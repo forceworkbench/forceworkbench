@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope
+	xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:ns1="urn:partner.soap.sforce.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<SOAP-ENV:Header>
+		<ns1:SessionHeader>
+			<ns1:sessionId>
+				tKVxJi0Es_wcrdSO4rnbApWzFgGh2jb6H0ScpDWvERcIvHm9Bs5VcvlsTMFAMpEKHI0MdrXB6wnS3S.01q2yAjgDS9N4udZpue_z1DRFgZHk8d2OcrfXEQLC7uKv2oNrWZchZACU
+			</ns1:sessionId>
+		</ns1:SessionHeader>
+		<ns1:CallOptions>
+			<ns1:client>phpClient/1.0</ns1:client>
+			<ns1:defaultNamespace xsi:nil="true" />
+		</ns1:CallOptions>
+	</SOAP-ENV:Header>
+	<SOAP-ENV:Body>
+		<ns1:describeSObjects>
+			<ns1:sObjectType>AccountPartner</ns1:sObjectType>
+		</ns1:describeSObjects>
+	</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
