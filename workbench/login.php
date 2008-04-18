@@ -3,18 +3,22 @@ session_start();
 
 require_once('shared.php');
 
-if(extension_loaded('curl')){
-	$ch = curl_init();
-	curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	$latestVersionAvailable = trim(curl_exec($ch));
-	curl_close($ch);
+try{
+	if(extension_loaded('curl')){
+		$ch = curl_init();
+		curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$latestVersionAvailable = trim(curl_exec($ch));
+		curl_close($ch);
 	
-	if (isset($latestVersionAvailable)){
-		if($latestVersionAvailable != $version){
-			print "<span style='font-size: 8pt;'><a href='http://sourceforge.net/projects/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
+		if (isset($latestVersionAvailable)){
+			if($latestVersionAvailable != $version){
+				print "<span style='font-size: 8pt;'><a href='http://sourceforge.net/projects/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
+			}
 		}
 	}
+} catch (Exception $e){
+	//do nothing
 }
 
 if($_GET['serverUrl'] && $_GET['sid']){		//simulate adv login from url query params for web tab use
@@ -159,6 +163,7 @@ function givePassFocus(){
 				<option value='emea'>EMEA</option>
 				<option value='tapp0-api'>Sandbox CS0</option>
 				<option value='cs1-api'>Sandbox CS1</option>
+				<option value='cs2-api'>Sandbox CS2</option>
 			</select>
 
 			<select name='endp' id='endp' onChange='build_location();'>
