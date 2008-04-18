@@ -10,10 +10,10 @@ try{
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$latestVersionAvailable = trim(curl_exec($ch));
 		curl_close($ch);
-	
-		if (isset($latestVersionAvailable)){
+
+		if (preg_match('/^[0-9]+.[0-9]+.[0-9]+$/',$latestVersionAvailable)){
 			if($latestVersionAvailable != $version){
-				print "<span style='font-size: 8pt;'><a href='http://sourceforge.net/projects/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
+				print "<span style='font-size: 8pt;'><a href='http://code.google.com/p/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
 			}
 		}
 	}
@@ -26,7 +26,7 @@ if($_GET['serverUrl'] && $_GET['sid']){		//simulate adv login from url query par
 	$_POST['sessionId'] = $_GET['sid'];
 	$_POST[login_type] = "adv";
 	$_POST[actionJumpAdv] = "select.php";
-} 
+}
 
 if ($_POST[login_type]=='std'){
 	process_login($_POST['usernameStd'], $_POST['passwordStd'], null, null, $_POST['actionJumpStd']);
@@ -68,7 +68,7 @@ function toggleUsernamePasswordSessionDisabled(){
 		document.getElementById('usernameAdv').disabled = false;
 		document.getElementById('passwordAdv').disabled = false;
 	}
-	
+
 	if(document.getElementById('usernameAdv').value || document.getElementById('passwordAdv').value){
 		document.getElementById('sessionId').disabled = true;
 	} else {
@@ -254,16 +254,16 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	$serverUrl = htmlentities(trim($serverUrl));
 	$sessionId = htmlentities(trim($sessionId));
 	$actionJump = htmlentities(trim($actionJump));
-	
+
 	if($_POST[rememberUser] !== 'on') setcookie(user,NULL,time()-3600);
-	
+
 	if ($username && $password && $sessionId){
 		$errors = null;
 		$errors = 'Provide only username and password OR session id, but not all three.';
 		display_login($errors);
 		exit;
-	} 
-	
+	}
+
 
 	try{
 		require_once ('soapclient/SforcePartnerClient.php');
@@ -271,7 +271,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		$wsdl = 'soapclient/sforce.120.partner.wsdl';
 		$mySforceConnection = new SforcePartnerClient();
 	    $mySforceConnection->createConnection($wsdl);
-	    
+
 	    if($username && $password && !$sessionId){
 	    	if($serverUrl){
 	    		$mySforceConnection->setEndpoint($serverUrl);
@@ -289,7 +289,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 			$mySforceConnection->setEndpoint($serverUrl);
 	    	$mySforceConnection->setSessionHeader($sessionId);
 		}
-	    
+
 		session_unset();
 		session_destroy();
 		session_start();
@@ -311,7 +311,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		display_login($errors);
 		exit;
 	}
-	
+
 }
 
 ?>

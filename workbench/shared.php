@@ -333,7 +333,7 @@ function idOnlyCallIds($api_call,$field_map,$csv_array,$show_results){
 			global $mySforceConnection;
 			if($api_call == 'purge') $api_call = 'emptyRecycleBin';
 			$results_more = $mySforceConnection->$api_call($id_array200);
-	
+
 		    if(!$results){
 		    	$results = $results_more;
 		    } else {
@@ -605,7 +605,7 @@ function debug(){
 	print "<pre style='font-family: monospace; text-align: left;'>";
 	try{
 	global $mySforceConnection;
-	
+
 	print "<h1>GLOBALS</h1>\n";
 
 	print "<strong>COOKIE SUPERGLOBAL VARIABLE</strong>\n";
