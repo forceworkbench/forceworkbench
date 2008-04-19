@@ -11,7 +11,7 @@ try{
 		$latestVersionAvailable = trim(curl_exec($ch));
 		curl_close($ch);
 
-		if (preg_match('/^[0-9]+.[0-9]+.[0-9]+$/',$latestVersionAvailable)){
+		if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable)){
 			if($latestVersionAvailable != $version){
 				print "<span style='font-size: 8pt;'><a href='http://code.google.com/p/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
 			}
@@ -80,13 +80,13 @@ function toggleUsernamePasswordSessionDisabled(){
 
 function form_become_adv() {
 	document.getElementById('login_std').style.display='none';
-//	document.getElementById('apexLogo').style.display='none';
+	document.getElementById('apexLogo').style.display='none';
 	document.getElementById('login_adv').style.display='inline';
 }
 
 function form_become_std() {
 	document.getElementById('login_std').style.display='inline';
-//	document.getElementById('apexLogo').style.display='inline'
+	document.getElementById('apexLogo').style.display='inline'
 	document.getElementById('login_adv').style.display='none';
 }
 
@@ -129,7 +129,7 @@ function givePassFocus(){
 			<p><strong>Username: </strong><input type='text' name='usernameStd' id='username' size='45' value='$user' /></p>
 			<p><strong>Password: </strong><input type='password' name='passwordStd'  id='password' size='45' /></p>
 			<p><strong>Jump to: </strong>
-			<select name='actionJumpStd' style='width: 22em;'>
+			<select name='actionJumpStd' style='width: 24em;'>
 				<option value='select.php'></option>
 				<option value='describe.php'>Describe</option>
 				<option value='insert.php'>Insert</option>
@@ -144,12 +144,12 @@ function givePassFocus(){
 		</div>
 
 		<div id='login_adv' style='display: none;'>
-			<p><strong>Username: </strong><input type='text' name='usernameAdv' id='usernameAdv' size='45' value='$user' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
-			<p><strong>Password: </strong><input type='password' name='passwordAdv' id='passwordAdv' size='45' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
+			<p><strong>Username: </strong><input type='text' name='usernameAdv' id='usernameAdv' size='65' value='$user' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
+			<p><strong>Password: </strong><input type='password' name='passwordAdv' id='passwordAdv' size='65' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
 			<p>-OR-</p>
-			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='45' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
+			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='65' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
 			<p>&nbsp;</p>
-			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='45' value='https://www.salesforce.com/services/Soap/u/12.0' /></p>
+			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='65' value='https://www.salesforce.com/services/Soap/u/12.0' /></p>
 			<p><strong>QuickSelect: </strong>
 			<select name='inst' id='inst' onChange='build_location();'>
 				<option value='www'>www</option>
@@ -178,7 +178,7 @@ function givePassFocus(){
 			</select></p>
 
 			<p><strong>Jump to: </strong>
-			<select name='actionJumpAdv' style='width: 15em;'>
+			<select name='actionJumpAdv' style='width: 14em;'>
 				<option value='select.php'></option>
 				<option value='describe.php'>Describe</option>
 				<option value='insert.php'>Insert</option>
