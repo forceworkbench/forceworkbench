@@ -8,10 +8,16 @@ require_once ('header.php');
 
 
 <p>
-The Workbench is a web-based application that gives administrators on-demand access to useful 
-tools to manage their organization. Combining the power of both the Apex Data Loader with the 
-Apex Explorer, the Workbench can insert, upsert, update, export, delete, undelete, and purge data 
-as well as describe the metadata of any object in your Force.com organization.
+The Workbench is a web-based application that gives administrators on-demand access 
+to useful tools to manage their salesforce.com organization. 
+Combining the power of both the Apex Data Loader with the Force.com Explorer, 
+the Workbench can insert, upsert, update, export, delete, undelete, 
+and purge data as well as describe any object in your salesforce.com organization. 
+These functions build on the strengths of both the existing 
+products to create an even more powerful and easier-to-use on-demand application. 
+Not only can the Workbench be used as a standalone application 
+in your browser, but it can also be integrated within Salesforce as a single-sign-on 
+web tab for more convenient access.
 </p>
 
 <p>
@@ -20,14 +26,24 @@ Workbench v<?php echo $GLOBALS['version']; ?><br/>
 Developed by Ryan Brainard<br/>
 </strong>
 Distributed under the Open Source BSD License.<br/>
-<a href="http://sourceforge.net/projects/forceworkbench/">Download the latest version and source code</a>
 </p>
-
 
 <p>
 <img src='images/open_source_logo.png' width='119' height='96' alt='Open Source Logo' align='center' />&nbsp;&nbsp;
-<img src='images/php-med-trans-light.gif' width='95' height='51' alt='PHP Logo' align='center' />&nbsp;&nbsp;&nbsp;&nbsp;
-<img src='images/sfx_logo2.png' width='260' height='48' alt='Sourceforge Logo' align='center' />
+<img src='images/php-med-trans-light.gif' width='95' height='51' alt='PHP Logo' align='center' />
+</p>
+
+<p>
+<strong>The Workbench is NOT a product of or supported by salesforce.com, inc.
+For support from the Open Source community, please visit the recources below:</strong>
+<ul>
+	<li><a href="http://code.google.com/p/forceworkbench/">Main Page</a></li>
+	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench">Wiki</a></li>
+	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#FAQ">FAQ</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/issues/list">Issue Tracking</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/source/checkout">Source Code</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/downloads/list">Download</a></li>
+</ul>
 </p>
 
 <strong><p>
@@ -43,7 +59,7 @@ Force.com Web Services API, but is not itself a product of salesforce.com, inc. 
 salesforce.com, inc or its contributors. Below is the copyright and license for the PHP Toolkit:</p>
 
 <p>
-  Copyright (c) 2007, salesforce.com, inc.<br/>
+  Copyright (c) 2008, salesforce.com, inc.<br/>
   All rights reserved.
 </p>
 <p>

@@ -6,7 +6,7 @@ include_once('shared.php');
 <div class='disclaimer'>
 
 	<br/>
-	Workbench v<?php echo $GLOBALS['version']; ?> <a href='about.php'>About</a> | <a href='help.php'>Help</a><br/>
+	Workbench v<?php echo $GLOBALS['version']; ?> <a href='about.php'>About</a><br/>
 
 
 	<?php

@@ -23,8 +23,6 @@ export, delete, undelete, and purge data as well as describe the metadata of any
   <strong>
   	<li><a href="#installation">Installation</a></li>
     <li><a href="#support">Support</a></li>
-    <li><a href="#faq">FAQ</a></li>
-    <li><a href="#versions">Version History</a></li>
     <li><a href="#credits">Credits & Disclaimers</a></li>
   </strong>
   </ul>
@@ -126,170 +124,12 @@ PHPIniDir "&lt;your_apache_dir&gt;/php5"
   Please note that the Workbench is NOT a product of or supported by salesforce.com, inc.
 
 
-  For support from the Open Source community, please visit this project's SourceForge pages below:.
+  For support from the Open Source community, please visit the pages below:.
 
   <ul>
-  	<li><a href='http://sourceforge.net/projects/forceworkbench/'>Project Main Page</a></li>
-  	<li><a href='http://sourceforge.net/forum/?group_id=203311'>Forums</a></li>
-  	<li><a href='http://sourceforge.net/tracker/?group_id=203311&atid=985083'>Feature Requests</a></li>
-  	<li><a href='http://sourceforge.net/tracker/?group_id=203311&atid=985080'>Bugs</a></li>
+  	<li><a href='http://code.google.com/p/forceworkbench/'>Google Code - Project Main Page, Downloads, Source Code, Issue Tracking</a></li>
+  	<li><a href='http://wiki.apexdevnet.com/index.php/Workbench'>developer.force.com - Project Wiki Page, Installation, Help</a></li>
   </ul>
-
- <h2><a name="faq"></a>FAQ</h2>
-
- 	<h3>What are the advantages of the Workbench compared to the Data Loader?</h3>
-	  <ul>
-	    <li>On-demand access to your organization's data anywhere you have an Internet connection. 
-	    There is nothing for the end users to download and nothing to upgrade.</li>
-	    <li>Clean, easy-to-use, user-centered interface that remembers your settings throughout your session.</li>
-	    <li><a href="describe.php">Describe</a> function to access your organization's metadata.</li>
-	    <li>Simplified results on one easy-to-read table displayed right in your browser.</li>
-	    <li>Easier and faster SOQL query builder that dynamically updates itself.</li>
-	    <li>The choice to view queries right in your browser or download them as a CSV file.</li>
-	    <li><a href="export.php">Query All</a> function to query archived items as well as items that in your recycle bin.</li>
-	    <li><a href="undelete.php">Undelete</a> function to restore items from your recycle bin by Id.</li>
-	    <li><a href="purge.php">Purge</a> function to permanently delete items from your recycle bin by Id.</li>
-	    <li><a href="#sso">Single sign on</a> integration with your Salesforce organization</li>
-	  </ul>
-	  
-	<h3>What is the Workbench <u>not</u> designed for?</h3>
-	  <ul>
-	    <li>Being web-based, the Workbench is subject to browser and connection timeouts. As such, is it not recommended to use the Workbench
-	    for large data loads or exports. It is much better suited for quick, on-the-fly data management, which is something other
-	    API integration tools lack</li>
-	    <li>The Workbench cannot be run from the command line, used for automated processes, or support mapping files</li>
-	  </ul>
-	  
-   <h3>Is the Workbench just an extension of the DataLoader?</h3>
-	No, the Workbench was built completely from the ground-up using PHP and JavaScript, and binds to the Force.com Web Services API via the PHP Toolkit.
-	It does not reference or build upon any of the Java code in the DataLoader, but was modeled after its concept.
-
-  	<h3>How are the version numbers formatted?</h3>
-	Because the version number is appended by the version number of the Force.com API WSDL file being used, the
-	the version numbers tend to get rather long. The version numbers follow the format below:<p/>
-
-	<em>Major.Minor.API</em>
-
-	<h3>If this software is Open Source, where can I get the source code?</h3>
-	The source code is available at the <a href="https://sourceforge.net/projects/forceworkbench/">Sourceforge project site</a> for download
-	and distribution under the Open Source BSD License. Please see the <a href="about.php">
-	About</a> page for details.
-	
-	<h3><a name="sso"></a>How I use the Workbench in a Web Tab or S-control in Salesforce for single sign on?</h3>
-	Introduced in v.0.5.12, the Workbench has an exposed API to allow users to be automatically 
-	logged in by providing their Server URL and Session Id in the URL arguments. This can 
-	be to integrate the Workbench into a Web Tab or S-control directly in Salesforce for 
-	single sign on into the Workbench. To integrate the Workbench into your org, follow the 
-	instructions below:
-	<ol>
-		<li>Login to Salesforce</li>
-		<li>Setup | Create | Tabs | Web Tabs | New</li>
-		<li>Choose Tab Layout
-			<ul>
-				<li><em>Full page width</em> is recommended</li>
-			</ul>
-		</li>
-		<li>Define Content and Display Properties
-			<ul>
-				<li>Tab Type: <em>URL</em></li>
-				<li>Tab Label: <em>Workbench</em></li>
-				<li>Tab Tab Style: Choose a style</li>
-				<li>Content Frame Height (pixels): Choose the maximum amount available for your screen (you may have to edit this value to find the correct value for your screen)</li>
-			</ul>
-		</li>
-		<li>Button or Link URL
-			<ul>
-				<li>Button or Link URL: <em><?php if($_SERVER[HTTPS]) print "https://"; else print "http://"; print $_SERVER[SERVER_NAME]; ?>/workbench/login.php?serverUrl={!API.Partner_Server_URL_120}&sid={!API.Session_ID}</em></li>
-				<li>Encoding: <em>Unicode UTF-8</em></li>
-			</ul>
-		</li>
-		<li>Save</li>	
-	</ol> 
-	
-	<h3>What is the difference between Delete and Purge?</h3>
-	Delete moves the records to your organization's recycle bin and can be undeleted if that object has the Undeletable attribute, 
-	whereas Purge permanently deletes items that are already in our organization's recycle bin. Note, some types of objects are
-	immediately deleted from your organization when they are deleted. Be sure to check the if the record has the the Undeletable attribute
-	before deleting records. This can be done using the Describe function and opening the Attributes folder.
-
-
-	<h2><a name="versions"></a>Version History</h2>
-   		<strong>0.0.8</strong> 2007/08/05
-  		<ul>
-  		   <li>Blank screen</li>
-  		   <li>Stripped down Apex API 8.0 Partner WSDL-based PHP Toolkit</li>
-  		</ul>
-
-
-  		<strong>0.1.9</strong> 2007/08/23
-  		<ul>
-	  		<li>Completed development of all basic functions without JavaScript flourishes</li>
-	  		<li>Upgraded WSDL to Apex API 9.0</li>
-		</ul>
-
-
-  		<strong>0.2.10</strong> 2007/09/04
-  		<ul>
-	  		<li>Partially abstracted PHP code and shared common functions for more efficient code re-use</li>
-	  		<li>Added support for Query All method to query recycled and archived records</li>
-	  		<li>Re-coded the Export functions to support queries of more than 2000 records by passing the Query Locater to a looping Query More calls to the Apex API</li>
-	  		<li>Re-coded all basic put functions to support more than 200 records by looping multiple calls to the Apex API</li>
-	  		<li>Added JavaScript functions for persistent login and SOQL builder</li>
-	  		<li>Upgraded WSDL to Apex API 10.0</li>
-		</ul>
-
-		<strong>0.3.10</strong> 2007/09/12
-  		<ul>
-	  		<li>Changed branding from Apex DataLoader.PHP to Workbench</li>
-	  		<li>Enhanced and streamlined the SOQL builder JavaScript function to automatically update the entire SOQL query when the user makes any changes to the criteria in the form.
-	  		Also added onKeyUp event handling for realtime updating while the user types criteria in text fields.</li>
-	  		<li>Added ORDER BY sorting to SOQL builder</li>
-	  		<li>Added error handling if no object is selected when using SOQL builder</li>
-	  		<li>Streamlined login and action-picking process with Jump To menu on login screen to avoid extra step with Select page</li>
-	  	</ul>
-
-	  	<strong>0.4.11</strong> 2007/11/18
-  		<ul>
-	  		<li>Upgraded WSDL to Force.com API Partner 11.0</li>
-	  		<li>Added Purge functionality to remove items from the Recycle Bin by ID</li>
-	  		<li>Expanded deleteUndelete function to allow for any simple API call that takes only IDs</li>
-	  		<li>Updated Salesforce.com branding from Apex to Force.com</li>
-	  	</ul>
-	  	
-	  	<strong>0.5.12</strong> 2008/02/25
-  		<ul>
-	  		<li>Upgraded WSDL to Force.com API Partner 12.0</li>
-	  		<li>Upgraded base client to PHP Toolkit 11.1</li>
-	  		<li>Added support for login with URL arguments for single sign on inside a Salesforce Web Tab. <a href="#sso">[Instructions]</a></li>
-	  		<li>Simplified standard and advanced logins at code level</li>
-	  		<li>Added support for endpoint changes when logging in with username and password under Advanced login option with auto-enabling fields</li>
-	  		<li>Improved user interface on Export with more accessible and intuitive layout, auto-enabling field choices, and an additional filter selection</li>
-	  		<li>Support for count() keyword in SOQL queries displaying results in browser</li>
-	  		<li>Query result anchor jumping so the user does not have to scroll after running a query</li>
-	  		<li>Enhanced Select page with auto-enabling field choices for more intuitive workflow</li>
-	  		<li>Collapsible tree view for Describe function</li>
-	  		<li>Increased maximum record size for Insert, Update, and Upsert to 2000 records, and Delete, Undelete, and Purge to 5000 records</li>
-	  		<li>Added tooltip hovers to menubar</li>
-	  		<li>Fixed minor bugs:
-	  			<ul>
-				    <li>Corrected PHP warnings for non-existent foreach() variables before field selections are made</li>
-				    <li>Corrected wording of Purge info and error messages</li>
-				    <li>Allowed API calls that do not depend on an object selection to not require selection of an object</li>
-			  	</ul>
-	  	</ul>
-	  	
-	  	<strong>0.6.12</strong> 2008/03/18
-  		<ul>
-	  		<li>Added an elapsed time clock to Query Results. Note, this is the time for the query() and queryMore() functions took to complete their requests with the Force.com API, not including the time it takes for PHP to process, transmit, and display the results to the end user.</li>
-	  		<li>Added line numbers to the Query Results to match the Excel row numbers.</li>
-	  	</ul>
-	  	
-	  	<strong>1.0.12</strong> 2008/03/22
-  		<ul>
-	  		<li>Updated documentation for general availability</li>
-	  		<li>First public release on Sourceforge</li>
-	  	</ul>
-
 
 
 
@@ -297,14 +137,24 @@ PHPIniDir "&lt;your_apache_dir&gt;/php5"
 <p>
 <strong>Developed by Ryan Brainard</strong><br/>
 Distributed under the Open Source BSD License.<br/>
-<a href="http://sourceforge.net/projects/forceworkbench/">Download Source Code</a>
 </p>
 
 
 <p>
-<img src='images/open_source_logo.png' width='119' height='96' alt='Open Source Logo' align='center' />&nbsp;&nbsp;&nbsp;
-<img src='images/php-med-trans-light.gif' width='95' height='51' alt='PHP Logo' align='center' />&nbsp;&nbsp;&nbsp;
-<img src='images/sfx_logo2.png' width='260' height='48' alt='Sourceforge Logo' align='center' />
+<img src='images/open_source_logo.png' width='119' height='96' alt='Open Source Logo' align='center' />&nbsp;&nbsp;
+<img src='images/php-med-trans-light.gif' width='95' height='51' alt='PHP Logo' align='center' />
+</p>
+
+<p>
+<strong>The Workbench is NOT a product of or supported by salesforce.com, inc.
+For support from the Open Source community, please visit the recources below:</strong>
+<ul>
+	<li><a href="http://code.google.com/p/forceworkbench/">Main Page on Google Code</a></li>
+	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench">Wiki on developer.force.co</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/issues/list">Issues, Bugs, & Feature Requests</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/source/checkout">Source Code</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/downloads/list">Download</a></li>
+</ul>
 </p>
 
 <strong><p>
@@ -321,7 +171,7 @@ salesforce.com, inc or its contributors.</p>
 <hr/>
 
 <p>
-  *Copyright (c) 2007, salesforce.com, inc.<br/>
+  *Copyright (c) 2008, salesforce.com, inc.<br/>
   All rights reserved.
 </p>
 <p>
