@@ -8,15 +8,15 @@ require_once ('header.php');
 
 
 <p>
-The Workbench is a web-based application that gives administrators on-demand access 
-to useful tools to manage their salesforce.com organization. 
-Combining the power of both the Apex Data Loader with the Force.com Explorer, 
-the Workbench can insert, upsert, update, export, delete, undelete, 
-and purge data as well as describe any object in your salesforce.com organization. 
-These functions build on the strengths of both the existing 
-products to create an even more powerful and easier-to-use on-demand application. 
-Not only can the Workbench be used as a standalone application 
-in your browser, but it can also be integrated within Salesforce as a single-sign-on 
+The Workbench is a web-based application that gives administrators on-demand access
+to useful tools to manage their salesforce.com organization.
+Combining the power of both the Apex Data Loader with the Force.com Explorer,
+the Workbench can insert, upsert, update, export, delete, undelete,
+and purge data as well as describe any object in your salesforce.com organization.
+These functions build on the strengths of both the existing
+products to create an even more powerful and easier-to-use on-demand application.
+Not only can the Workbench be used as a standalone application
+in your browser, but it can also be integrated within Salesforce as a single-sign-on
 web tab for more convenient access.
 </p>
 
@@ -38,10 +38,11 @@ Distributed under the Open Source BSD License.<br/>
 For support from the Open Source community, please visit the recources below:</strong>
 <ul>
 	<li><a href="http://code.google.com/p/forceworkbench/">Main Page</a></li>
-	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench">Wiki</a></li>
+	<li><a href="http://groups.google.com/group/forceworkbench">Feedback &amp; Discussion</a></li>
+  	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench">Wiki</a></li>
 	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#FAQ">FAQ</a></li>
 	<li><a href="http://code.google.com/p/forceworkbench/issues/list">Issue Tracking</a></li>
-	<li><a href="http://code.google.com/p/forceworkbench/source/checkout">Source Code</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/source/browse">Source Code</a></li>
 	<li><a href="http://code.google.com/p/forceworkbench/downloads/list">Download</a></li>
 </ul>
 </p>
@@ -89,16 +90,16 @@ salesforce.com, inc or its contributors. Below is the copyright and license for 
 
 <hr/>
 <p>
-Collapsible tree on Describe page is built on 
-<a href="http://www.dynamicdrive.com/dynamicindex1/navigate1.htm">Simple Tree Menu</a> 
+Collapsible tree on Describe page is built on
+<a href="http://www.dynamicdrive.com/dynamicindex1/navigate1.htm">Simple Tree Menu</a>
 framework from <a href="http://www.dynamicdrive.com">Dynamic Drive DHTML code library</a>
 </p>
 
 
 <hr/>
 <p>
-Code for menu bar tool tips is built on 
-<a href="http://www.walterzorn.com/tooltip/tooltip_e.htm">JavaScript, DHTML Tooltips </a> 
+Code for menu bar tool tips is built on
+<a href="http://www.walterzorn.com/tooltip/tooltip_e.htm">JavaScript, DHTML Tooltips </a>
 framework from <a href="http://www.walterzorn.com/">Walter Zorn</a>
 </p>
 </div>
