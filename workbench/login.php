@@ -3,23 +3,6 @@ session_start();
 
 require_once('shared.php');
 
-try{
-	if(extension_loaded('curl')){
-		$ch = curl_init();
-		curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$latestVersionAvailable = trim(curl_exec($ch));
-		curl_close($ch);
-
-		if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable)){
-			if($latestVersionAvailable != $version){
-				print "<span style='font-size: 8pt;'><a href='http://code.google.com/p/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
-			}
-		}
-	}
-} catch (Exception $e){
-	//do nothing
-}
 
 if($_GET['serverUrl'] && $_GET['sid']){		//simulate adv login from url query params for web tab use
 	$_POST['serverUrl'] = $_GET['serverUrl'];
@@ -33,6 +16,7 @@ if ($_POST[login_type]=='std'){
 } elseif ($_POST[login_type]=='adv'){
 	process_login($_POST['usernameAdv'], $_POST['passwordAdv'], $_POST['serverUrl'], $_POST['sessionId'], $_POST['actionJumpAdv']);
 } else {
+	checkLatestVersion();
 	display_login(null);
 }
 
@@ -312,6 +296,26 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		exit;
 	}
 
+}
+
+function checkLatestVersion(){
+	try{
+		if(extension_loaded('curl')){
+			$ch = curl_init();
+			curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			$latestVersionAvailable = trim(curl_exec($ch));
+			curl_close($ch);
+	
+			if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable)){
+				if($latestVersionAvailable != $version){
+					print "<span style='font-size: 8pt;'><a href='http://code.google.com/p/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
+				}
+			}
+		}
+	} catch (Exception $e){
+		//do nothing
+	}
 }
 
 ?>
