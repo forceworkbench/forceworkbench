@@ -3,7 +3,7 @@ require_once ('session.php');
 require_once ('shared.php');
 
 //correction for dynamic magic quotes
-if(get_magic_quotes_gpc){
+if(get_magic_quotes_gpc()){
 	$_POST[soql_query] = stripslashes($_POST[soql_query]);
 } else {
 	$_SESSION[soql_query] = $_POST[soql_query];
