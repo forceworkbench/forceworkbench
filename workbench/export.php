@@ -2,7 +2,12 @@
 require_once ('session.php');
 require_once ('shared.php');
 
-$_SESSION[soql_query] = $_POST[soql_query];
+//correction for dynamic magic quotes
+if(get_magic_quotes_gpc){
+	$_POST[soql_query] = stripslashes($_POST[soql_query]);
+} else {
+	$_SESSION[soql_query] = $_POST[soql_query];
+}
 
 if ($_POST[justUpdate]){
 	if ($_POST[default_object]) $_SESSION[default_object] = $_POST[default_object];
@@ -85,19 +90,19 @@ print <<<QUERY_BUILDER_SCRIPT
 
 function toggleFieldDisabled(){
 	var QB_field_sel = document.getElementById('QB_field_sel');
-	
+
 	if(document.getElementById('myGlobalSelect').value){
-		QB_field_sel.disabled = false;		
+		QB_field_sel.disabled = false;
 	} else {
-		QB_field_sel.disabled = true;		
+		QB_field_sel.disabled = true;
 	}
-	
-	
+
+
 	var isFieldSelected = false;
 	for (var i = 0; i < QB_field_sel.options.length; i++)
 		if (QB_field_sel.options[i].selected)
 			isFieldSelected = true;
-	
+
 	if(isFieldSelected){
 			document.getElementById('QB_filter_field_sel').disabled = false;
 			document.getElementById('QB_orderby_field').disabled = false;
@@ -120,7 +125,7 @@ function toggleFieldDisabled(){
 			document.getElementById('QB_nulls').disabled = true;
 			document.getElementById('QB_limit_txt').disabled = true;
 	}
-	
+
 	if (isFieldSelected && document.getElementById('QB_filter_field_sel').value && document.getElementById('QB_oper_sel').value && document.getElementById('QB_filter_txt').value){
 		document.getElementById('QB_filter_field_sel2').disabled = false;
 		if(document.getElementById('QB_filter_field_sel2').value){
@@ -155,15 +160,15 @@ function build_query(){
 	for (var i = 0; i < QB_field_sel.options.length; i++){
 		if (QB_field_sel.options[i].selected){
 			QB_fields_selected.push(QB_field_sel.options[i].value);
-		}	
+		}
 	}
-	
+
 	var soql_select = '';
 	if(QB_fields_selected.toString().indexOf('count()') != -1 && QB_fields_selected.length > 1){
-		alert('Warning: Choosing count() with other fields will result in a malformed query. Unselect either count() or the other fields to continue.');	
+		alert('Warning: Choosing count() with other fields will result in a malformed query. Unselect either count() or the other fields to continue.');
 	} else	if (QB_fields_selected.length > 0){
 		var soql_select = 'SELECT ' + QB_fields_selected + ' FROM ' + myGlobalSelect;
-	} 
+	}
 
 
 	var QB_filter_field_sel = document.getElementById('QB_filter_field_sel').value;
@@ -198,8 +203,8 @@ function build_query(){
 	} else {
 		var soql_where = '';
 	}
-	
-	
+
+
 	var QB_filter_field_sel2 = document.getElementById('QB_filter_field_sel2').value;
 	var QB_oper_sel2 = document.getElementById('QB_oper_sel2').value;
 	var QB_filter_txt2 = document.getElementById('QB_filter_txt2').value;
@@ -231,7 +236,7 @@ function build_query(){
 	} else {
 		var soql_where2 = '';
 	}
-	
+
 	if(soql_where && soql_where2){
 		soql_where = soql_where + soql_where2;
 	}
@@ -293,7 +298,7 @@ QUERY_BUILDER_SCRIPT;
 
     print "Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='10' style='width: 16em;' onChange='build_query();'>\n";
 	if(isset($describeSObject_result)){
-		
+
 		print   " <option value='count()'";
 		if(count($_POST['QB_field_sel'])){ //check to make sure something is selected; otherwise warnings will display
 			foreach ($_POST['QB_field_sel'] as $selected_field){
@@ -301,7 +306,7 @@ QUERY_BUILDER_SCRIPT;
 			}
 		}
 		print ">count()</option>\n";
-		
+
 		print ">$field->name</option>\n";
 		foreach($describeSObject_result->fields as $fields => $field){
 			print   " <option value='$field->name'";
@@ -315,10 +320,10 @@ QUERY_BUILDER_SCRIPT;
 	}
 	print "</select></td>\n";
 	print "<td valign='top'>";
-	
-	
-	
-	
+
+
+
+
 	print "<table border='0' align='right'>\n";
 	print "<tr><td valign='top' colspan=2>Export to:<br/>" .
 			"<label><input type='radio' name='export_action' value='screen' ";
@@ -381,8 +386,8 @@ QUERY_BUILDER_SCRIPT;
 		print "<td><input type='text' id='QB_limit_txt' size='11' name='QB_limit_txt' value='$_POST[QB_limit_txt]' onkeyup='build_query();' /></td>";
 
 	print "</tr>";
-	
-	
+
+
 	print "<tr><td valign='top' colspan=4>";
 	print "<br/>Filter results by:<br/>";
 
@@ -460,11 +465,11 @@ QUERY_BUILDER_SCRIPT;
 	print "<input type='text' id='QB_filter_txt2' size='31' name='QB_filter_txt2' value='$_POST[QB_filter_txt2]' onkeyup='build_query();' />";
 	print "</td></tr>";
 
-	
-	
-	
+
+
+
 	print "</table>";
-	
+
 	print "</td></tr>";
 
 
@@ -480,11 +485,11 @@ QUERY_BUILDER_SCRIPT;
 
 function query($soql_query,$query_action){
 	try{
-	
+
 	global $mySforceConnection;
 	if ($query_action == 'Query') $query_response = $mySforceConnection->query($soql_query);
 	if ($query_action == 'QueryAll') $query_response = $mySforceConnection->queryAll($soql_query);
-	
+
 	if (substr_count($soql_query,"count()")){
 		print "<p><a name='qr'>&nbsp;</a></p>";
 		show_info("Query would return " . $query_response->size . " records.");
@@ -492,14 +497,14 @@ function query($soql_query,$query_action){
 		include_once('footer.php');
 		exit;
 	}
-	
+
 	$records = $query_response->records;
 
 	while(!$query_response->done){
 		$query_response = $mySforceConnection->queryMore($query_response->queryLocator);
 		$records = array_merge($records,$query_response->records);
 	}
-	
+
 	return $records;
 
 	} catch (Exception $e){
