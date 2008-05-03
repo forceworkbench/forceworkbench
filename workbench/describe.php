@@ -46,8 +46,7 @@ function show_describeSObject_form(){
 function show_describeSObject_result(){
 	try{
 		//Ping Apex API
-		global $mySforceConnection;
-		$describeSObject_result = $mySforceConnection->describeSObjects(array ($_SESSION[default_object]));
+		$describeSObject_result = describeSObject($_SESSION[default_object], true);
 		} catch (Exception $e) {
 	      	$errors = null;
 			$errors = $e->getMessage();

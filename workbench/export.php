@@ -65,15 +65,7 @@ if ($_POST[querySubmit]=='Query' && $_POST[soql_query] && $_POST[export_action] 
 function show_query_form($soql_query,$export_action,$query_action){
 
 if ($_SESSION[default_object]){
-	try{
-	global $mySforceConnection;
-	$describeSObject_result = $mySforceConnection->describeSObjects(array ($_SESSION[default_object]));
-	} catch (Exception $e) {
-	      	$errors = null;
-			$errors = $e->getMessage();
-			show_error($errors);
-			exit;
-    }
+	$describeSObject_result = describeSObject($_SESSION[default_object], true);
 } else {
 	show_info('First choose an object to use the SOQL builder wizard.');
 }

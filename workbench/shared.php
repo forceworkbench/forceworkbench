@@ -29,6 +29,8 @@ function myGlobalSelect($default_object){
 			exit;
 	    }
 	}
+	
+	
 	//Print the global object types in a dropdown select box
 	foreach($_SESSION[myGlobal]->types as $type){
 		print "	<option value='$type'";
@@ -40,18 +42,33 @@ function myGlobalSelect($default_object){
 	print "</select>\n";
 }
 
-function field_mapping_set($action,$csv_array){
-	if ($action == 'insert' || $action == 'upsert' || $action == 'update'){
-		if (isset($_SESSION[default_object])){
-			try{
-				global $mySforceConnection;
-				$describeSObject_result = $mySforceConnection->describeSObjects(array ($_SESSION[default_object]));
-			} catch (Exception $e) {
+function describeSObject($objectType, $abcOrder = false){
+	try{
+		global $mySforceConnection;
+		$describeSObject_result = $mySforceConnection->describeSObject($objectType);
+	} catch (Exception $e) {
 			      	$errors = null;
 					$errors = $e->getMessage();
 					show_error($errors);
 					exit;
-		    }
+	}
+	
+	if($abcOrder){
+		//move field name out to key name and then ksort based on key for field abc order 
+		foreach($describeSObject_result->fields as $field){
+			$fieldNames[] = $field->name;
+		}
+		$describeSObject_result->fields = array_combine($fieldNames, $describeSObject_result->fields);
+		ksort($describeSObject_result->fields);
+	}
+	
+	return $describeSObject_result;
+}
+
+function field_mapping_set($action,$csv_array){
+	if ($action == 'insert' || $action == 'upsert' || $action == 'update'){
+		if (isset($_SESSION[default_object])){
+			$describeSObject_result = describeSObject($_SESSION[default_object], true);
 		} else {
 		show_error("A default object is required to $action. Go to the Select page to choose a default object and try again.");
 	}
