@@ -83,7 +83,9 @@ function field_mapping_set($action,$csv_array){
 		print "<td><select name='_ext_id' style='width: 100%;'>\n";
 		print "	<option value=''></option>\n";
 		foreach($describeSObject_result->fields as $fields => $field){
-			print   " <option value='$field->name'>$field->name</option>\n";
+			if($field->idLookup){ //limit the fields to only those with the idLookup property set to true. Corrected Issue #10
+				print   " <option value='$field->name'>$field->name</option>\n";
+			}
 		}
 		print "</select></td></tr></table>\n";
 	}
