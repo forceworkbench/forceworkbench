@@ -79,7 +79,7 @@ function field_mapping_set($action,$csv_array){
 	if ($action == 'upsert'){
 		print "<p><strong>Map the Salesforce fields to the columns from the uploaded CSV:</strong></p>\n";
 		print "<table class='description'><tr>\n";
-		print "<td style='color: red;'>External Id</stong>";
+		print "<td style='color: red;'>External Id</td>";
 		print "<td><select name='_ext_id' style='width: 100%;'>\n";
 		print "	<option value=''></option>\n";
 		foreach($describeSObject_result->fields as $fields => $field){
@@ -87,12 +87,18 @@ function field_mapping_set($action,$csv_array){
 				print   " <option value='$field->name'>$field->name</option>\n";
 			}
 		}
-		print "</select></td></tr></table>\n";
-	}
+		print "</select></td></tr></table>\n";		
+		
+		
+	} //end if upsert
 
 	print "<p><strong>Map the Salesforce fields to the columns from the uploaded CSV:</strong></p>\n";
 	print "<table class='description'>\n";
-	print "<tr><th>Salesforce Field</th><th>CSV Field</th></tr>\n";
+	print "<tr><th>Salesforce Field</th><th>CSV Field</th>";
+	if ($action == 'upsert'){
+		print "<th>Referenced Field</th>";
+	}
+	print "</tr>\n";
 
 	if ($action == 'insert'){
 		foreach($describeSObject_result->fields as $fields => $field){
@@ -132,7 +138,7 @@ function field_mapping_set($action,$csv_array){
 	}
 
 	if ($action == 'upsert'){
-		field_mapping_idOnly_set($csv_array);
+		field_mapping_idOnly_set($csv_array, $action);
 		foreach($describeSObject_result->fields as $fields => $field){
 			if ($field->updateable && $field->createable){
 				print "<tr";
@@ -145,7 +151,39 @@ function field_mapping_set($action,$csv_array){
 					if (strtolower($col) == strtolower($field->name)) print " selected='true' ";
 					print ">$col</option>\n";
 				}
-				print "</select></td></tr>\n";
+				print "</select></td>";//////
+				
+				
+				if(isset($field->referenceTo)){ ////// TODO: is this the right criteria?? 
+				
+					$describeRefObjResult = describeSObject($field->referenceTo, false);
+					
+					//check to see if there are any IdLookup fields and if so move them to a new array 
+					$extFields = null;
+					foreach($describeRefObjResult->fields as $extFieldKey => $extFieldVal){
+						if($extFieldVal->idLookup == true){
+							$extFields[$extFieldKey] = $extFieldVal;
+						}
+					}
+					
+					//check if the new array has any fields and if so
+					if(count($extFields) > 0){
+						print "<td><select name='__ref__$field->name' style='width: 100%;'";
+						if (count($extFields) == 1) print " disabled='true' "; //disable the selection if only one choice ('Id') is available
+						print ">\n";
+						
+						foreach($extFields as $extFieldKey => $extFieldVal){
+							print  " <option value='$extFieldVal->name'";
+							if ($extFieldVal->name == 'Id') print " selected='true' ";
+							print ">$extFieldVal->name</option>\n";
+						}
+						print "</select></td>\n";
+						} 
+					} else {
+						print "<td>&nbsp;</td>\n";
+					}
+									
+				print "</tr>\n";//////
 			}
 		}
 	}
@@ -163,7 +201,7 @@ function field_mapping_set($action,$csv_array){
 }
 
 
-function field_mapping_idOnly_set($csv_array){
+function field_mapping_idOnly_set($csv_array, $action = null){ //$action only used for upsert third blank column for id
 	print "<tr style='color: red;'><td>Id</td>";
 	print "<td><select name='Id' style='width: 100%;'>";
 	print "	<option value=''></option>\n";
@@ -172,7 +210,11 @@ function field_mapping_idOnly_set($csv_array){
 		if (strtolower($col) == 'id') print " selected='true' ";
 		print ">$col</option>\n";
 	}
-	print "</select></td></tr>\n";
+	print "</select></td>";
+	if ($action == 'upsert'){
+		print "<td>&nbsp;</td>";
+	}	
+	print"</tr>\n";
 }
 
 
