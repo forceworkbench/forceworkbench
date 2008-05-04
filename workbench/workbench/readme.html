@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
+<link rel="stylesheet" href="style/master.css" type="text/css" />
+<link rel="Shortcut Icon" href="images/apex_x_icon.bmp" />
+
+ <head>
+  <title>Workbench - README</title>
+ </head>
+ <body>
+ <img src="images/workbench_logo.png" width="446" height="90" alt="Workbench logo" border="0" />
+	<p>
+<div id='main_block'>
+The Workbench is a web-based application that gives administrators
+on-demand access to useful tools to manage their organization. Combining and extending the power of both
+the Apex DataLoader with the Apex Explorer, the Workbench can insert, upsert, update,
+export, delete, undelete, and purge data as well as describe the metadata of any object in your Force.com organization.
+</p>
+
+  <ul>
+  <strong>
+  	<li><a href="#installation">Installation</a></li>
+    <li><a href="#support">Support</a></li>
+    <li><a href="#credits">Credits & Disclaimers</a></li>
+  </strong>
+  </ul>
+
+<h2><a name="installation"></a>Installation</h2>
+<p>
+The Workbench is built on PHP and connects to the Force.com API using SOAP-based web services. As such, 
+to install and run the Workbench, you must have a working web server, such as Apache HTTP Server, with 
+support for PHP. Follow the instructions below to install Apache HTTP Server, PHP, and the Workbench:
+
+<ol>
+<li>
+	Easier
+		<ul>
+			Install a LAMP/WAMP bundled installation of Apache HTTP Server, MySQL, and PHP. For a list of WAMPs, please see 
+			the <a href="http://en.wikipedia.org/wiki/Comparison_of_WAMPs">Comparison of WAMPs</a>. The Workbench has been known
+			to work with <a href="http://sourceforge.net/projects/webdeveloper/">Web Developer Server Suite</a>.
+		</ul>
+	Manual
+		<ol type="a">
+			<li>Install Apache HTTP Server from <a href="http://httpd.apache.org/">http://httpd.apache.org/</a></li>
+			<li>Install PHP 5.x+ from <a href="http://www.php.net">http://www.php.net</a></li>
+			<li>Ensure that PHP is registered with your Apache HTTP Server to handle .php files. The following lines
+			should be in  <span class='mono'>&lt;your_apache_dir&gt;\conf\httpd.conf</span> file:<p/>	
+				
+<pre>
+# Dynamic Shared Object (DSO) Support
+LoadModule php5_module "&lt;your_apache_dir&gt;/php5apache2.dll"
+
+# AddType
+AddType application/x-httpd-php .php
+
+# Anywhere
+PHPIniDir "&lt;your_apache_dir&gt;/php5"
+</pre>
+				
+			</li>
+		</ol>
+	<p/></li>
+	
+	<li>
+	Ensure that PHP works on a basic level:
+	<ol type="a">
+		<li>Create a file called phpinfo.php in your web server's document root directory and paste the following into the file:<br/>
+		<pre>&lt;?php phpinfo();&nbsp;?&gt;</pre></li>
+		<li>Access the in your web browser by navigating to http://localhost/phpinfo.php. You should be presented with a page of PHP information about the current stage of PHP.
+		If you did not, there is a problem with configuration of either your web server or PHP.</li>
+
+	</ol>		
+	<p/></li>
+	
+	<li>
+	PHP 5 includes two .ini files to be used as templates for configuration. Rename php.ini-recommended to php.ini
+	<p/></li>
+	
+	<li>
+	Search for the string "extension_dir" in php.ini. Uncomment it and set it equal to "<your_php5_dir>/ext/". PHP requires an explicit path to find your extensions under Windows.
+	<p/></li>
+	
+	<li>
+	In order to use the HTTPS protocol and other features of Workbench, you need to edit some of the configurations in your php.ini file:
+		<ol type="a">
+			<li>Search for "extension=php_curl.dll". There should be a semi-colon in front of that line - remove it to enable the extension.</li>
+			<li>Scroll down and find "extension=php_openssl.dll" and do the same.</li>
+			<li>Now scroll down a bit further and find "extension=php_sockets.dll". Leave this line alone, but insert a new line below it and type "extension=php_soap.dll" on that line.</li>
+			<li>Search for "magic_quotes_gpc" and ensure that it is "Off"</li>
+			<li>Search for "file_uploads" and ensure that it is "On"</li>
+		</ol>
+	<p/></li>
+		
+	<li>
+	Now you need to copy the SSL library files from the PHP installation directory to your Windows system directory. The two files are libeay32.dll and ssleay32.dll. They need to be copied into the system directory, usually c:\windows\system32 on an XP system. If you happen to have OpenSSL already installed on your computer you may find that these files are already installed. If they are, you should only replace them if the ones from the PHP directory are more recent. Change the extensions on the existing ones by adding '.bak' just to be safe.
+
+    Note: these files must be readable by the Apache process, which may not run with the same permissions that you have when you copy the file into system32, please check that these are read and executable by world/all users 
+	<p/></li>
+	
+	<li>
+	You'll need to add the PHP installation directory to your system path. Right-click on My Computer on your desktop (or in the Start menu) and select 'Properties'. Click on the Advanced tab and then the 'Environment Variables' button. Scroll down in the System variables list until you find 'Path'. Select it and click the 'Edit' button. Click at the end of the string and make sure that the rest of the string is not highlighted. Type ";c:\php" at the end of the existing string and click OK until all of the windows are closed.
+	<p/></li>
+	
+	<li>
+	Restart your web server and re-load your phpinfo.php file to ensure it is still working.
+	<p/></li>
+	
+	<li>
+	Download and unzip the Workbench zip file into your web server's document root.
+	<p/></li>
+	
+	<li>
+	Point your web browser to https://localhost/workbench and you should be redirected to the Workbench
+	login page, where you can login using your salesforce.com username and password.
+	<p/></li>
+	
+	
+
+</ol>
+
+  <h2><a name="support"></a>Support</h2>
+  Please note that the Workbench is NOT a product of or supported by salesforce.com, inc.
+
+
+  For support from the Open Source community, please visit the pages below:.
+
+  <ul>
+  	<li><a href='http://code.google.com/p/forceworkbench/'>Google Code - Project Main Page, Downloads, Source Code, Issue Tracking</a></li>
+  	<li><a href='http://wiki.apexdevnet.com/index.php/Workbench'>developer.force.com - Project Wiki Page, Installation, Help</a></li>
+  </ul>
+
+
+
+<h2><a name="credits"></a>Credits & Disclaimers</h2>
+<p>
+<strong>Developed by Ryan Brainard</strong><br/>
+Distributed under the Open Source BSD License.<br/>
+</p>
+
+
+<p>
+<img src='images/open_source_logo.png' width='119' height='96' alt='Open Source Logo' align='center' />&nbsp;&nbsp;
+<img src='images/php-med-trans-light.gif' width='95' height='51' alt='PHP Logo' align='center' />
+</p>
+
+<p>
+<strong>The Workbench is NOT a product of or supported by salesforce.com, inc.
+For support from the Open Source community, please visit the recources below:</strong>
+<ul>
+	<li><a href="http://code.google.com/p/forceworkbench/">Main Page on Google Code</a></li>
+	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench">Wiki on developer.force.co</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/issues/list">Issues, Bugs, & Feature Requests</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/source/checkout">Source Code</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/downloads/list">Download</a></li>
+</ul>
+</p>
+
+<strong><p>
+THIS APPLICATION IS STILL IN ACTIVE DEVELOPMENT AND HAS NOT UNDERGONE QUALITY ASSURANCE TESTING.
+DO NOT USE WITH PRODUCTION DATA.
+THIS APPLICATION IS PROVIDED 'AS IS' AND THE USER ASSUMES ALL RISKS ASSOCIATED WITH ITS USE.</p>
+</strong>
+
+<p>This application is based on the salesforce.com PHP Toolkit* and calls against the
+Force.com Web Services API, but is not itself a product of salesforce.com, inc. and not supported by
+salesforce.com, inc or its contributors.</p>
+
+
+<hr/>
+
+<p>
+  *Copyright (c) 2008, salesforce.com, inc.<br/>
+  All rights reserved.
+</p>
+<p>
+  Redistribution and use in source and binary forms, with or without modification, are permitted provided
+  that the following conditions are met:
+<ul>
+     <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
+     following disclaimer.</li>
+
+     <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+     the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+
+     <li>Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
+     promote products derived from this software without specific prior written permission.</li>
+</ul>
+</p>
+<p>
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+  PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+  TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
+</p>
+
+<hr/>
+<p>
+Collapsible tree on Describe page is built on 
+<a href="http://www.dynamicdrive.com/dynamicindex1/navigate1.htm">Simple Tree Menu</a> 
+framework from <a href="http://www.dynamicdrive.com">Dynamic Drive DHTML code library</a>
+</p>
+
+
+<hr/>
+<p>
+Code for menu bar tool tips is built on 
+<a href="http://www.walterzorn.com/tooltip/tooltip_e.htm">JavaScript, DHTML Tooltips </a> 
+framework from <a href="http://www.walterzorn.com/">Walter Zorn</a>
+</p>
+</div>
+ 
+ </body>
+</html>
