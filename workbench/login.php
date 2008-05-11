@@ -143,15 +143,19 @@ function givePassFocus(){
 				<option value='na3-api'>NA3</option>
 				<option value='na4-api'>NA4</option>
 				<option value='na5-api'>NA5</option>
+				<option value='na6-api'>NA6</option>
 				<option value='ap0'>AP</option>
 				<option value='emea'>EMEA</option>
+				<option value='test'>test</option>
 				<option value='tapp0-api'>Sandbox CS0</option>
 				<option value='cs1-api'>Sandbox CS1</option>
 				<option value='cs2-api'>Sandbox CS2</option>
+				<option value='prerelna1.pre'>Pre-Release</option>
 			</select>
 
 			<select name='endp' id='endp' onChange='build_location();'>
-				<option value='12.0'>12.0</option>
+				<option value='13.0'>13.0</option>
+				<option value='12.0' selected='true'>12.0</option> //TODO: temp
 				<option value='11.1'>11.1</option>
 				<option value='11.0'>11.0</option>
 				<option value='10.0'>10.0</option>
@@ -201,7 +205,7 @@ function process_login_old($username, $password, $actionJump){
 
 		$username = htmlentities(trim($username));
 		$password = htmlentities(trim($password));
-		$wsdl = 'soapclient/sforce.120.partner.wsdl';
+		$wsdl = 'soapclient/sforce.130.partner.wsdl';
 
 		$mySforceConnection = new SforcePartnerClient();
 	    $mySforceConnection->createConnection($wsdl);
@@ -252,7 +256,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	try{
 		require_once ('soapclient/SforcePartnerClient.php');
 		require_once ('soapclient/SforceHeaderOptions.php');
-		$wsdl = 'soapclient/sforce.120.partner.wsdl';
+		$wsdl = 'soapclient/sforce.130.partner.wsdl';
 		$mySforceConnection = new SforcePartnerClient();
 	    $mySforceConnection->createConnection($wsdl);
 
@@ -264,9 +268,9 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	    	}
 			$mySforceConnection->login($username, $password);
 		} elseif ($sessionId && $serverUrl && !($username && $password)){
-			if (stristr($serverUrl,'www')) {
+			if (stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
 				$errors = null;
-				$errors = 'Must not connect to WWW if providing Session Id. Choose your Salesforce instance.';
+				$errors = 'Must not connect to login server (www, test, or prerellogin) if providing a session id. Choose your specific Salesforce instance on the QuickSelect menu when using a session id; otherwise, provide a username and password and choose the appropriate a login server.';
 				display_login($errors);
 				exit;
 			}
@@ -299,6 +303,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 }
 
 function checkLatestVersion(){
+	global $version;
 	try{
 		if(extension_loaded('curl')){
 			$ch = curl_init();
