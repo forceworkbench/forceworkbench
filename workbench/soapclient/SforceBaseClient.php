@@ -363,13 +363,24 @@ class SforceBaseClient {
 		return $this->sforce->__getLastResponseHeaders();
 	}
 
-	protected function _convertToAny($fields) {
-		$anyString = '';
-		foreach ($fields as $key => $value) {
-			$anyString = $anyString . '<' . $key . '>' . $value . '</' . $key . '>';
-		}
-		return $anyString;
-	}
+	private function _convertToAny($fields) {
+    $anyString = '';
+    foreach ($fields as $key => $value) {
+    	if($value instanceOf SObject) { //additional processing for nested sObject in field value for use with external ids
+    		if (isset ($value->fields)) {
+	          $nestedAnyString = $this->_convertToAny($value->fields);
+	          $anyString = $anyString . '<' . $key . '>';
+	          if(isset($value->type)){ //check if partner wsdl (should always be, but just in case)
+	          	$anyString = $anyString . '<type>' . $value->type . '</type>';
+	          } 
+	          $anyString = $anyString . $nestedAnyString . '</' . $key . '>';
+	        }
+    	} else {
+    		$anyString = $anyString . '<' . $key . '>' . $value . '</' . $key . '>';
+    	} 
+    }
+    return $anyString;
+   }
 
 	protected function _create($arg) {
 		$this->setHeaders("create");
@@ -403,6 +414,7 @@ class SforceBaseClient {
         $email = new SoapVar($r, SOAP_ENC_OBJECT, 'SingleEmailMessage', $this->namespace);
         array_push($messages, $email);
       }
+      $arg = new stdClass;
       $arg->messages = $messages;
       return $this->_sendEmail($arg);
     } else {
@@ -418,6 +430,7 @@ class SforceBaseClient {
         $email = new SoapVar($r, SOAP_ENC_OBJECT, 'MassEmailMessage', $this->namespace);
         array_push($messages, $email);
       }
+      $arg = new stdClass;
       $arg->messages = $messages;
       return $this->_sendEmail($arg);
     } else {
@@ -499,6 +512,7 @@ class SforceBaseClient {
 			foreach ($processRequestArray as &$process) {
 				$process = new SoapVar($process, SOAP_ENC_OBJECT, 'ProcessSubmitRequest', $this->namespace);
 			}
+			$arg = new stdClass;
 			$arg->actions = $processRequestArray;
 			return $this->_process($arg);
 		} else {
@@ -518,6 +532,7 @@ class SforceBaseClient {
 			foreach ($processRequestArray as &$process) {
 				$process = new SoapVar($process, SOAP_ENC_OBJECT, 'ProcessWorkitemRequest', $this->namespace);
 			}
+			$arg = new stdClass;
 			$arg->actions = $processRequestArray;
 			return $this->_process($arg);
 		} else {

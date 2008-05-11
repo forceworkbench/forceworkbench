@@ -45,22 +45,38 @@ function myGlobalSelect($default_object){
 function describeSObject($objectType, $abcOrder = false){
 	try{
 		global $mySforceConnection;
-		$describeSObject_result = $mySforceConnection->describeSObject($objectType);
+		
+		if (!is_array($objectType)){
+			$describeSObject_result = $mySforceConnection->describeSObject($objectType);
+			if($abcOrder){
+				$describeSObject_result = alphaOrderFields($describeSObject_result);
+			}
+			return $describeSObject_result;
+		} else if (count($objectType) > 1 && count($objectType) <= 100){
+			$describeSObjects_results = $mySforceConnection->describeSObjects($objectType);
+			if($abcOrder){
+				foreach ($describeSObjects_results as $describeSObject_resultKey => $describeSObject_result){
+					$describeSObjects_results[$describeSObject_resultKey] = alphaOrderFields($describeSObject_result);
+				}
+			}
+			return $describeSObjects_results;
+		}		
 	} catch (Exception $e) {
-			      	$errors = null;
-					$errors = $e->getMessage();
-					show_error($errors);
-					exit;
+      	$errors = null;
+		$errors = $e->getMessage();
+		show_error($errors);
+		exit;
 	}
-	
-	if($abcOrder){
-		//move field name out to key name and then ksort based on key for field abc order 
-		foreach($describeSObject_result->fields as $field){
-			$fieldNames[] = $field->name;
-		}
-		$describeSObject_result->fields = array_combine($fieldNames, $describeSObject_result->fields);
-		ksort($describeSObject_result->fields);
+
+}
+
+function alphaOrderFields($describeSObject_result){
+	//move field name out to key name and then ksort based on key for field abc order 
+	foreach($describeSObject_result->fields as $field){
+		$fieldNames[] = $field->name;
 	}
+	$describeSObject_result->fields = array_combine($fieldNames, $describeSObject_result->fields);
+	ksort($describeSObject_result->fields);
 	
 	return $describeSObject_result;
 }
@@ -94,26 +110,12 @@ function field_mapping_set($action,$csv_array){
 
 	print "<p><strong>Map the Salesforce fields to the columns from the uploaded CSV:</strong></p>\n";
 	print "<table class='description'>\n";
-	print "<tr><th>Salesforce Field</th><th>CSV Field</th>";
-	if ($action == 'upsert'){
-		print "<th>Referenced Field</th>";
-	}
-	print "</tr>\n";
+	print "<tr><th>Salesforce Field</th><th>Reference By</th><th>CSV Field</th></tr>\n";
 
 	if ($action == 'insert'){
 		foreach($describeSObject_result->fields as $fields => $field){
 			if ($field->createable){
-				print "<tr";
-				if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
-				print "><td>$field->name</td>";
-				print "<td><select name='$field->name' style='width: 100%;'>";
-				print "	<option value=''></option>\n";
-				foreach($csv_array[0] as $col){
-					print   "<option value='$col'";
-					if (strtolower($col) == strtolower($field->name)) print " selected='true' ";
-					print ">$col</option>\n";
-				}
-				print "</select></td></tr>\n";
+				printPutFieldForMapping($field, $csv_array);
 			}
 		}
 	}
@@ -122,17 +124,7 @@ function field_mapping_set($action,$csv_array){
 		field_mapping_idOnly_set($csv_array);
 		foreach($describeSObject_result->fields as $fields => $field){
 			if ($field->updateable){
-				print "<tr";
-				if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
-				print "><td>$field->name</td>";
-				print "<td><select name='$field->name' style='width: 100%;'>";
-				print "	<option value=''></option>\n";
-				foreach($csv_array[0] as $col){
-					print   "<option value='$col'";
-					if (strtolower($col) == strtolower($field->name)) print " selected='true' ";
-					print ">$col</option>\n";
-				}
-				print "</select></td></tr>\n";
+				printPutFieldForMapping($field, $csv_array);
 			}
 		}
 	}
@@ -141,49 +133,7 @@ function field_mapping_set($action,$csv_array){
 		field_mapping_idOnly_set($csv_array, $action);
 		foreach($describeSObject_result->fields as $fields => $field){
 			if ($field->updateable && $field->createable){
-				print "<tr";
-				if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
-				print "><td>$field->name</td>";
-				print "<td><select name='$field->name' style='width: 100%;'>";
-				print "	<option value=''></option>\n";
-				foreach($csv_array[0] as $col){
-					print   "<option value='$col'";
-					if (strtolower($col) == strtolower($field->name)) print " selected='true' ";
-					print ">$col</option>\n";
-				}
-				print "</select></td>";//////
-				
-				
-				if(isset($field->referenceTo)){ ////// TODO: is this the right criteria?? 
-				
-					$describeRefObjResult = describeSObject($field->referenceTo, false);
-					
-					//check to see if there are any IdLookup fields and if so move them to a new array 
-					$extFields = null;
-					foreach($describeRefObjResult->fields as $extFieldKey => $extFieldVal){
-						if($extFieldVal->idLookup == true){
-							$extFields[$extFieldKey] = $extFieldVal;
-						}
-					}
-					
-					//check if the new array has any fields and if so
-					if(count($extFields) > 0){
-						print "<td><select name='__ref__$field->name' style='width: 100%;'";
-						if (count($extFields) == 1) print " disabled='true' "; //disable the selection if only one choice ('Id') is available
-						print ">\n";
-						
-						foreach($extFields as $extFieldKey => $extFieldVal){
-							print  " <option value='$extFieldVal->name'";
-							if ($extFieldVal->name == 'Id') print " selected='true' ";
-							print ">$extFieldVal->name</option>\n";
-						}
-						print "</select></td>\n";
-						} 
-					} else {
-						print "<td>&nbsp;</td>\n";
-					}
-									
-				print "</tr>\n";//////
+				printPutFieldForMapping($field, $csv_array);
 			}
 		}
 	}
@@ -200,9 +150,107 @@ function field_mapping_set($action,$csv_array){
 	print "</form>\n";
 }
 
+function printPutFieldForMapping($field, $csv_array){
+		print "<tr";
+		if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
+		print "><td>$field->name</td>";
+		
+		if(isset($field->referenceTo)){ 
+			$describeRefObjResult = describeSObject($field->referenceTo, false);
+			printRefField($field, $describeRefObjResult);
+		} else {
+			print "<td>&nbsp;</td>\n";
+		}
+		
+		print "<td><select name='$field->name' style='width: 100%;'>";
+		print "	<option value=''></option>\n";
+		foreach($csv_array[0] as $col){
+			print   "<option value='$col'";
+			if (strtolower($col) == strtolower($field->name)) print " selected='true' ";
+			print ">$col</option>\n";
+		}
+		print "</select></td>";
+						
+	    print "</tr>\n";
+}
+
+function printRefField($field, $describeRefObjResult){
+	if(is_array($describeRefObjResult)){
+		$polyExtFields = array();
+		foreach($describeRefObjResult as $describeRefObjResultKey => $describeRefObjResult){
+			$extFields = null;
+			if(count($describeRefObjResult->fields) > 0){
+				foreach($describeRefObjResult->fields as $extFieldKey => $extFieldVal){
+					if($extFieldVal->idLookup == true){
+						$extFields[$extFieldKey] = $extFieldVal;
+					}
+				}
+				$polyExtFields[$describeRefObjResult->name] = $extFields;
+			}
+		}
+		
+		//check if the new array has any fields and if so
+		print "<td><select name='$field->name:$field->relationshipName' style='width: 100%;'";
+		
+		$numOfExtFields = 0;
+		foreach($polyExtFields as $extFields){
+			if(count($extFields) > 1){
+				$numOfExtFields = $numOfExtFields + count($extFields) - 1;
+			}
+		}
+		
+		if($numOfExtFields <= 0){
+			print " disabled='true' ";
+		}
+		
+		print ">\n";
+		
+		
+		print  " <option value='Id'  selected='true'>Id</option>\n";
+		foreach($polyExtFields as $objectType => $extFields){
+			if(count($extFields) > 0){
+				foreach($extFields as $extFieldKey => $extFieldVal){
+					if ($extFieldVal->name != 'Id'){
+						print  " <option value='$objectType: $extFieldVal->name'>$objectType: $extFieldVal->name</option>\n";	
+					}					
+				}
+			} 
+		}
+		print "</select></td>\n";
+		
+	} else { //for scalar values
+		//check to see if there are any IdLookup fields and if so move them to a new array 
+		$extFields = null;
+		if(count($describeRefObjResult->fields) > 0){
+			foreach($describeRefObjResult->fields as $extFieldKey => $extFieldVal){
+				if($extFieldVal->idLookup == true){
+					$extFields[$extFieldKey] = $extFieldVal;
+				}
+			}
+		}
+		
+		
+		//check if the new array has any fields and if so
+		if(count($extFields) > 0){
+			print "<td><select name='$field->name:$field->relationshipName' style='width: 100%;'";
+			if (count($extFields) == 1) print " disabled='true' "; //disable the selection if only one choice ('Id') is available
+			print ">\n";
+			
+			print  " <option value='Id'  selected='true'>Id</option>\n";
+			foreach($extFields as $extFieldKey => $extFieldVal){
+				if ($extFieldVal->name != 'Id'){
+					print  " <option value='$describeRefObjResult->name: $extFieldVal->name'>$describeRefObjResult->name: $extFieldVal->name</option>\n";
+				}
+			}
+			print "</select></td>\n";
+		} 
+	}
+		
+}
+
 
 function field_mapping_idOnly_set($csv_array, $action = null){ //$action only used for upsert third blank column for id
-	print "<tr style='color: red;'><td>Id</td>";
+	print "<tr style='color: red;'><td>Id</td><td>&nbsp;</td>";
 	print "<td><select name='Id' style='width: 100%;'>";
 	print "	<option value=''></option>\n";
 	foreach($csv_array[0] as $col){
@@ -211,9 +259,6 @@ function field_mapping_idOnly_set($csv_array, $action = null){ //$action only us
 		print ">$col</option>\n";
 	}
 	print "</select></td>";
-	if ($action == 'upsert'){
-		print "<td>&nbsp;</td>";
-	}	
 	print"</tr>\n";
 }
 
