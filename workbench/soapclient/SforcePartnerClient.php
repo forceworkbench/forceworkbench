@@ -75,6 +75,7 @@ class SforcePartnerClient extends SforceBaseClient {
         $mergeRequest->masterRecord->any = $this->_convertToAny($mergeRequest->masterRecord->fields);
       }
       //return parent::merge($mergeRequest, $type);
+      $arg = new stdClass;
       $arg->request = $mergeRequest;
       return $this->_merge($arg);
     }
@@ -87,6 +88,7 @@ class SforcePartnerClient extends SforceBaseClient {
         $email = new SoapVar($r, SOAP_ENC_OBJECT, 'SingleEmailMessage', $this->namespace);
         array_push($messages, $email);
       }
+      $arg = new stdClass;
       $arg->messages = $messages;
       return parent::_sendEmail($arg);
     } else {
@@ -102,6 +104,7 @@ class SforcePartnerClient extends SforceBaseClient {
         $email = new SoapVar($r, SOAP_ENC_OBJECT, 'MassEmailMessage', $this->namespace);
         array_push($messages, $email);
       }
+      $arg = new stdClass;
       $arg->messages = $messages;
       return parent::_sendEmail($arg);
     } else {
