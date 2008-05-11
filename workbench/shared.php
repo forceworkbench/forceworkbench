@@ -211,7 +211,7 @@ function printRefField($field, $describeRefObjResult){
 			if(count($extFields) > 0){
 				foreach($extFields as $extFieldKey => $extFieldVal){
 					if ($extFieldVal->name != 'Id'){
-						print  " <option value='$objectType: $extFieldVal->name'>$objectType: $extFieldVal->name</option>\n";	
+						print  " <option value='$field->relationshipName.$objectType.$extFieldVal->name'>$objectType.$extFieldVal->name</option>\n";	
 					}					
 				}
 			} 
@@ -239,7 +239,7 @@ function printRefField($field, $describeRefObjResult){
 			print  " <option value='Id'  selected='true'>Id</option>\n";
 			foreach($extFields as $extFieldKey => $extFieldVal){
 				if ($extFieldVal->name != 'Id'){
-					print  " <option value='$describeRefObjResult->name: $extFieldVal->name'>$describeRefObjResult->name: $extFieldVal->name</option>\n";
+					print  " <option value='$field->relationshipName.$describeRefObjResult->name.$extFieldVal->name'>$describeRefObjResult->name.$extFieldVal->name</option>\n";
 				}
 			}
 			print "</select></td>\n";
@@ -271,10 +271,23 @@ function field_mapping_show($field_map,$ext_id){
 	}
 
 	print "<table class='description'>\n";
-	print "<tr><th>Salesforce Field</th><th>CSV Field</th></tr>\n";
-	foreach($field_map as $salesforce_field=>$csv_field){
-		if($salesforce_field && $csv_field){
-			print "<tr><td>$salesforce_field</td> <td>$csv_field</td></tr>\n";
+	print "<tr><th>Salesforce Field</th><th>Reference By</th><th>CSV Field</th></tr>\n";
+	foreach($field_map as $fieldMapKey=>$fieldMapValue){
+		$alreadyMatchedKey = $alreadyMatchedKey; //must be here for variable scope and passing value from last interation
+		if(preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)){ //check to see if field map key matches Field:Relationship pattern	
+			preg_match('/^(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches); //match relationship field map values Relationship.Object.Field patern
+			foreach($field_map as $fieldMapIntKey=>$fieldMapIntValue){ //interate to find the matching field:value pair with the Reference By value
+				if($fieldMapIntKey == $keyMatches[1] && $fieldMapIntValue){
+					if(isset($valueMatches[0])){ //do this for FK lookups
+						print "<tr><td>$fieldMapIntKey</td><td>$valueMatches[2].$valueMatches[3]</td><td>$fieldMapIntValue</td></tr>\n";
+					} else if ($fieldMapValue == "Id"){ //do this for Ids
+						print "<tr><td>$fieldMapIntKey</td><td>Id</td><td>$fieldMapIntValue</td></tr>\n";
+					}
+					$alreadyMatchedKey = $keyMatches[1];
+				}	
+			}
+		} else if ($fieldMapKey != $alreadyMatchedKey && $fieldMapValue) { //otherwise, do this for normal fields
+			print "<tr><td>$fieldMapKey</td><td>$keyMatches[0]&nbsp;</td><td>$fieldMapValue</td></tr>\n";
 		}
 	}
 	print "</table>\n";
