@@ -97,10 +97,12 @@ function field_mapping_set($action,$csv_array){
 		print "<table class='description'><tr>\n";
 		print "<td style='color: red;'>External Id</td>";
 		print "<td><select name='_ext_id' style='width: 100%;'>\n";
-		print "	<option value=''></option>\n";
+//		print "	<option value=''></option>\n";
 		foreach($describeSObject_result->fields as $fields => $field){
 			if($field->idLookup){ //limit the fields to only those with the idLookup property set to true. Corrected Issue #10
-				print   " <option value='$field->name'>$field->name</option>\n";
+				print   " <option value='$field->name'";
+				if($field->name == 'Id') print " selected='true'";
+				print ">$field->name</option>\n";
 			}
 		}
 		print "</select></td></tr></table>\n";		
@@ -110,7 +112,9 @@ function field_mapping_set($action,$csv_array){
 
 	print "<p><strong>Map the Salesforce fields to the columns from the uploaded CSV:</strong></p>\n";
 	print "<table class='description'>\n";
-	print "<tr><th>Salesforce Field</th><th>Reference By</th><th>CSV Field</th></tr>\n";
+	print "<tr><th>Salesforce Field</th>";
+	if ($action == 'insert' || $action == 'update' || $action == 'upsert') print "<th>Reference By</th>";
+	print "<th>CSV Field</th></tr>\n";
 
 	if ($action == 'insert'){
 		foreach($describeSObject_result->fields as $fields => $field){
@@ -121,7 +125,7 @@ function field_mapping_set($action,$csv_array){
 	}
 
 	if ($action == 'update'){
-		field_mapping_idOnly_set($csv_array);
+		field_mapping_idOnly_set($csv_array, true);
 		foreach($describeSObject_result->fields as $fields => $field){
 			if ($field->updateable){
 				printPutFieldForMapping($field, $csv_array);
@@ -140,7 +144,7 @@ function field_mapping_set($action,$csv_array){
 
 
 	if ($action == 'delete' || $action == 'undelete' || $action == 'purge'){
-		field_mapping_idOnly_set($csv_array);
+		field_mapping_idOnly_set($csv_array, false);
 	}
 
 
@@ -189,7 +193,7 @@ function printRefField($field, $describeRefObjResult){
 			}
 		}
 		
-		//check if the new array has any fields and if so
+		//check if the new array has any fields
 		print "<td><select name='$field->name:$field->relationshipName' style='width: 100%;'";
 		
 		$numOfExtFields = 0;
@@ -202,16 +206,14 @@ function printRefField($field, $describeRefObjResult){
 		if($numOfExtFields <= 0){
 			print " disabled='true' ";
 		}
-		
 		print ">\n";
-		
-		
-		print  " <option value='Id'  selected='true'>Id</option>\n";
+				
+		print  " <option value='Id' selected='true'></option>\n";
 		foreach($polyExtFields as $objectType => $extFields){
 			if(count($extFields) > 0){
 				foreach($extFields as $extFieldKey => $extFieldVal){
 					if ($extFieldVal->name != 'Id'){
-						print  " <option value='$field->relationshipName.$objectType.$extFieldVal->name'>$objectType.$extFieldVal->name</option>\n";	
+						print  " <option value='$field->name.$field->relationshipName.$objectType.$extFieldVal->name'>$objectType.$extFieldVal->name</option>\n";	
 					}					
 				}
 			} 
@@ -236,10 +238,10 @@ function printRefField($field, $describeRefObjResult){
 			if (count($extFields) == 1) print " disabled='true' "; //disable the selection if only one choice ('Id') is available
 			print ">\n";
 			
-			print  " <option value='Id'  selected='true'>Id</option>\n";
+			print  " <option value='Id' selected='true'></option>\n";
 			foreach($extFields as $extFieldKey => $extFieldVal){
 				if ($extFieldVal->name != 'Id'){
-					print  " <option value='$field->relationshipName.$describeRefObjResult->name.$extFieldVal->name'>$describeRefObjResult->name.$extFieldVal->name</option>\n";
+					print  " <option value='$field->name.$field->relationshipName.$describeRefObjResult->name.$extFieldVal->name'>$describeRefObjResult->name.$extFieldVal->name</option>\n";
 				}
 			}
 			print "</select></td>\n";
@@ -249,8 +251,9 @@ function printRefField($field, $describeRefObjResult){
 }
 
 
-function field_mapping_idOnly_set($csv_array, $action = null){ //$action only used for upsert third blank column for id
-	print "<tr style='color: red;'><td>Id</td><td>&nbsp;</td>";
+function field_mapping_idOnly_set($csv_array, $showRefCol){
+	print "<tr style='color: red;'><td>Id</td>";
+	if ($showRefCol) print "<td></td>";
 	print "<td><select name='Id' style='width: 100%;'>";
 	print "	<option value=''></option>\n";
 	foreach($csv_array[0] as $col){
@@ -262,6 +265,24 @@ function field_mapping_idOnly_set($csv_array, $action = null){ //$action only us
 	print"</tr>\n";
 }
 
+function field_map_to_array($field_map){
+	$field_map_array = array();
+	
+	foreach($field_map as $fieldMapKey=>$fieldMapValue){
+		if(preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)){
+			if(preg_match('/^(\w+).(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches)){
+				$field_map_array[$valueMatches[1]]["relationshipName"] = $valueMatches[2]; 
+				$field_map_array[$valueMatches[1]]["relatedObjectName"] = $valueMatches[3]; 
+				$field_map_array[$valueMatches[1]]["relatedFieldName"] = $valueMatches[4]; 	
+			}
+		} else if ($fieldMapValue){
+			$field_map_array[$fieldMapKey]["csvField"] = $fieldMapValue;
+		}
+	}
+	
+	return $field_map_array;
+}
+
 
 function field_mapping_show($field_map,$ext_id){
 	if ($ext_id){
@@ -269,28 +290,39 @@ function field_mapping_show($field_map,$ext_id){
 		print "<tr><td>External Id</td> <td>$ext_id</td></tr>\n";
 		print "</table><p/>\n";
 	}
-
+	
 	print "<table class='description'>\n";
 	print "<tr><th>Salesforce Field</th><th>Reference By</th><th>CSV Field</th></tr>\n";
-	foreach($field_map as $fieldMapKey=>$fieldMapValue){
-		$alreadyMatchedKey = $alreadyMatchedKey; //must be here for variable scope and passing value from last interation
-		if(preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)){ //check to see if field map key matches Field:Relationship pattern	
-			preg_match('/^(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches); //match relationship field map values Relationship.Object.Field patern
-			foreach($field_map as $fieldMapIntKey=>$fieldMapIntValue){ //interate to find the matching field:value pair with the Reference By value
-				if($fieldMapIntKey == $keyMatches[1] && $fieldMapIntValue){
-					if(isset($valueMatches[0])){ //do this for FK lookups
-						print "<tr><td>$fieldMapIntKey</td><td>$valueMatches[2].$valueMatches[3]</td><td>$fieldMapIntValue</td></tr>\n";
-					} else if ($fieldMapValue == "Id"){ //do this for Ids
-						print "<tr><td>$fieldMapIntKey</td><td>Id</td><td>$fieldMapIntValue</td></tr>\n";
-					}
-					$alreadyMatchedKey = $keyMatches[1];
-				}	
-			}
-		} else if ($fieldMapKey != $alreadyMatchedKey && $fieldMapValue) { //otherwise, do this for normal fields
-			print "<tr><td>$fieldMapKey</td><td>$keyMatches[0]&nbsp;</td><td>$fieldMapValue</td></tr>\n";
+	
+	foreach($field_map as $salesforce_field=>$fieldMapArray){
+		print "<tr><td>$salesforce_field</td><td>";
+		if ($fieldMapArray['relatedObjectName'] && $fieldMapArray['relatedFieldName']){
+			print $fieldMapArray['relatedObjectName'] . "." . $fieldMapArray['relatedFieldName'];
 		}
+		print "</td><td>" . $fieldMapArray['csvField'] . "</td></tr>\n";
 	}
+	
 	print "</table>\n";
+
+	
+//	foreach($field_map as $fieldMapKey=>$fieldMapValue){
+//		$alreadyMatchedKey = $alreadyMatchedKey; //must be here for variable scope and passing value from last interation
+//		if(preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)){ //check to see if field map key matches Field:Relationship pattern	
+//			preg_match('/^(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches); //match relationship field map values Relationship.Object.Field patern
+//			foreach($field_map as $fieldMapIntKey=>$fieldMapIntValue){ //interate to find the matching field:value pair with the Reference By value
+//				if($fieldMapIntKey == $keyMatches[1] && $fieldMapIntValue){
+//					if(isset($valueMatches[0])){ //do this for FK lookups
+//						print "<tr><td>$fieldMapIntKey</td><td>$valueMatches[2].$valueMatches[3]</td><td>$fieldMapIntValue</td></tr>\n";
+//					} else if ($fieldMapValue == "Id"){ //do this for Ids
+//						print "<tr><td>$fieldMapIntKey</td><td>Id</td><td>$fieldMapIntValue</td></tr>\n";
+//					}
+//					$alreadyMatchedKey = $keyMatches[1];
+//				}	
+//			}
+//		} else if ($fieldMapKey != $alreadyMatchedKey && $fieldMapValue) { //otherwise, do this for normal fields
+//			print "<tr><td>$fieldMapKey</td><td>$keyMatches[0]&nbsp;</td><td>$fieldMapValue</td></tr>\n";
+//		}
+//	}
 }
 
 
@@ -485,23 +517,37 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 			    $sObject = new SObject;
 		    	$sObject->type = $_SESSION[default_object];
 		    	$fields = array();
-
-		    	foreach($field_map as $salesforce_field => $csv_field){
-
-					if($salesforce_field && $csv_field){
-						$col = array_search($field_map[$salesforce_field],$csv_header);
+		    					
+				foreach($field_map as $salesforce_field=>$fieldMapArray){
+					if($fieldMapArray['relatedObjectName'] && $fieldMapArray['relatedFieldName'] && $fieldMapArray['csvField']){
+						$refSObject = new SObject;
+				    	$refSObject->type = $fieldMapArray['relatedObjectName'];
+						$col = array_search($fieldMapArray['csvField'],$csv_header);				    	
+				    	$refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlentities($csv_array200[$row][$col],ENT_QUOTES,'UTF-8'));
+				    	$field = array($fieldMapArray['relationshipName'] => $refSObject);
+					} else if($salesforce_field && $fieldMapArray['csvField']){
+						$col = array_search($fieldMapArray['csvField'],$csv_header);
 						$field = array($salesforce_field => htmlentities($csv_array200[$row][$col],ENT_QUOTES,'UTF-8'));
 					}
+					
 					if (!$fields){
 						$fields = $field;
 					} else {
 						$fields = array_merge($fields,$field);
 					}
 				}
+
+
+								
 			    $sObject->fields = $fields;
 			    array_push($sObjects, $sObject);
 			    unset($sObject);
 			}
+			
+//print "<pre>";
+//print_r($sObjects);
+//print "</pre>";
+//exit;
 
 			try{
 				global $mySforceConnection;
@@ -625,7 +671,7 @@ function put($action){
 			$_SESSION[_ext_id] = $_POST[_ext_id];
 			$_POST[_ext_id] = NULL;
 		}
-		$_SESSION[field_map] = $_POST;
+		$_SESSION[field_map] = field_map_to_array($_POST);
 		field_mapping_confirm($confirm_action,$_SESSION[field_map],$_SESSION[csv_array],$_SESSION[_ext_id]);
 		include_once('footer.php');
 	}
@@ -660,7 +706,7 @@ function put($action){
 
 	else {
 		require_once ('header.php');
-		print "<p><strong>Select an object and upload a CSV file with Salesforce IDs to $action:</strong></p>\n";
+		print "<p><strong>Select an object and upload a CSV file to $action:</strong></p>\n";
 		form_upload_objectSelect_show('file',TRUE);
 		include_once('footer.php');
 	}
