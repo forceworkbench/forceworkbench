@@ -363,7 +363,7 @@ class SforceBaseClient {
 		return $this->sforce->__getLastResponseHeaders();
 	}
 
-	private function _convertToAny($fields) {
+	protected function _convertToAny($fields) {
     $anyString = '';
     foreach ($fields as $key => $value) {
     	if($value instanceOf SObject) { //additional processing for nested sObject in field value for use with external ids
