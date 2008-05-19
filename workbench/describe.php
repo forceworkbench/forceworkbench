@@ -24,6 +24,7 @@ if ($_SESSION[default_object]){
 	show_describeSObject_result();
 } else {
 	show_describeSObject_form();
+	include_once('footer.php');
 	exit;
 }
 
@@ -46,7 +47,7 @@ function show_describeSObject_form(){
 function show_describeSObject_result(){
 	try{
 		//Ping Apex API
-		$describeSObject_result = describeSObject($_SESSION[default_object], true);
+		$describeSObject_result = describeSObject($_SESSION[default_object]);
 		} catch (Exception $e) {
 	      	$errors = null;
 			$errors = $e->getMessage();

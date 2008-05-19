@@ -31,7 +31,7 @@ function show_describeSObject_form(){
 function show_describeSObject_result(){
 	try{
 		//Ping Apex API
-		$describeSObject_result = describeSObject($_SESSION[default_object], true);
+		$describeSObject_result = describeSObject($_SESSION[default_object]);
 
 		print "<h1>$_SESSION[default_object] Object Description</h1>";
 		

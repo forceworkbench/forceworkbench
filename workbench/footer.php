@@ -24,5 +24,6 @@ include_once('shared.php');
 </html>
 
 <?php
-//debug(); //UNCOMMENT TO SHOW SOAP MESSAGES & SUPERGLOBAL VARS
+//USAGE: debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null)
+debug(true,true,null,null);
 ?>

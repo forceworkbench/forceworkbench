@@ -211,8 +211,8 @@ function build_query(){
 			QB_oper_sel2 = 'LIKE'
 			QB_filter_txt2 = '%' + QB_filter_txt2 + '%';
 		}
-
-		if ((field_type_array[QB_filter_field_sel2] == "datetime") ||
+		if ((QB_filter_txt2 == 'null') ||
+			(field_type_array[QB_filter_field_sel2] == "datetime") ||
 		    (field_type_array[QB_filter_field_sel2] == "date") ||
 		    (field_type_array[QB_filter_field_sel2] == "currency") ||
 		    (field_type_array[QB_filter_field_sel2] == "percent") ||

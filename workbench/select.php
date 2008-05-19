@@ -32,7 +32,7 @@ function show_select_form(){
 	function toggleObjectSelectDisabled(){
 		var actionJumpVal = document.getElementById('actionJump').value;
 		
-		if(actionJumpVal == '' || actionJumpVal == 'delete.php' || actionJumpVal == 'undelete.php' || actionJumpVal == 'purge.php'){
+		if(actionJumpVal == '' || actionJumpVal == 'settings.php' || actionJumpVal == 'delete.php' || actionJumpVal == 'undelete.php' || actionJumpVal == 'purge.php'){
 			document.getElementById('myGlobalSelect').disabled = true;		
 		} else {
 			document.getElementById('myGlobalSelect').disabled = false;			
@@ -59,6 +59,7 @@ print <<<actionJumper
 			<option value='undelete.php'>Undelete</option>
 			<option value='purge.php'>Purge</option>
 			<option value='export.php'>Export</option>
+			<option value='settings.php'>Settings</option>
 		</select></p>
 actionJumper;
 

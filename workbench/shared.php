@@ -1,24 +1,38 @@
 <?php
-$version = "1.4.12";
-
+$version = "2.0.12 Beta 2";
+	
 function show_error($errors){
 	print "<div class='show_errors'>\n";
-	print "<img src='images/warning.gif' width='30' height='30' align='middle' border='0' alt='ERROR:' /> ";
-	print htmlentities($errors);
+	print "<img src='images/warning.gif' width='30' height='30' align='middle' border='0' alt='ERROR:' /> <br/>";
+	if(is_array($errors)){
+		foreach($errors as $error){
+			$errorString .= "<p>" . htmlentities($error) . "</p>";
+		}
+		print $errorString;
+	} else {
+		print htmlentities($errors);
+	}
 	print "</div>\n";
 }
 
-function show_info($info){
+function show_info($infos){
 	print "<div class='show_info'>\n";
-	print "<img src='images/info.gif' width='30' height='30' align='middle' border='0' alt='Info:' /> ";
-	print htmlentities($info);
+	print "<img src='images/info.gif' width='30' height='30' align='middle' border='0' alt='info:' /> <br/>";
+	if(is_array($infos)){
+		foreach($infos as $info){
+			$infoString .= "<p>" . htmlentities($info) . "</p>";
+		}
+		print $infoString;
+	} else {
+		print htmlentities($infos);
+	}
 	print "</div>\n";
 }
 
 function myGlobalSelect($default_object){
 	print "<select id='myGlobalSelect' name='default_object' style='width: 20em;'>\n";
 	print "<option value=''></option>";
-	if (!$_SESSION[myGlobal]){
+	if (!$_SESSION[myGlobal] || !$_SESSION['config']['cacheDescribeGlobal']){
 		try{
 		global $mySforceConnection;
 		$_SESSION[myGlobal] = $mySforceConnection->describeGlobal();
@@ -42,19 +56,19 @@ function myGlobalSelect($default_object){
 	print "</select>\n";
 }
 
-function describeSObject($objectType, $abcOrder = false){
+function describeSObject($objectType){
 	try{
 		global $mySforceConnection;
 		
 		if (!is_array($objectType)){
 			$describeSObject_result = $mySforceConnection->describeSObject($objectType);
-			if($abcOrder){
+			if($_SESSION['config']['abcOrder']){
 				$describeSObject_result = alphaOrderFields($describeSObject_result);
 			}
 			return $describeSObject_result;
 		} else if (count($objectType) > 1 && count($objectType) <= 100){
 			$describeSObjects_results = $mySforceConnection->describeSObjects($objectType);
-			if($abcOrder){
+			if($_SESSION['config']['abcOrder']){
 				foreach ($describeSObjects_results as $describeSObject_resultKey => $describeSObject_result){
 					$describeSObjects_results[$describeSObject_resultKey] = alphaOrderFields($describeSObject_result);
 				}
@@ -84,7 +98,7 @@ function alphaOrderFields($describeSObject_result){
 function field_mapping_set($action,$csv_array){
 	if ($action == 'insert' || $action == 'upsert' || $action == 'update'){
 		if (isset($_SESSION[default_object])){
-			$describeSObject_result = describeSObject($_SESSION[default_object], true);
+			$describeSObject_result = describeSObject($_SESSION[default_object]);
 		} else {
 		show_error("A default object is required to $action. Go to the Select page to choose a default object and try again.");
 	}
@@ -113,7 +127,8 @@ function field_mapping_set($action,$csv_array){
 	print "<p><strong>Map the Salesforce fields to the columns from the uploaded CSV:</strong></p>\n";
 	print "<table class='description'>\n";
 	print "<tr><th>Salesforce Field</th>";
-	if ($action == 'insert' || $action == 'update' || $action == 'upsert') print "<th>Reference By</th>";
+	if ($_SESSION['config']['showReferenceBy'] && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
+		print "<th>Reference By</th>";
 	print "<th>CSV Field</th></tr>\n";
 
 	if ($action == 'insert'){
@@ -134,7 +149,7 @@ function field_mapping_set($action,$csv_array){
 	}
 
 	if ($action == 'upsert'){
-		field_mapping_idOnly_set($csv_array, $action);
+		field_mapping_idOnly_set($csv_array, true);
 		foreach($describeSObject_result->fields as $fields => $field){
 			if ($field->updateable && $field->createable){
 				printPutFieldForMapping($field, $csv_array);
@@ -159,11 +174,13 @@ function printPutFieldForMapping($field, $csv_array){
 		if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
 		print "><td>$field->name</td>";
 		
-		if(isset($field->referenceTo)){ 
-			$describeRefObjResult = describeSObject($field->referenceTo, false);
-			printRefField($field, $describeRefObjResult);
-		} else {
-			print "<td>&nbsp;</td>\n";
+		if($_SESSION['config']['showReferenceBy']){
+			if(isset($field->referenceTo)){ 
+				$describeRefObjResult = describeSObject($field->referenceTo);
+				printRefField($field, $describeRefObjResult);
+			} else {
+				print "<td>&nbsp;</td>\n";
+			}
 		}
 		
 		print "<td><select name='$field->name' style='width: 100%;'>";
@@ -253,7 +270,7 @@ function printRefField($field, $describeRefObjResult){
 
 function field_mapping_idOnly_set($csv_array, $showRefCol){
 	print "<tr style='color: red;'><td>Id</td>";
-	if ($showRefCol) print "<td></td>";
+	if ($showRefCol && $_SESSION['config']['showReferenceBy']) print "<td></td>";
 	print "<td><select name='Id' style='width: 100%;'>";
 	print "	<option value=''></option>\n";
 	foreach($csv_array[0] as $col){
@@ -365,7 +382,7 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 
 function form_upload_objectSelect_show($file_input_name,$showObjectSelect = FALSE){
 	print "<form enctype='multipart/form-data' method='post' action='$_SERVER[PHP_SELF]'>\n";
-	print "<input type='hidden' name='MAX_FILE_SIZE' value='512000' />\n"; //max size = 512KB
+	print "<input type='hidden' name='MAX_FILE_SIZE' value='$_SESSION[config][maxFileSize]' />\n";
 	print "<p><input type='file' name='$file_input_name' size=44 /></p>\n";
 	if ($showObjectSelect){
 		 myGlobalSelect($_SESSION[default_object]);
@@ -479,11 +496,11 @@ function idOnlyCallIds($api_call,$field_map,$csv_array,$show_results){
 	$id_array_all = $id_array;
 
 	while($id_array){
-		$id_array200 = array_splice($id_array,0,200);
+		$id_arrayBatch = array_splice($id_array,0,$_SESSION['config']['batchSize']);
 		try{
 			global $mySforceConnection;
 			if($api_call == 'purge') $api_call = 'emptyRecycleBin';
-			$results_more = $mySforceConnection->$api_call($id_array200);
+			$results_more = $mySforceConnection->$api_call($id_arrayBatch);
 
 		    if(!$results){
 		    	$results = $results_more;
@@ -511,9 +528,9 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 
 		while($csv_array){
 			$sObjects = array();
-			$csv_array200 = array_splice($csv_array,0,200);
+			$csv_arrayBatch = array_splice($csv_array,0,$_SESSION['config']['batchSize']);
 
-			for($row=0; $row < count($csv_array200); $row++){
+			for($row=0; $row < count($csv_arrayBatch); $row++){
 			    $sObject = new SObject;
 		    	$sObject->type = $_SESSION[default_object];
 		    	$fields = array();
@@ -523,11 +540,11 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 						$refSObject = new SObject;
 				    	$refSObject->type = $fieldMapArray['relatedObjectName'];
 						$col = array_search($fieldMapArray['csvField'],$csv_header);				    	
-				    	$refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlentities($csv_array200[$row][$col],ENT_QUOTES,'UTF-8'));
+				    	$refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
 				    	$field = array($fieldMapArray['relationshipName'] => $refSObject);
 					} else if($salesforce_field && $fieldMapArray['csvField']){
 						$col = array_search($fieldMapArray['csvField'],$csv_header);
-						$field = array($salesforce_field => htmlentities($csv_array200[$row][$col],ENT_QUOTES,'UTF-8'));
+						$field = array($salesforce_field => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
 					}
 					
 					if (!$fields){
@@ -690,8 +707,8 @@ function put($action){
 				show_error("The file uploaded contains no records. Please try again.");
 				include_once('footer.php');
 				exit();
-			} elseif($csv_array_count > 2000){
-				show_error ("The file uploaded contains more than 2000 records. The size of the dataset is limited for performance reasons. Please try again.");
+			} elseif($csv_array_count > $_SESSION['config']['maxFileLengthRows']){
+				show_error ("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.");
 				include_once('footer.php');
 				exit();
 			}
@@ -766,62 +783,81 @@ function idOnlyCall($action){
 }
 
 
-function debug(){
-	print "<pre style='font-family: monospace; text-align: left;'>";
-	try{
-	global $mySforceConnection;
-
-	print "<h1>GLOBALS</h1>\n";
-
-	print "<strong>COOKIE SUPERGLOBAL VARIABLE</strong>\n";
-	var_dump ($_COOKIE);
-	print "<hr/>";
-
-	print "<strong>SESSION SUPERGLOBAL VARIABLE</strong>\n";
-	var_dump ($_SESSION);
-	print "<hr/>";
-
-	print "<strong>POST SUPERGLOBAL VARIABLE</strong>\n";
-	var_dump ($_POST);
-	print "<hr/>";
-
-	print "<strong>GET SUPERGLOBAL VARIABLE</strong>\n";
-	var_dump ($_GET);
-	print "<hr/>";
-
-	print "<strong>FILES SUPERGLOBAL VARIABLE</strong>\n";
-	var_dump ($_FILES);
-	print "<hr/>";
-
-	print "<strong>ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
-	var_dump ($_ENV);
-	print "<hr/>";
-
-	print "<h1>SOAP MESSAGES</h1>\n";
-
-	print "<strong>LAST REQUEST HEADER</strong>\n";
-	print htmlentities($mySforceConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
-	print "<hr/>";
-
-	print "<strong>LAST REQUEST</strong>\n";
-	print htmlentities($mySforceConnection->getLastRequest(),ENT_QUOTES,'UTF-8');
-	print "<hr/>";
-
-	print "<strong>LAST RESPONSE HEADER</strong>\n";
-	print htmlentities($mySforceConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
-	print "<hr/>";
-
-	print "<strong>LAST RESPONSE</strong>\n";
-	print htmlentities($mySforceConnection->getLastResponse(),ENT_QUOTES,'UTF-8');
-//	print $mySforceConnection->getLastResponse();
-	print "<hr/>";
+function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
+	if($_SESSION['config']['debug']){
+	
+		print "<pre style='font-family: monospace; text-align: left;'>";
+		
+		if($customValue){
+			if($customName){
+				print "<h1>$customName</h1>\n";
+			} else {
+				print "<h1>CUSTOM</h1>\n";
+			}
+			
+			 var_dump($customValue);
+			print "<hr/>";
+		}
+		
+		if($showSuperVars){
+			print "<h1>GLOBALS</h1>\n";
+		
+			print "<strong>COOKIE SUPERGLOBAL VARIABLE</strong>\n";
+			var_dump ($_COOKIE);
+			print "<hr/>";
+		
+			print "<strong>SESSION SUPERGLOBAL VARIABLE</strong>\n";
+			var_dump ($_SESSION);
+			print "<hr/>";
+		
+			print "<strong>POST SUPERGLOBAL VARIABLE</strong>\n";
+			var_dump ($_POST);
+			print "<hr/>";
+		
+			print "<strong>GET SUPERGLOBAL VARIABLE</strong>\n";
+			var_dump ($_GET);
+			print "<hr/>";
+		
+			print "<strong>FILES SUPERGLOBAL VARIABLE</strong>\n";
+			var_dump ($_FILES);
+			print "<hr/>";
+		
+			print "<strong>ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
+			var_dump ($_ENV);
+			print "<hr/>";
+		}
+		
+		if($showSoap){
+			try{
+				global $mySforceConnection;
+		
+				print "<h1>SOAP MESSAGES</h1>\n";
+			
+				print "<strong>LAST REQUEST HEADER</strong>\n";
+				print htmlentities($mySforceConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+				print "<hr/>";
+			
+				print "<strong>LAST REQUEST</strong>\n";
+				print htmlentities($mySforceConnection->getLastRequest(),ENT_QUOTES,'UTF-8');
+				print "<hr/>";
+			
+				print "<strong>LAST RESPONSE HEADER</strong>\n";
+				print htmlentities($mySforceConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+				print "<hr/>";
+			
+				print "<strong>LAST RESPONSE</strong>\n";
+				print htmlentities($mySforceConnection->getLastResponse(),ENT_QUOTES,'UTF-8');
+			//	print $mySforceConnection->getLastResponse();
+				print "<hr/>";
+			}
+			catch (Exception $e) {
+				print "<strong>SOAP Error</strong>\n";
+				print_r ($e);
+			}
+		}
+	
+		print "</pre>";
 	}
-	catch (Exception $e) {
-		print "<strong>SOAP Error</strong>\n";
-		print_r ($e);
-	}
-
-	print "</pre>";
 }
 
 

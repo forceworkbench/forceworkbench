@@ -123,6 +123,7 @@ function givePassFocus(){
 				<option value='undelete.php'>Undelete</option>
 				<option value='purge.php'>Purge</option>
 				<option value='export.php'>Export</option>
+				<option value='settings.php'>Settings</option>
 			</select></p>
 			<p  style='text-align: right;'><label><input type='checkbox' name='rememberUser' $isRemembered />Remember username</label></p>
 		</div>
@@ -176,6 +177,7 @@ function givePassFocus(){
 				<option value='undelete.php'>Undelete</option>
 				<option value='purge.php'>Purge</option>
 				<option value='export.php'>Export</option>
+				<option value='settings.php'>Settings</option>
 			</select></p>
 		</div>
 
