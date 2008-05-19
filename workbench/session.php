@@ -23,8 +23,14 @@ if (!isset($_SESSION['sessionId'])) {
 		//load default config values
 		require_once('config.php'); 
 		
-		//check if user has cookies that override defaults
 		foreach($config as $configKey => $configValue){
+			//check if the setting is NOT overrideable and if so clear the cookie
+			//this is done to clear previously set cookeies
+			if(!$configValue['overrideable']){
+				setcookie($configKey,NULL,time()-3600);	
+			}
+			
+			//check if user has cookies that override defaults
 			if(isset($_COOKIE[$configKey])){
 				$_SESSION['config'][$configKey] = $_COOKIE[$configKey];
 			} else {

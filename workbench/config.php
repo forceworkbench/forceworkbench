@@ -32,13 +32,13 @@ $config["cacheDescribeGlobal"] = array(
 	"dataType" => "boolean"	
 );
 
-$config["cacheDescribeSObject"] = array(
-	"label" => "Cache Field Names",
-	"description" => "Caches the results from the describeSobject() API calls. Improves performance of the Workbench, but not recommended if actively making changes to metadata of your Salesforce organization.",
-	"default" => true,
-	"overrideable" => false,
-	"dataType" => "boolean"
-);
+//$config["cacheDescribeSObject"] = array(
+//	"label" => "Cache Field Names",
+//	"description" => "Caches the results from the describeSobject() API calls. Improves performance of the Workbench, but not recommended if actively making changes to metadata of your Salesforce organization.",
+//	"default" => true,
+//	"overrideable" => false,
+//	"dataType" => "boolean"
+//);
 
 $config["showReferenceBy"] = array(
 	"label" => "Display Reference By Column",
@@ -48,45 +48,45 @@ $config["showReferenceBy"] = array(
 	"dataType" => "boolean"
 );
 
-$config["emailHeader_triggerAutoResponseEmail"] = array(
-	"label" => "Trigger Auto-Resonse Emails",
-	"description" => "Send Auto-Response e-mails for insert, update, and upsert of Leads and Cases",
-	"default" => false,
-	"overrideable" => false,
-	"dataType" => "boolean"
-);
-
-$config["emailHeader_triggertriggerUserEmail"] = array(
-	"label" => "Trigger User Emails",
-	"description" => "Send e-mails to users when resetting a password, creating a new user, adding comments to a case, or creating or modifying a task",
-	"default" => false,
-	"overrideable" => false,
-	"dataType" => "boolean"
-);
-
-$config["emailHeader_triggerOtherEmail"] = array(
-	"label" => "Trigger Other Emails",
-	"description" => "Send other e-mails for insert, update, and upsert of records",
-	"default" => false,
-	"overrideable" => false,
-	"dataType" => "boolean"
-);
-
-$config["mruHeader_updateMru"] = array(
-	"label" => "Update MRU",
-	"description" => "Indicates whether to update the list of most recently used items for queries of one record",
-	"default" => false,
-	"overrideable" => false,
-	"dataType" => "boolean"
-);
-
-$config["UserTerritoryDeleteHeader_transferToUserId"] = array(
-	"label" => "Territory Delete Transfer User",
-	"description" => "The ID of the user to whom open opportunities in that user's territory will be assigned when an opportunity's owner is removed from a territory",
-	"default" => false,
-	"overrideable" => false,
-	"dataType" => "boolean"
-);
+//$config["emailHeader_triggerAutoResponseEmail"] = array(
+//	"label" => "Trigger Auto-Resonse Emails",
+//	"description" => "Send Auto-Response e-mails for insert, update, and upsert of Leads and Cases",
+//	"default" => false,
+//	"overrideable" => false,
+//	"dataType" => "boolean"
+//);
+//
+//$config["emailHeader_triggertriggerUserEmail"] = array(
+//	"label" => "Trigger User Emails",
+//	"description" => "Send e-mails to users when resetting a password, creating a new user, adding comments to a case, or creating or modifying a task",
+//	"default" => false,
+//	"overrideable" => false,
+//	"dataType" => "boolean"
+//);
+//
+//$config["emailHeader_triggerOtherEmail"] = array(
+//	"label" => "Trigger Other Emails",
+//	"description" => "Send other e-mails for insert, update, and upsert of records",
+//	"default" => false,
+//	"overrideable" => false,
+//	"dataType" => "boolean"
+//);
+//
+//$config["mruHeader_updateMru"] = array(
+//	"label" => "Update MRU",
+//	"description" => "Indicates whether to update the list of most recently used items for queries of one record",
+//	"default" => false,
+//	"overrideable" => false,
+//	"dataType" => "boolean"
+//);
+//
+//$config["UserTerritoryDeleteHeader_transferToUserId"] = array(
+//	"label" => "Territory Delete Transfer User",
+//	"description" => "The ID of the user to whom open opportunities in that user's territory will be assigned when an opportunity's owner is removed from a territory",
+//	"default" => false,
+//	"overrideable" => false,
+//	"dataType" => "boolean"
+//);
 
 $config["debug"] = array(
 	"label" => "Debug Mode",
@@ -96,37 +96,37 @@ $config["debug"] = array(
 	"dataType" => boolean
 );
 
-$config["assignmentRuleHeader_useDefaultRule"] = array(
-	"label" => "Use Default Assignment Rule",
-	"description" => "Apply default Assignment Rule to apply to insert, update, and upsert operations",
-	"default" => true,
-	"overrideable" => false,
-	"dataType" => "boolean"
-);
-
-$config["assignmentRuleHeader_assignmentRuleId"] = array(
-	"label" => "Assignment Rule Id",
-	"description" => "Specify an Assignment Rule Id to apply to insert, update, and upsert operations",
-	"default" => null,
-	"overrideable" => false,
-	"dataType" => "string"
-);
-
-$config["callOptions_client"] = array(
-	"label" => "Client Id",
-	"description" => "Specify a Client Id for a partner with special API functionality.",
-	"default" => null,
-	"overrideable" => false,
-	"dataType" => "string"
-);
-
-$config["callOptions_defaultNamespace"] = array(
-	"label" => "Default Namespace",
-	"description" => " A string that identifies a developer namespace prefix",
-	"default" => null,
-	"overrideable" => false,
-	"dataType" => "string"
-);
+//$config["assignmentRuleHeader_useDefaultRule"] = array(
+//	"label" => "Use Default Assignment Rule",
+//	"description" => "Apply default Assignment Rule to apply to insert, update, and upsert operations",
+//	"default" => true,
+//	"overrideable" => false,
+//	"dataType" => "boolean"
+//);
+//
+//$config["assignmentRuleHeader_assignmentRuleId"] = array(
+//	"label" => "Assignment Rule Id",
+//	"description" => "Specify an Assignment Rule Id to apply to insert, update, and upsert operations",
+//	"default" => null,
+//	"overrideable" => false,
+//	"dataType" => "string"
+//);
+//
+//$config["callOptions_client"] = array(
+//	"label" => "Client Id",
+//	"description" => "Specify a Client Id for a partner with special API functionality.",
+//	"default" => null,
+//	"overrideable" => false,
+//	"dataType" => "string"
+//);
+//
+//$config["callOptions_defaultNamespace"] = array(
+//	"label" => "Default Namespace",
+//	"description" => " A string that identifies a developer namespace prefix",
+//	"default" => null,
+//	"overrideable" => false,
+//	"dataType" => "string"
+//);
 
 
 $config["maxFileSize"] = array(
@@ -156,14 +156,14 @@ $config["batchSize"] = array(
 	"maxValue" => 200
 );
 
-$config["queryOptions_batchSize"] = array(
-	"label" => "Query Batch Size",
-	"description" => "Requested query batch size. This is not a guranteed value and depends on the data set being returned.",
-	"default" => 500,
-	"overrideable" => false,
-	"dataType" => "int",
-	"minValue" => 200,
-	"maxValue" => 2000
-);
+//$config["queryOptions_batchSize"] = array(
+//	"label" => "Query Batch Size",
+//	"description" => "Requested query batch size. This is not a guranteed value and depends on the data set being returned.",
+//	"default" => 500,
+//	"overrideable" => false,
+//	"dataType" => "int",
+//	"minValue" => 200,
+//	"maxValue" => 2000
+//);
 
 ?>
