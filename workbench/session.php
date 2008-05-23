@@ -24,17 +24,20 @@ if (!isset($_SESSION['sessionId'])) {
 		require_once('config.php');
 
 		foreach($config as $configKey => $configValue){
-			//check if the setting is NOT overrideable and if so clear the cookie
-			//this is done to clear previously set cookeies
-			if(!$configValue['overrideable']){
-				setcookie($configKey,NULL,time()-3600);
-			}
+			//only process non-headers
+			if(!$configValue['isHeader']){
+				//check if the setting is NOT overrideable and if so clear the cookie
+				//this is done to clear previously set cookeies
+				if(!$configValue['overrideable']){
+					setcookie($configKey,NULL,time()-3600);
+				}
 
-			//check if user has cookies that override defaults
-			if(isset($_COOKIE[$configKey])){
-				$_SESSION['config'][$configKey] = $_COOKIE[$configKey];
-			} else {
-				$_SESSION['config'][$configKey] = $configValue['default'];
+				//check if user has cookies that override defaults
+				if(isset($_COOKIE[$configKey])){
+					$_SESSION['config'][$configKey] = $_COOKIE[$configKey];
+				} else {
+					$_SESSION['config'][$configKey] = $configValue['default'];
+				}
 			}
 		}
 

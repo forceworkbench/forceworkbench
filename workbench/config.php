@@ -14,156 +14,180 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-$config["abcOrder"] = array(
-	"label" => "Alphabetize Field Names",
-	"description" => "Alphabetizes field names for across application. Otherwise, field names are displayed in the order returned by Salesforce.",
-	"default" => false,
-	"overrideable" => true,
-	"dataType" => boolean
+$config["header_General"] = array(
+	"label" => "General",
+	"display" => true,
+	"isHeader" => true
 );
 
-$config["cacheDescribeGlobal"] = array(
-	"label" => "Cache Object Names",
-	"description" => "Caches the results from the describeGlobal() API call. Improves performance of the Workbench, but not recommended if actively making changes to metadata of your Salesforce organization.",
-	"default" => true,
-	"overrideable" => true,
-	"dataType" => "boolean"
+	$config["abcOrder"] = array(
+		"label" => "Alphabetize Field Names",
+		"description" => "Alphabetizes field names for across application. Otherwise, field names are displayed in the order returned by Salesforce.",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => boolean
+	);
+
+	$config["cacheDescribeGlobal"] = array(
+		"label" => "Cache Object Names",
+		"description" => "Caches the results from the describeGlobal() API call. Improves performance of the Workbench, but not recommended if actively making changes to metadata of your Salesforce organization.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+
+	//$config["cacheDescribeSObject"] = array(
+	//	"label" => "Cache Field Names",
+	//	"description" => "Caches the results from the describeSobject() API calls. Improves performance of the Workbench, but not recommended if actively making changes to metadata of your Salesforce organization.",
+	//	"default" => true,
+	//	"overrideable" => false,
+	//	"dataType" => "boolean"
+	//);
+
+	$config["showReferenceBy"] = array(
+		"label" => "Display Reference By Column",
+		"description" => "Show the Reference By column for insert, update, and upsert operations for mapping with foreign keys via relationships.",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+
+	$config["debug"] = array(
+		"label" => "Debug Mode",
+		"description" => "Enables debugging mode for showing supervariables and SOAP messages.",
+		"default" => false,
+		"overrideable" => true, //TODO: Set back to false
+		"dataType" => boolean
+	);
+
+$config["header_placeholder0"] = array(
+	"label" => "",
+	"display" => true,
+	"isHeader" => true
 );
 
-//$config["cacheDescribeSObject"] = array(
-//	"label" => "Cache Field Names",
-//	"description" => "Caches the results from the describeSobject() API calls. Improves performance of the Workbench, but not recommended if actively making changes to metadata of your Salesforce organization.",
-//	"default" => true,
-//	"overrideable" => false,
-//	"dataType" => "boolean"
-//);
-
-$config["showReferenceBy"] = array(
-	"label" => "Display Reference By Column",
-	"description" => "Show the Reference By column for insert, update, and upsert operations for mapping with foreign keys via relationships.",
-	"default" => false,
-	"overrideable" => true,
-	"dataType" => "boolean"
+$config["header_ApiOptions"] = array(
+	"label" => "API Options",
+	"display" => true,
+	"isHeader" => true
 );
 
-$config["emailHeader_triggerAutoResponseEmail"] = array(
-	"label" => "Trigger Auto-Response Emails",
-	"description" => "Send Auto-Response e-mails for insert, update, and upsert of Leads and Cases",
-	"default" => false,
-	"overrideable" => true,
-	"dataType" => "boolean"
-);
+	$config["emailHeader_triggerAutoResponseEmail"] = array(
+		"label" => "Trigger Auto-Response Emails",
+		"description" => "Send Auto-Response e-mails for insert, update, and upsert of Leads and Cases",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 
-$config["emailHeader_triggertriggerUserEmail"] = array(
-	"label" => "Trigger User Emails",
-	"description" => "Send e-mails to users when resetting a password, creating a new user, adding comments to a case, or creating or modifying a task",
-	"default" => false,
-	"overrideable" => true,
-	"dataType" => "boolean"
-);
+	$config["emailHeader_triggertriggerUserEmail"] = array(
+		"label" => "Trigger User Emails",
+		"description" => "Send e-mails to users when resetting a password, creating a new user, adding comments to a case, or creating or modifying a task",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 
-$config["emailHeader_triggerOtherEmail"] = array(
-	"label" => "Trigger Other Emails",
-	"description" => "Send other e-mails for insert, update, and upsert of records",
-	"default" => false,
-	"overrideable" => true,
-	"dataType" => "boolean"
-);
+	$config["emailHeader_triggerOtherEmail"] = array(
+		"label" => "Trigger Other Emails",
+		"description" => "Send other e-mails for insert, update, and upsert of records",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 
-$config["mruHeader_updateMru"] = array(
-	"label" => "Update MRU",
-	"description" => "Indicates whether to update the list of most recently used items for queries of one record",
-	"default" => false,
-	"overrideable" => true,
-	"dataType" => "boolean"
-);
+	$config["mruHeader_updateMru"] = array(
+		"label" => "Update MRU",
+		"description" => "Indicates whether to update the list of most recently used items for queries of one record",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 
-$config["UserTerritoryDeleteHeader_transferToUserId"] = array(
-	"label" => "Territory Delete Transfer User",
-	"description" => "The ID of the user to whom open opportunities in that user's territory will be assigned when an opportunity's owner is removed from a territory",
-	"default" => false,
-	"overrideable" => true,
-	"dataType" => "boolean"
-);
+	$config["UserTerritoryDeleteHeader_transferToUserId"] = array(
+		"label" => "Territory Delete Transfer User",
+		"description" => "The ID of the user to whom open opportunities in that user's territory will be assigned when an opportunity's owner is removed from a territory",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 
-$config["debug"] = array(
-	"label" => "Debug Mode",
-	"description" => "Enables debugging mode for showing supervariables and SOAP messages.",
-	"default" => false,
-	"overrideable" => true, //TODO: Set back to false
-	"dataType" => boolean
-);
+	$config["assignmentRuleHeader_useDefaultRule"] = array(
+		"label" => "Use Default Assignment Rule",
+		"description" => "Apply default Assignment Rule to apply to insert, update, and upsert operations",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 
-$config["assignmentRuleHeader_useDefaultRule"] = array(
-	"label" => "Use Default Assignment Rule",
-	"description" => "Apply default Assignment Rule to apply to insert, update, and upsert operations",
-	"default" => false,
-	"overrideable" => true,
-	"dataType" => "boolean"
-);
+	$config["autoRunQueryMore"] = array(
+		"label" => "Automatically Retrieve All Query Results",
+		"description" => "Automatically retrieve all query results with queryMore() API call",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 
-$config["assignmentRuleHeader_assignmentRuleId"] = array(
-	"label" => "Assignment Rule Id",
-	"description" => "Specify an Assignment Rule Id to apply to insert, update, and upsert operations",
-	"default" => null,
-	"overrideable" => true,
-	"dataType" => "string"
-);
+	$config["assignmentRuleHeader_assignmentRuleId"] = array(
+		"label" => "Assignment Rule Id",
+		"description" => "Specify an Assignment Rule Id to apply to insert, update, and upsert operations",
+		"default" => null,
+		"overrideable" => true,
+		"dataType" => "string"
+	);
 
-$config["callOptions_client"] = array(
-	"label" => "Client Id",
-	"description" => "Specify a Client Id for a partner with special API functionality.",
-	"default" => null,
-	"overrideable" => true,
-	"dataType" => "string"
-);
+	$config["callOptions_client"] = array(
+		"label" => "Client Id",
+		"description" => "Specify a Client Id for a partner with special API functionality.",
+		"default" => null,
+		"overrideable" => true,
+		"dataType" => "string"
+	);
 
-$config["callOptions_defaultNamespace"] = array(
-	"label" => "Default Namespace",
-	"description" => " A string that identifies a developer namespace prefix",
-	"default" => null,
-	"overrideable" => true,
-	"dataType" => "string"
-);
-
-
-$config["maxFileSize"] = array(
-	"label" => "Maxiumum File Size (bytes)",
-	"description" => "Maximum file size for upload in bytes.",
-	"default" => 512000,
-	"overrideable" => false,
-	"dataType" => "int"
-);
-
-$config["maxFileLengthRows"] = array(
-	"label" => "Maxiumum File Length (rows)",
-	"description" => "Maximum file size for upload in number of CSV rows.",
-	"default" => 2000,
-	"overrideable" => false,
-	"dataType" => "int"
-);
+	$config["callOptions_defaultNamespace"] = array(
+		"label" => "Default Namespace",
+		"description" => " A string that identifies a developer namespace prefix",
+		"default" => null,
+		"overrideable" => true,
+		"dataType" => "string"
+	);
 
 
-$config["batchSize"] = array(
-	"label" => "Batch Size",
-	"description" => "Number of records that are batched together in one API call. Recommended to leave at 200.",
-	"default" => 200,
-	"overrideable" => true,
-	"dataType" => "int",
-	"minValue" => 0,
-	"maxValue" => 200
-);
+	$config["maxFileSize"] = array(
+		"label" => "Maxiumum File Size (bytes)",
+		"description" => "Maximum file size for upload in bytes.",
+		"default" => 512000,
+		"overrideable" => false,
+		"dataType" => "int"
+	);
 
-$config["queryOptions_batchSize"] = array(
-	"label" => "Query Batch Size",
-	"description" => "Requested query batch size. This is not a guranteed value and depends on the data set being returned.",
-	"default" => 500,
-	"overrideable" => true,
-	"dataType" => "int",
-	"minValue" => 200,
-	"maxValue" => 2000
-);
+	$config["maxFileLengthRows"] = array(
+		"label" => "Maxiumum File Length (rows)",
+		"description" => "Maximum file size for upload in number of CSV rows.",
+		"default" => 2000,
+		"overrideable" => false,
+		"dataType" => "int"
+	);
+
+
+	$config["batchSize"] = array(
+		"label" => "Record Batch Size",
+		"description" => "Number of records that are batched together in one API call. Recommended to leave at 200.",
+		"default" => 200,
+		"overrideable" => true,
+		"dataType" => "int",
+		"minValue" => 0,
+		"maxValue" => 200
+	);
+
+	$config["queryOptions_batchSize"] = array(
+		"label" => "Query Batch Size",
+		"description" => "Requested query batch size. This is not a guranteed value and depends on the data set being returned.",
+		"default" => 500,
+		"overrideable" => true,
+		"dataType" => "int",
+		"minValue" => 200,
+		"maxValue" => 2000
+	);
 
 ?>

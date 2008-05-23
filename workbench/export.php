@@ -492,7 +492,7 @@ function query($soql_query,$query_action){
 
 	$records = $query_response->records;
 
-	while(!$query_response->done){
+	while($_SESSION['config']['autoRunQueryMore'] && !$query_response->done){
 		$query_response = $mySforceConnection->queryMore($query_response->queryLocator);
 		$records = array_merge($records,$query_response->records);
 	}

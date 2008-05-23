@@ -7,7 +7,7 @@ $errors = null;
 if(isset($_POST['submitConfigSetter'])){
 	//find errors
   	foreach($config as $configKey => $configValue){
-		if(isset($_POST[$configKey])){
+		if(!$configValue['isHeader'] && isset($_POST[$configKey])){
 			if(isset($configValue['maxValue']) && $configValue['maxValue'] < $_POST[$configKey]){
 				$errors[] = $configValue[label] . " must not be greater than " . $configValue['maxValue'];
 			} else if(isset($configValue['minValue']) && $configValue['minValue'] > $_POST[$configKey]){
@@ -46,7 +46,9 @@ require_once('header.php');
 
 	print "<table border='0' cellspacing='5' style='border-width-top: 1'>\n";
 		foreach($config as $configKey => $configValue){
-			if($configValue['overrideable']){
+			if($configValue['isHeader'] && $configValue['display']){
+				print "\t<tr><th align='left' colspan='3'>$configValue[label]</th></tr>\n";
+			} else if($configValue['overrideable']){
 				print "\t<tr onmouseover=" . '"' . "Tip('$configValue[description]')". '"' . ">\n";
 				print "\t\t<td align='right'><label for='$configKey'>$configValue[label]</label></td><td>&nbsp;&nbsp;</td>\n";
 				print "\t\t<td align='left'>";
