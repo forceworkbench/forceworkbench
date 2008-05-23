@@ -1,6 +1,6 @@
 <?php
 $version = "2.0.12 Alpha 2";
-	
+
 function show_error($errors){
 	print "<div class='show_errors'>\n";
 	print "<img src='images/warning.gif' width='30' height='30' align='middle' border='0' alt='ERROR:' /> <br/>";
@@ -43,8 +43,8 @@ function myGlobalSelect($default_object){
 			exit;
 	    }
 	}
-	
-	
+
+
 	//Print the global object types in a dropdown select box
 	foreach($_SESSION[myGlobal]->types as $type){
 		print "	<option value='$type'";
@@ -59,7 +59,7 @@ function myGlobalSelect($default_object){
 function describeSObject($objectType){
 	try{
 		global $mySforceConnection;
-		
+
 		if (!is_array($objectType)){
 			$describeSObject_result = $mySforceConnection->describeSObject($objectType);
 			if($_SESSION['config']['abcOrder']){
@@ -74,7 +74,7 @@ function describeSObject($objectType){
 				}
 			}
 			return $describeSObjects_results;
-		}		
+		}
 	} catch (Exception $e) {
       	$errors = null;
 		$errors = $e->getMessage();
@@ -85,13 +85,13 @@ function describeSObject($objectType){
 }
 
 function alphaOrderFields($describeSObject_result){
-	//move field name out to key name and then ksort based on key for field abc order 
+	//move field name out to key name and then ksort based on key for field abc order
 	foreach($describeSObject_result->fields as $field){
 		$fieldNames[] = $field->name;
 	}
 	$describeSObject_result->fields = array_combine($fieldNames, $describeSObject_result->fields);
 	ksort($describeSObject_result->fields);
-	
+
 	return $describeSObject_result;
 }
 
@@ -119,9 +119,9 @@ function field_mapping_set($action,$csv_array){
 				print ">$field->name</option>\n";
 			}
 		}
-		print "</select></td></tr></table>\n";		
-		
-		
+		print "</select></td></tr></table>\n";
+
+
 	} //end if upsert
 
 	print "<p><strong>Map the Salesforce fields to the columns from the uploaded CSV:</strong></p>\n";
@@ -173,16 +173,16 @@ function printPutFieldForMapping($field, $csv_array){
 		print "<tr";
 		if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
 		print "><td>$field->name</td>";
-		
+
 		if($_SESSION['config']['showReferenceBy']){
-			if(isset($field->referenceTo)){ 
+			if(isset($field->referenceTo)){
 				$describeRefObjResult = describeSObject($field->referenceTo);
 				printRefField($field, $describeRefObjResult);
 			} else {
 				print "<td>&nbsp;</td>\n";
 			}
 		}
-		
+
 		print "<td><select name='$field->name' style='width: 100%;'>";
 		print "	<option value=''></option>\n";
 		foreach($csv_array[0] as $col){
@@ -191,7 +191,7 @@ function printPutFieldForMapping($field, $csv_array){
 			print ">$col</option>\n";
 		}
 		print "</select></td>";
-						
+
 	    print "</tr>\n";
 }
 
@@ -209,36 +209,36 @@ function printRefField($field, $describeRefObjResult){
 				$polyExtFields[$describeRefObjResult->name] = $extFields;
 			}
 		}
-		
+
 		//check if the new array has any fields
 		print "<td><select name='$field->name:$field->relationshipName' style='width: 100%;'";
-		
+
 		$numOfExtFields = 0;
 		foreach($polyExtFields as $extFields){
 			if(count($extFields) > 1){
 				$numOfExtFields = $numOfExtFields + count($extFields) - 1;
 			}
 		}
-		
+
 		if($numOfExtFields <= 0){
 			print " disabled='true' ";
 		}
 		print ">\n";
-				
+
 		print  " <option value='Id' selected='true'></option>\n";
 		foreach($polyExtFields as $objectType => $extFields){
 			if(count($extFields) > 0){
 				foreach($extFields as $extFieldKey => $extFieldVal){
 					if ($extFieldVal->name != 'Id'){
-						print  " <option value='$field->name.$field->relationshipName.$objectType.$extFieldVal->name'>$objectType.$extFieldVal->name</option>\n";	
-					}					
+						print  " <option value='$field->name.$field->relationshipName.$objectType.$extFieldVal->name'>$objectType.$extFieldVal->name</option>\n";
+					}
 				}
-			} 
+			}
 		}
 		print "</select></td>\n";
-		
+
 	} else { //for scalar values
-		//check to see if there are any IdLookup fields and if so move them to a new array 
+		//check to see if there are any IdLookup fields and if so move them to a new array
 		$extFields = null;
 		if(count($describeRefObjResult->fields) > 0){
 			foreach($describeRefObjResult->fields as $extFieldKey => $extFieldVal){
@@ -247,14 +247,14 @@ function printRefField($field, $describeRefObjResult){
 				}
 			}
 		}
-		
-		
+
+
 		//check if the new array has any fields and if so
 		if(count($extFields) > 0){
 			print "<td><select name='$field->name:$field->relationshipName' style='width: 100%;'";
 			if (count($extFields) == 1) print " disabled='true' "; //disable the selection if only one choice ('Id') is available
 			print ">\n";
-			
+
 			print  " <option value='Id' selected='true'></option>\n";
 			foreach($extFields as $extFieldKey => $extFieldVal){
 				if ($extFieldVal->name != 'Id'){
@@ -262,9 +262,9 @@ function printRefField($field, $describeRefObjResult){
 				}
 			}
 			print "</select></td>\n";
-		} 
+		}
 	}
-		
+
 }
 
 
@@ -284,19 +284,19 @@ function field_mapping_idOnly_set($csv_array, $showRefCol){
 
 function field_map_to_array($field_map){
 	$field_map_array = array();
-	
+
 	foreach($field_map as $fieldMapKey=>$fieldMapValue){
 		if(preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)){
 			if(preg_match('/^(\w+).(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches)){
-				$field_map_array[$valueMatches[1]]["relationshipName"] = $valueMatches[2]; 
-				$field_map_array[$valueMatches[1]]["relatedObjectName"] = $valueMatches[3]; 
-				$field_map_array[$valueMatches[1]]["relatedFieldName"] = $valueMatches[4]; 	
+				$field_map_array[$valueMatches[1]]["relationshipName"] = $valueMatches[2];
+				$field_map_array[$valueMatches[1]]["relatedObjectName"] = $valueMatches[3];
+				$field_map_array[$valueMatches[1]]["relatedFieldName"] = $valueMatches[4];
 			}
 		} else if ($fieldMapValue){
 			$field_map_array[$fieldMapKey]["csvField"] = $fieldMapValue;
 		}
 	}
-	
+
 	return $field_map_array;
 }
 
@@ -307,24 +307,30 @@ function field_mapping_show($field_map,$ext_id){
 		print "<tr><td>External Id</td> <td>$ext_id</td></tr>\n";
 		print "</table><p/>\n";
 	}
-	
+
 	print "<table class='description'>\n";
-	print "<tr><th>Salesforce Field</th><th>Reference By</th><th>CSV Field</th></tr>\n";
-	
+	print "<tr><th>Salesforce Field</th>";
+	if ($_SESSION['config']['showReferenceBy']) print "<th>Reference By</th>";
+	print "<th>CSV Field</th></tr>\n";
+
 	foreach($field_map as $salesforce_field=>$fieldMapArray){
-		print "<tr><td>$salesforce_field</td><td>";
-		if ($fieldMapArray['relatedObjectName'] && $fieldMapArray['relatedFieldName']){
-			print $fieldMapArray['relatedObjectName'] . "." . $fieldMapArray['relatedFieldName'];
+		print "<tr><td>$salesforce_field</td>";
+		if ($_SESSION['config']['showReferenceBy']){
+			print "<td>";
+			if ($fieldMapArray['relatedObjectName'] && $fieldMapArray['relatedFieldName']){
+				print $fieldMapArray['relatedObjectName'] . "." . $fieldMapArray['relatedFieldName'];
+			}
+			print "</td>";
 		}
-		print "</td><td>" . $fieldMapArray['csvField'] . "</td></tr>\n";
+		print "<td>" . $fieldMapArray['csvField'] . "</td></tr>\n";
 	}
-	
+
 	print "</table>\n";
 
-	
+
 //	foreach($field_map as $fieldMapKey=>$fieldMapValue){
 //		$alreadyMatchedKey = $alreadyMatchedKey; //must be here for variable scope and passing value from last interation
-//		if(preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)){ //check to see if field map key matches Field:Relationship pattern	
+//		if(preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)){ //check to see if field map key matches Field:Relationship pattern
 //			preg_match('/^(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches); //match relationship field map values Relationship.Object.Field patern
 //			foreach($field_map as $fieldMapIntKey=>$fieldMapIntValue){ //interate to find the matching field:value pair with the Reference By value
 //				if($fieldMapIntKey == $keyMatches[1] && $fieldMapIntValue){
@@ -334,7 +340,7 @@ function field_mapping_show($field_map,$ext_id){
 //						print "<tr><td>$fieldMapIntKey</td><td>Id</td><td>$fieldMapIntValue</td></tr>\n";
 //					}
 //					$alreadyMatchedKey = $keyMatches[1];
-//				}	
+//				}
 //			}
 //		} else if ($fieldMapKey != $alreadyMatchedKey && $fieldMapValue) { //otherwise, do this for normal fields
 //			print "<tr><td>$fieldMapKey</td><td>$keyMatches[0]&nbsp;</td><td>$fieldMapValue</td></tr>\n";
@@ -534,19 +540,19 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 			    $sObject = new SObject;
 		    	$sObject->type = $_SESSION[default_object];
 		    	$fields = array();
-		    					
+
 				foreach($field_map as $salesforce_field=>$fieldMapArray){
 					if($fieldMapArray['relatedObjectName'] && $fieldMapArray['relatedFieldName'] && $fieldMapArray['csvField']){
 						$refSObject = new SObject;
 				    	$refSObject->type = $fieldMapArray['relatedObjectName'];
-						$col = array_search($fieldMapArray['csvField'],$csv_header);				    	
+						$col = array_search($fieldMapArray['csvField'],$csv_header);
 				    	$refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
 				    	$field = array($fieldMapArray['relationshipName'] => $refSObject);
 					} else if($salesforce_field && $fieldMapArray['csvField']){
 						$col = array_search($fieldMapArray['csvField'],$csv_header);
 						$field = array($salesforce_field => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
 					}
-					
+
 					if (!$fields){
 						$fields = $field;
 					} else {
@@ -555,12 +561,12 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 				}
 
 
-								
+
 			    $sObject->fields = $fields;
 			    array_push($sObjects, $sObject);
 			    unset($sObject);
 			}
-			
+
 //print "<pre>";
 //print_r($sObjects);
 //print "</pre>";
@@ -785,66 +791,66 @@ function idOnlyCall($action){
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
 	if($_SESSION['config']['debug']){
-	
+
 		print "<pre style='font-family: monospace; text-align: left;'>";
-		
+
 		if($customValue){
 			if($customName){
 				print "<h1>$customName</h1>\n";
 			} else {
 				print "<h1>CUSTOM</h1>\n";
 			}
-			
+
 			 var_dump($customValue);
 			print "<hr/>";
 		}
-		
+
 		if($showSuperVars){
 			print "<h1>GLOBALS</h1>\n";
-		
+
 			print "<strong>COOKIE SUPERGLOBAL VARIABLE</strong>\n";
 			var_dump ($_COOKIE);
 			print "<hr/>";
-		
+
 			print "<strong>SESSION SUPERGLOBAL VARIABLE</strong>\n";
 			var_dump ($_SESSION);
 			print "<hr/>";
-		
+
 			print "<strong>POST SUPERGLOBAL VARIABLE</strong>\n";
 			var_dump ($_POST);
 			print "<hr/>";
-		
+
 			print "<strong>GET SUPERGLOBAL VARIABLE</strong>\n";
 			var_dump ($_GET);
 			print "<hr/>";
-		
+
 			print "<strong>FILES SUPERGLOBAL VARIABLE</strong>\n";
 			var_dump ($_FILES);
 			print "<hr/>";
-		
+
 			print "<strong>ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
 			var_dump ($_ENV);
 			print "<hr/>";
 		}
-		
+
 		if($showSoap){
 			try{
 				global $mySforceConnection;
-		
+
 				print "<h1>SOAP MESSAGES</h1>\n";
-			
+
 				print "<strong>LAST REQUEST HEADER</strong>\n";
 				print htmlentities($mySforceConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
 				print "<hr/>";
-			
+
 				print "<strong>LAST REQUEST</strong>\n";
 				print htmlentities($mySforceConnection->getLastRequest(),ENT_QUOTES,'UTF-8');
 				print "<hr/>";
-			
+
 				print "<strong>LAST RESPONSE HEADER</strong>\n";
 				print htmlentities($mySforceConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
 				print "<hr/>";
-			
+
 				print "<strong>LAST RESPONSE</strong>\n";
 				print htmlentities($mySforceConnection->getLastResponse(),ENT_QUOTES,'UTF-8');
 			//	print $mySforceConnection->getLastResponse();
@@ -855,7 +861,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 				print_r ($e);
 			}
 		}
-	
+
 		print "</pre>";
 	}
 }
