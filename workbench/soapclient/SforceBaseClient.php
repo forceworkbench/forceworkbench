@@ -94,28 +94,22 @@ class SforceBaseClient {
 	public function createConnection($wsdl, $proxy=null) {
 		$_SERVER['HTTP_USER_AGENT'] = 'Salesforce/PHPToolkit/1.0';
 
-		$soapClientArray = null;
-		if (phpversion() > '5.1.2') {
-			$soapClientArray = array (
-          'encoding' => 'utf-8',
-          'trace' => 1,
-          'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP
-			);
-		} else {
-			$soapClientArray = array (
-          'encoding' => 'utf-8',
-          'trace' => 1
-			);
+		$soapClientArray = array();
+		$soapClientArray['trace'] = 1;
+		$soapClientArray['encoding'] = 'utf-8';
+
+		if ($_SESSION['config']['enableGzip'] && phpversion() > '5.1.2') {
+			$soapClientArray['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | 1;
 		}
 
 		if ($proxy != null) {
-  		$proxySettings = array();
-	    $proxySettings['proxy_host'] = $proxy->host;
-		  $proxySettings['proxy_port'] = $proxy->port; // Use an integer, not a string
-  		$proxySettings['proxy_login'] = $proxy->login; 
-      $proxySettings['proxy_password'] = $proxy->password;
+  			$proxySettings = array();
+	   		$proxySettings['proxy_host'] = $proxy->host;
+		    $proxySettings['proxy_port'] = $proxy->port; // Use an integer, not a string
+  		    $proxySettings['proxy_login'] = $proxy->login;
+            $proxySettings['proxy_password'] = $proxy->password;
 
-  		$soapClientArray = array_merge($soapClientArray, $proxySettings);
+  		    $soapClientArray = array_merge($soapClientArray, $proxySettings);
 		}
 
 		$this->sforce = new SoapClient($wsdl, $soapClientArray);
@@ -372,12 +366,12 @@ class SforceBaseClient {
 	          $anyString = $anyString . '<' . $key . '>';
 	          if(isset($value->type)){ //check if partner wsdl (should always be, but just in case)
 	          	$anyString = $anyString . '<type>' . $value->type . '</type>';
-	          } 
+	          }
 	          $anyString = $anyString . $nestedAnyString . '</' . $key . '>';
 	        }
     	} else {
     		$anyString = $anyString . '<' . $key . '>' . $value . '</' . $key . '>';
-    	} 
+    	}
     }
     return $anyString;
    }
@@ -437,8 +431,8 @@ class SforceBaseClient {
       $backtrace = debug_backtrace();
       die('Please pass in array to this function:  '.$backtrace[0]['function']);
     }
-  }	
-	
+  }
+
 	protected function _sendEmail($arg) {
 		$this->setHeaders();
 		return $this->sforce->sendEmail($arg)->result;
@@ -496,7 +490,7 @@ class SforceBaseClient {
 		$arg->ids = $ids;
 		return $this->sforce->emptyRecycleBin($arg)->result;
 	}
-	
+
 //	public function purge($ids) {
 //		return $this->emptyRecycleBin($ids);
 //	}

@@ -44,15 +44,20 @@
 <?php
 global $mySforceConnection;
 if ($_SESSION[sessionId] && $mySforceConnection){
-	try{
-		global $mySforceConnection;
-		$myUserInfo = $mySforceConnection->getUserInfo();
-		print "<p id='myuserinfo'>Logged in as $myUserInfo->userFullName at $myUserInfo->organizationName</p>\n";
-	} catch (Exception $e) {
-      	$errors = null;
-		$errors = $e->getMessage();
-		show_error($errors);
-		exit;
-    }
+
+	if(!$_SESSION['getUserInfo'] || !$_SESSION['config']['cacheGetUserInfo']){
+		try{
+			global $mySforceConnection;
+			$_SESSION['getUserInfo'] = $mySforceConnection->getUserInfo();
+
+		} catch (Exception $e) {
+	      	$errors = null;
+			$errors = $e->getMessage();
+			show_error($errors);
+			exit;
+	    }
+	}
+
+    print "<p id='myuserinfo'>Logged in as " . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . "</p>\n";
 }
 ?>

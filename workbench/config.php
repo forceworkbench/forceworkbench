@@ -28,22 +28,6 @@ $config["header_General"] = array(
 		"dataType" => boolean
 	);
 
-	$config["cacheDescribeGlobal"] = array(
-		"label" => "Cache Object Names",
-		"description" => "Caches the results from the describeGlobal() API call. Improves performance of the Workbench, but not recommended if actively making changes to metadata of your Salesforce organization.",
-		"default" => true,
-		"overrideable" => true,
-		"dataType" => "boolean"
-	);
-
-	//$config["cacheDescribeSObject"] = array(
-	//	"label" => "Cache Field Names",
-	//	"description" => "Caches the results from the describeSobject() API calls. Improves performance of the Workbench, but not recommended if actively making changes to metadata of your Salesforce organization.",
-	//	"default" => true,
-	//	"overrideable" => false,
-	//	"dataType" => "boolean"
-	//);
-
 	$config["showReferenceBy"] = array(
 		"label" => "Display Reference By Column",
 		"description" => "Show the Reference By column for insert, update, and upsert operations for mapping with foreign keys via relationships.",
@@ -60,11 +44,44 @@ $config["header_General"] = array(
 		"dataType" => boolean
 	);
 
-$config["header_placeholder0"] = array(
-	"label" => "",
+$config["header_Performance"] = array(
+	"label" => "Performance Options",
 	"display" => true,
 	"isHeader" => true
 );
+
+	$config["cacheGetUserInfo"] = array(
+		"label" => "Cache User Info",
+		"description" => "Caches the results from the getUserInfo() API call. Improves performance of the Workbench in that user info does not need to be retrieved more than once, but not recommended if active session should be checked on each page load.",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+
+	$config["cacheDescribeGlobal"] = array(
+		"label" => "Cache Object Names",
+		"description" => "Caches the results from the describeGlobal() API call. Improves performance of the Workbench in that object names do not need to be retrieved more than once. Recommened unless actively making changes to metadata of your Salesforce organization.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+
+	//$config["cacheDescribeSObject"] = array(
+	//	"label" => "Cache Field Names",
+	//	"description" => "Caches the results from the describeSobject() API calls. Improves performance of the Workbench in that field names do not need to be retrieved more than once. Recommened unless actively making changes to metadata of your Salesforce organization.",
+	//	"default" => true,
+	//	"overrideable" => false,
+	//	"dataType" => "boolean"
+	//);
+
+
+	$config["enableGzip"] = array(
+		"label" => "Enable Compression",
+		"description" => "Enables GZIP compression to improve performance of API call response time. Recommended to leave enabled unless SOAP capturing is necessary.",
+		"default" => true,
+		"overrideable" => true, //TODO: Set back to false
+		"dataType" => boolean
+	);
 
 $config["header_ApiOptions"] = array(
 	"label" => "API Options",
