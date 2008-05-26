@@ -7,7 +7,7 @@ $errors = null;
 if(isset($_POST['submitConfigSetter'])){
 	//find errors
   	foreach($config as $configKey => $configValue){
-		if(!$configValue['isHeader'] && isset($_POST[$configKey])){
+		if(!isset($configValue['isHeader']) && isset($_POST[$configKey])){
 			if(isset($configValue['maxValue']) && $configValue['maxValue'] < $_POST[$configKey]){
 				$errors[] = $configValue[label] . " must not be greater than " . $configValue['maxValue'];
 			} else if(isset($configValue['minValue']) && $configValue['minValue'] > $_POST[$configKey]){
@@ -16,7 +16,7 @@ if(isset($_POST['submitConfigSetter'])){
 		}
  	}
 
- 	if ($_POST['assignmentRuleHeader_useDefaultRule'] && $_POST['assignmentRuleHeader_assignmentRuleId']){
+ 	if (isset($_POST['assignmentRuleHeader_useDefaultRule']) && isset($_POST['assignmentRuleHeader_assignmentRuleId'])){
  		$errors[] = "Can not set both 'Use Default Assignment Rule' and 'Assignment Rule Id'";
  	}
 
@@ -24,7 +24,7 @@ if(isset($_POST['submitConfigSetter'])){
 	 	foreach($config as $configKey => $configValue){
 	 		if(isset($_POST[$configKey]) && $configValue['dataType'] == "boolean"){		//for boolean trues
 				setcookie($configKey,1,time()+60*60*24*365*10);
-			} else if($configValue['dataType'] == "boolean"){							//for boolean falses
+			} else if(isset($configValue['dataType']) && $configValue['dataType'] == "boolean"){							//for boolean falses
 				setcookie($configKey,0,time()+60*60*24*365*10);
 	 		} else if(isset($_POST[$configKey])){
 				setcookie($configKey,$_POST[$configKey],time()+60*60*24*365*10);		//for non-null strings and numbers
@@ -46,7 +46,7 @@ require_once('header.php');
 
 	print "<table border='0' cellspacing='5' style='border-width-top: 1'>\n";
 		foreach($config as $configKey => $configValue){
-			if($configValue['isHeader'] && $configValue['display']){
+			if(isset($configValue['isHeader']) && $configValue['display']){
 				print "\t<tr><th align='left' colspan='3'>$configValue[label]</th></tr>\n";
 			} else if($configValue['overrideable']){
 				print "\t<tr onmouseover=" . '"' . "Tip('$configValue[description]')". '"' . ">\n";
@@ -54,10 +54,10 @@ require_once('header.php');
 				print "\t\t<td align='left'>";
 				if($configValue['dataType'] == "boolean"){
 						print "<input name='$configKey' id='$configKey' type='checkbox' ";
-						if($_SESSION[config][$configKey]) print " checked='true'";
+						if($_SESSION['config'][$configKey]) print " checked='true'";
 						print "/></td>\n";
 				} else if  ($configValue['dataType'] == "string" || $configValue['dataType'] == "int"){
-					print "<input name='$configKey' id='$configKey' type='text' value='". $_SESSION[config][$configKey] . "' size='30'/></td>\n";
+					print "<input name='$configKey' id='$configKey' type='text' value='". $_SESSION['config'][$configKey] . "' size='30'/></td>\n";
 				} else {
 					print "</td>\n";
 				}

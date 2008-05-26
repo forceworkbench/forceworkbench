@@ -33,7 +33,7 @@
 	print "| ";
 	foreach($navbar_items as $href => $label){
 		print "<a href='$href'";
-		if (!strcmp($href,basename($_SERVER[PHP_SELF]))){
+		if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
 			print " style='color: red;' ";
 		}
 		print " onmouseover=" . '"' . "Tip('$label[1]')". '"' . ">$label[0]</a> | ";
@@ -43,7 +43,7 @@
 </div>
 <?php
 global $mySforceConnection;
-if ($_SESSION[sessionId] && $mySforceConnection){
+if ($_SESSION['sessionId'] && $mySforceConnection){
 
 	if(!$_SESSION['getUserInfo'] || !$_SESSION['config']['cacheGetUserInfo']){
 		try{
@@ -51,9 +51,9 @@ if ($_SESSION[sessionId] && $mySforceConnection){
 			$_SESSION['getUserInfo'] = $mySforceConnection->getUserInfo();
 
 		} catch (Exception $e) {
-	      	$errors = null;
-			$errors = $e->getMessage();
+			$errors[] = $e->getMessage();
 			show_error($errors);
+			include_once('footer.php');
 			exit;
 	    }
 	}

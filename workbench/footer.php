@@ -11,13 +11,17 @@ include_once('shared.php');
 
 	<?php
 	//print $_SERVER[SERVER_NAME];
-	if (!$_SERVER[HTTPS] && $_SERVER[SERVER_NAME] !== 'localhost' && $_SERVER[SERVER_NAME] !== '127.0.0.1' && $_SERVER[SERVER_NAME] !== '10.8.45.11' ){
+	if (!isset($_SERVER['HTTPS']) && $_SERVER['SERVER_NAME'] !== 'localhost' && $_SERVER['SERVER_NAME'] !== '127.0.0.1' && $_SERVER['SERVER_NAME'] !== '10.8.45.11' ){
 		print "<span style='font-size: 8pt; color: red;'>WARNING: Unsecure connection detected</span><br/>";
 	}
-	
-	
-	
-	print date("Y/m/d H:i:s",$_SERVER[REQUEST_TIME]); ?>
+
+
+	if(isset($GLOBALS['requestTimeStart'])){
+		$requestTimeEnd = microtime(true);
+		$requestTimeElapsed = $requestTimeEnd - $GLOBALS['requestTimeStart'];
+		printf ("Request Time: %01.3f seconds", $requestTimeElapsed);
+	}
+	?>
 </div>
 
 </body>

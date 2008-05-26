@@ -25,7 +25,7 @@ $config["header_General"] = array(
 		"description" => "Alphabetizes field names for across application. Otherwise, field names are displayed in the order returned by Salesforce.",
 		"default" => false,
 		"overrideable" => true,
-		"dataType" => boolean
+		"dataType" => "boolean"
 	);
 
 	$config["showReferenceBy"] = array(
@@ -41,7 +41,7 @@ $config["header_General"] = array(
 		"description" => "Enables debugging mode for showing supervariables and SOAP messages.",
 		"default" => false,
 		"overrideable" => true, //TODO: Set back to false
-		"dataType" => boolean
+		"dataType" => "boolean"
 	);
 
 $config["header_Performance"] = array(
@@ -66,21 +66,20 @@ $config["header_Performance"] = array(
 		"dataType" => "boolean"
 	);
 
-	//$config["cacheDescribeSObject"] = array(
-	//	"label" => "Cache Field Names",
-	//	"description" => "Caches the results from the describeSobject() API calls. Improves performance of the Workbench in that field names do not need to be retrieved more than once. Recommened unless actively making changes to metadata of your Salesforce organization.",
-	//	"default" => true,
-	//	"overrideable" => false,
-	//	"dataType" => "boolean"
-	//);
-
+	$config["cacheDescribeSObject"] = array(
+		"label" => "Cache Object Descriptions",
+		"description" => "Caches the results from the describeSobject() API calls. Improves performance of the Workbench in that the object descriptions and field names do not need to be retrieved more than once. Recommened unless actively making changes to metadata of your Salesforce organization.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 
 	$config["enableGzip"] = array(
 		"label" => "Enable Compression",
 		"description" => "Enables GZIP compression to improve performance of API call response time. Recommended to leave enabled unless SOAP capturing is necessary.",
 		"default" => true,
 		"overrideable" => true, //TODO: Set back to false
-		"dataType" => boolean
+		"dataType" => "boolean"
 	);
 
 $config["header_ApiOptions"] = array(

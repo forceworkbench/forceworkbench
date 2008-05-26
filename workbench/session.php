@@ -1,4 +1,8 @@
 <?php
+if(!isset($GLOBALS['requestTimeStart'])){
+	$GLOBALS['requestTimeStart'] = microtime(true);
+}
+
 session_start();
 if (!isset($_SESSION['sessionId']) && strcmp('settings.php',basename($_SERVER['PHP_SELF']))) {
 //	echo basename($_SERVER['PHP_SELF']);
@@ -11,7 +15,7 @@ if (!isset($_SESSION['sessionId']) && strcmp('settings.php',basename($_SERVER['P
 
 	foreach($config as $configKey => $configValue){
 		//only process non-headers
-		if(!$configValue['isHeader']){
+		if(!isset($configValue['isHeader'])){
 			//check if the setting is NOT overrideable and if so clear the cookie
 			//this is done to clear previously set cookeies
 			if(!$configValue['overrideable']){
@@ -42,8 +46,8 @@ if (!isset($_SESSION['sessionId']) && strcmp('settings.php',basename($_SERVER['P
 			$mySforceConnection->setSessionHeader($sessionId);
 			//Has the user selected a default object on? If so,
 			//pass them to the session
-			if ($_POST[default_object]){
-				$_SESSION[default_object] = $_POST[default_object];
+			if (isset($_POST['default_object'])){
+				$_SESSION['default_object'] = $_POST['default_object'];
 			}
 
 			require_once ('soapclient/SforceHeaderOptions.php');

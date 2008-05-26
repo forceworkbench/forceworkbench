@@ -32,13 +32,12 @@ function show_info($infos){
 function myGlobalSelect($default_object){
 	print "<select id='myGlobalSelect' name='default_object' style='width: 20em;'>\n";
 	print "<option value=''></option>";
-	if (!$_SESSION[myGlobal] || !$_SESSION['config']['cacheDescribeGlobal']){
+	if (!$_SESSION['myGlobal'] || !$_SESSION['config']['cacheDescribeGlobal']){
 		try{
 		global $mySforceConnection;
 		$_SESSION[myGlobal] = $mySforceConnection->describeGlobal();
 		} catch (Exception $e) {
-	      	$errors = null;
-			$errors = $e->getMessage();
+			$errors[] = $e->getMessage();
 			show_error($errors);
 			exit;
 	    }
@@ -46,7 +45,7 @@ function myGlobalSelect($default_object){
 
 
 	//Print the global object types in a dropdown select box
-	foreach($_SESSION[myGlobal]->types as $type){
+	foreach($_SESSION['myGlobal']->types as $type){
 		print "	<option value='$type'";
 		if ($default_object == $type){
 			print " selected='true'";
@@ -56,32 +55,75 @@ function myGlobalSelect($default_object){
 	print "</select>\n";
 }
 
-function describeSObject($objectType){
-	try{
-		global $mySforceConnection;
+function describeSObject($objectTypes){
+	if (!is_array($objectTypes)){
+		$objectTypeArray = array($objectTypes);
+	} else {
+		$objectTypeArray = $objectTypes;
+	}
 
-		if (!is_array($objectType)){
-			$describeSObject_result = $mySforceConnection->describeSObject($objectType);
-			if($_SESSION['config']['abcOrder']){
-				$describeSObject_result = alphaOrderFields($describeSObject_result);
+	$objectTypesToRetreive = array();
+	if($_SESSION['config']['cacheDescribeSObject']){
+		foreach($objectTypeArray as $objectType){
+			if(!isset($_SESSION['describeSObjects_results'][$objectType])){
+				$objectTypesToRetreive[] = $objectType;
 			}
-			return $describeSObject_result;
-		} else if (count($objectType) > 1 && count($objectType) <= 100){
-			$describeSObjects_results = $mySforceConnection->describeSObjects($objectType);
-			if($_SESSION['config']['abcOrder']){
-				foreach ($describeSObjects_results as $describeSObject_resultKey => $describeSObject_result){
-					$describeSObjects_results[$describeSObject_resultKey] = alphaOrderFields($describeSObject_result);
-				}
-			}
-			return $describeSObjects_results;
 		}
-	} catch (Exception $e) {
-      	$errors = null;
-		$errors = $e->getMessage();
-		show_error($errors);
+	} else {
+		$objectTypesToRetreive = $objectTypeArray;
+		$_SESSION['describeSObjects_results'] = null;
+	}
+
+	if (count($objectTypesToRetreive) >= 1 && count($objectTypesToRetreive) <= 100){
+		try{
+			global $mySforceConnection;
+			$describeSObjects_results = $mySforceConnection->describeSObjects($objectTypesToRetreive);
+		} catch (Exception $e) {
+			$errors[] = $e->getMessage();
+			show_error($errors);
+			exit;
+		}
+
+		if (!is_array($objectTypes)){
+			$describeSObjects_results_array = array($describeSObjects_results->name => $describeSObjects_results);
+		} else {
+			foreach ($describeSObjects_results as $describeSObject_resultKey => $describeSObject_resultValue){
+				$describeSObjects_results_array[$describeSObject_resultValue->name] = $describeSObject_resultValue;
+			}
+		}
+
+	} else if(count($objectTypesToRetreive) > 100) {
+		show_error("Too many polymorphic object types: " . count($objectTypesToRetreive));
+		include_once("footer.php");
 		exit;
 	}
 
+
+	if(isset($_SESSION['config']['cacheDescribeSObject'])){
+		if(isset($describeSObjects_results_array)){
+			foreach ($describeSObjects_results_array as $describeSObject_resultKey => $describeSObject_result){
+				$_SESSION['describeSObjects_results'][$describeSObject_result->name] = $describeSObjects_results_array[$describeSObject_result->name];
+			}
+		}
+
+		foreach($objectTypeArray as $objectTypeKey => $objectTypeValue){
+			$describeSObjects_results_ToReturn[$objectTypeValue] = $_SESSION['describeSObjects_results'][$objectTypeValue];
+		}
+	} else {
+		$describeSObjects_results_ToReturn = $describeSObjects_results;
+	}
+
+	if($_SESSION['config']['abcOrder']){
+		foreach ($describeSObjects_results_ToReturn as $describeSObject_resultKey => $describeSObject_result){
+			$describeSObjects_results_ToReturn[$describeSObject_resultKey] = alphaOrderFields($describeSObject_result);
+		}
+	}
+
+	if (!is_array($objectTypes)){
+		return $describeSObjects_results_ToReturn[$objectTypes];
+	} else {
+		return $describeSObjects_results_ToReturn;
+	}
 }
 
 function alphaOrderFields($describeSObject_result){
@@ -97,8 +139,8 @@ function alphaOrderFields($describeSObject_result){
 
 function field_mapping_set($action,$csv_array){
 	if ($action == 'insert' || $action == 'upsert' || $action == 'update'){
-		if (isset($_SESSION[default_object])){
-			$describeSObject_result = describeSObject($_SESSION[default_object]);
+		if (isset($_SESSION['default_object'])){
+			$describeSObject_result = describeSObject($_SESSION['default_object']);
 		} else {
 		show_error("A default object is required to $action. Go to the Select page to choose a default object and try again.");
 	}
@@ -200,7 +242,7 @@ function printRefField($field, $describeRefObjResult){
 		$polyExtFields = array();
 		foreach($describeRefObjResult as $describeRefObjResultKey => $describeRefObjResult){
 			$extFields = null;
-			if(count($describeRefObjResult->fields) > 0){
+			if(isset($describeRefObjResult->fields)){
 				foreach($describeRefObjResult->fields as $extFieldKey => $extFieldVal){
 					if($extFieldVal->idLookup == true){
 						$extFields[$extFieldKey] = $extFieldVal;
@@ -355,14 +397,14 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 	} else {
 
 	if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')){
-		if (!$field_map[Id]){
+		if (!isset($field_map['Id'])){
 			show_error("Salesforce ID not selected. Please try again.");
 			include_once('footer.php');
 			exit();
 		} else {
 		ob_start();
 		field_mapping_show($field_map,null);
-		$id_col = array_search($field_map[Id],$csv_array[0]);
+		$id_col = array_search($field_map['Id'],$csv_array[0]);
 		for($row=1,$id_count = 0; $row < count($csv_array); $row++){
 			if ($csv_array[$row][$id_col]){
 				$id_count++;
@@ -375,7 +417,7 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 		}
 	} else {
 		$record_count = count($csv_array) - 1;
-		show_info ("The file uploaded contains $record_count records to be added to $_SESSION[default_object].");
+		show_info ("The file uploaded contains $record_count records to be added to " . $_SESSION['default_object']);
 		print "<p><strong>Confirm the mappings below:</strong></p>";
 		field_mapping_show($field_map,$ext_id);
 	}
@@ -391,7 +433,7 @@ function form_upload_objectSelect_show($file_input_name,$showObjectSelect = FALS
 	print "<input type='hidden' name='MAX_FILE_SIZE' value='$_SESSION[config][maxFileSize]' />\n";
 	print "<p><input type='file' name='$file_input_name' size=44 /></p>\n";
 	if ($showObjectSelect){
-		 myGlobalSelect($_SESSION[default_object]);
+		 myGlobalSelect($_SESSION['default_object']);
 		 $submitLabel = 'Upload & Select Object';
 	} else {
 		$submitLabel = 'Upload';
@@ -408,7 +450,7 @@ function csv_upload_valid_check($file){
 	//print "Temp Name: $file[tmp_name]<br/>";
 	//print "Error: $file[error]<br/>";
 
-	if($file[error] !== 0){
+	if($file['error'] !== 0){
 		$upload_error_codes = array(
 		       0=>"There is no error, the file uploaded with success",
 		       1=>"The file uploaded is too large. Please try again. (Error 1)", //as per PHP config
@@ -419,18 +461,18 @@ function csv_upload_valid_check($file){
 		       7=>"Failed to write file to disk.  Please try again. (Error 7)",
 		       8=>"File upload stopped by extension.  Please try again. (Error 8)"
 			);
-		return($upload_error_codes[$file[error]]);
+		return($upload_error_codes[$file['error']]);
 	}
 
-	elseif(!is_uploaded_file($file[tmp_name])){
+	elseif(!is_uploaded_file($file['tmp_name'])){
 		return("The file was not uploaded from your computer. Please try again.");
 	}
 
-	elseif((!stristr($file[type],'csv') || $file[type] !== "application//vnd.ms-excel") && !stristr($file[name],'.csv')){
+	elseif((!stristr($file['type'],'csv') || $file['type'] !== "application//vnd.ms-excel") && !stristr($file['name'],'.csv')){
 		return("The file uploaded is not a valid CSV file. Please try again.");
 	}
 
-	elseif($file[size] == 0){
+	elseif($file['size'] == 0){
 		return("The file uploaded contains no data. Please try again.");
 	}
 
@@ -526,7 +568,7 @@ function idOnlyCallIds($api_call,$field_map,$csv_array,$show_results){
 }
 
 function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
-	if (!($field_map && $csv_array && $_SESSION[default_object])){
+	if (!($field_map && $csv_array && $_SESSION['default_object'])){
 		show_error("CSV file and field mapping not initialized. Upload a new file and map fields.");
 	} else {
 		$csv_header = array_shift($csv_array);
@@ -538,19 +580,23 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 
 			for($row=0; $row < count($csv_arrayBatch); $row++){
 			    $sObject = new SObject;
-		    	$sObject->type = $_SESSION[default_object];
+		    	$sObject->type = $_SESSION['default_object'];
 		    	$fields = array();
 
 				foreach($field_map as $salesforce_field=>$fieldMapArray){
-					if($fieldMapArray['relatedObjectName'] && $fieldMapArray['relatedFieldName'] && $fieldMapArray['csvField']){
+					if(isset($fieldMapArray['relatedObjectName']) && isset($fieldMapArray['relatedFieldName']) && isset($fieldMapArray['csvField'])){
 						$refSObject = new SObject;
 				    	$refSObject->type = $fieldMapArray['relatedObjectName'];
 						$col = array_search($fieldMapArray['csvField'],$csv_header);
-				    	$refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
+				    	if($csv_arrayBatch[$row][$col] != ""){
+				    		$refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
+				    	}
 				    	$field = array($fieldMapArray['relationshipName'] => $refSObject);
-					} else if($salesforce_field && $fieldMapArray['csvField']){
+					} else if(isset($salesforce_field) && isset($fieldMapArray['csvField'])){
 						$col = array_search($fieldMapArray['csvField'],$csv_header);
-						$field = array($salesforce_field => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
+						if($csv_arrayBatch[$row][$col] != ""){
+							$field = array($salesforce_field => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
+						}
 					}
 
 					if (!$fields){
@@ -677,38 +723,38 @@ function show_idOnlyCall_results($results,$id_array){
 function put($action){
 	$confirm_action = 'Confirm ' . ucwords($action);
 
-	if($_POST[action] == $confirm_action){
+	if(isset($_POST['action']) && $_POST['action'] == $confirm_action){
 		require_once('header.php');
 		print "<h1>" . ucwords($action) . " Results</h1>";
 		if ($action == 'insert') $api_call = 'create'; else $api_call = $action;
 		if ($action == 'upsert') $ext_id = $_SESSION[_ext_id]; else $ext_id = NULL;
-		putSObjects($api_call,$ext_id,$_SESSION[field_map],$_SESSION[csv_array],true);
+		putSObjects($api_call,$ext_id,$_SESSION['field_map'],$_SESSION['csv_array'],true);
 		include_once('footer.php');
-		unset($_SESSION[field_map],$_SESSION[csv_array],$_SESSION[_ext_id],$_SESSION['file_tmp_name']);
+		unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name']);
 	}
 
-	elseif($_POST[action] == 'Map Fields'){
+	elseif(isset($_POST['action']) && $_POST['action'] == 'Map Fields'){
 		require_once('header.php');
 		array_pop($_POST); //remove header row
 		if ($_POST[_ext_id]){
 			$_SESSION[_ext_id] = $_POST[_ext_id];
 			$_POST[_ext_id] = NULL;
 		}
-		$_SESSION[field_map] = field_map_to_array($_POST);
-		field_mapping_confirm($confirm_action,$_SESSION[field_map],$_SESSION[csv_array],$_SESSION[_ext_id]);
+		$_SESSION['field_map'] = field_map_to_array($_POST);
+		field_mapping_confirm($confirm_action,$_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id']);
 		include_once('footer.php');
 	}
 
-	elseif ($_FILES['file'] && $_POST[default_object]){
+	elseif (isset($_FILES['file']) && isset($_POST['default_object'])){
 		require_once('header.php');
 		if (csv_upload_valid_check($_FILES['file'])){
 			form_upload_objectSelect_show('file',TRUE);
 			show_error(csv_upload_valid_check($_FILES['file']));
 		} else {
-			$csv_file_name = basename($_FILES['file'][name]);
-			$_SESSION['file_tmp_name'] = $_FILES['file'][tmp_name];
-			$_SESSION[csv_array] = csv_file_to_array($_SESSION['file_tmp_name']);
-			$csv_array_count = count($_SESSION[csv_array]) - 1;
+			$csv_file_name = basename($_FILES['file']['name']);
+			$_SESSION['file_tmp_name'] = $_FILES['file']['tmp_name'];
+			$_SESSION['csv_array'] = csv_file_to_array($_SESSION['file_tmp_name']);
+			$csv_array_count = count($_SESSION['csv_array']) - 1;
 			if (!$csv_array_count) {
 				show_error("The file uploaded contains no records. Please try again.");
 				include_once('footer.php');
@@ -722,7 +768,7 @@ function put($action){
 			if ($csv_array_count !== 1) $info .= 's';
 			show_info($info);
 			print "<br/>";
-			field_mapping_set($action,$_SESSION[csv_array]);
+			field_mapping_set($action,$_SESSION['csv_array']);
 		}
 		include_once('footer.php');
 	}
