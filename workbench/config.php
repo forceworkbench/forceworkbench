@@ -88,6 +88,14 @@ $config["header_ApiOptions"] = array(
 	"isHeader" => true
 );
 
+	$config["fieldsToNull"] = array(
+		"label" => "Insert Null Values",
+		"description" => "Forces null values to be commited to the database when inserting, updating, or upserting records; otherwise null values will be overwritten by the existing values in the database",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+
 	$config["emailHeader_triggerAutoResponseEmail"] = array(
 		"label" => "Trigger Auto-Response Emails",
 		"description" => "Send Auto-Response e-mails for insert, update, and upsert of Leads and Cases",

@@ -581,6 +581,7 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 			for($row=0; $row < count($csv_arrayBatch); $row++){
 			    $sObject = new SObject;
 		    	$sObject->type = $_SESSION['default_object'];
+		    	if($_SESSION['config']['fieldsToNull']) $sObject->fieldsToNull = array();
 		    	$fields = array();
 
 				foreach($field_map as $salesforce_field=>$fieldMapArray){
@@ -596,6 +597,8 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 						$col = array_search($fieldMapArray['csvField'],$csv_header);
 						if($csv_arrayBatch[$row][$col] != ""){
 							$field = array($salesforce_field => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
+						} elseif($_SESSION['config']['fieldsToNull']){
+							$sObject->fieldsToNull[] = $salesforce_field;
 						}
 					}
 
@@ -605,8 +608,6 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 						$fields = array_merge($fields,$field);
 					}
 				}
-
-
 
 			    $sObject->fields = $fields;
 			    array_push($sObjects, $sObject);

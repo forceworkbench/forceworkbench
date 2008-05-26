@@ -190,12 +190,14 @@ class QueryResult {
 class SObject {
   public $type;
   public $fields;
+  public $fieldsToNull;
   //  public $sobject;
 
   public function __construct($response=NULL) {
     if (isset($response)) {
       if (isset($response->Id)) $this->Id = $response->Id[0];
       if (isset($response->type)) $this->type = $response->type;
+      if (isset($response->fieldsToNull)) $this->fieldsToNull = $response->fieldsToNull;
       if (isset($response->any)) {
         try {
           //$this->fields = $this->convertFields($response->any);
