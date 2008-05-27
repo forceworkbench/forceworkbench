@@ -770,5 +770,13 @@ class SforceBaseClient {
 		$arg->userId = new SoapVar($userId, XSD_STRING, 'string', 'http://www.w3.org/2001/XMLSchema');
 		return $this->sforce->resetPassword($arg)->result;
 	}
+	
+	/**
+	 * Logs out the current user
+	 */
+	public function logout() {
+		$this->setHeaders("logout");
+		return $this->sforce->logout()->result;
+	}
 }
 ?>

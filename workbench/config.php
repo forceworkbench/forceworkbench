@@ -121,8 +121,8 @@ $config["header_ApiOptions"] = array(
 	);
 
 	$config["mruHeader_updateMru"] = array(
-		"label" => "Update MRU",
-		"description" => "Indicates whether to update the list of most recently used items for queries of one record",
+		"label" => "Update Recent Items Sidebar List",
+		"description" => "Indicates whether to update the list of most recently used items on the Salesforce sidebar for queries of one record",
 		"default" => false,
 		"overrideable" => true,
 		"dataType" => "boolean"
@@ -138,7 +138,7 @@ $config["header_ApiOptions"] = array(
 
 	$config["assignmentRuleHeader_useDefaultRule"] = array(
 		"label" => "Use Default Assignment Rule",
-		"description" => "Apply default Assignment Rule to apply to insert, update, and upsert operations",
+		"description" => "Apply default Assignment Rule to apply to insert, update, and upsert operations. May not be used in conjuction with Assignment Rule Id option.",
 		"default" => false,
 		"overrideable" => true,
 		"dataType" => "boolean"
@@ -152,9 +152,17 @@ $config["header_ApiOptions"] = array(
 		"dataType" => "boolean"
 	);
 
+	$config["invalidateSessionOnLogout"] = array(
+		"label" => "Invalidate Session on Logout",
+		"description" => "Invalidates the current API session when logging out of the Workbench. This option is only available when logging in with API version 13.0 and higher; otherwise it is ignored.",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+
 	$config["assignmentRuleHeader_assignmentRuleId"] = array(
 		"label" => "Assignment Rule Id",
-		"description" => "Specify an Assignment Rule Id to apply to insert, update, and upsert operations",
+		"description" => "Specify an Assignment Rule Id to apply to insert, update, and upsert operations. May not be used if Use Default Assignment Rule option is checked.",
 		"default" => null,
 		"overrideable" => true,
 		"dataType" => "string"
@@ -200,12 +208,12 @@ $config["header_ApiOptions"] = array(
 		"default" => 200,
 		"overrideable" => true,
 		"dataType" => "int",
-		"minValue" => 0,
+		"minValue" => 1,
 		"maxValue" => 200
 	);
 
 	$config["queryOptions_batchSize"] = array(
-		"label" => "Query Batch Size",
+		"label" => "Preferred Query Batch Size",
 		"description" => "Requested query batch size. This is not a guranteed value and depends on the data set being returned.",
 		"default" => 500,
 		"overrideable" => true,

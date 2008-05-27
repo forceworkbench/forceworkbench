@@ -31,35 +31,44 @@ if ($_POST['justUpdate'] == true){
 //show the query results with default object selected on a previous page, otherwise
 // just display the blank form. When the user selects the SCREEN or CSV options, the
 //query is processed by the correct function
-
-if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && isset($_POST['soql_query']) && $_POST['export_action'] == 'screen') {
-		print "<body onLoad='toggleFieldDisabled();'>";
-		require_once ('header.php');
-		show_query_form($_POST['soql_query'],'screen',$_POST['query_action'],$_SESSION['default_object']);
-		$queryTimeStart = microtime(true);
+if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator']) && $_POST['export_action'] == 'screen'){
+	print "<body onLoad='toggleFieldDisabled();'>";
+	require_once ('header.php');
+	show_query_form($_POST['soql_query'],'screen',$_POST['query_action'],$_SESSION['default_object']);
+	$queryTimeStart = microtime(true);
+	$records = query(null,'QueryMore',$_SESSION['queryLocator']);
+	$queryTimeEnd = microtime(true);
+	$queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
+	show_query_result($records,$queryTimeElapsed);
+	include_once('footer.php');
+} else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && isset($_POST['soql_query']) && $_POST['export_action'] == 'screen') {
+	print "<body onLoad='toggleFieldDisabled();'>";
+	require_once ('header.php');
+	show_query_form($_POST['soql_query'],'screen',$_POST['query_action'],$_SESSION['default_object']);
+	$queryTimeStart = microtime(true);
+	$records = query($_POST['soql_query'],$_POST['query_action']);
+	$queryTimeEnd = microtime(true);
+	$queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
+	show_query_result($records,$queryTimeElapsed);
+	include_once('footer.php');
+} elseif (isset($_POST['querySubmit']) && $_POST[querySubmit]=='Query' && $_POST[soql_query] && $_POST[export_action] == 'csv') {
+	if (!substr_count($_POST['soql_query'],"count()")){
 		$records = query($_POST['soql_query'],$_POST['query_action']);
-		$queryTimeEnd = microtime(true);
-		$queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
-		show_query_result($records,$queryTimeElapsed);
-		include_once('footer.php');
-	} elseif (isset($_POST['querySubmit']) && $_POST[querySubmit]=='Query' && $_POST[soql_query] && $_POST[export_action] == 'csv') {
-		if (!substr_count($_POST['soql_query'],"count()")){
-			$records = query($_POST['soql_query'],$_POST['query_action']);
-			export_query_csv($records);
-		} else {
-			print "<body onLoad='toggleFieldDisabled();'>";
-			require_once ('header.php');
-			show_query_form($_POST['soql_query'],'csv',$_POST['query_action'],$_SESSION['default_object']);
-			print "<p>&nbsp;</p>";
-			show_error("count() is not supported for CSV file export. Change export to Browser or choose fields and try again.");
-			include_once('footer.php');
-		}
+		export_query_csv($records);
 	} else {
 		print "<body onLoad='toggleFieldDisabled();'>";
 		require_once ('header.php');
-		show_query_form($_SESSION['soql_query'],'screen','Query');
+		show_query_form($_POST['soql_query'],'csv',$_POST['query_action'],$_SESSION['default_object']);
+		print "<p>&nbsp;</p>";
+		show_error("count() is not supported for CSV file export. Change export to Browser or choose fields and try again.");
 		include_once('footer.php');
 	}
+} else {
+	print "<body onLoad='toggleFieldDisabled();'>";
+	require_once ('header.php');
+	show_query_form($_SESSION['soql_query'],'screen','Query');
+	include_once('footer.php');
+}
 
 
 
@@ -136,11 +145,6 @@ function toggleFieldDisabled(){
 		document.getElementById('QB_filter_txt2').disabled = true;
 	}
 }
-
-function clearForm(){
-  document.getElementById('soql_query_textarea').value = '';
-}
-
 
 function updateObject(){
   document.query_form.justUpdate.value = 1;
@@ -473,17 +477,23 @@ QUERY_BUILDER_SCRIPT;
 		  "</td></tr>";
 
 
-	print "<tr><td colspan=5><input type='submit' name='querySubmit' value='Query' /> <input type='button' value='Clear' onClick='clearForm();' /></td></tr></table><p/>";
-	print "</form>\n";
+	print "<tr><td colspan=5><input type='submit' name='querySubmit' value='Query' />";
+	print "<input type='reset' value='Reset' />";
+	if (!$_SESSION['config']['autoRunQueryMore']){
+		 print "&nbsp;<input type='submit' name='queryMore' id='queryMoreButton' value='More...' disabled='true' />";
+		 print "<input type='hidden' name='queryLocator' value='". $_POST['queryLocator'] . "' />";
+	}
+	print "</td></tr></table><p/></form>\n";
 }
 
 
-function query($soql_query,$query_action){
+function query($soql_query,$query_action, $query_locator = null){
 	try{
 
 	global $mySforceConnection;
 	if ($query_action == 'Query') $query_response = $mySforceConnection->query($soql_query);
 	if ($query_action == 'QueryAll') $query_response = $mySforceConnection->queryAll($soql_query);
+	if ($query_action == 'QueryMore' && isset($query_locator)) $query_response = $mySforceConnection->queryMore($query_locator);
 
 	if (substr_count($soql_query,"count()")){
 		print "<p><a name='qr'>&nbsp;</a></p>";
@@ -498,6 +508,15 @@ function query($soql_query,$query_action){
 	} else {
 		$records = null;
 	}
+
+	if(!$query_response->done){
+		$_SESSION['queryLocator'] = $query_response->queryLocator;
+		print "<script>document.getElementById('queryMoreButton').disabled = false</script>";
+	} else {
+		$_SESSION['queryLocator'] = null;
+		print "<script>document.getElementById('queryMoreButton').disabled = true</script>";
+	}
+	
 
 	while($_SESSION['config']['autoRunQueryMore'] && !$query_response->done){
 		$query_response = $mySforceConnection->queryMore($query_response->queryLocator);
