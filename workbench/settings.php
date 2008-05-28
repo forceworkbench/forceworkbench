@@ -19,16 +19,20 @@ if(isset($_POST['submitConfigSetter'])){
  	if (isset($_POST['assignmentRuleHeader_useDefaultRule']) && isset($_POST['assignmentRuleHeader_assignmentRuleId'])){
  		$errors[] = "Can not set both 'Use Default Assignment Rule' and 'Assignment Rule Id'";
  	}
+}
 
+if(isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])){
 	if(!isset($errors)){
 	 	foreach($config as $configKey => $configValue){
-	 		if(isset($_POST[$configKey]) && $configValue['dataType'] == "boolean"){		//for boolean trues
+	 		if (isset($_POST['restoreDefaults'])){
+				setcookie($configKey,NULL,time()-3600);		//clear all config cookies if restoreDefaults selected
+	 		} else if(isset($_POST[$configKey]) && $configValue['dataType'] == "boolean"){		//for boolean trues
 				setcookie($configKey,1,time()+60*60*24*365*10);
 			} else if(isset($configValue['dataType']) && $configValue['dataType'] == "boolean"){							//for boolean falses
 				setcookie($configKey,0,time()+60*60*24*365*10);
 	 		} else if(isset($_POST[$configKey])){
 				setcookie($configKey,$_POST[$configKey],time()+60*60*24*365*10);		//for non-null strings and numbers
-			}  else {
+			} else {
 				setcookie($configKey,NULL,time()-3600);									//for null strings and numbers (remove cookie)
 			}
 	 	}
@@ -67,7 +71,7 @@ require_once('header.php');
 
 	print "<tr> <td></td> <td></td> <td></td> </tr>";
 
-	print "<tr> <td colspan='3' align='left'><input type='submit' name='submitConfigSetter' value='Apply Settings'/>&nbsp;<input type='reset' value='Cancel'/></td> </tr>";
+	print "<tr> <td colspan='3' align='left'><input type='submit' name='submitConfigSetter' value='Apply Settings'/>&nbsp;<input type='submit' name='restoreDefaults' value='Restore Defaults'/>&nbsp;<input type='reset' value='Cancel'/></td> </tr>";
 
 	print "<table>\n";
 
