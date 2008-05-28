@@ -36,7 +36,7 @@
 		if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
 			print " style='color: red;' ";
 		}
-		print " onmouseover=" . '"' . "Tip('$label[1]')". '"' . ">$label[0]</a> | ";
+		print " onmouseover=\"Tip('$label[1]')\">$label[0]</a> | ";
 	}
 	?>
 	</p>

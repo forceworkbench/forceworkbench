@@ -85,7 +85,7 @@ table.description TD{
 	border-style: solid;
 	border-color: grey;
 	border-width: thin;
-	width: 33%;
+	width: 50%;
 }
 
 table.data_table{
@@ -93,14 +93,15 @@ table.data_table{
 	border-style: solid;
 	border-width: thin;
 	border-collapse: collapse;
+	width: 80%;
 }
 
 table.data_table TD, table.data_table TH{
-
 	border-color: grey;
 	border-style: solid;
 	border-width: thin;
 	text-align: left;
+	width: 33%;
 }
 
 .show_errors{

@@ -149,8 +149,8 @@ function field_mapping_set($action,$csv_array){
 	print "<form method='POST' action='$_SERVER[PHP_SELF]'>";
 
 	if ($action == 'upsert'){
-		print "<p><strong>Map the Salesforce fields to the columns from the uploaded CSV:</strong></p>\n";
-		print "<table class='description'><tr>\n";
+		print "<p><strong>Choose the Salesforce field to use as the External Id. Be sure to also map this field below:</strong></p>\n";
+		print "<table class='data_table'><tr>\n";
 		print "<td style='color: red;'>External Id</td>";
 		print "<td><select name='_ext_id' style='width: 100%;'>\n";
 //		print "	<option value=''></option>\n";
@@ -167,11 +167,12 @@ function field_mapping_set($action,$csv_array){
 	} //end if upsert
 
 	print "<p><strong>Map the Salesforce fields to the columns from the uploaded CSV:</strong></p>\n";
-	print "<table class='description'>\n";
+	print "<table class='data_table'>\n";
 	print "<tr><th>Salesforce Field</th>";
+	print "<th>CSV Field</th>";
 	if ($_SESSION['config']['showReferenceBy'] && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
-		print "<th>Reference By</th>";
-	print "<th>CSV Field</th></tr>\n";
+		print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided in the CSV file and can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='images/questionMark.png'/></th>";
+	print "</tr>\n";
 
 	if ($action == 'insert'){
 		foreach($describeSObject_result->fields as $fields => $field){
@@ -216,15 +217,6 @@ function printPutFieldForMapping($field, $csv_array){
 		if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
 		print "><td>$field->name</td>";
 
-		if($_SESSION['config']['showReferenceBy']){
-			if(isset($field->referenceTo)){
-				$describeRefObjResult = describeSObject($field->referenceTo);
-				printRefField($field, $describeRefObjResult);
-			} else {
-				print "<td>&nbsp;</td>\n";
-			}
-		}
-
 		print "<td><select name='$field->name' style='width: 100%;'>";
 		print "	<option value=''></option>\n";
 		foreach($csv_array[0] as $col){
@@ -233,6 +225,15 @@ function printPutFieldForMapping($field, $csv_array){
 			print ">$col</option>\n";
 		}
 		print "</select></td>";
+
+		if($_SESSION['config']['showReferenceBy']){
+			if(isset($field->referenceTo) && isset($field->relationshipName)){
+				$describeRefObjResult = describeSObject($field->referenceTo);
+				printRefField($field, $describeRefObjResult);
+			} else {
+				print "<td>&nbsp;</td>\n";
+			}
+		}
 
 	    print "</tr>\n";
 }
@@ -312,7 +313,6 @@ function printRefField($field, $describeRefObjResult){
 
 function field_mapping_idOnly_set($csv_array, $showRefCol){
 	print "<tr style='color: red;'><td>Id</td>";
-	if ($showRefCol && $_SESSION['config']['showReferenceBy']) print "<td></td>";
 	print "<td><select name='Id' style='width: 100%;'>";
 	print "	<option value=''></option>\n";
 	foreach($csv_array[0] as $col){
@@ -321,6 +321,7 @@ function field_mapping_idOnly_set($csv_array, $showRefCol){
 		print ">$col</option>\n";
 	}
 	print "</select></td>";
+	if ($showRefCol && $_SESSION['config']['showReferenceBy']) print "<td></td>";
 	print"</tr>\n";
 }
 
@@ -345,18 +346,20 @@ function field_map_to_array($field_map){
 
 function field_mapping_show($field_map,$ext_id){
 	if ($ext_id){
-		print "<table class='description'>\n";
+		print "<table class='data_table'>\n";
 		print "<tr><td>External Id</td> <td>$ext_id</td></tr>\n";
 		print "</table><p/>\n";
 	}
 
-	print "<table class='description'>\n";
+	print "<table class='data_table'>\n";
 	print "<tr><th>Salesforce Field</th>";
-	if ($_SESSION['config']['showReferenceBy']) print "<th>Reference By</th>";
-	print "<th>CSV Field</th></tr>\n";
+	print "<th>CSV Field</th>";
+	if ($_SESSION['config']['showReferenceBy']) print "<th>Smart Lookup</th>";
+	print "</tr>\n";
 
 	foreach($field_map as $salesforce_field=>$fieldMapArray){
 		print "<tr><td>$salesforce_field</td>";
+		print "<td>" . $fieldMapArray['csvField'] . "</td>";
 		if ($_SESSION['config']['showReferenceBy']){
 			print "<td>";
 			if ($fieldMapArray['relatedObjectName'] && $fieldMapArray['relatedFieldName']){
@@ -364,7 +367,7 @@ function field_mapping_show($field_map,$ext_id){
 			}
 			print "</td>";
 		}
-		print "<td>" . $fieldMapArray['csvField'] . "</td></tr>\n";
+		print "</tr>\n";
 	}
 
 	print "</table>\n";

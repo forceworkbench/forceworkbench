@@ -8,7 +8,7 @@ require_once ('shared.php');
 <head>
 <meta http-equiv="Content-Language" content="UTF-8" />
 <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
-<link rel="stylesheet" href="master.css" type="text/css" />
+<link rel="stylesheet" href="style/master.css" type="text/css" />
 <title>Workbench CSV Preview</title>
 </head>
 <body>

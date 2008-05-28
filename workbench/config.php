@@ -29,8 +29,8 @@ $config["header_General"] = array(
 	);
 
 	$config["showReferenceBy"] = array(
-		"label" => "Display Reference By Column",
-		"description" => "Show the Reference By column for insert, update, and upsert operations for mapping with foreign keys via relationships.",
+		"label" => "Enable Smart Lookup",
+		"description" => "Show the Smart Lookup column for insert, update, and upsert operations for mapping with foreign keys via relationships.",
 		"default" => false,
 		"overrideable" => true,
 		"dataType" => "boolean"
@@ -121,7 +121,7 @@ $config["header_ApiOptions"] = array(
 	);
 
 	$config["mruHeader_updateMru"] = array(
-		"label" => "Update Recent Items Sidebar List",
+		"label" => "Update Recent Items on Sidebar",
 		"description" => "Indicates whether to update the list of most recently used items on the Salesforce sidebar for queries of one record",
 		"default" => false,
 		"overrideable" => true,
@@ -130,7 +130,7 @@ $config["header_ApiOptions"] = array(
 
 	$config["UserTerritoryDeleteHeader_transferToUserId"] = array(
 		"label" => "Territory Delete Transfer User",
-		"description" => "The ID of the user to whom open opportunities in that user's territory will be assigned when an opportunity's owner is removed from a territory",
+		"description" => "The ID of the user to whom open opportunities will be assigned when an opportunity's owner is removed from a territory",
 		"default" => false,
 		"overrideable" => true,
 		"dataType" => "boolean"
