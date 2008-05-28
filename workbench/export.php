@@ -53,7 +53,7 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator']) && $_POST['exp
 	include_once('footer.php');
 } elseif (isset($_POST['querySubmit']) && $_POST[querySubmit]=='Query' && $_POST[soql_query] && $_POST[export_action] == 'csv') {
 	if (!substr_count($_POST['soql_query'],"count()")){
-		$records = query($_POST['soql_query'],$_POST['query_action']);
+		$records = query($_POST['soql_query'],$_POST['query_action'],null,true);
 		export_query_csv($records);
 	} else {
 		print "<body onLoad='toggleFieldDisabled();'>";
@@ -487,7 +487,7 @@ QUERY_BUILDER_SCRIPT;
 }
 
 
-function query($soql_query,$query_action, $query_locator = null){
+function query($soql_query,$query_action,$query_locator = null,$suppressScreenOutput=false){
 	try{
 
 	global $mySforceConnection;
@@ -495,7 +495,7 @@ function query($soql_query,$query_action, $query_locator = null){
 	if ($query_action == 'QueryAll') $query_response = $mySforceConnection->queryAll($soql_query);
 	if ($query_action == 'QueryMore' && isset($query_locator)) $query_response = $mySforceConnection->queryMore($query_locator);
 
-	if (substr_count($soql_query,"count()")){
+	if (substr_count($soql_query,"count()") && $suppressScreenOutput == false){
 		print "<p><a name='qr'>&nbsp;</a></p>";
 		show_info("Query would return " . $query_response->size . " records.");
 		$records = $query_response->size;
@@ -509,12 +509,14 @@ function query($soql_query,$query_action, $query_locator = null){
 		$records = null;
 	}
 
-	if(!$query_response->done){
-		$_SESSION['queryLocator'] = $query_response->queryLocator;
-		print "<script>document.getElementById('queryMoreButton').disabled = false</script>";
-	} else {
-		$_SESSION['queryLocator'] = null;
-		print "<script>document.getElementById('queryMoreButton').disabled = true</script>";
+	if(!$suppressScreenOutput){
+		if(!$query_response->done){
+			$_SESSION['queryLocator'] = $query_response->queryLocator;
+			print "<script>document.getElementById('queryMoreButton').disabled = false</script>";
+		} else {
+			$_SESSION['queryLocator'] = null;
+			print "<script>document.getElementById('queryMoreButton').disabled = true</script>";
+		}
 	}
 	
 
