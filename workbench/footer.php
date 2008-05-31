@@ -1,12 +1,13 @@
 <?php
 include_once('shared.php');
+global $version;
 ?>
 </div>
 
 <div class='disclaimer'>
 
 	<br/>
-	Workbench v<?php echo $GLOBALS['version']; ?> <a href='about.php'>About</a><br/>
+	Workbench v<?php echo $version; ?> <a href='about.php'>About</a><br/>
 
 
 	<?php
@@ -19,8 +20,13 @@ include_once('shared.php');
 	if(isset($GLOBALS['requestTimeStart'])){
 		$requestTimeEnd = microtime(true);
 		$requestTimeElapsed = $requestTimeEnd - $GLOBALS['requestTimeStart'];
-		printf ("Request Time: %01.3f seconds", $requestTimeElapsed);
+		printf ("Request Time: %01.3f seconds<BR/>", $requestTimeElapsed);
 	}
+	
+	if(stristr($version,'beta') || stristr($version,'alpha')){
+		print "<br/><a href='http://groups.google.com/group/forceworkbench' target='_blank'>BETA TESTING: PLEASE PROVIDE FEEDBACK</a>";
+	}
+	
 	?>
 </div>
 

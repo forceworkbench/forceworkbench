@@ -314,7 +314,7 @@ function checkLatestVersion(){
 			$latestVersionAvailable = trim(curl_exec($ch));
 			curl_close($ch);
 	
-			if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable)){
+			if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !(stristr($version,'beta') || stristr($version,'alpha'))){
 				if($latestVersionAvailable != $version){
 					print "<span style='font-size: 8pt;'><a href='http://code.google.com/p/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
 				}
