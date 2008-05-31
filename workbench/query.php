@@ -31,7 +31,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 //show the query results with default object selected on a previous page, otherwise
 // just display the blank form. When the user selects the SCREEN or CSV options, the
 //query is processed by the correct function
-if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator']) && $_POST['export_action'] == 'screen'){
+if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
 	show_query_form($_POST['soql_query'],'screen',$_POST['query_action'],$_SESSION['default_object']);
@@ -556,7 +556,13 @@ function show_query_result($records, $queryTimeElapsed){
 	print " seconds:</p>";
 	
 	if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
-		 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>";	
+		
+		if($_SESSION['config']['autoJumpToQueryResults']){
+			print "<form method='POST' name='queryMoreForm' action='$_SERVER[PHP_SELF]#qr'>\n";
+		} else {
+			print "<form method='POST' name='queryMoreForm' action='$_SERVER[PHP_SELF]'>\n";
+		}
+		 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p></form>";	
 	}
 
     print "<table class='data_table'>\n";
@@ -605,13 +611,13 @@ function show_query_result($records, $queryTimeElapsed){
 		}
 		print "</tr>\n";
         } else{
-        	print "</td></tr>";
+        	print "</td></tr>\n";
         }
       }
       print "</table>";
 	  
       if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
-	    print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";	
+	    print "<p><<input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";	
 	  }
 	  
 	  print	"</div>\n";
