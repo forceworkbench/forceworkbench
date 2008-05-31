@@ -36,6 +36,14 @@ $config["header_General"] = array(
 		"dataType" => "boolean"
 	);
 
+	$config["autoJumpToQueryResults"] = array(
+		"label" => "Automatically Jump to Query Results",
+		"description" => "When displaying query results in the browser, automatically jump to the top of the query results.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+
 	$config["debug"] = array(
 		"label" => "Debug Mode",
 		"description" => "Enables debugging mode for showing supervariables and SOAP messages.",

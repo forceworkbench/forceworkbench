@@ -265,7 +265,11 @@ function build_query(){
 QUERY_BUILDER_SCRIPT;
 
 
-	print "<form method='POST' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
+	if($_SESSION['config']['autoJumpToQueryResults']){
+		print "<form method='POST' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
+	} else {
+		print "<form method='POST' name='query_form' action='$_SERVER[PHP_SELF]'>\n";
+	}
 	print "<input type='hidden' name='justUpdate' value='0' />";
 	print "<p><strong>Choose the object, fields, and critera to build a SOQL query below:</strong></p>\n";
 	print "<table border='0' width=1>\n";
@@ -479,11 +483,7 @@ QUERY_BUILDER_SCRIPT;
 
 	print "<tr><td colspan=5><input type='submit' name='querySubmit' value='Query' />";
 	print "<input type='reset' value='Reset' />";
-	if (!$_SESSION['config']['autoRunQueryMore']){
-		 print "&nbsp;<input type='submit' name='queryMore' id='queryMoreButton' value='More...' disabled='true' />";
-		 print "<input type='hidden' name='queryLocator' value='". $_POST['queryLocator'] . "' />";
-	}
-	print "</td></tr></table><p/></form>\n";
+	print "</td></tr></table><p/></form><a name='qr'></a>\n";
 }
 
 
@@ -496,7 +496,6 @@ function query($soql_query,$query_action,$query_locator = null,$suppressScreenOu
 	if ($query_action == 'QueryMore' && isset($query_locator)) $query_response = $mySforceConnection->queryMore($query_locator);
 
 	if (substr_count($soql_query,"count()") && $suppressScreenOutput == false){
-		print "<p><a name='qr'>&nbsp;</a></p>";
 		show_info("Query would return " . $query_response->size . " records.");
 		$records = $query_response->size;
 		include_once('footer.php');
@@ -509,16 +508,11 @@ function query($soql_query,$query_action,$query_locator = null,$suppressScreenOu
 		$records = null;
 	}
 
-	if(!$suppressScreenOutput){
-		if(!$query_response->done){
-			$_SESSION['queryLocator'] = $query_response->queryLocator;
-			print "<script>document.getElementById('queryMoreButton').disabled = false</script>";
-		} else {
-			$_SESSION['queryLocator'] = null;
-			print "<script>document.getElementById('queryMoreButton').disabled = true</script>";
-		}
-	}
-	
+	if(!$query_response->done){
+		$_SESSION['queryLocator'] = $query_response->queryLocator;
+	} else {
+		$_SESSION['queryLocator'] = null;
+	}	
 
 	while($_SESSION['config']['autoRunQueryMore'] && !$query_response->done){
 		$query_response = $mySforceConnection->queryMore($query_response->queryLocator);
@@ -543,12 +537,16 @@ function show_query_result($records, $queryTimeElapsed){
 	//Check if records were returned
 	if ($records) {
     try {
-    print "<a name=qr></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
+    print "<div style='clear: both;'><br/><h2>Query Results</h2>\n";
     print "<p>Returned " . count($records) . " record";
     if (count($records) !== 1) print 's';
     print " in ";
 	printf ("%01.3f", $queryTimeElapsed);
 	print " seconds:</p>";
+	
+	if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
+		 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>";	
+	}
 
     print "<table class='data_table'>\n";
 	//Print the header row on screen
@@ -599,7 +597,13 @@ function show_query_result($records, $queryTimeElapsed){
         	print "</td></tr>";
         }
       }
-      print "</table></div>\n";
+      print "</table>";
+	  
+      if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
+	    print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";	
+	  }
+	  
+	  print	"</div>\n";
     } catch (Exception $e) {
       	$errors = null;
 		$errors = $e->getMessage();
