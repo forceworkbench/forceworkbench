@@ -58,7 +58,7 @@ print <<<actionJumper
 			<option value='delete.php'>Delete</option>
 			<option value='undelete.php'>Undelete</option>
 			<option value='purge.php'>Purge</option>
-			<option value='export.php'>Export</option>
+			<option value='query.php'>Query</option>
 			<option value='settings.php'>Settings</option>
 		</select></p>
 actionJumper;

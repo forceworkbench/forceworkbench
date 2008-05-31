@@ -26,7 +26,7 @@
 	'delete.php'=>array('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted'),
 	'undelete.php'=>array('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.'),
 	'purge.php' =>array('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.'),
-	'export.php'=>array('Export','Queries the data in your organization and displays on the screen or exports to a CSV file'),
+	'query.php'=>array('Query','Queries the data in your organization and displays on the screen or exports to a CSV file'),
 	'settings.php'=>array('Settings','Configure the Workbench'),
 	'logout.php'=>array('Logout','Logs out of your Salesforce organization')
 	);
