@@ -504,7 +504,7 @@ function csv_file_to_array($file){
 
 
 function csv_array_show($csv_array){
-	print "<table class='field_mapping'>\n";
+	print "<table class='data_table'>\n";
 	print "<tr>";
 		for($col=0; $col < count($csv_array[0]); $col++){
 			print "<th>";
