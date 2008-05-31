@@ -150,7 +150,7 @@ function field_mapping_set($action,$csv_array){
 
 	if ($action == 'upsert'){
 		print "<p><strong>Choose the Salesforce field to use as the External Id. Be sure to also map this field below:</strong></p>\n";
-		print "<table class='data_table'><tr>\n";
+		print "<table class='field_mapping'><tr>\n";
 		print "<td style='color: red;'>External Id</td>";
 		print "<td><select name='_ext_id' style='width: 100%;'>\n";
 //		print "	<option value=''></option>\n";
@@ -167,7 +167,7 @@ function field_mapping_set($action,$csv_array){
 	} //end if upsert
 
 	print "<p><strong>Map the Salesforce fields to the columns from the uploaded CSV:</strong></p>\n";
-	print "<table class='data_table'>\n";
+	print "<table class='field_mapping'>\n";
 	print "<tr><th>Salesforce Field</th>";
 	print "<th>CSV Field</th>";
 	if ($_SESSION['config']['showReferenceBy'] && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
@@ -346,12 +346,12 @@ function field_map_to_array($field_map){
 
 function field_mapping_show($field_map,$ext_id){
 	if ($ext_id){
-		print "<table class='data_table'>\n";
+		print "<table class='field_mapping'>\n";
 		print "<tr><td>External Id</td> <td>$ext_id</td></tr>\n";
 		print "</table><p/>\n";
 	}
 
-	print "<table class='data_table'>\n";
+	print "<table class='field_mapping'>\n";
 	print "<tr><th>Salesforce Field</th>";
 	print "<th>CSV Field</th>";
 	if ($_SESSION['config']['showReferenceBy']) print "<th>Smart Lookup</th>";
@@ -375,7 +375,7 @@ function field_mapping_show($field_map,$ext_id){
 
 
 function field_mapping_idOnly_show($field_map){
-	print "<table class='data_table'>\n";
+	print "<table class='field_mapping'>\n";
 	print "<tr><th>Salesforce Field</th>";
 	print "<th>CSV Field</th>";
 	print "</tr>\n";
@@ -504,7 +504,7 @@ function csv_file_to_array($file){
 
 
 function csv_array_show($csv_array){
-	print "<table class='data_table'>\n";
+	print "<table class='field_mapping'>\n";
 	print "<tr>";
 		for($col=0; $col < count($csv_array[0]); $col++){
 			print "<th>";
@@ -681,7 +681,7 @@ function show_put_results($results,$api_call){
 	print "</table><br/>";
 	$results_table = ob_get_clean();
 	show_info("There were $success_count successes and $error_count errors.");
-	print "<br/>\n<table class='data_table'>\n";
+	print "<br/>\n<table class='field_mapping'>\n";
 	print "<td>1</td> <th>ID</th> <th>Result</th> <th>Status</th>\n";
 	print "<p>$results_table</p>";
 }

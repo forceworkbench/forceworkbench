@@ -93,16 +93,35 @@ table.data_table{
 	border-style: solid;
 	border-width: thin;
 	border-collapse: collapse;
-	width: 80%;
 }
 
 table.data_table TD, table.data_table TH{
+	margin: 0;
+	padding: 2;
+	border-color: grey;
+	border-style: solid;
+	border-width: thin;
+	text-align: left;
+	vertical-align: top;	
+}
+
+table.field_mapping{
+	border-color: #888;
+	border-style: solid;
+	border-width: thin;
+	border-collapse: collapse;
+	width: 80%;
+}
+
+table.field_mapping TD, table.field_mapping TH{
+	padding: 2;
 	border-color: grey;
 	border-style: solid;
 	border-width: thin;
 	text-align: left;
 	width: 33%;
 }
+
 
 .show_errors{
  	color: red;
