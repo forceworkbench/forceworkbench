@@ -6,11 +6,11 @@ require_once('shared.php');
 //of the action buttons. If so, proceed to that page; otherwise,
 //show the form to do so.
 
-if ($_POST[actionJump]){
-	$_SESSION[default_object] = $_POST[default_object];
+if (isset($_POST['actionJump'])){
+	$_SESSION['default_object'] = $_POST['default_object'];
 	header("Location: $_POST[actionJump]");
 } 
-elseif ($_POST[select] && (!$_POST[actionJump] || !$_SESSION[default_object])){
+elseif (isset($_POST['select']) && (!isset($_POST['actionJump']) || !isset($_SESSION['default_object']))){
 	include_once('header.php');
 	show_error("Choose an object and an action to which to jump.");
 	show_select_form();
@@ -66,7 +66,7 @@ actionJumper;
 	//Describe a list of all the objects in the user's org and display
 	//in a drop down select box
 	print "<p><strong>Object: &nbsp; </strong>";
-	myGlobalSelect($_SESSION[default_object]);
+	myGlobalSelect($_SESSION['default_object']);
 
 
 	print "<p/><input type='submit' name='select' value='Select' />";

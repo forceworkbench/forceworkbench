@@ -12,7 +12,7 @@ if(isset($_POST['soql_query'])){
 }
 
 
-if ($_POST['justUpdate'] == true){
+if (isset($_POST['justUpdate'])){
 	if (isset($_POST['default_object'])) $_SESSION['default_object'] = $_POST['default_object'];
 	unset($_POST['QB_field_sel']);
 	unset($_POST['QB_filter_field_sel']);

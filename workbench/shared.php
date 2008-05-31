@@ -35,7 +35,7 @@ function myGlobalSelect($default_object){
 	if (!$_SESSION['myGlobal'] || !$_SESSION['config']['cacheDescribeGlobal']){
 		try{
 		global $mySforceConnection;
-		$_SESSION[myGlobal] = $mySforceConnection->describeGlobal();
+		$_SESSION['myGlobal'] = $mySforceConnection->describeGlobal();
 		} catch (Exception $e) {
 			$errors[] = $e->getMessage();
 			show_error($errors);
@@ -146,7 +146,7 @@ function field_mapping_set($action,$csv_array){
 	}
 	}
 
-	print "<form method='POST' action='$_SERVER[PHP_SELF]'>";
+	print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
 
 	if ($action == 'upsert'){
 		print "<p><strong>Choose the Salesforce field to use as the External Id. Be sure to also map this field below:</strong></p>\n";
@@ -426,15 +426,15 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 		field_mapping_show($field_map,$ext_id);
 	}
 
-	print "<form method='POST' action='$_SERVER[PHP_SELF]'>";
+	print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
 	print "<p><input type='submit' name='action' value='$action' /></p>\n";
 	print "</form>\n";
 	}
 }
 
 function form_upload_objectSelect_show($file_input_name,$showObjectSelect = FALSE){
-	print "<form enctype='multipart/form-data' method='post' action='$_SERVER[PHP_SELF]'>\n";
-	print "<input type='hidden' name='MAX_FILE_SIZE' value='$_SESSION[config][maxFileSize]' />\n";
+	print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n";
+	print "<input type='hidden' name='MAX_FILE_SIZE' value='" . $_SESSION['config']['maxFileSize'] . "' />\n";
 	print "<p><input type='file' name='$file_input_name' size=44 /></p>\n";
 	if ($showObjectSelect){
 		 myGlobalSelect($_SESSION['default_object']);
@@ -447,24 +447,22 @@ function form_upload_objectSelect_show($file_input_name,$showObjectSelect = FALS
 }
 
 function csv_upload_valid_check($file){
-	//print "Initializing upload...<br/>";
-	//print "Name: $file[name]<br/>";
-	//print "Type: $file[type]<br/>";
-	//print "Size: $file[size] bytes<br/>";
-	//print "Temp Name: $file[tmp_name]<br/>";
-	//print "Error: $file[error]<br/>";
-
 	if($file['error'] !== 0){
 		$upload_error_codes = array(
 		       0=>"There is no error, the file uploaded with success",
 		       1=>"The file uploaded is too large. Please try again. (Error 1)", //as per PHP config
 		       2=>"The file uploaded is too large. Please try again. (Error 2)", //as per form config
-		       3=>"The file uploaded was only partially uploaded.  Please try again. (error 3)",
+		       3=>"The file uploaded was only partially uploaded.  Please try again. (Error 3)",
 		       4=>"No file was uploaded.  Please try again. (Error 4)",
 		       6=>"Missing a temporary folder.  Please try again. (Error 6)",
 		       7=>"Failed to write file to disk.  Please try again. (Error 7)",
 		       8=>"File upload stopped by extension.  Please try again. (Error 8)"
 			);
+			
+			if($_SESSION['config']['maxFileSize']['overrideable']){
+				$upload_error_codes[2] = "The file uploaded is too large. Please try again or adjust in Settings. (Error 2)";
+			}
+			
 		return($upload_error_codes[$file['error']]);
 	}
 
@@ -536,7 +534,7 @@ function idOnlyCallIds($api_call,$field_map,$csv_array,$show_results){
 	} else {
 
 	$id_array =  array();
-	$id_col = array_search($field_map[Id],$csv_array[0]);
+	$id_col = array_search($field_map['Id'],$csv_array[0]);
 
 	for($row=1; $row < count($csv_array); $row++){
 		if ($csv_array[$row][$id_col]){
@@ -732,7 +730,7 @@ function put($action){
 		require_once('header.php');
 		print "<h1>" . ucwords($action) . " Results</h1>";
 		if ($action == 'insert') $api_call = 'create'; else $api_call = $action;
-		if ($action == 'upsert') $ext_id = $_SESSION[_ext_id]; else $ext_id = NULL;
+		if ($action == 'upsert') $ext_id = $_SESSION['_ext_id']; else $ext_id = NULL;
 		putSObjects($api_call,$ext_id,$_SESSION['field_map'],$_SESSION['csv_array'],true);
 		include_once('footer.php');
 		unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name']);
@@ -741,9 +739,9 @@ function put($action){
 	elseif(isset($_POST['action']) && $_POST['action'] == 'Map Fields'){
 		require_once('header.php');
 		array_pop($_POST); //remove header row
-		if ($_POST[_ext_id]){
-			$_SESSION[_ext_id] = $_POST[_ext_id];
-			$_POST[_ext_id] = NULL;
+		if ($_POST['_ext_id']){
+			$_SESSION['_ext_id'] = $_POST['_ext_id'];
+			$_POST['_ext_id'] = NULL;
 		}
 		$_SESSION['field_map'] = field_map_to_array($_POST);
 		field_mapping_confirm($confirm_action,$_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id']);
@@ -790,30 +788,30 @@ function idOnlyCall($action){
 	if($_POST['action'] == 'Confirm ' . ucfirst($action)){
 		require_once('header.php');
 		print "<h1>" . ucfirst($action) . " Results</h1>";
-		idOnlyCallIds($action,$_SESSION[field_map],$_SESSION[csv_array],true);
-		unset($_SESSION[field_map],$_SESSION[csv_array],$_SESSION[update_file_tmp_name]);
+		idOnlyCallIds($action,$_SESSION['field_map'],$_SESSION['csv_array'],true);
+		unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['update_file_tmp_name']);
 		include_once('footer.php');
 	}
 
 	elseif($_POST['action'] == 'Map Fields'){
 		require_once('header.php');
 		array_pop($_POST); //remove header row
-		$_SESSION[field_map] = $_POST;
-		field_mapping_confirm('Confirm ' . ucfirst($action),$_SESSION[field_map],$_SESSION[csv_array],null);
+		$_SESSION['field_map'] = $_POST;
+		field_mapping_confirm('Confirm ' . ucfirst($action),$_SESSION['field_map'],$_SESSION['csv_array'],null);
 		include_once('footer.php');
 	}
 
-	elseif ($_FILES[file]){
+	elseif ($_FILES['file']){
 		require_once('header.php');
-		if (csv_upload_valid_check($_FILES[file])){
+		if (csv_upload_valid_check($_FILES['file'])){
 			form_upload_objectSelect_show('file',FALSE);
-			show_error(csv_upload_valid_check($_FILES[file]));
+			show_error(csv_upload_valid_check($_FILES['file']));
 			include_once('footer.php');
 		} else {
-			$csv_file_name = basename($_FILES[file][name]);
-			$_SESSION[file_tmp_name] = $_FILES[file][tmp_name];
-			$_SESSION[csv_array] = csv_file_to_array($_SESSION[file_tmp_name]);
-			$csv_array_count = count($_SESSION[csv_array]) - 1;
+			$csv_file_name = basename($_FILES['file']['name']);
+			$_SESSION['file_tmp_name'] = $_FILES['file']['tmp_name'];
+			$_SESSION['csv_array'] = csv_file_to_array($_SESSION['file_tmp_name']);
+			$csv_array_count = count($_SESSION['csv_array']) - 1;
 			if (!$csv_array_count) {
 				show_error("The file uploaded contains no records. Please try again.");
 				include_once('footer.php');
@@ -828,7 +826,7 @@ function idOnlyCall($action){
 			if ($csv_array_count !== 1) $info .= 's';
 				show_info($info);
 				print "<br/>";
-				field_mapping_set($action,$_SESSION[csv_array]);
+				field_mapping_set($action,$_SESSION['csv_array']);
 			}
 		}
 		else {
