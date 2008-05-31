@@ -12,7 +12,7 @@ if(isset($_POST['soql_query'])){
 }
 
 
-if (isset($_POST['justUpdate'])){
+if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 	if (isset($_POST['default_object'])) $_SESSION['default_object'] = $_POST['default_object'];
 	unset($_POST['QB_field_sel']);
 	unset($_POST['QB_filter_field_sel']);
@@ -507,6 +507,8 @@ function query($soql_query,$query_action,$query_locator = null,$suppressScreenOu
 	} else {
 		$records = null;
 	}
+	
+	$_SESSION['totalQuerySize'] = $query_response->size;
 
 	if(!$query_response->done){
 		$_SESSION['queryLocator'] = $query_response->queryLocator;
@@ -538,8 +540,17 @@ function show_query_result($records, $queryTimeElapsed){
 	if ($records) {
     try {
     print "<div style='clear: both;'><br/><h2>Query Results</h2>\n";
-    print "<p>Returned " . count($records) . " record";
-    if (count($records) !== 1) print 's';
+    if(isset($_SESSION['queryLocator']) && !$_SESSION['config']['autoRunQueryMore']){
+    	preg_match("/-(\d+)/",$_SESSION['queryLocator'],$lastRecord);
+    	print "<p>Returned records " . ($lastRecord[1] - count($records) + 1) . " - " . $lastRecord[1] . " of ";
+    } else if (!$_SESSION['config']['autoRunQueryMore']){
+    	print "<p>Returned records " . ($_SESSION['totalQuerySize'] - count($records) + 1) . " - " . $_SESSION['totalQuerySize'] . " of ";
+    } else {
+    	print "<p>Returned ";
+    }
+    
+    print $_SESSION['totalQuerySize'] . " total record";
+    if ($_SESSION['totalQuerySize'] !== 1) print 's';
     print " in ";
 	printf ("%01.3f", $queryTimeElapsed);
 	print " seconds:</p>";
