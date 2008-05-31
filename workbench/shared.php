@@ -1,5 +1,5 @@
 <?php
-$version = "2.0.12 Alpha 5";
+$version = "2.0.12 Alpha 6";
 
 function show_error($errors){
 	print "<div class='show_errors'>\n";
@@ -371,28 +371,23 @@ function field_mapping_show($field_map,$ext_id){
 	}
 
 	print "</table>\n";
-
-
-//	foreach($field_map as $fieldMapKey=>$fieldMapValue){
-//		$alreadyMatchedKey = $alreadyMatchedKey; //must be here for variable scope and passing value from last interation
-//		if(preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)){ //check to see if field map key matches Field:Relationship pattern
-//			preg_match('/^(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches); //match relationship field map values Relationship.Object.Field patern
-//			foreach($field_map as $fieldMapIntKey=>$fieldMapIntValue){ //interate to find the matching field:value pair with the Reference By value
-//				if($fieldMapIntKey == $keyMatches[1] && $fieldMapIntValue){
-//					if(isset($valueMatches[0])){ //do this for FK lookups
-//						print "<tr><td>$fieldMapIntKey</td><td>$valueMatches[2].$valueMatches[3]</td><td>$fieldMapIntValue</td></tr>\n";
-//					} else if ($fieldMapValue == "Id"){ //do this for Ids
-//						print "<tr><td>$fieldMapIntKey</td><td>Id</td><td>$fieldMapIntValue</td></tr>\n";
-//					}
-//					$alreadyMatchedKey = $keyMatches[1];
-//				}
-//			}
-//		} else if ($fieldMapKey != $alreadyMatchedKey && $fieldMapValue) { //otherwise, do this for normal fields
-//			print "<tr><td>$fieldMapKey</td><td>$keyMatches[0]&nbsp;</td><td>$fieldMapValue</td></tr>\n";
-//		}
-//	}
 }
 
+
+function field_mapping_idOnly_show($field_map){
+	print "<table class='data_table'>\n";
+	print "<tr><th>Salesforce Field</th>";
+	print "<th>CSV Field</th>";
+	print "</tr>\n";
+
+	foreach($field_map as $salesforce_field=>$csv_field){
+		print "<tr><td>$salesforce_field</td>";
+		print "<td>$csv_field</td></tr>\n";
+	}
+
+	print "</table>\n";
+
+}
 
 function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 	if (!($field_map && $csv_array)){
@@ -406,7 +401,13 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 			exit();
 		} else {
 		ob_start();
-		field_mapping_show($field_map,null);
+		
+		if(($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')){
+			field_mapping_idOnly_show($field_map);
+		} else {
+			field_mapping_show($field_map,null);
+		}
+		
 		$id_col = array_search($field_map['Id'],$csv_array[0]);
 		for($row=1,$id_count = 0; $row < count($csv_array); $row++){
 			if ($csv_array[$row][$id_col]){
@@ -818,8 +819,8 @@ function idOnlyCall($action){
 				include_once('footer.php');
 				exit();
 			}
-			elseif ($csv_array_count > 5000) {
-				show_error("The file uploaded contains more than 5000 records. The size of the dataset is limited for performance reasons. Please try again.");
+			elseif ($csv_array_count > $_SESSION['config']['maxFileLengthRows']) {
+				show_error("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.");
 				include_once('footer.php');
 				exit();
 			}
