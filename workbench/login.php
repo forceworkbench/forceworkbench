@@ -309,14 +309,18 @@ function checkLatestVersion(){
 	try{
 		if(extension_loaded('curl')){
 			$ch = curl_init();
-			curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
+			if(stristr($version,'beta')){
+				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailableBeta.txt');
+			} else {
+				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');	
+			}			
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			$latestVersionAvailable = trim(curl_exec($ch));
 			curl_close($ch);
 	
-			if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !(stristr($version,'beta') || stristr($version,'alpha'))){
+			if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !stristr($version,'alpha')){
 				if($latestVersionAvailable != $version){
-					print "<span style='font-size: 8pt;'><a href='http://code.google.com/p/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
+					print "<span style='font-size: 8pt; font-weight: bold;'><a href='http://code.google.com/p/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
 				}
 			}
 		}
