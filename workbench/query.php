@@ -617,7 +617,7 @@ function show_query_result($records, $queryTimeElapsed){
       print "</table>";
 	  
       if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
-	    print "<p><<input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";	
+	    print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";	
 	  }
 	  
 	  print	"</div>\n";
