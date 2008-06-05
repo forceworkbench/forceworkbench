@@ -23,7 +23,7 @@ $config["header_General"] = array(
 	$config["abcOrder"] = array(
 		"label" => "Alphabetize Field Names",
 		"description" => "Alphabetizes field names for across application. Otherwise, field names are displayed in the order returned by Salesforce.",
-		"default" => false,
+		"default" => true,
 		"overrideable" => true,
 		"dataType" => "boolean"
 	);
@@ -143,7 +143,7 @@ $config["header_deleteOptions"] = array(
 	$config["UserTerritoryDeleteHeader_transferToUserId"] = array(
 		"label" => "Territory Delete Transfer User",
 		"description" => "The ID of the user to whom open opportunities will be assigned when an opportunity's owner is removed from a territory",
-		"default" => false,
+		"default" => null,
 		"overrideable" => true,
 		"dataType" => "string"
 	);
@@ -163,9 +163,9 @@ $config["header_queryOptions"] = array(
 	);
 
 	$config["autoRunQueryMore"] = array(
-		"label" => "Automatically Retrieve All Query Results",
-		"description" => "Automatically retrieve all query results with queryMore() API call; otherwise, 'More...' button is show when additional results are available.",
-		"default" => true,
+		"label" => "Automatically Retrieve More Query Results",
+		"description" => "Automatically retrieve all query results with queryMore() API call; otherwise, 'More...' button is show when additional results are available. If a large query is run with this setting enabled, the operation may be subject to unexpected timeouts.",
+		"default" => false,
 		"overrideable" => true,
 		"dataType" => "boolean"
 	);
@@ -215,7 +215,7 @@ $config["header_Performance"] = array(
 		"label" => "Enable Compression",
 		"description" => "Enables GZIP compression to improve performance of API call response time. Recommended to leave enabled unless SOAP capturing is necessary.",
 		"default" => true,
-		"overrideable" => true, //TODO: Set back to false
+		"overrideable" => true,
 		"dataType" => "boolean"
 	);
 	
