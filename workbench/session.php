@@ -5,8 +5,6 @@ if(!isset($GLOBALS['requestTimeStart'])){
 
 session_start();
 if (!isset($_SESSION['sessionId']) && strcmp('settings.php',basename($_SERVER['PHP_SELF']))) {
-//	echo basename($_SERVER['PHP_SELF']);
-//	echo strcmp('settings.php',basename($_SERVER['PHP_SELF']));
   header('Location: login.php');
   exit;
 } else {

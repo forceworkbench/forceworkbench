@@ -261,6 +261,11 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		$wsdl = 'soapclient/sforce.130.partner.wsdl';
 		$mySforceConnection = new SforcePartnerClient();
 	    $mySforceConnection->createConnection($wsdl);
+	    
+	    if($_SESSION['config']['callOptions_client'] || $_SESSION['config']['callOptions_defaultNamespace']){
+				$header = new CallOptions($_SESSION['config']['callOptions_client'], $_SESSION['config']['callOptions_defaultNamespace']);
+				$mySforceConnection->setCallOptions($header);
+		}
 
 	    if($username && $password && !$sessionId){
 	    	if($serverUrl){

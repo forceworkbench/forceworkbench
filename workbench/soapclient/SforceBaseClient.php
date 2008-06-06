@@ -136,13 +136,7 @@ class SforceBaseClient {
 	 * @return LoginResult
 	 */
 	public function login($username, $password) {
-		$this->sforce->__setSoapHeaders(NULL);
-		if ($this->callOptions != NULL) {
-			$this->sforce->__setSoapHeaders(array($this->callOptions));
-		}
-		if ($this->loginScopeHeader != NULL) {
-			$this->sforce->__setSoapHeaders(array($this->loginScopeHeader));
-		}
+		$this->setHeaders("login");
 		$result = $this->sforce->login(array (
          'username' => $username,
          'password' => $password
@@ -175,9 +169,11 @@ class SforceBaseClient {
 
 	private function setHeaders($call=NULL) {
 		$this->sforce->__setSoapHeaders(NULL);
-		$header_array = array (
-		$this->sessionHeader
-		);
+		$header_array = array();
+		
+		if(isset($this->sessionHeader)){
+			array_push($header_array, $this->sessionHeader);
+		}
 
 		$header = $this->callOptions;
 		if ($header != NULL) {
