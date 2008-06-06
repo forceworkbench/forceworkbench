@@ -48,7 +48,7 @@ $config["header_General"] = array(
 		"label" => "Debug Mode",
 		"description" => "Enables debugging mode for showing supervariables and SOAP messages.",
 		"default" => false,
-		"overrideable" => false,
+		"overrideable" => true,
 		"dataType" => "boolean"
 	);
 	
@@ -243,6 +243,57 @@ $config["header_Performance"] = array(
 		"default" => 2000,
 		"overrideable" => false,
 		"dataType" => "int"
+	);
+
+$config["header_proxyOptions"] = array(
+	"label" => "Proxy Options",
+	"display" => true,
+	"isHeader" => true
+);
+
+	$config["proxyEnabled"] = array(
+		"label" => "Connect with Proxy",
+		"description" => "Check this box to use the proxy information below to connect to Salesforce.",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+	
+	$config["proxyHost"] = array(
+		"label" => "Proxy Host",
+		"description" => "Proxy Host",
+		"default" => null,
+		"overrideable" => true,
+		"dataType" => "string"
+	);
+	
+	
+	$config["proxyPort"] = array(
+		"label" => "Proxy Port Number",
+		"description" => "Proxy Port Number",
+		"default" => null,
+		"overrideable" => true,
+		"dataType" => "int",
+		"minValue" => 0,
+		"maxValue" => 65536
+	);
+	
+	
+	$config["proxyUsername"] = array(
+		"label" => "Proxy Username",
+		"description" => "Proxy Username",
+		"default" => null,
+		"overrideable" => true,
+		"dataType" => "string"
+	);
+	
+	
+	$config["proxyPassword"] = array(
+		"label" => "Proxy Password",
+		"description" => "Proxy Password",
+		"default" => null,
+		"overrideable" => true,
+		"dataType" => "password"
 	);
 	
 

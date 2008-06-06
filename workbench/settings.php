@@ -62,6 +62,8 @@ require_once('header.php');
 						print "/></td>\n";
 				} else if  ($configValue['dataType'] == "string" || $configValue['dataType'] == "int"){
 					print "<input name='$configKey' id='$configKey' type='text' value='". $_SESSION['config'][$configKey] . "' size='30'/></td>\n";
+				} else if  ($configValue['dataType'] == "password"){
+					print "<input name='$configKey' id='$configKey' type='password' value='". $_SESSION['config'][$configKey] . "' size='30'/></td>\n";
 				} else {
 					print "</td>\n";
 				}
