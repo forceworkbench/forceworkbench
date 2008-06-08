@@ -1,5 +1,5 @@
 <?php
-//require_once ('session.php');
+require_once ('session.php');
 require_once ('shared.php');
 require_once ('header.php');
 ?>
@@ -23,9 +23,10 @@ web tab for more convenient access.
 <p>
 <strong>
 Workbench v<?php echo $GLOBALS['version']; ?><br/>
-Developed by Ryan Brainard<br/>
 </strong>
 Distributed under the Open Source BSD License.<br/>
+Developed by Ryan Brainard<br/>
+
 </p>
 
 <p>

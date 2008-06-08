@@ -30,9 +30,18 @@ a{
 	text-align: center;
 }
 
-#navmenu a:hover{
+#setupMenu{
+	float: right;
+}
+
+#setupMenu a{
+	font-size: 11px;
+}
+
+#navmenu a:hover, #setupMenu a:hover{
 	color: red;
 }
+
 
 h1{
 	color: red;

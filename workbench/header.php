@@ -12,13 +12,39 @@
 <body>
 <script type="text/javascript" src="script/wz_tooltip.js"></script>
 <div id='main_block'>
-<div id='navmenu' class='clear_both'>
-	<img src="images/workbench_logo.png" width="446" height="90" alt="Workbench logo" border="0" />
-	<p>
+
+<div id='setupMenu'>
+	<?php
+	$setupBar_items = array ();
+	
+	if(!isset($_SESSION['sessionId']) || 'logout.php' == basename($_SERVER['PHP_SELF'])){
+		$setupBar_items['login.php'] = array('Login','Logs into your Salesforce organization');
+	} else {
+		$setupBar_items['logout.php'] = array('Logout','Logs out of your Salesforce organization');
+	}
+	$setupBar_items['settings.php'] = array('Settings','Configure the Workbench');
+	$setupBar_items['about.php'] = array('About','Learn about the Workbench');
+	
+	foreach($setupBar_items as $href => $label){
+		print "<a href='$href'";
+		if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
+			print " style='color: red;'";
+		}
+		print " onmouseover=\"Tip('$label[1]')\">$label[0]</a>&nbsp;&nbsp;";
+	}
+	?>
+</div>
+
+<div style="clear: both; text-align: center"><p>
+<!-- <img src="images/workbench_logo.png" width="446" height="90" alt="Workbench logo" border="0" /> -->
+<img src="images/workbench_logo60.png" width="297" height="60" alt="Workbench logo" border="0" />
+</p></div>
+
+<div id='navmenu' style="clear: both;">
 	<?php
 	$navbar_items = array (
-	'login.php'=>array('Login','Logs into your Salesforce organization'),
-	'select.php'=>array('Select','Selects an action to perform on an object'),
+//	'login.php'=>array('Login','Logs into your Salesforce organization'),
+//	'select.php'=>array('Select','Selects an action to perform on an object'),
 	'describe.php'=>array('Describe','Describes the attributes, fields, record types, and child relationships of an object'),
 	'insert.php'=>array('Insert','Creates new records from a CSV file'),
 	'upsert.php'=>array('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id'),
@@ -28,8 +54,8 @@
 	'purge.php' =>array('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.'),
 	'query.php'=>array('Query','Queries the data in your organization and displays on the screen or exports to a CSV file'),
 	'search.php'=>array('Search','Search the data in your organization across multiple objects'),
-	'settings.php'=>array('Settings','Configure the Workbench'),
-	'logout.php'=>array('Logout','Logs out of your Salesforce organization')
+//	'settings.php'=>array('Settings','Configure the Workbench'),
+//	'logout.php'=>array('Logout','Logs out of your Salesforce organization')
 	);
 	print "| ";
 	foreach($navbar_items as $href => $label){
@@ -40,11 +66,11 @@
 		print " onmouseover=\"Tip('$label[1]')\">$label[0]</a> | ";
 	}
 	?>
-	</p>
 </div>
+<p/>
 <?php
 global $mySforceConnection;
-if ($_SESSION['sessionId'] && $mySforceConnection){
+if ($_SESSION['sessionId'] && $mySforceConnection && 'logout.php' != basename($_SERVER['PHP_SELF'])){
 
 	if(!$_SESSION['getUserInfo'] || !$_SESSION['config']['cacheGetUserInfo']){
 		try{
@@ -52,6 +78,7 @@ if ($_SESSION['sessionId'] && $mySforceConnection){
 			$_SESSION['getUserInfo'] = $mySforceConnection->getUserInfo();
 
 		} catch (Exception $e) {
+			print "<p/>";
 			$errors[] = $e->getMessage();
 			show_error($errors);
 			include_once('footer.php');

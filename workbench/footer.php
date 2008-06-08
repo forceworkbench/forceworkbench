@@ -21,9 +21,7 @@ global $version;
 		$requestTimeElapsed = $requestTimeEnd - $GLOBALS['requestTimeStart'];
 		printf ("Requested in %01.3f sec<BR/>", $requestTimeElapsed);
 	}
-	
-	print "<a href='about.php'>About</a><br/>";
-	
+		
 	if(stristr($version,'beta') || stristr($version,'alpha')){
 		print "<br/><a href='http://groups.google.com/group/forceworkbench' target='_blank'>THANK YOU FOR BETA TESTING - PLEASE PROVIDE FEEDBACK</a>";
 	}

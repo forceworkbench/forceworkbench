@@ -92,9 +92,8 @@ function givePassFocus(){
 
 <div id='intro_text'>
 	<p>$workbenchIntroText</p>
-	<p>Use the standard login to login with just your salesforce.com username and password or use the advanced
-	   login to login with a valid salesforce.com session ID or to a specific API version. Jump To is an optional field
-	   to jump directly to the desired action:</p>
+	<p>Use the standard login to login with your salesforce.com username and password or use the advanced
+	   login to login with a valid salesforce.com session ID or to a specific API version:</p>
 </div>
 
 <div id='logo_block'>

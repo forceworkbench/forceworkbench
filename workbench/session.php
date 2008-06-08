@@ -4,7 +4,7 @@ if(!isset($GLOBALS['requestTimeStart'])){
 }
 
 session_start();
-if (!isset($_SESSION['sessionId']) && strcmp('settings.php',basename($_SERVER['PHP_SELF']))) {
+if (!isset($_SESSION['sessionId']) && !(('settings.php' == basename($_SERVER['PHP_SELF'])) || ('about.php' == basename($_SERVER['PHP_SELF']))) ) {
   header('Location: login.php');
   exit;
 } else {
