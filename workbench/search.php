@@ -181,7 +181,7 @@ SEARCH_BUILDER_SCRIPT;
 	
 	print "<tr><td colspan='2'></td></tr>";
 	print "<tr><td>and object </td><td>";
-	myGlobalSelect($_POST['SB_objSelect2'],'SB_objSelect3',20,"onChange='build_search();'");
+	myGlobalSelect($_POST['SB_objSelect3'],'SB_objSelect3',20,"onChange='build_search();'");
 	print " including fields <input id='SB_objDetail3' name='SB_objDetail3' type='text' value=\"" . $_POST['SB_objDetail3'] . "\" size='45' onKeyUp='build_search();' /></td></tr>";
 
 	print "<tr><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
