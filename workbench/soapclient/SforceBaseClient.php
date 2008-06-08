@@ -695,6 +695,7 @@ class SforceBaseClient {
 		}
 	}
 
+
 	/**
 	 * Retrieves one or more objects based on the specified object IDs.
 	 *
@@ -722,7 +723,11 @@ class SforceBaseClient {
 		$this->setHeaders("search");
 		$arg = new stdClass;
 		$arg->searchString = new SoapVar($searchString, XSD_STRING, 'string', 'http://www.w3.org/2001/XMLSchema');
-		return $this->sforce->search($arg)->result;
+		$SearchResult = $this->sforce->search($arg)->result;		
+		if(isset($SearchResult->searchRecords) && !is_array($SearchResult->searchRecords)){
+			$SearchResult->searchRecords = array($SearchResult->searchRecords);
+		}
+		return $SearchResult;
 	}
 
 	/**

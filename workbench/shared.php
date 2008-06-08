@@ -29,8 +29,8 @@ function show_info($infos){
 	print "</div>\n";
 }
 
-function myGlobalSelect($default_object){
-	print "<select id='myGlobalSelect' name='default_object' style='width: 20em;'>\n";
+function myGlobalSelect($default_object=null, $nameId='myGlobalSelect', $width=20, $extras=null){
+	print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";	
 	print "<option value=''></option>";
 	if (!$_SESSION['myGlobal'] || !$_SESSION['config']['cacheDescribeGlobal']){
 		try{
@@ -42,7 +42,6 @@ function myGlobalSelect($default_object){
 			exit;
 	    }
 	}
-
 
 	//Print the global object types in a dropdown select box
 	foreach($_SESSION['myGlobal']->types as $type){

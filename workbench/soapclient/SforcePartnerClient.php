@@ -182,6 +182,28 @@ class QueryResult {
   }
 }
 
+
+class SearchResult {
+  public $searchRecords;
+
+  public function __construct($response) {
+
+    $this->searchRecords = array();
+
+    if (isset($response->searchRecords)) {
+      if (is_array($response->searchRecords)) {
+        foreach ($response->searchRecords as $record) {
+          $sobject = new SObject($record);
+          array_push($this->searchRecords, $sobject);
+        };
+      } else {
+        $sobject = new SObject($response->searchRecords);
+        array_push($this->searchRecords, $sobject);
+      }
+    }
+  }
+}
+
 /**
  * Salesforce Object
  *

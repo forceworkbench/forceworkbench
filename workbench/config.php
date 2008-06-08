@@ -180,6 +180,19 @@ $config["header_queryOptions"] = array(
 		"maxValue" => 2000
 	);
 	
+$config["header_searchOptions"] = array(
+	"label" => "Search Options",
+	"display" => true,
+	"isHeader" => true
+);
+
+	$config["autoJumpToSearchResults"] = array(
+		"label" => "Automatically Jump to Search Results",
+		"description" => "When displaying search results in the browser, automatically jump to the top of the search results.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 	
 $config["header_Performance"] = array(
 	"label" => "Performance Options",
