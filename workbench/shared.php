@@ -1,36 +1,37 @@
 <?php
-$version = "2.0.13 Alpha 7.12";
+$version = "2.0.13 Alpha 8.12";
 
 function show_error($errors){
 	print "<div class='show_errors'>\n";
-	print "<img src='images/warning.gif' width='30' height='30' align='middle' border='0' alt='ERROR:' /> <br/>";
+	print "<img src='images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <br/>";
 	if(is_array($errors)){
 		foreach($errors as $error){
-			$errorString .= "<p>" . htmlentities($error) . "</p>";
+			$errorString .= "<p>" . htmlspecialchars($error) . "</p>";
 		}
 		print $errorString;
 	} else {
-		print htmlentities($errors);
+		print htmlspecialchars($errors);
 	}
 	print "</div>\n";
 }
 
 function show_info($infos){
 	print "<div class='show_info'>\n";
-	print "<img src='images/info.gif' width='30' height='30' align='middle' border='0' alt='info:' /> <br/>";
+	print "<img src='images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <br/>";
 	if(is_array($infos)){
 		foreach($infos as $info){
-			$infoString .= "<p>" . htmlentities($info) . "</p>";
+			$infoString .= "<p>" . htmlspecialchars($info) . "</p>";
 		}
 		print $infoString;
 	} else {
-		print htmlentities($infos);
+		print htmlspecialchars($infos);
 	}
 	print "</div>\n";
 }
 
-function myGlobalSelect($default_object=null, $nameId='myGlobalSelect', $width=20, $extras=null){
+function myGlobalSelect($default_object=null, $nameId='default_object', $width=20, $extras=null){
 	print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";	
+//	print "<select id='myGlobalSelect' name='default_object' style='width: 20em;'>\n";
 	print "<option value=''></option>";
 	if (!$_SESSION['myGlobal'] || !$_SESSION['config']['cacheDescribeGlobal']){
 		try{
@@ -170,7 +171,7 @@ function field_mapping_set($action,$csv_array){
 	print "<tr><th>Salesforce Field</th>";
 	print "<th>CSV Field</th>";
 	if ($_SESSION['config']['showReferenceBy'] && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
-		print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided in the CSV file and can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='images/questionMark.png'/></th>";
+		print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided in the CSV file and can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='images/help16.png'/></th>";
 	print "</tr>\n";
 
 	if ($action == 'insert'){
@@ -507,7 +508,7 @@ function csv_array_show($csv_array){
 	print "<tr>";
 		for($col=0; $col < count($csv_array[0]); $col++){
 			print "<th>";
-			print htmlentities($csv_array[0][$col],ENT_QUOTES,'UTF-8');
+			print htmlspecialchars($csv_array[0][$col],ENT_QUOTES,'UTF-8');
 			print "</th>";
 		}
 	print "</tr>\n";
@@ -516,7 +517,7 @@ function csv_array_show($csv_array){
 		for($col=0; $col < count($csv_array[0]); $col++){
 			print "<td>";
 			if ($csv_array[$row][$col]){
-				print htmlentities($csv_array[$row][$col],ENT_QUOTES,'UTF-8');
+				print htmlspecialchars($csv_array[$row][$col],ENT_QUOTES,'UTF-8');
 			} else {
 				print "&nbsp;";
 			}
@@ -591,13 +592,13 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 				    	$refSObject->type = $fieldMapArray['relatedObjectName'];
 						$col = array_search($fieldMapArray['csvField'],$csv_header);
 				    	if($csv_arrayBatch[$row][$col] != ""){
-				    		$refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
+				    		$refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlspecialchars($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
 				    	}
 				    	$field = array($fieldMapArray['relationshipName'] => $refSObject);
 					} else if(isset($salesforce_field) && isset($fieldMapArray['csvField'])){
 						$col = array_search($fieldMapArray['csvField'],$csv_header);
 						if($csv_arrayBatch[$row][$col] != ""){
-							$field = array($salesforce_field => htmlentities($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
+							$field = array($salesforce_field => htmlspecialchars($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
 						} elseif($_SESSION['config']['fieldsToNull']){
 							$sObject->fieldsToNull[] = $salesforce_field;
 						}
@@ -888,19 +889,19 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 				print "<h1>SOAP MESSAGES</h1>\n";
 
 				print "<strong>LAST REQUEST HEADER</strong>\n";
-				print htmlentities($mySforceConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+				print htmlspecialchars($mySforceConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
 				print "<hr/>";
 
 				print "<strong>LAST REQUEST</strong>\n";
-				print htmlentities($mySforceConnection->getLastRequest(),ENT_QUOTES,'UTF-8');
+				print htmlspecialchars($mySforceConnection->getLastRequest(),ENT_QUOTES,'UTF-8');
 				print "<hr/>";
 
 				print "<strong>LAST RESPONSE HEADER</strong>\n";
-				print htmlentities($mySforceConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+				print htmlspecialchars($mySforceConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
 				print "<hr/>";
 
 				print "<strong>LAST RESPONSE</strong>\n";
-				print htmlentities($mySforceConnection->getLastResponse(),ENT_QUOTES,'UTF-8');
+				print htmlspecialchars($mySforceConnection->getLastResponse(),ENT_QUOTES,'UTF-8');
 			//	print $mySforceConnection->getLastResponse();
 				print "<hr/>";
 			}

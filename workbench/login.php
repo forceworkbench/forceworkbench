@@ -206,8 +206,8 @@ function process_login_old($username, $password, $actionJump){
 		require_once ('soapclient/SforcePartnerClient.php');
 		require_once ('soapclient/SforceHeaderOptions.php');
 
-		$username = htmlentities(trim($username));
-		$password = htmlentities(trim($password));
+		$username = htmlspecialchars(trim($username));
+		$password = htmlspecialchars(trim($password));
 		$wsdl = 'soapclient/sforce.130.partner.wsdl';
 
 		$mySforceConnection = new SforcePartnerClient();
@@ -240,11 +240,11 @@ function process_login_old($username, $password, $actionJump){
 } //end process_login
 
 function process_Login($username, $password, $serverUrl, $sessionId, $actionJump){
-	$username = htmlentities(trim($username));
-	$password = htmlentities(trim($password));
-	$serverUrl = htmlentities(trim($serverUrl));
-	$sessionId = htmlentities(trim($sessionId));
-	$actionJump = htmlentities(trim($actionJump));
+	$username = htmlspecialchars(trim($username));
+	$password = htmlspecialchars(trim($password));
+	$serverUrl = htmlspecialchars(trim($serverUrl));
+	$sessionId = htmlspecialchars(trim($sessionId));
+	$actionJump = htmlspecialchars(trim($actionJump));
 
 	if($_POST[rememberUser] !== 'on') setcookie(user,NULL,time()-3600);
 

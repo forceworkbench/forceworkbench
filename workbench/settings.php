@@ -51,10 +51,10 @@ require_once('header.php');
 	print "<table border='0' cellspacing='5' style='border-width-top: 1'>\n";
 		foreach($config as $configKey => $configValue){
 			if(isset($configValue['isHeader']) && $configValue['display']){
-				print "\t<tr><th align='left' colspan='3'>" . htmlentities($configValue['label'],ENT_QUOTES,'UTF-8') . "</th></tr>\n";
+				print "\t<tr><th align='left' colspan='3'><br/>" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</th></tr>\n";
 			} else if($configValue['overrideable']){
-				print "\t<tr onmouseover=\"Tip('" . htmlentities(addslashes($configValue['description']),ENT_NOQUOTES,'UTF-8') . "')\">\n";
-				print "\t\t<td align='right'><label for='$configKey'>" . htmlentities($configValue['label'],ENT_QUOTES,'UTF-8') . "</label></td><td>&nbsp;&nbsp;</td>\n";
+				print "\t<tr onmouseover=\"Tip('" . htmlspecialchars(addslashes($configValue['description']),ENT_NOQUOTES,'UTF-8') . "')\">\n";
+				print "\t\t<td align='right'><label for='$configKey'>" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</label></td><td>&nbsp;&nbsp;</td>\n";
 				print "\t\t<td align='left'>";
 				if($configValue['dataType'] == "boolean"){
 						print "<input name='$configKey' id='$configKey' type='checkbox' ";

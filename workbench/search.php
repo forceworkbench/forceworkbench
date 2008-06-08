@@ -92,10 +92,7 @@ function toggleFieldDisabled(){
 function build_search(){
 	toggleFieldDisabled();
 	
-	var searchString = null;
-	if(document.getElementById('SB_searchString').value){
-		searchString = 'FIND {' + document.getElementById('SB_searchString').value + '}';
-	}
+	var searchString = 'FIND {' + document.getElementById('SB_searchString').value + '}';
 	
 	var fieldTypeSelect = '';
 	if(document.getElementById('SB_fieldTypeSelect').value && !document.getElementById('SB_fieldTypeSelect').disabled){
@@ -151,7 +148,7 @@ SEARCH_BUILDER_SCRIPT;
 	print "<p><strong>Enter a search string and optionally select the objects and fields to return to build a SOSL search below:</strong></p>\n";
 	print "<table border='0' width=1>\n<tr>\n";
     
-    print "<td>Search for </td><td><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . $_POST['SB_searchString'] . "\" size='37' onKeyUp='build_search();'/> in ";
+    print "<td>Search for </td><td><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . $_POST['SB_searchString'] . "\" size='37' onKeyUp='build_search();' /> in ";
     
 	$fieldTypeSelectOptions = array(
 		'ALL FIELDS' => 'All Fields',
@@ -212,7 +209,6 @@ function search($sosl_search){
 	} catch (Exception $e){
 		$errors = null;
 		$errors = $e->getMessage();
-		print "<p><a name='sr'>&nbsp;</a></p>";
 		show_error($errors);
 		include_once('footer.php');
 		exit;
@@ -224,7 +220,7 @@ function search($sosl_search){
 function show_search_result($records, $searchTimeElapsed){
 	//Check if records were returned
 	if ($records) {
-    try {
+    try {   	
     print "<a name='sr'></a><div style='clear: both;'><br/><h2>Search Results</h2>\n";
     print "<p>Returned " . count($records) . " total record";
     if (count($records) !== 1) print 's';
@@ -255,7 +251,7 @@ function show_search_result($records, $searchTimeElapsed){
 		if ($record0->fields){
 			foreach($record0->fields->children() as $field){
 		 			print "<th>";
-		        	print htmlentities($field->getName(),ENT_QUOTES,'UTF-8');
+		        	print htmlspecialchars($field->getName(),ENT_QUOTES,'UTF-8');
 		        	print "</th>";
 		        }
 		}else {
@@ -277,7 +273,7 @@ function show_search_result($records, $searchTimeElapsed){
 			foreach($record->fields as $datum){
 				print "<td>";
 				if($datum){
-				print htmlentities($datum,ENT_QUOTES,'UTF-8');
+				print htmlspecialchars($datum,ENT_QUOTES,'UTF-8');
 				} else {
 					print "&nbsp;";
 				}

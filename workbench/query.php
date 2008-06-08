@@ -483,7 +483,10 @@ QUERY_BUILDER_SCRIPT;
 
 	print "<tr><td colspan=5><input type='submit' name='querySubmit' value='Query' />";
 	print "<input type='reset' value='Reset' />";
-	print "</td></tr></table><p/></form><a name='qr'></a>\n";
+	print "</td></tr></table><p/>";
+	if($_SESSION['queryLocator'] != null){
+		print "</form>\n";
+	}
 }
 
 
@@ -539,7 +542,7 @@ function show_query_result($records, $queryTimeElapsed){
 	//Check if records were returned
 	if ($records) {
     try {
-    print "<div style='clear: both;'><br/><h2>Query Results</h2>\n";
+    print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
     if(isset($_SESSION['queryLocator']) && !$_SESSION['config']['autoRunQueryMore']){
     	preg_match("/-(\d+)/",$_SESSION['queryLocator'],$lastRecord);
     	print "<p>Returned records " . ($lastRecord[1] - count($records) + 1) . " - " . $lastRecord[1] . " of ";
@@ -556,13 +559,7 @@ function show_query_result($records, $queryTimeElapsed){
 	print " seconds:</p>";
 	
 	if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
-		
-		if($_SESSION['config']['autoJumpToQueryResults']){
-			print "<form method='POST' name='queryMoreForm' action='$_SERVER[PHP_SELF]#qr'>\n";
-		} else {
-			print "<form method='POST' name='queryMoreForm' action='$_SERVER[PHP_SELF]'>\n";
-		}
-		 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p></form>";	
+		 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>";	
 	}
 
     print "<table class='data_table'>\n";
@@ -578,7 +575,7 @@ function show_query_result($records, $queryTimeElapsed){
 	if ($record0->fields){
 		foreach($record0->fields->children() as $field){
 	 			print "<th>";
-	        	print htmlentities($field->getName(),ENT_QUOTES,'UTF-8');
+	        	print htmlspecialchars($field->getName(),ENT_QUOTES,'UTF-8');
 	        	print "</th>";
 	        }
 	}else {
@@ -603,7 +600,7 @@ function show_query_result($records, $queryTimeElapsed){
 		foreach($record->fields as $datum){
 			print "<td>";
 			if($datum){
-			print htmlentities($datum,ENT_QUOTES,'UTF-8');
+			print htmlspecialchars($datum,ENT_QUOTES,'UTF-8');
 			} else {
 				print "&nbsp;";
 			}
@@ -617,7 +614,7 @@ function show_query_result($records, $queryTimeElapsed){
       print "</table>";
 	  
       if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
-	    print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";	
+	    print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></form></p>";	
 	  }
 	  
 	  print	"</div>\n";
