@@ -124,6 +124,12 @@ function show_describeSObject_result(){
 						print "</ul></li>\n"; //end one picklist node
 					}
 					print "</ul></li>\n"; //end picklist node
+				} elseif ($subkey == 'referenceTo'){ //do this for referenceTo arrays 
+					print "<li>$subkey<ul>\n";
+					foreach($subvalue as $subsubkey => $subsubvalue){
+						print  "<li>$subsubvalue</li>\n";
+					}
+					print "</ul></li>\n"; //end referenceTo node
 				}
 			}
 			print "</ul></li>\n"; ///end one field node

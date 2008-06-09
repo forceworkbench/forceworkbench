@@ -99,6 +99,12 @@ function show_describeSObject_result(){
 						}
 						print "<tr><td>&nbsp;</td><td>&nbsp;</td></tr> \n";
 					}
+				} elseif ($subkey == 'referenceTo'){ //do this for referenceTo arrays 
+					print "<tr><td colspan=2>$subkey</td></tr>\n";
+					foreach($subvalue as $subsubkey => $subsubvalue){
+						print  "<tr><td>&nbsp;</td><td>$subsubvalue</td></tr>\n";
+					}
+					print "<tr><td>&nbsp;</td><td>&nbsp;</td></tr> \n"; //end referenceTo node
 				}
 			}
 		print "</table>\n<br/>";
