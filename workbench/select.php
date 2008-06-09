@@ -67,7 +67,7 @@ actionJumper;
 	//Describe a list of all the objects in the user's org and display
 	//in a drop down select box
 	print "<p><strong>Object: &nbsp; </strong>";
-	myGlobalSelect($_SESSION['default_object']);
+	myGlobalSelect($_SESSION['default_object'],'myGlobalSelect');
 
 
 	print "<p/><input type='submit' name='select' value='Select' />";
