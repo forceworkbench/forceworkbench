@@ -70,7 +70,7 @@
 <p/>
 <?php
 global $mySforceConnection;
-if ($_SESSION['sessionId'] && $mySforceConnection && 'logout.php' != basename($_SERVER['PHP_SELF'])){
+if (isset($_SESSION['sessionId']) && $mySforceConnection && 'logout.php' != basename($_SERVER['PHP_SELF'])){
 
 	if(!$_SESSION['getUserInfo'] || !$_SESSION['config']['cacheGetUserInfo']){
 		try{

@@ -5,6 +5,7 @@ function show_error($errors){
 	print "<div class='show_errors'>\n";
 	print "<img src='images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <br/>";
 	if(is_array($errors)){
+		$errorString = null;
 		foreach($errors as $error){
 			$errorString .= "<p>" . htmlspecialchars($error) . "</p>";
 		}
@@ -128,12 +129,14 @@ function describeSObject($objectTypes){
 
 function alphaOrderFields($describeSObject_result){
 	//move field name out to key name and then ksort based on key for field abc order
-	foreach($describeSObject_result->fields as $field){
-		$fieldNames[] = $field->name;
+	if(isset($describeSObject_result->fields)){
+		foreach($describeSObject_result->fields as $field){
+			$fieldNames[] = $field->name;
+		}
+	
+		$describeSObject_result->fields = array_combine($fieldNames, $describeSObject_result->fields);
+		ksort($describeSObject_result->fields);
 	}
-	$describeSObject_result->fields = array_combine($fieldNames, $describeSObject_result->fields);
-	ksort($describeSObject_result->fields);
-
 	return $describeSObject_result;
 }
 
@@ -839,7 +842,7 @@ function idOnlyCall($action){
 
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
-	if($_SESSION['config']['debug']){
+	if(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true){
 
 		print "<pre style='font-family: monospace; text-align: left;'>";
 
