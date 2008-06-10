@@ -11,9 +11,9 @@ if($_GET['serverUrl'] && $_GET['sid']){		//simulate adv login from url query par
 	$_POST[actionJumpAdv] = "select.php";
 }
 
-if ($_POST[login_type]=='std'){
+if ($_POST['login_type']=='std'){
 	process_login($_POST['usernameStd'], $_POST['passwordStd'], null, null, $_POST['actionJumpStd']);
-} elseif ($_POST[login_type]=='adv'){
+} elseif ($_POST['login_type']=='adv'){
 	process_login($_POST['usernameAdv'], $_POST['passwordAdv'], $_POST['serverUrl'], $_POST['sessionId'], $_POST['actionJumpAdv']);
 } else {
 	checkLatestVersion();
@@ -28,12 +28,12 @@ if (isset($errors)) {
 	show_error($errors);
 }
 
-if ($_COOKIE[user]){
-	$user = $_COOKIE[user];
+if ($_COOKIE['user']){
+	$user = $_COOKIE['user'];
 	$isRemembered = "checked='checked'";
 	print "<body onLoad='givePassFocus();' />";
 } else {
-	$user = $_POST[user];
+	$user = $_POST['user'];
 	$isRemembered = NULL;
 	print "<body onLoad='giveUserFocus();' />";
 }
@@ -91,7 +91,6 @@ function givePassFocus(){
 </script>
 
 <div id='intro_text'>
-	<p>$workbenchIntroText</p>
 	<p>Use the standard login to login with your salesforce.com username and password or use the advanced
 	   login to login with a valid salesforce.com session ID or to a specific API version:</p>
 </div>
@@ -200,7 +199,7 @@ include_once ('footer.php');
 
 //connects to Apex API and validates login
 function process_login_old($username, $password, $actionJump){
-	if($_POST[rememberUser] !== 'on') setcookie(user,NULL,time()-3600);
+	if($_POST['rememberUser'] !== 'on') setcookie(user,NULL,time()-3600);
 
 	try{
 		require_once ('soapclient/SforcePartnerClient.php');
@@ -220,7 +219,7 @@ function process_login_old($username, $password, $actionJump){
 		    $_SESSION['location'] = $mySforceConnection->getLocation();
 		    $_SESSION['sessionId'] = $mySforceConnection->getSessionId();
 		    $_SESSION['wsdl'] = $wsdl;
-			if($_POST[rememberUser] == 'on'){
+			if($_POST['rememberUser'] == 'on'){
 				 setcookie(user,$username,time()+60*60*24*7,'','','',TRUE);
 			} else {
 				setcookie(user,NULL,time()-3600);
@@ -246,7 +245,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	$sessionId = htmlspecialchars(trim($sessionId));
 	$actionJump = htmlspecialchars(trim($actionJump));
 
-	if($_POST[rememberUser] !== 'on') setcookie(user,NULL,time()-3600);
+	if($_POST['rememberUser'] !== 'on') setcookie(user,NULL,time()-3600);
 
 	if ($username && $password && $sessionId){
 		$errors = null;
@@ -292,7 +291,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		    $_SESSION['location'] = $mySforceConnection->getLocation();
 		    $_SESSION['sessionId'] = $mySforceConnection->getSessionId();
 		    $_SESSION['wsdl'] = $wsdl;
-			if($_POST[rememberUser] == 'on'){
+			if($_POST['rememberUser'] == 'on'){
 				 setcookie(user,$username,time()+60*60*24*7,'','','',TRUE);
 			} else {
 				setcookie(user,NULL,time()-3600);

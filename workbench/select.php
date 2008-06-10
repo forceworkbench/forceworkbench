@@ -33,9 +33,9 @@ function show_select_form(){
 		var actionJumpVal = document.getElementById('actionJump').value;
 		
 		if(actionJumpVal == '' || actionJumpVal == 'settings.php' || actionJumpVal == 'delete.php' || actionJumpVal == 'undelete.php' || actionJumpVal == 'purge.php' || actionJumpVal == 'search.php'){
-			document.getElementById('myGlobalSelect').disabled = true;		
+			document.getElementById('default_object').disabled = true;		
 		} else {
-			document.getElementById('myGlobalSelect').disabled = false;			
+			document.getElementById('default_object').disabled = false;			
 		}
 	}
 	</script>
@@ -67,7 +67,7 @@ actionJumper;
 	//Describe a list of all the objects in the user's org and display
 	//in a drop down select box
 	print "<p><strong>Object: &nbsp; </strong>";
-	myGlobalSelect($_SESSION['default_object'],'myGlobalSelect');
+	myGlobalSelect($_SESSION['default_object'],'default_object');
 
 
 	print "<p/><input type='submit' name='select' value='Select' />";
