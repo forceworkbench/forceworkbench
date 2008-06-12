@@ -64,13 +64,13 @@ function toggleUsernamePasswordSessionDisabled(){
 
 function form_become_adv() {
 	document.getElementById('login_std').style.display='none';
-	document.getElementById('apexLogo').style.display='none';
+	//document.getElementById('apexLogo').style.display='none';
 	document.getElementById('login_adv').style.display='inline';
 }
 
 function form_become_std() {
 	document.getElementById('login_std').style.display='inline';
-	document.getElementById('apexLogo').style.display='inline'
+	//document.getElementById('apexLogo').style.display='inline'
 	document.getElementById('login_adv').style.display='none';
 }
 
@@ -96,7 +96,7 @@ function givePassFocus(){
 </div>
 
 <div id='logo_block'>
-	<img id='apexLogo' src='images/appex_x_rgb.png' width='200' height='171' border='0' alt='Apex X Logo' />
+	<!--<img id='apexLogo' src='images/appex_x_rgb.png' width='200' height='171' border='0' alt='Apex X Logo' />-->
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </div>
 

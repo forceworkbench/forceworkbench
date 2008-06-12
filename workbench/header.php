@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Language" content="UTF-8" />
 <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 <link rel="stylesheet" href="style/master.css" type="text/css" />
-<link rel="Shortcut Icon" href="images/apex_x_icon.bmp" />
+<link rel="Shortcut Icon" href="images/blueBox.bmp" />
 
 
 <title>Workbench</title>
