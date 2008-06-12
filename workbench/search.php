@@ -167,22 +167,22 @@ SEARCH_BUILDER_SCRIPT;
     print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . $_POST['SB_limit'] . "' size='5' onKeyUp='build_search();' /> maximum records</td></tr>\n";
 
 	print "<tr><td colspan='2'></td></tr>";
-	print "<tr><td>returning object </td><td>";
+	print "<tr><td>returning object </td><td NOWRAP>";
 	myGlobalSelect($_POST['SB_objSelect1'],'SB_objSelect1',20,"onChange='build_search();'");
-	print " including fields <input id='SB_objDetail1' name='SB_objDetail1' type='text' value=\"" . $_POST['SB_objDetail1'] . "\" size='45'  onKeyUp='build_search();' /></td></tr>";
+	print " including fields <input id='SB_objDetail1' name='SB_objDetail1' type='text' value=\"" . $_POST['SB_objDetail1'] . "\" size='40'  onKeyUp='build_search();' /></td></tr>";
 	
 	print "<tr><td colspan='2'></td></tr>";
-	print "<tr><td>and object </td><td>";
+	print "<tr><td>and object </td><td NOWRAP>";
 	myGlobalSelect($_POST['SB_objSelect2'],'SB_objSelect2',20,"onChange='build_search();'");
-	print " including fields <input id='SB_objDetail2' name='SB_objDetail2' type='text' value=\"" . $_POST['SB_objDetail2'] . "\" size='45' onKeyUp='build_search();' /></td></tr>";
+	print " including fields <input id='SB_objDetail2' name='SB_objDetail2' type='text' value=\"" . $_POST['SB_objDetail2'] . "\" size='40' onKeyUp='build_search();' /></td></tr>";
 	
 	print "<tr><td colspan='2'></td></tr>";
-	print "<tr><td>and object </td><td>";
+	print "<tr><td>and object </td><td NOWRAP>";
 	myGlobalSelect($_POST['SB_objSelect3'],'SB_objSelect3',20,"onChange='build_search();'");
-	print " including fields <input id='SB_objDetail3' name='SB_objDetail3' type='text' value=\"" . $_POST['SB_objDetail3'] . "\" size='45' onKeyUp='build_search();' /></td></tr>";
+	print " including fields <input id='SB_objDetail3' name='SB_objDetail3' type='text' value=\"" . $_POST['SB_objDetail3'] . "\" size='40' onKeyUp='build_search();' /></td></tr>";
 
 	print "<tr><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
-			"<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='118' rows='4' style='overflow: auto;'>$sosl_search</textarea>" .
+			"<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='110' rows='4' style='overflow: auto;'>$sosl_search</textarea>" .
 		  "</td></tr>";
 
 
