@@ -100,7 +100,7 @@ function describeSObject($objectTypes){
 	}
 
 
-	if(isset($_SESSION['config']['cacheDescribeSObject'])){
+	if($_SESSION['config']['cacheDescribeSObject'] == true){
 		if(isset($describeSObjects_results_array)){
 			foreach ($describeSObjects_results_array as $describeSObject_resultKey => $describeSObject_result){
 				$_SESSION['describeSObjects_results'][$describeSObject_result->name] = $describeSObjects_results_array[$describeSObject_result->name];
@@ -842,7 +842,7 @@ function idOnlyCall($action){
 
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
-	if(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true){
+	if($_SESSION['config']['debug'] == true){
 
 		print "<pre style='font-family: monospace; text-align: left;'>";
 
