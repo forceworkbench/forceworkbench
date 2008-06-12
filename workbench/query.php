@@ -59,6 +59,7 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 		print "<body onLoad='toggleFieldDisabled();'>";
 		require_once ('header.php');
 		show_query_form($_POST['soql_query'],'csv',$_POST['query_action'],$_SESSION['default_object']);
+		print "</form>"; //could include inside because if IE page loading bug
 		print "<p>&nbsp;</p>";
 		show_error("count() is not supported for CSV file export. Change export to Browser or choose fields and try again.");
 		include_once('footer.php');
@@ -67,6 +68,7 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
 	show_query_form($_SESSION['soql_query'],'screen','Query');
+	print "</form>"; //could include inside because if IE page loading bug
 	include_once('footer.php');
 }
 
@@ -344,15 +346,15 @@ QUERY_BUILDER_SCRIPT;
 
 	print "<label><input type='radio' name='query_action' value='QueryAll' ";
 		if ($query_action == 'QueryAll') print "checked='true'";
-	print " >Include</label></td></tr>";
+	print " >Include</label></td></tr>\n";
 
 
 
 
-	print "<tr><td><br/>Sort results by:</td> <td><br/>&nbsp;</td> <td><br/>&nbsp;</td> <td><br/>Max Records:</td></tr>";
+	print "<tr><td><br/>Sort results by:</td> <td><br/>&nbsp;</td> <td><br/>&nbsp;</td> <td><br/>Max Records:</td></tr>\n";
 	print "<tr>";
 		print "<td><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='build_query();'>\n";
-		print "<option value=''></option>";
+		print "<option value=''></option>\n";
 		if(isset($describeSObject_result)){
 			foreach($describeSObject_result->fields as $fields => $field){
 				print   " <option value='$field->name'";
@@ -360,7 +362,7 @@ QUERY_BUILDER_SCRIPT;
 				print ">$field->name</option>\n";
 			}
 		}
-		print "</select></td>";
+		print "</select></td>\n";
 
 		$QB_orderby_sort_options = array(
 			'ASC' => 'A to Z',
@@ -370,9 +372,9 @@ QUERY_BUILDER_SCRIPT;
 		foreach ($QB_orderby_sort_options as $op_key => $op){
 			print "<option value='$op_key'";
 			if (isset($_POST['QB_orderby_sort']) && $op_key == $_POST['QB_orderby_sort']) print " selected='selected' ";
-			print ">$op</option>";
+			print ">$op</option>\n";
 		}
-		print "</select></td>";
+		print "</select></td>\n";
 
 		$QB_nulls_options = array(
 			'FIRST' => 'Nulls First',
@@ -382,17 +384,17 @@ QUERY_BUILDER_SCRIPT;
 		foreach ($QB_nulls_options as $op_key => $op){
 			print "<option value='$op_key'";
 			if (isset($_POST['QB_nulls']) && $op_key == $_POST['QB_nulls']) print " selected='selected' ";
-			print ">$op</option>";
+			print ">$op</option>\n";
 		}
-		print "</select></td>";
+		print "</select></td>\n";
 
-		print "<td><input type='text' id='QB_limit_txt' size='11' name='QB_limit_txt' value='" . $_POST['QB_limit_txt'] . "' onkeyup='build_query();' /></td>";
+		print "<td><input type='text' id='QB_limit_txt' size='11' name='QB_limit_txt' value='" . $_POST['QB_limit_txt'] . "' onkeyup='build_query();' /></td>\n";
 
-	print "</tr>";
+	print "</tr>\n";
 
 
-	print "<tr><td valign='top' colspan=4>";
-	print "<br/>Filter results by:<br/>";
+	print "<tr><td valign='top' colspan=4>\n";
+	print "<br/>Filter results by:<br/>\n";
 
 	print "<select id='QB_filter_field_sel' name='QB_filter_field_sel' style='width: 16em;' onChange='build_query();'>\n";
 	print "<option value=''></option>";
@@ -403,7 +405,7 @@ QUERY_BUILDER_SCRIPT;
 			print ">$field->name</option>\n";
 		}
 	}
-	print "</select> \n";
+	print "</select>\n";
 
 
 	$ops = array(
@@ -418,23 +420,23 @@ QUERY_BUILDER_SCRIPT;
 		'contains' => 'contains'
 	);
 
-	print "<select id='QB_oper_sel' name='QB_oper_sel' style='width: 10em;' onChange='build_query();'>";
+	print "<select id='QB_oper_sel' name='QB_oper_sel' style='width: 10em;' onChange='build_query();'>\n";
 		foreach ($ops as $op_key => $op){
 			print "<option value='$op_key'";
 			if (isset($_POST['QB_oper_sel']) && $op_key == $_POST['QB_oper_sel']) print " selected='selected' ";
-			print ">$op</option>";
+			print ">$op</option>\n";
 		}
-	print "</select> ";
+	print "</select>\n";
 
 	print "<input type='text' id='QB_filter_txt' size='31' name='QB_filter_txt' value='" . $_POST['QB_filter_txt'] . "' onkeyup='build_query();' />";
-	print "</td></tr>";
+	print "</td></tr>\n";
 
 
-	print "<tr><td valign='top' colspan=4>";
-	print "<br/>Then filter results by:<br/>";
+	print "<tr><td valign='top' colspan=4>\n";
+	print "<br/>Then filter results by:<br/>\n";
 
 	print "<select id='QB_filter_field_sel2' name='QB_filter_field_sel2' style='width: 16em;' onChange='build_query();'>\n";
-	print "<option value=''></option>";
+	print "<option value=''></option>\n";
 	if(isset($describeSObject_result)){
 		foreach($describeSObject_result->fields as $fields => $field){
 			print   " <option value='$field->name'";
@@ -463,30 +465,27 @@ QUERY_BUILDER_SCRIPT;
 			if (isset($_POST['QB_oper_sel2']) && $op_key == $_POST['QB_oper_sel2']) print " selected='selected' ";
 			print ">$op</option>";
 		}
-	print "</select> ";
+	print "</select>\n";
 
-	print "<input type='text' id='QB_filter_txt2' size='31' name='QB_filter_txt2' value='" . $_POST['QB_filter_txt2'] . "' onkeyup='build_query();' />";
-	print "</td></tr>";
-
-
+	print "<input type='text' id='QB_filter_txt2' size='31' name='QB_filter_txt2' value='" . $_POST['QB_filter_txt2'] . "' onkeyup='build_query();' />\n";
+	print "</td></tr>\n";
 
 
-	print "</table>";
-
-	print "</td></tr>";
 
 
-	print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:" .
-			"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='118' rows='4' style='overflow: auto;'>$soql_query</textarea>" .
-		  "</td></tr>";
+	print "</table>\n";
+
+	print "</td></tr>\n";
 
 
-	print "<tr><td colspan=5><input type='submit' name='querySubmit' value='Query' />";
-	print "<input type='reset' value='Reset' />";
-	print "</td></tr></table><p/>";
-	if($_SESSION['queryLocator'] != null){
-		print "</form>\n";
-	}
+	print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
+			"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='118' rows='4' style='overflow: auto;'>$soql_query</textarea>\n" .
+		  "</td></tr>\n";
+
+
+	print "<tr><td colspan=5><input type='submit' name='querySubmit' value='Query' />\n";
+	print "<input type='reset' value='Reset' />\n";
+	print "</td></tr></table><p/>\n";
 }
 
 
@@ -556,10 +555,10 @@ function show_query_result($records, $queryTimeElapsed){
     if ($_SESSION['totalQuerySize'] !== 1) print 's';
     print " in ";
 	printf ("%01.3f", $queryTimeElapsed);
-	print " seconds:</p>";
+	print " seconds:</p>\n";
 	
 	if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
-		 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>";	
+		 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";	
 	}
 
     print "<table class='data_table'>\n";
@@ -614,10 +613,10 @@ function show_query_result($records, $queryTimeElapsed){
       print "</table>";
 	  
       if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
-	    print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></form></p>";	
+	    print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";	
 	  }
 	  
-	  print	"</div>\n";
+	  print	"</form></div>\n";
     } catch (Exception $e) {
       	$errors = null;
 		$errors = $e->getMessage();
