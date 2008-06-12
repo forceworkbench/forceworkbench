@@ -28,7 +28,7 @@
 	foreach($setupBar_items as $href => $label){
 		print "<a href='$href'";
 		if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
-			print " style='color: red;'";
+			print " style='color: #0046ad;'";
 		}
 		print " onmouseover=\"Tip('$label[1]')\">$label[0]</a>&nbsp;&nbsp;";
 	}
@@ -37,7 +37,9 @@
 
 <div style="clear: both; text-align: center"><p>
 <!-- <img src="images/workbench_logo.png" width="446" height="90" alt="Workbench logo" border="0" /> -->
-<img src="images/workbench_logo60.png" width="297" height="60" alt="Workbench logo" border="0" />
+<!-- <img src="images/workbench_logo60.png" width="297" height="60" alt="Workbench logo" border="0" /> -->
+<!-- <img src="images/workbench2.png" width="336" height="48" alt="Workbench 2.0 Logo" border="0" /> -->
+<img src="images/workbench2-futura.png" width="289" height="43" alt="Workbench 2.0 Logo" border="0" />
 </p></div>
 
 <div id='navmenu' style="clear: both;">
@@ -61,7 +63,7 @@
 	foreach($navbar_items as $href => $label){
 		print "<a href='$href'";
 		if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
-			print " style='color: red;' ";
+			print " style='color: #0046ad;' ";
 		}
 		print " onmouseover=\"Tip('$label[1]')\">$label[0]</a> | ";
 	}

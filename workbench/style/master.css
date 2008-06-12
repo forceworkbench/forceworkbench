@@ -39,7 +39,7 @@ a{
 }
 
 #navmenu a:hover, #setupMenu a:hover{
-	color: red;
+	color: #0046ad;
 }
 
 
@@ -143,11 +143,11 @@ table.field_mapping TD, table.field_mapping TH{
  }
 
 .show_info{
- 	color: blue;
+ 	color: #0046ad;
 	text-align: center;
 	font-size: 12px;
  	padding: 10px;
- 	border: blue solid thin;
+ 	border: #0046ad solid thin;
  	-moz-border-radius: 10px;
  	clear: both;
  }
