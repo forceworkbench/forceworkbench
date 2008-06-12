@@ -102,10 +102,10 @@ class SforceBaseClient {
 			$soapClientArray['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | 1;
 		}
 
-		if (isset($_SESSION['config']['proxyEnabled'])) {
+		if ($_SESSION['config']['proxyEnabled'] == true) {
   			$proxySettings = array();
 	   		$proxySettings['proxy_host'] = $_SESSION['config']['proxyHost'];
-		    $proxySettings['proxy_port'] = $_SESSION['config']['proxyPort']; // Use an integer, not a string
+		    $proxySettings['proxy_port'] = (int)$_SESSION['config']['proxyPort']; // Use an integer, not a string
   		    $proxySettings['proxy_login'] = $_SESSION['config']['proxyUsername'];
             $proxySettings['proxy_password'] = $_SESSION['config']['proxyPassword'];
 
