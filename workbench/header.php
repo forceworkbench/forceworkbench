@@ -6,8 +6,10 @@
 <link rel="stylesheet" href="style/master.css" type="text/css" />
 <link rel="Shortcut Icon" href="images/blueBox.bmp" />
 
-
-<title>Workbench</title>
+<?php
+preg_match('/(\w+)\.php/',basename($_SERVER['PHP_SELF']),$pageTitle);
+print "<title>Workbench - " . ucwords($pageTitle[1]) . "</title>"
+?>
 
 <body>
 <script type="text/javascript" src="script/wz_tooltip.js"></script>
