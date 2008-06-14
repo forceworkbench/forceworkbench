@@ -133,7 +133,7 @@ function givePassFocus(){
 			<p>-OR-</p>
 			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='65' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
 			<p>&nbsp;</p>
-			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='65' value='https://www.salesforce.com/services/Soap/u/12.0' /></p>
+			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='65' value='https://www.salesforce.com/services/Soap/u/13.0' /></p>
 			<p><strong>QuickSelect: </strong>
 			<select name='inst' id='inst' onChange='build_location();'>
 				<option value='www'>www</option>
@@ -154,8 +154,8 @@ function givePassFocus(){
 			</select>
 
 			<select name='endp' id='endp' onChange='build_location();'>
-				<option value='13.0'>13.0</option>
-				<option value='12.0' selected='true'>12.0</option> //TODO: temp
+				<option value='13.0' selected='true'>13.0</option>
+				<option value='12.0'>12.0</option>
 				<option value='11.1'>11.1</option>
 				<option value='11.0'>11.0</option>
 				<option value='10.0'>10.0</option>
@@ -271,7 +271,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	    	if($serverUrl){
 	    		$mySforceConnection->setEndpoint($serverUrl);
 	    	} else {
-	    		$mySforceConnection->setEndpoint("https://www.salesforce.com/services/Soap/u/12.0");
+	    		$mySforceConnection->setEndpoint("https://www.salesforce.com/services/Soap/u/13.0");
 	    	}
 			$mySforceConnection->login($username, $password);
 		} elseif ($sessionId && $serverUrl && !($username && $password)){
