@@ -169,8 +169,9 @@ SEARCH_BUILDER_SCRIPT;
 	print "<tr><td colspan='2'></td></tr>";
 	print "<tr><td>returning object </td><td NOWRAP>";
 	myGlobalSelect($_POST['SB_objSelect1'],'SB_objSelect1',20,"onChange='build_search();'");
-	print " including fields <input id='SB_objDetail1' name='SB_objDetail1' type='text' value=\"" . $_POST['SB_objDetail1'] . "\" size='40'  onKeyUp='build_search();' /></td></tr>";
-	
+	print " including fields <input id='SB_objDetail1' name='SB_objDetail1' type='text' value=\"" . $_POST['SB_objDetail1'] . "\" size='40'  onKeyUp='build_search();' />";
+		print "&nbsp;<img onmouseover=\"Tip('List the API names of the fields to be returned; otherwise, only the Id is returned. Optionally include WHERE and LIMIT statements to futher filter search results.')\" align='absmiddle' src='images/help16.png'/>";
+		print "</td></tr>";
 	print "<tr><td colspan='2'></td></tr>";
 	print "<tr><td>and object </td><td NOWRAP>";
 	myGlobalSelect($_POST['SB_objSelect2'],'SB_objSelect2',20,"onChange='build_search();'");
