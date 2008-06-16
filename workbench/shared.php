@@ -111,7 +111,7 @@ function describeSObject($objectTypes){
 			$describeSObjects_results_ToReturn[$objectTypeValue] = $_SESSION['describeSObjects_results'][$objectTypeValue];
 		}
 	} else {
-		$describeSObjects_results_ToReturn = $describeSObjects_results;
+		$describeSObjects_results_ToReturn = $describeSObjects_results_array;
 	}
 
 	if($_SESSION['config']['abcOrder']){
