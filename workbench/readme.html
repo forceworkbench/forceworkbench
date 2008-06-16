@@ -4,19 +4,19 @@
 <meta http-equiv="Content-Language" content="UTF-8" />
 <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 <link rel="stylesheet" href="style/master.css" type="text/css" />
-<link rel="Shortcut Icon" href="images/apex_x_icon.bmp" />
+<link rel="Shortcut Icon" href="images/blueBox.bmp" />
 
  <head>
   <title>Workbench - README</title>
  </head>
  <body>
- <img src="images/workbench_logo.png" width="446" height="90" alt="Workbench logo" border="0" />
+<img src="images/workbench2-futura.png" width="289" height="43" alt="Workbench 2.0 Logo" border="0" />
 	<p>
 <div id='main_block'>
-The Workbench is a web-based application that gives administrators
+The Workbench is a web-based application that gives Salesforce administrators
 on-demand access to useful tools to manage their organization. Combining and extending the power of both
 the Apex DataLoader with the Apex Explorer, the Workbench can insert, upsert, update,
-export, delete, undelete, and purge data as well as describe the metadata of any object in your Force.com organization.
+query, search, delete, undelete, and purge data as well as describe the metadata of any object in your Force.com organization.
 </p>
 
   <ul>
@@ -88,7 +88,7 @@ PHPIniDir "&lt;your_apache_dir&gt;/php5"
 			<li>Search for "extension=php_curl.dll". There should be a semi-colon in front of that line - remove it to enable the extension.</li>
 			<li>Scroll down and find "extension=php_openssl.dll" and do the same.</li>
 			<li>Now scroll down a bit further and find "extension=php_sockets.dll". Leave this line alone, but insert a new line below it and type "extension=php_soap.dll" on that line.</li>
-			<li>Search for "magic_quotes_gpc" and ensure that it is "Off"</li>
+			<li>Search for "magic_quotes_gpc" and ensure that it is "Off" (Optional, but recommended)</li>
 			<li>Search for "file_uploads" and ensure that it is "On"</li>
 		</ol>
 	<p/></li>
@@ -116,6 +116,12 @@ PHPIniDir "&lt;your_apache_dir&gt;/php5"
 	login page, where you can login using your salesforce.com username and password.
 	<p/></li>
 	
+    <li>
+	To optionally configure the Workbench, system-wide changes can be made in the config.php file by an administrator who has access
+	the the web server root (not from a web browser). The administrator can also allow end-users to override the defaults set in the config.php
+	file by using the Settings page in the application in their web browser. Please see the instructions in the config.php file for details.
+	<p/></li>
+	
 	
 
 </ol>
@@ -129,6 +135,7 @@ PHPIniDir "&lt;your_apache_dir&gt;/php5"
   <ul>
   	<li><a href='http://code.google.com/p/forceworkbench/'>Google Code - Project Main Page, Downloads, Source Code, Issue Tracking</a></li>
   	<li><a href='http://wiki.apexdevnet.com/index.php/Workbench'>developer.force.com - Project Wiki Page, Installation, Help</a></li>
+  	<li><a href='http://groups.google.com/group/forceworkbench'>Discussion & Feedback</a></li>
   </ul>
 
 
@@ -150,7 +157,7 @@ Distributed under the Open Source BSD License.<br/>
 For support from the Open Source community, please visit the recources below:</strong>
 <ul>
 	<li><a href="http://code.google.com/p/forceworkbench/">Main Page on Google Code</a></li>
-	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench">Wiki on developer.force.co</a></li>
+	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench">Wiki on developer.force.com</a></li>
 	<li><a href="http://code.google.com/p/forceworkbench/issues/list">Issues, Bugs, & Feature Requests</a></li>
 	<li><a href="http://code.google.com/p/forceworkbench/source/checkout">Source Code</a></li>
 	<li><a href="http://code.google.com/p/forceworkbench/downloads/list">Download</a></li>
