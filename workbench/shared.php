@@ -57,12 +57,16 @@ function myGlobalSelect($default_object=null, $nameId='default_object', $width=2
 }
 
 function describeSObject($objectTypes){
+	// if a scalar is passed to this function, change it to an array
 	if (!is_array($objectTypes)){
 		$objectTypeArray = array($objectTypes);
 	} else {
 		$objectTypeArray = $objectTypes;
 	}
 
+	// find which objects are already in the session cache to only retreive the
+	// ones uncached ones. if caching is disabled, just retreive everything and
+	// clear the cache.
 	$objectTypesToRetreive = array();
 	if($_SESSION['config']['cacheDescribeSObject']){
 		foreach($objectTypeArray as $objectType){
@@ -75,6 +79,8 @@ function describeSObject($objectTypes){
 		$_SESSION['describeSObjects_results'] = null;
 	}
 
+
+	// retreive uncached object descriptions from the API and return as an array. 
 	if (count($objectTypesToRetreive) >= 1 && count($objectTypesToRetreive) <= 100){
 		try{
 			global $mySforceConnection;
@@ -99,8 +105,9 @@ function describeSObject($objectTypes){
 		exit;
 	}
 
-
-	if($_SESSION['config']['cacheDescribeSObject'] == true){
+	// move the describe results to the session cache and then copy all the requested object descriptions from the cache
+	// if caching is disaled, the results will just be returned directly 
+	if($_SESSION['config']['cacheDescribeSObject']){
 		if(isset($describeSObjects_results_array)){
 			foreach ($describeSObjects_results_array as $describeSObject_resultKey => $describeSObject_result){
 				$_SESSION['describeSObjects_results'][$describeSObject_result->name] = $describeSObjects_results_array[$describeSObject_result->name];
@@ -114,12 +121,14 @@ function describeSObject($objectTypes){
 		$describeSObjects_results_ToReturn = $describeSObjects_results_array;
 	}
 
+	// if alphabetize fields is enabled, alphabetize the describe results
 	if($_SESSION['config']['abcOrder']){
 		foreach ($describeSObjects_results_ToReturn as $describeSObject_resultKey => $describeSObject_result){
 			$describeSObjects_results_ToReturn[$describeSObject_resultKey] = alphaOrderFields($describeSObject_result);
 		}
 	}
 
+	//finally, return the describe results
 	if (!is_array($objectTypes)){
 		return $describeSObjects_results_ToReturn[$objectTypes];
 	} else {
