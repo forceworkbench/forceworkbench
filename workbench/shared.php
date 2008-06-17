@@ -3,7 +3,7 @@ $version = "2.0.13";
 
 function show_error($errors){
 	print "<div class='show_errors'>\n";
-	print "<img src='images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <br/>";
+	print "<img src='images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
 	if(is_array($errors)){
 		$errorString = null;
 		foreach($errors as $error){
@@ -18,7 +18,7 @@ function show_error($errors){
 
 function show_info($infos){
 	print "<div class='show_info'>\n";
-	print "<img src='images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <br/>";
+	print "<img src='images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
 	if(is_array($infos)){
 		foreach($infos as $info){
 			$infoString .= "<p>" . htmlspecialchars($info) . "</p>";
