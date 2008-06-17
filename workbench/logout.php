@@ -19,7 +19,7 @@ require_once('shared.php');
 		session_destroy();
 		
 		if($sessionInvatidated == true){
-			show_info('You have been successfully logged out of the Workbench and your Salesforce.');
+			show_info('You have been successfully logged out of the Workbench and Salesforce.');
 		} else {
 			show_info('You have been successfully logged out of the Workbench.');
 		}
