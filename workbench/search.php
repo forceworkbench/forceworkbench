@@ -237,7 +237,7 @@ function show_search_result($records, $searchTimeElapsed){
 
 
 	foreach($searchResultArray as $recordSetName=>$records){
-		echo "<h3 style='color: red;'>$recordSetName</h3>";
+		echo "<h3 style='color: #0046ad;'>$recordSetName</h3>";
 		
 	    print "<table class='data_table'>\n";
 		//Print the header row on screen
