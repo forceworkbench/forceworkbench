@@ -39,7 +39,7 @@ $config["header_General"] = array(
 	$config["invalidateSessionOnLogout"] = array(
 		"label" => "Invalidate Session on Logout",
 		"description" => "Invalidates the current API session when logging out of the Workbench. This option is only available when logging in with API version 13.0 and higher; otherwise it is ignored.",
-		"default" => false,
+		"default" => true,
 		"overrideable" => true,
 		"dataType" => "boolean"
 	);
@@ -48,7 +48,7 @@ $config["header_General"] = array(
 		"label" => "Debug Mode",
 		"description" => "Enables debugging mode for showing supervariables and SOAP messages.",
 		"default" => false,
-		"overrideable" => true,
+		"overrideable" => false,
 		"dataType" => "boolean"
 	);
 	
@@ -69,8 +69,8 @@ $config["header_General"] = array(
 	);
 
 
-$config["header_PutOptions"] = array(
-	"label" => "Insert, Update, and Upsert Options",
+$config["header_DataManagement"] = array(
+	"label" => "Data Management Options",
 	"display" => true,
 	"isHeader" => true
 );
@@ -132,13 +132,6 @@ $config["header_PutOptions"] = array(
 		"overrideable" => true,
 		"dataType" => "string"
 	);
-
-	
-$config["header_deleteOptions"] = array(
-	"label" => "Delete Options",
-	"display" => true,
-	"isHeader" => true
-);
 
 	$config["UserTerritoryDeleteHeader_transferToUserId"] = array(
 		"label" => "Territory Delete Transfer User",
