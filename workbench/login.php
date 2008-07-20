@@ -144,10 +144,10 @@ function givePassFocus(){
 				<option value='na4-api'>NA4</option>
 				<option value='na5-api'>NA5</option>
 				<option value='na6-api'>NA6</option>
-				<option value='ap0'>AP</option>
-				<option value='emea'>EMEA</option>
+				<option value='ap0-api'>AP</option>
+				<option value='eu0-api'>EMEA</option>
 				<option value='test'>test</option>
-				<option value='tapp0-api'>Sandbox CS0</option>
+				<option value='tapp0-api'>Sandbox CS0 (tapp0)</option>
 				<option value='cs1-api'>Sandbox CS1</option>
 				<option value='cs2-api'>Sandbox CS2</option>
 				<option value='prerelna1.pre'>Pre-Release</option>
@@ -261,7 +261,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		$wsdl = 'soapclient/sforce.130.partner.wsdl';
 		$mySforceConnection = new SforcePartnerClient();
 	    $mySforceConnection->createConnection($wsdl);
-	    
+
 	    if($_SESSION['config']['callOptions_client'] || $_SESSION['config']['callOptions_defaultNamespace']){
 				$header = new CallOptions($_SESSION['config']['callOptions_client'], $_SESSION['config']['callOptions_defaultNamespace']);
 				$mySforceConnection->setCallOptions($header);
@@ -317,12 +317,12 @@ function checkLatestVersion(){
 			if(stristr($version,'beta')){
 				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailableBeta.txt');
 			} else {
-				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');	
-			}			
+				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
+			}
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			$latestVersionAvailable = trim(curl_exec($ch));
 			curl_close($ch);
-	
+
 			if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !stristr($version,'alpha')){
 				if($latestVersionAvailable != $version){
 					print "<span style='font-size: 8pt; font-weight: bold;'><a href='http://code.google.com/p/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
