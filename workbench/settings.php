@@ -16,7 +16,8 @@ if(isset($_POST['submitConfigSetter'])){
 		}
  	}
 
- 	if (isset($_POST['assignmentRuleHeader_useDefaultRule']) && isset($_POST['assignmentRuleHeader_assignmentRuleId'])){
+ 	if (isset($_POST['assignmentRuleHeader_useDefaultRule']) && isset($_POST['assignmentRuleHeader_assignmentRuleId'])
+ 		&& ($_POST['assignmentRuleHeader_useDefaultRule'] != FALSE) && ($_POST['assignmentRuleHeader_assignmentRuleId'] != "")){
  		$errors[] = "Can not set both 'Use Default Assignment Rule' and 'Assignment Rule Id'";
  	}
 }
