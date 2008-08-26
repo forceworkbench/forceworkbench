@@ -1,5 +1,5 @@
 <?php
-$version = "2.0.13";
+$version = "2.1.13";
 
 function show_error($errors){
 	print "<div class='show_errors'>\n";
