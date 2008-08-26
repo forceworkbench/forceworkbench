@@ -6,7 +6,7 @@ require_once('shared.php');
 //of the action buttons. If so, proceed to that page; otherwise,
 //show the form to do so.
 
-if (isset($_POST['actionJump'])){
+if (isset($_POST['actionJump']) && $_POST['actionJump'] != ""){
 	$_SESSION['default_object'] = $_POST['default_object'];
 	header("Location: $_POST[actionJump]");
 } 
