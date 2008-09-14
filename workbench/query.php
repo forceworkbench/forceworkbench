@@ -187,7 +187,12 @@ function build_query(){
 			QB_filter_txt = '%' + QB_filter_txt + '%';
 		}
 
-		if ((QB_filter_txt == 'null') ||
+		if (QB_oper_sel == 'IN' || 
+			QB_oper_sel == 'NOT IN' || 
+			QB_oper_sel == 'INCLUDES' || 
+			QB_oper_sel == 'EXCLUDES'){
+				QB_filter_txt_q = '(' + QB_filter_txt + ')';
+		} else if ((QB_filter_txt == 'null') ||
 			(field_type_array[QB_filter_field_sel] == "datetime") ||
 		    (field_type_array[QB_filter_field_sel] == "date") ||
 		    (field_type_array[QB_filter_field_sel] == "currency") ||
@@ -220,7 +225,14 @@ function build_query(){
 			QB_oper_sel2 = 'LIKE'
 			QB_filter_txt2 = '%' + QB_filter_txt2 + '%';
 		}
-		if ((QB_filter_txt2 == 'null') ||
+		
+		
+		if (QB_oper_sel2 == 'IN' || 
+			QB_oper_sel2 == 'NOT IN' ||
+			QB_oper_sel2 == 'INCLUDES' || 
+			QB_oper_sel2 == 'EXCLUDES'){
+				QB_filter_txt_q2 = '(' + QB_filter_txt2 + ')';
+		} else if ((QB_filter_txt2 == 'null') ||
 			(field_type_array[QB_filter_field_sel2] == "datetime") ||
 		    (field_type_array[QB_filter_field_sel2] == "date") ||
 		    (field_type_array[QB_filter_field_sel2] == "currency") ||
@@ -417,7 +429,11 @@ QUERY_BUILDER_SCRIPT;
 		'>=' => '&ge;',
 		'starts' => 'starts with',
 		'ends' => 'ends with',
-		'contains' => 'contains'
+		'contains' => 'contains',
+		'IN' => 'in',
+		'NOT IN' => 'not in',
+		'INCLUDES' => 'includes',
+		'EXCLUDES' => 'excludes'
 	);
 
 	print "<select id='QB_oper_sel' name='QB_oper_sel' style='width: 10em;' onChange='build_query();'>\n";
@@ -428,7 +444,7 @@ QUERY_BUILDER_SCRIPT;
 		}
 	print "</select>\n";
 
-	print "<input type='text' id='QB_filter_txt' size='31' name='QB_filter_txt' value='" . $_POST['QB_filter_txt'] . "' onkeyup='build_query();' />";
+	print "<input type='text' id='QB_filter_txt' size='31' name='QB_filter_txt' value=\"" . $_POST['QB_filter_txt'] . "\" onkeyup='build_query();' />";
 	print "</td></tr>\n";
 
 
@@ -456,7 +472,11 @@ QUERY_BUILDER_SCRIPT;
 		'>=' => '&ge;',
 		'starts' => 'starts with',
 		'ends' => 'ends with',
-		'contains' => 'contains'
+		'contains' => 'contains',
+		'IN' => 'in',
+		'NOT IN' => 'not in',
+		'INCLUDES' => 'includes',
+		'EXCLUDES' => 'excludes'
 	);
 
 	print "<select id='QB_oper_sel2' name='QB_oper_sel2' style='width: 10em;' onChange='build_query();'>";
@@ -467,7 +487,7 @@ QUERY_BUILDER_SCRIPT;
 		}
 	print "</select>\n";
 
-	print "<input type='text' id='QB_filter_txt2' size='31' name='QB_filter_txt2' value='" . $_POST['QB_filter_txt2'] . "' onkeyup='build_query();' />\n";
+	print "<input type='text' id='QB_filter_txt2' size='31' name='QB_filter_txt2' value=\"" . $_POST['QB_filter_txt2'] . "\" onkeyup='build_query();' />\n";
 	print "</td></tr>\n";
 
 

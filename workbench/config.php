@@ -48,7 +48,7 @@ $config["header_General"] = array(
 		"label" => "Debug Mode",
 		"description" => "Enables debugging mode for showing supervariables and SOAP messages.",
 		"default" => false,
-		"overrideable" => false,
+		"overrideable" => true,
 		"dataType" => "boolean"
 	);
 	
