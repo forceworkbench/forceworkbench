@@ -518,7 +518,9 @@ function query($soql_query,$query_action,$query_locator = null,$suppressScreenOu
 	if ($query_action == 'QueryMore' && isset($query_locator)) $query_response = $mySforceConnection->queryMore($query_locator);
 
 	if (substr_count($soql_query,"count()") && $suppressScreenOutput == false){
-		show_info("Query would return " . $query_response->size . " records.");
+		$countString = "Query would return " . $query_response->size . " record";
+		$countString .= ($query_response->size == 1) ? "." : "s.";
+		show_info($countString);
 		$records = $query_response->size;
 		include_once('footer.php');
 		exit;
