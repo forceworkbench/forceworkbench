@@ -894,10 +894,9 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 			print "<hr/>";
 		}
 
-		if($showSoap){
+		global $mySforceConnection;
+		if($showSoap && isset($mySforceConnection)){
 			try{
-				global $mySforceConnection;
-
 				print "<h1>SOAP MESSAGES</h1>\n";
 
 				print "<strong>LAST REQUEST HEADER</strong>\n";
