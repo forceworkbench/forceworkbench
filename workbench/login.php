@@ -1,20 +1,29 @@
 <?php
-session_start();
-
+//session_start();
+require_once ('session.php');
 require_once('shared.php');
 
 
-if($_GET['serverUrl'] && $_GET['sid']){		//simulate adv login from url query params for web tab use
+if(isset($_GET['serverUrl']) && isset($_GET['sid'])){		//simulate adv login from url query params for web tab use
 	$_POST['serverUrl'] = $_GET['serverUrl'];
 	$_POST['sessionId'] = $_GET['sid'];
-	$_POST[login_type] = "adv";
-	$_POST[actionJumpAdv] = "select.php";
+	$_POST['login_type'] = "adv";
+	$_POST['actionJumpAdv'] = "select.php";
 }
 
-if ($_POST['login_type']=='std'){
-	process_login($_POST['usernameStd'], $_POST['passwordStd'], null, null, $_POST['actionJumpStd']);
-} elseif ($_POST['login_type']=='adv'){
-	process_login($_POST['usernameAdv'], $_POST['passwordAdv'], $_POST['serverUrl'], $_POST['sessionId'], $_POST['actionJumpAdv']);
+if(isset($_GET['un']) && isset($_GET['pw'])){		//simulate std login from un/pw query params for web tab use
+	$_POST['usernameStd'] = $_GET['un'];
+	$_POST['passwordStd'] = $_GET['pw'];
+	$_POST['login_type'] = "std";
+	$_POST['actionJumpStd'] = "select.php";
+}
+
+if(isset($_POST['login_type'])){
+	if ($_POST['login_type']=='std'){
+		process_login($_POST['usernameStd'], $_POST['passwordStd'], null, null, $_POST['actionJumpStd']);
+	} elseif ($_POST['login_type']=='adv'){
+		process_login($_POST['usernameAdv'], $_POST['passwordAdv'], $_POST['serverUrl'], $_POST['sessionId'], $_POST['actionJumpAdv']);
+	} 
 } else {
 	checkLatestVersion();
 	display_login(null);
@@ -28,14 +37,16 @@ if (isset($errors)) {
 	show_error($errors);
 }
 
-if ($_COOKIE['user']){
+if (isset($_COOKIE['user'])){
 	$user = $_COOKIE['user'];
 	$isRemembered = "checked='checked'";
 	print "<body onLoad='givePassFocus();' />";
-} else {
+} elseif (isset($_POST['user'])){
 	$user = $_POST['user'];
 	$isRemembered = NULL;
 	print "<body onLoad='giveUserFocus();' />";
+} else {
+	$user = null;
 }
 
 
@@ -191,53 +202,21 @@ function givePassFocus(){
 
 LOGIN_FORM;
 
+//if 'adv' is added to the login url and is not 0, default to advanced login
+if(isset($_GET[adv]) && $_GET[adv] != 0){
+	print "<script>
+				document.getElementById('login_become_adv').checked=true; 
+				form_become_adv(); 
+			</script>";
+	
+}
+
 include_once ('footer.php');
 
 
 
 } //end display_form()
 
-
-//connects to Apex API and validates login
-function process_login_old($username, $password, $actionJump){
-	if($_POST['rememberUser'] !== 'on') setcookie(user,NULL,time()-3600);
-
-	try{
-		require_once ('soapclient/SforcePartnerClient.php');
-		require_once ('soapclient/SforceHeaderOptions.php');
-
-		$username = htmlspecialchars(trim($username));
-		$password = htmlspecialchars(trim($password));
-		$wsdl = 'soapclient/sforce.130.partner.wsdl';
-
-		$mySforceConnection = new SforcePartnerClient();
-	    $mySforceConnection->createConnection($wsdl);
-	    $mySforceConnection->login($username, $password);
-
-		session_unset();
-		session_destroy();
-		session_start();
-		    $_SESSION['location'] = $mySforceConnection->getLocation();
-		    $_SESSION['sessionId'] = $mySforceConnection->getSessionId();
-		    $_SESSION['wsdl'] = $wsdl;
-			if($_POST['rememberUser'] == 'on'){
-				 setcookie(user,$username,time()+60*60*24*7,'','','',TRUE);
-			} else {
-				setcookie(user,NULL,time()-3600);
-			}
-		session_write_close();
-
-
-
-		header("Location: $actionJump");
-
-	} catch (Exception $e) {
-		$errors = null;
-		$errors = $e->getMessage();
-		display_login($errors);
-		exit;
-	}
-} //end process_login
 
 function process_Login($username, $password, $serverUrl, $sessionId, $actionJump){
 	$username = htmlspecialchars(trim($username));
@@ -246,7 +225,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	$sessionId = htmlspecialchars(trim($sessionId));
 	$actionJump = htmlspecialchars(trim($actionJump));
 
-	if($_POST['rememberUser'] !== 'on') setcookie(user,NULL,time()-3600);
+	if($_POST['rememberUser'] !== 'on') setcookie('user',NULL,time()-3600);
 
 	if ($username && $password && $sessionId){
 		$errors = null;
@@ -259,19 +238,17 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	try{
 		require_once ('soapclient/SforcePartnerClient.php');
 		require_once ('soapclient/SforceHeaderOptions.php');
-		$wsdl = 'soapclient/sforce.130.partner.wsdl';
+		$wsdl = 'soapclient/sforce.140.partner.wsdl';
 		$mySforceConnection = new SforcePartnerClient();
 	    $mySforceConnection->createConnection($wsdl);
-
-	    if($_SESSION['config']['callOptions_client'] || $_SESSION['config']['callOptions_defaultNamespace']){
-				$header = new CallOptions($_SESSION['config']['callOptions_client'], $_SESSION['config']['callOptions_defaultNamespace']);
-				$mySforceConnection->setCallOptions($header);
-		}
 
 	    if($username && $password && !$sessionId){
 	    	if($serverUrl){
 	    		$mySforceConnection->setEndpoint($serverUrl);
 	    	} else {
+	    		//SET STANDARD LOGIN URL HERE
+//	    		$mySforceConnection->setEndpoint("https://prerelwww.pre.salesforce.com/services/Soap/u/14.0");
+//	    		$mySforceConnection->setEndpoint("https://test.pre.salesforce.com/services/Soap/u/14.0");
 	    		$mySforceConnection->setEndpoint("https://www.salesforce.com/services/Soap/u/14.0");
 	    	}
 			$mySforceConnection->login($username, $password);
@@ -293,9 +270,9 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		    $_SESSION['sessionId'] = $mySforceConnection->getSessionId();
 		    $_SESSION['wsdl'] = $wsdl;
 			if($_POST['rememberUser'] == 'on'){
-				 setcookie(user,$username,time()+60*60*24*7,'','','',TRUE);
+				 setcookie('user',$username,time()+60*60*24*7,'','','',TRUE);
 			} else {
-				setcookie(user,NULL,time()-3600);
+				setcookie('user',NULL,time()-3600);
 			}
 		session_write_close();
 
