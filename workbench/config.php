@@ -157,7 +157,7 @@ $config["header_queryOptions"] = array(
 
 	$config["autoRunQueryMore"] = array(
 		"label" => "Automatically Retrieve More Query Results",
-		"description" => "Automatically retrieve all query results with queryMore() API call; otherwise, 'More...' button is show when additional results are available. If a large query is run with this setting enabled, the operation may be subject to unexpected timeouts.",
+		"description" => "Automatically retrieve all query results with queryMore() API call for browser view; otherwise, 'More...' button is show when additional results are available. If a large query is run with this setting enabled, the operation may be subject to unexpected timeouts. CSV exports automatically retrieve all results.",
 		"default" => false,
 		"overrideable" => true,
 		"dataType" => "boolean"

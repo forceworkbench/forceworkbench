@@ -306,7 +306,7 @@ QUERY_BUILDER_SCRIPT;
 	//Print the global object types in a dropdown select box
 	foreach($_SESSION['myGlobal']->types as $type){
 		print "	<option value='$type'";
-		if ($_SESSION['default_object'] == $type){
+		if (isset($_SESSION['default_object']) && $_SESSION['default_object'] == $type){
 			print " selected='true'";
 			}
 		print " />$type</option> \n";
@@ -538,7 +538,7 @@ function query($soql_query,$query_action,$query_locator = null,$suppressScreenOu
 		$_SESSION['queryLocator'] = null;
 	}	
 
-	while($_SESSION['config']['autoRunQueryMore'] && !$query_response->done){
+	while(($suppressScreenOutput || $_SESSION['config']['autoRunQueryMore']) && !$query_response->done){
 		$query_response = $mySforceConnection->queryMore($query_response->queryLocator);
 		$records = array_merge($records,$query_response->records);
 	}
@@ -670,7 +670,7 @@ function export_query_csv($records){
 		    //If the user queried for the Salesforce ID, this special method is nessisary
 			//to export it from the nested SOAP message. This will always be displayed
 			//in the first column regardless of query order
-			if ($record0->Id){
+			if (isset($record0->Id)){
 				$csv_line[] = "Id";
 			}
 
@@ -688,10 +688,10 @@ function export_query_csv($records){
 	      //Export remaining rows and write to CSV line-by-line
 	      foreach ($records as $record) {
 	        $record = new SObject($record);
-	        if ($record->Id){
+	        if (isset($record->Id)){
 	        	$csv_line[] = $record->Id;
 	        }
-	        if ($record->fields){
+	        if (isset($record->fields)){
 			foreach($record->fields as $datum){
 				if($datum){
 					$csv_line[] = $datum;
