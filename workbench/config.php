@@ -48,7 +48,7 @@ $config["header_General"] = array(
 		"label" => "Debug Mode",
 		"description" => "Enables debugging mode for showing supervariables and SOAP messages.",
 		"default" => false,
-		"overrideable" => true,
+		"overrideable" => false,
 		"dataType" => "boolean"
 	);
 	
@@ -196,7 +196,7 @@ $config["header_Performance"] = array(
 	$config["cacheGetUserInfo"] = array(
 		"label" => "Cache User Info",
 		"description" => "Caches the results from the getUserInfo() API call. Improves performance of the Workbench in that user info does not need to be retrieved more than once, but not recommended if active session should be checked on each page load.",
-		"default" => false,
+		"default" => true,
 		"overrideable" => true,
 		"dataType" => "boolean"
 	);
