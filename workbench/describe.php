@@ -142,22 +142,24 @@ function show_describeSObject_result(){
 		if (isset($describeSObject_result->recordTypeInfos)){
 			print "<li>Record Types<ul>\n";
 			foreach($describeSObject_result->recordTypeInfos as $key => $value){
-				print "<li>$value->name<ul>\n";
-				foreach($value as $subkey => $subvalue){
-					if (is_string($subvalue)){
-						print "<li>$subkey: <strong>$subvalue</strong><li>\n";
-					}
-					elseif (is_bool($subvalue)){
-						print "<li>$subkey: ";
-						if ($subvalue){
-							print "<strong>True</strong>";
-						} else {
-							print "<strong>False</strong>";
+				if(isset($value->name)){
+					print "<li>$value->name<ul>\n";
+					foreach($value as $subkey => $subvalue){
+						if (is_string($subvalue)){
+							print "<li>$subkey: <strong>$subvalue</strong><li>\n";
 						}
-						print "</li> \n";
+						elseif (is_bool($subvalue)){
+							print "<li>$subkey: ";
+							if ($subvalue){
+								print "<strong>True</strong>";
+							} else {
+								print "<strong>False</strong>";
+							}
+							print "</li> \n";
+						}
 					}
+					print "</ul></li>\n"; ///end one record type node
 				}
-				print "</ul></li>\n"; ///end one record type node
 			}
 			print "</ul></li>\n"; ///end record types node
 		} //end record type exist conditional check
