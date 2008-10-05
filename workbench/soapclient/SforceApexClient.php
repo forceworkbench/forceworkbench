@@ -7,7 +7,7 @@ class SforceApexClient {
 
   protected $namespace = 'http://soap.sforce.com/2006/08/apex';
 
-  public function __construct($wsdl, $sessionId, $apexServerUrl, $debugLevel) {
+  public function __construct($wsdl, $sessionId, $apexServerUrl, $LogCategory, $LogCategoryLevel) {
 	
   	$_SERVER['HTTP_USER_AGENT'] = 'Salesforce/PHPToolkit/1.0';
 
@@ -38,19 +38,27 @@ class SforceApexClient {
     $headerBody = new SoapVar($sessionVar, SOAP_ENC_OBJECT);
 
     $session_header = new SoapHeader($this->namespace, 'SessionHeader', $headerBody, false);
+
     
     
-    $debugVar = array(
-      'debugLevel' => new SoapVar($debugLevel, XSD_STRING)
+    $logInfoComp = array(
+      'category' => new SoapVar($LogCategory, XSD_STRING),
+      'level' => new SoapVar($LogCategoryLevel, XSD_STRING)
+    );
+    
+    $logInfoVar = array(
+    	'categories' => new SoapVar($logInfoComp, SOAP_ENC_OBJECT)
     );
 
-    $debugBody = new SoapVar($debugVar, SOAP_ENC_OBJECT);
+    $debugBody = new SoapVar($logInfoVar, SOAP_ENC_OBJECT);
     
     $debugging_header = new SoapHeader($this->namespace, 'DebuggingHeader', $debugBody, false);
 
+    
+    
     $header_array = array (
-    $session_header,
-    $debugging_header
+	    $session_header,
+	    $debugging_header
     );
 
     $this->sforce->__setSoapHeaders($header_array);

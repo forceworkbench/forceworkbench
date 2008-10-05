@@ -31,7 +31,7 @@ function show_select_form(){
 	function toggleObjectSelectDisabled(){
 		var actionJumpVal = document.getElementById('actionJump').value;
 		
-		if(actionJumpVal == '' || actionJumpVal == 'settings.php' || actionJumpVal == 'delete.php' || actionJumpVal == 'undelete.php' || actionJumpVal == 'purge.php' || actionJumpVal == 'search.php'){
+		if(actionJumpVal == '' || actionJumpVal == 'execute.php'|| actionJumpVal == 'settings.php' || actionJumpVal == 'delete.php' || actionJumpVal == 'undelete.php' || actionJumpVal == 'purge.php' || actionJumpVal == 'search.php'){
 			document.getElementById('default_object').disabled = true;		
 		} else {
 			document.getElementById('default_object').disabled = false;			
@@ -59,6 +59,7 @@ print <<<actionJumper
 			<option value='purge.php'>Purge</option>
 			<option value='query.php'>Query</option>
 			<option value='search.php'>Search</option>
+			<option value='execute.php'>Execute</option>
 			<option value='settings.php'>Settings</option>
 		</select></p>
 actionJumper;

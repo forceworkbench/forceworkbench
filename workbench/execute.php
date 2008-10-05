@@ -11,30 +11,67 @@ if(isset($_POST['scriptInput']) && get_magic_quotes_gpc()){
 
 if(isset($_POST['execute'])){
 	$_SESSION['scriptInput'] = $_POST['scriptInput'];
-	$_SESSION['debugLevel'] = $_POST['debugLevel'];
+	$_SESSION['LogCategory'] = $_POST['LogCategory'];
+	$_SESSION['LogCategoryLevel'] = $_POST['LogCategoryLevel'];
+	$_SESSION['apiVersion'] = $_POST['apiVersion'];
+} else if(!isset($_SESSION['LogCategory']) && !isset($_SESSION['LogCategoryLevel'])){
+	$_SESSION['LogCategory'] = "Apex_code";
+	$_SESSION['LogCategoryLevel'] = "DEBUG";
+	preg_match("/(\d\d?\.\d)/",$_SESSION['location'],$apiVersionCurrent);
+	$_SESSION['apiVersion'] = $apiVersionCurrent[1];
 }
 
+	
+
 ?>
-<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+<form id="executeForm" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 	<table border="0">
 	  <tr>
-	    <td>Enter Apex code to be executed as an anonymous block:</td>
+	    <td><strong>Enter Apex code to be executed as an anonymous block:</strong><p/></td>
+	  </tr>
+	  <tr>
 	    <td align="right">
-		    Debug Level: 
-			<select id="debugLevel" name="debugLevel">
+		    Log Category: 
+			<select id="LogCategory" name="LogCategory">
 				<?php
-					$debugLevels = array(
-						array("Debugonly", "Debug Only"),
+					$LogCategory = array(
 						array("Db", "Database"),
-						array("Profiling", "Profiling"),
+						array("Workflow", "Workflow"),
+						array("Validation", "Validation"),
 						array("Callout", "Callout"),
-						array("Detail", "Detail"),
-						array("None", "None")
+						array("Apex_code", "Apex Code"),
+						array("Apex_profiling", "Apex Profiling")
 					);
 					
-					foreach($debugLevels as $level){
+					foreach($LogCategory as $category){
+						print "<option value=\"" . $category[0] . "\"";
+						if($_SESSION['LogCategory'] == $category[0]){
+							print " selected=\"selected\"";
+						}
+						print ">" . $category[1] . "</option>";
+					}
+
+				?>
+			</select>
+	
+			&nbsp;
+			
+			Log Level: 
+			<select id="LogCategoryLevel" name="LogCategoryLevel">
+				<?php
+					$LogCategoryLevel = array(
+						array("ERROR", "Error"),
+						array("WARN", "Warn"),
+						array("INFO", "Info"),
+						array("DEBUG", "Debug"),
+						array("FINE", "Fine"),
+						array("FINER", "Finer"),
+						array("FINEST", "Finest")
+					);
+					
+					foreach($LogCategoryLevel as $level){
 						print "<option value=\"" . $level[0] . "\"";
-						if($_SESSION['debugLevel'] == $level[0]){
+						if($_SESSION['LogCategoryLevel'] == $level[0]){
 							print " selected=\"selected\"";
 						}
 						print ">" . $level[1] . "</option>";
@@ -42,6 +79,34 @@ if(isset($_POST['execute'])){
 
 				?>
 			</select>
+	
+			&nbsp;
+			
+			API Version: 
+			<select id="apiVersion" name="apiVersion">
+				<?php
+					$apiVersions = array(
+						"14.0",
+						"13.0",
+						"12.0",
+						"11.1",
+						"11.0",
+						"10.0",
+						"9.0",
+						"8.0"
+					);
+					
+					foreach($apiVersions as $verion){
+						print "<option value=\"" . $verion . "\"";
+						if($_SESSION['apiVersion'] == $verion){
+							print " selected=\"selected\"";
+						}
+						print ">" . $verion . "</option>";
+					}
+
+				?>
+			</select>
+			
 		</td>
 	  </tr>
 	  <tr>
@@ -57,15 +122,19 @@ if(isset($_POST['execute'])){
 </form>
 
 
-
+<script type="text/javascript">
+ 	document.getElementById('scriptInput').focus();
+</script>
 
 
 <?php
 if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != ""){
 	print "<h2>Results</h2>";
 	
-	$apexServerUrl = str_replace("/u/","/s/",$_SESSION['location']);	
-	$apexBinding = new SforceApexClient("soapclient/sforce.110.apex.wsdl",$_SESSION['sessionId'],$apexServerUrl,$_POST['debugLevel']);
+	$apexServerUrl = str_replace("/u/","/s/",$_SESSION['location']);
+	$apexServerUrl = preg_replace("/\d\d?\.\d/",$_POST['apiVersion'],$apexServerUrl);
+
+	$apexBinding = new SforceApexClient("soapclient/sforce.140.apex.wsdl",$_SESSION['sessionId'],$apexServerUrl,$_POST['LogCategory'],$_POST['LogCategoryLevel']);
 	
 	try {
 		$executeAnonymousResultWithDebugLog = $apexBinding->executeAnonymous($_POST['scriptInput']);
