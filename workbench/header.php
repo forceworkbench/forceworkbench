@@ -58,6 +58,7 @@ print "<title>Workbench - " . ucwords($pageTitle[1]) . "</title>"
 	'purge.php' =>array('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.'),
 	'query.php'=>array('Query','Queries the data in your organization and displays on the screen or exports to a CSV file'),
 	'search.php'=>array('Search','Search the data in your organization across multiple objects'),
+	'execute.php'=>array('Execute','Execute Apex code as an anonymous block')
 //	'settings.php'=>array('Settings','Configure the Workbench'),
 //	'logout.php'=>array('Logout','Logs out of your Salesforce organization')
 	);

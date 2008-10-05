@@ -8,11 +8,13 @@ function show_error($errors){
 		$errorString = null;
 		foreach($errors as $error){
 			$errorString .= "<p>" . htmlspecialchars($error) . "</p>";
+			$errorString = str_replace("\n","<br/>",$errorString);
 		}
-		print $errorString;
 	} else {
-		print htmlspecialchars($errors);
+		$errorString = htmlspecialchars($errors);
+		$errorString = str_replace("\n","<br/>",$errorString);
 	}
+	print $errorString;
 	print "</div>\n";
 }
 
