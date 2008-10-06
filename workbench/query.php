@@ -2,15 +2,38 @@
 require_once ('session.php');
 require_once ('shared.php');
 
-//correction for dynamic magic quotes
 if(isset($_POST['soql_query'])){
+	//correction for dynamic magic quotes
 	if(get_magic_quotes_gpc()){
 		$_POST['soql_query'] = stripslashes($_POST['soql_query']);
-	} else {
-		$_SESSION['soql_query'] = $_POST['soql_query'];
 	}
+	
+	$_SESSION['soql_query'] = $_POST['soql_query'];
+
+	$_SESSION['QB_field_sel'] = $_POST['QB_field_sel'];
+	$_SESSION['QB_filter_field_sel'] = $_POST['QB_filter_field_sel'];
+	$_SESSION['QB_oper_sel'] = $_POST['QB_oper_sel'];
+	$_SESSION['QB_filter_txt'] = $_POST['QB_filter_txt'];
+	$_SESSION['QB_filter_field_sel2'] = $_POST['QB_filter_field_sel2'];
+	$_SESSION['QB_oper_sel2'] = $_POST['QB_oper_sel2'];
+	$_SESSION['QB_filter_txt2'] = $_POST['QB_filter_txt2'];
+	$_SESSION['QB_nulls'] = $_POST['QB_nulls'];
+	$_SESSION['QB_orderby_sort'] = $_POST['QB_orderby_sort'];
+	$_SESSION['QB_orderby_field'] = $_POST['QB_orderby_field'];
+	$_SESSION['QB_limit_txt'] = $_POST['QB_limit_txt'];
 }
 
+$_POST['QB_field_sel'] = $_SESSION['QB_field_sel'];
+$_POST['QB_filter_field_sel'] = $_SESSION['QB_filter_field_sel'];
+$_POST['QB_oper_sel'] = $_SESSION['QB_oper_sel'];
+$_POST['QB_filter_txt'] = $_SESSION['QB_filter_txt'];
+$_POST['QB_filter_field_sel2'] = $_SESSION['QB_filter_field_sel2'];
+$_POST['QB_oper_sel2'] = $_SESSION['QB_oper_sel2'];
+$_POST['QB_filter_txt2'] = $_SESSION['QB_filter_txt2'];
+$_POST['QB_nulls'] = $_SESSION['QB_nulls'];
+$_POST['QB_orderby_sort'] = $_SESSION['QB_orderby_sort'];
+$_POST['QB_orderby_field'] = $_SESSION['QB_orderby_field'];
+$_POST['QB_limit_txt'] = $_SESSION['QB_limit_txt'];
 
 if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 	if (isset($_POST['default_object'])) $_SESSION['default_object'] = $_POST['default_object'];
@@ -24,6 +47,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 	unset($_POST['QB_nulls']);
 	unset($_POST['QB_orderby_sort']);
 	unset($_POST['QB_orderby_field']);
+	unset($_POST['QB_limit_txt']);
 }
 
 
