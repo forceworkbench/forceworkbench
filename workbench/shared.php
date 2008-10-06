@@ -1,5 +1,5 @@
 <?php
-$version = "2.1.14 Alpha 1";
+$version = "2.1.14 Beta 2.13";
 
 function show_error($errors){
 	print "<div class='show_errors'>\n";
@@ -31,6 +31,17 @@ function show_info($infos){
 	}
 	print "</div>\n";
 }
+
+function printSelectOptions($valuesToLabelsArray,$defaultValue){
+	foreach($valuesToLabelsArray as $value => $label){
+		print "<option value=\"" . $value . "\"";
+		if($defaultValue == $value){
+			print " selected=\"selected\"";
+		}
+		print ">" . $label . "</option>";
+	}
+}
+
 
 function myGlobalSelect($default_object=null, $nameId='default_object', $width=20, $extras=null){
 	print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";	

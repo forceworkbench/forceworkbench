@@ -51,6 +51,7 @@ if (isset($_COOKIE['user'])){
 
 
 //Display main login form body
+$defaultApiVersion = $_SESSION['config']['defaultApiVersion'];
 print <<<LOGIN_FORM
 
 <script type='text/javascript' language='JavaScript'>
@@ -145,39 +146,20 @@ function givePassFocus(){
 			<p>-OR-</p>
 			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='65' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
 			<p>&nbsp;</p>
-			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='65' value='https://www.salesforce.com/services/Soap/u/14.0' /></p>
+			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='65' value='https://www.salesforce.com/services/Soap/u/$defaultApiVersion' /></p>
 			<p><strong>QuickSelect: </strong>
-			<select name='inst' id='inst' onChange='build_location();'>
-				<option value='www'>www</option>
-				<option value='na0-api'>NA0 (SSL)</option>
-				<option value='na1-api'>NA1</option>
-				<option value='na2-api'>NA2</option>
-				<option value='na3-api'>NA3</option>
-				<option value='na4-api'>NA4</option>
-				<option value='na5-api'>NA5</option>
-				<option value='na6-api'>NA6</option>
-				<option value='ap0-api'>AP</option>
-				<option value='eu0-api'>EMEA</option>
-				<option value='test'>test</option>
-				<option value='tapp0-api'>Sandbox CS0 (tapp0)</option>
-				<option value='cs1-api'>Sandbox CS1</option>
-				<option value='cs2-api'>Sandbox CS2</option>
-				<option value='prerelna1.pre'>Pre-Release</option>
-			</select>
+LOGIN_FORM;
+			
+			print "<select name='inst' id='inst' onChange='build_location();'>";
+			printSelectOptions($GLOBALS['config']['defaultInstance']['valuesToLabels'],$_SESSION['config']['defaultInstance']);
+			print "</select>";
 
-			<select name='endp' id='endp' onChange='build_location();'>
-				<option value='14.0' selected='true'>14.0</option>	
-				<option value='13.0'>13.0</option>
-				<option value='12.0'>12.0</option>
-				<option value='11.1'>11.1</option>
-				<option value='11.0'>11.0</option>
-				<option value='10.0'>10.0</option>
-				<option value='9.0'>9.0</option>
-				<option value='8.0'>8.0</option>
-				<option value='7.0'>7.0</option>
-				<option value='6.0'>6.0</option>
-			</select></p>
-
+			print "<select name='endp' id='endp' onChange='build_location();'>";
+			printSelectOptions($GLOBALS['config']['defaultApiVersion']['valuesToLabels'],$_SESSION['config']['defaultApiVersion']);	
+			print "</select></p>";
+			
+			
+print <<<LOGIN_FORM_PART_2
 			<p><strong>Jump to: </strong>
 			<select name='actionJumpAdv' style='width: 14em;'>
 				<option value='select.php'></option>
@@ -201,8 +183,8 @@ function givePassFocus(){
 
 	</form>
 </div>
+LOGIN_FORM_PART_2;
 
-LOGIN_FORM;
 
 //if 'adv' is added to the login url and is not 0, default to advanced login
 if(isset($_GET[adv]) && $_GET[adv] != 0){
@@ -248,10 +230,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	    	if($serverUrl){
 	    		$mySforceConnection->setEndpoint($serverUrl);
 	    	} else {
-	    		//SET STANDARD LOGIN URL HERE
-//	    		$mySforceConnection->setEndpoint("https://prerelwww.pre.salesforce.com/services/Soap/u/14.0");
-//	    		$mySforceConnection->setEndpoint("https://test.pre.salesforce.com/services/Soap/u/14.0");
-	    		$mySforceConnection->setEndpoint("https://www.salesforce.com/services/Soap/u/14.0");
+	    		$mySforceConnection->setEndpoint("https://" . $_SESSION['config']['defaultInstance'] . ".salesforce.com/services/Soap/u/" . $_SESSION['config']['defaultApiVersion']);
 	    	}
 			$mySforceConnection->login($username, $password);
 		} elseif ($sessionId && $serverUrl && !($username && $password)){

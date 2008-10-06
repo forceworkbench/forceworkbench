@@ -22,7 +22,7 @@ $config["header_General"] = array(
 
 	$config["defaultApiVersion"]  = array(
 		"label" => "Default API Version",
-		"description" => "Default API version to be used for standard login.",
+		"description" => "Default API version to be used for login. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
 		"default" => "13.0",
 		"overrideable" => true,
 		"dataType" => "picklist",
@@ -32,11 +32,36 @@ $config["header_General"] = array(
 			"12.0" => "12.0",
 			"11.1" => "11.1",
 			"11.0" => "11.0",
-			"10.0" => "12.0",
+			"10.0" => "10.0",
 			"9.0" => "9.0",
 			"8.0" => "8.0",
 			"7.0" => "7.0",
 			"6.0" => "6.0"
+		)
+	);
+
+	$config["defaultInstance"]  = array(
+		"label" => "Default Instance",
+		"description" => "Default instance to be used for login. Recommended to use 'www' for all production orgs.",
+		"default" => "www",
+		"overrideable" => true,
+		"dataType" => "picklist",
+		"valuesToLabels" => array(
+			"www" => "Production Login (www)",
+			"na0-api" => "NA0 (SSL)",
+			"na1-api" => "NA1",
+			"na2-api" => "NA2",
+			"na3-api" => "NA3",
+			"na4-api" => "NA4",
+			"na5-api" => "NA5",
+			"na6-api" => "NA6",
+			"ap0-api" => "AP",
+			"eu0-api" => "EMEA",
+			"test" => "Sandbox Login (test)",
+			"tapp0-api" => "Sandbox CS0 (tapp0)",
+			"cs1-api" => "Sandbox CS1",
+			"cs2-api" => "Sandbox CS2",
+			"prerelna1.pre" => "Pre-Release"
 		)
 	);
 	
@@ -206,6 +231,46 @@ $config["header_searchOptions"] = array(
 		"overrideable" => true,
 		"dataType" => "boolean"
 	);
+
+	
+$config["header_Execute"] = array(
+	"label" => "Apex Execute Logging Options",
+	"display" => true,
+	"isHeader" => true
+);
+
+	$config["defaultLogCategory"]  = array(
+		"label" => "Default Log Category",
+		"description" => "Default Log Category when displaying results from anonymous Apex execution. Defaults will not apply until after logging in again.",
+		"default" => "Db",
+		"overrideable" => true,
+		"dataType" => "picklist",
+		"valuesToLabels" => array(
+			"Db" => "Database",
+			"Workflow" => "Workflow",
+			"Validation" => "Validation",
+			"Callout" => "Callout",
+			"Apex_code" => "Apex Code",
+			"Apex_profiling" => "Apex Profiling"
+		)
+	);
+	
+	$config["defaultLogCategoryLevel"]  = array(
+		"label" => "Default Log Level",
+		"description" => "Default Log Level when displaying results from anonymous Apex execution. Defaults will not apply until after logging in again.",
+		"default" => "DEBUG",
+		"overrideable" => true,
+		"dataType" => "picklist",
+		"valuesToLabels" => array(
+			"ERROR" => "Error",
+			"WARN" => "Warn",
+			"INFO" => "Info",
+			"DEBUG" => "Debug",
+			"FINE" => "Fine",
+			"FINER" => "Finer",
+			"FINEST" => "Finest"
+		)
+	);	
 	
 $config["header_Performance"] = array(
 	"label" => "Performance Options",

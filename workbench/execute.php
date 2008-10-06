@@ -15,8 +15,8 @@ if(isset($_POST['execute'])){
 	$_SESSION['LogCategoryLevel'] = $_POST['LogCategoryLevel'];
 	$_SESSION['apiVersion'] = $_POST['apiVersion'];
 } else if(!isset($_SESSION['LogCategory']) && !isset($_SESSION['LogCategoryLevel'])){
-	$_SESSION['LogCategory'] = "Apex_code";
-	$_SESSION['LogCategoryLevel'] = "DEBUG";
+	$_SESSION['LogCategory'] = $_SESSION['config']['defaultLogCategory'];
+	$_SESSION['LogCategoryLevel'] = $_SESSION['config']['defaultLogCategoryLevel'];
 	preg_match("/(\d\d?\.\d)/",$_SESSION['location'],$apiVersionCurrent);
 	$_SESSION['apiVersion'] = $apiVersionCurrent[1];
 }
@@ -32,24 +32,8 @@ if(isset($_POST['execute'])){
 	    <td align="right">
 		    Log Category: 
 			<select id="LogCategory" name="LogCategory">
-				<?php
-					$LogCategory = array(
-						array("Db", "Database"),
-						array("Workflow", "Workflow"),
-						array("Validation", "Validation"),
-						array("Callout", "Callout"),
-						array("Apex_code", "Apex Code"),
-						array("Apex_profiling", "Apex Profiling")
-					);
-					
-					foreach($LogCategory as $category){
-						print "<option value=\"" . $category[0] . "\"";
-						if($_SESSION['LogCategory'] == $category[0]){
-							print " selected=\"selected\"";
-						}
-						print ">" . $category[1] . "</option>";
-					}
-
+				<?php		
+				printSelectOptions($config['defaultLogCategory']['valuesToLabels'],$_SESSION['LogCategory']);
 				?>
 			</select>
 	
@@ -58,30 +42,13 @@ if(isset($_POST['execute'])){
 			Log Level: 
 			<select id="LogCategoryLevel" name="LogCategoryLevel">
 				<?php
-					$LogCategoryLevel = array(
-						array("ERROR", "Error"),
-						array("WARN", "Warn"),
-						array("INFO", "Info"),
-						array("DEBUG", "Debug"),
-						array("FINE", "Fine"),
-						array("FINER", "Finer"),
-						array("FINEST", "Finest")
-					);
-					
-					foreach($LogCategoryLevel as $level){
-						print "<option value=\"" . $level[0] . "\"";
-						if($_SESSION['LogCategoryLevel'] == $level[0]){
-							print " selected=\"selected\"";
-						}
-						print ">" . $level[1] . "</option>";
-					}
-
+				printSelectOptions($config['defaultLogCategoryLevel']['valuesToLabels'],$_SESSION['LogCategoryLevel']);
 				?>
 			</select>
 	
 			&nbsp;
 			
-			API Version: 
+			Apex API Version: 
 			<select id="apiVersion" name="apiVersion">
 				<?php
 					$apiVersions = array(
@@ -113,7 +80,7 @@ if(isset($_POST['execute'])){
 	  <tr>
 	    <td colspan="2">
 			
-			<textarea id='scriptInput' name='scriptInput' cols='100' rows='6' style='overflow: auto; font-family: monospace, courier;'><? echo htmlspecialchars($_SESSION['scriptInput'],ENT_QUOTES,'UTF-8'); ?></textarea>
+			<textarea id='scriptInput' name='scriptInput' cols='100' rows='7' style='overflow: auto; font-family: monospace, courier;'><? echo htmlspecialchars($_SESSION['scriptInput'],ENT_QUOTES,'UTF-8'); ?></textarea>
 			<p/>
 			<input type='submit' name="execute" value='Execute'/> <input type='reset' value='Reset'/>
 			
@@ -151,9 +118,9 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 	
 	if($executeAnonymousResultWithDebugLog->executeAnonymousResult->success){
 		if(isset($executeAnonymousResultWithDebugLog->debugLog) && $executeAnonymousResultWithDebugLog->debugLog != ""){
-			print('<pre>' . $executeAnonymousResultWithDebugLog->debugLog . '</pre>');
+			print('<pre>' . htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8') . '</pre>');
 		} else {
-			show_info("Execution was successful, but returned no results. Confirm debug levels.");
+			show_info("Execution was successful, but returned no results. Confirm log category and level.");
 		}
 		
 	} else {
@@ -182,7 +149,7 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 		
 		show_error($error);
 		
-		print('<pre style="color: red;">' . $executeAnonymousResultWithDebugLog->debugLog . '</pre>');
+		print('<pre style="color: red;">' . htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8') . '</pre>');
 	}
 	
 //	print('<pre>');
