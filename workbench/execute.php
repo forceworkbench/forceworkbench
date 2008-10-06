@@ -74,7 +74,7 @@ if(isset($_POST['execute'])){
 
 				?>
 			</select>
-			
+			&nbsp;<img onmouseover="Tip('Apex API Version defaults to the logged in API version, but can be set independently and specifies against which version the Apex script will be compiled.')" align='absmiddle' src='images/help16.png'/>
 		</td>
 	  </tr>
 	  <tr>
