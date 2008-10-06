@@ -4,12 +4,6 @@ require_once ('shared.php');
 require_once('header.php');
 require_once ('soapclient/SforceApexClient.php');
 
-//protect against XSS
-foreach($_POST as $postKey => $postValue){
-	$_POST[$postKey] = htmlspecialchars($postValue,ENT_QUOTES,'UTF-8');
-}
-
-
 //correction for dynamic magic quotes
 if(isset($_POST['scriptInput']) && get_magic_quotes_gpc()){
 	$_POST['scriptInput'] = stripslashes($_POST['scriptInput']);
@@ -27,7 +21,6 @@ if(isset($_POST['execute'])){
 	$_SESSION['apiVersion'] = $apiVersionCurrent[1];
 }
 
-	
 
 ?>
 <form id="executeForm" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
@@ -102,10 +95,12 @@ if(isset($_POST['execute'])){
 						"8.0"
 					);
 					
+					$apiVersionMatched = false;
 					foreach($apiVersions as $verion){
 						print "<option value=\"" . $verion . "\"";
 						if($_SESSION['apiVersion'] == $verion){
 							print " selected=\"selected\"";
+							$apiVersionMatched = true;
 						}
 						print ">" . $verion . "</option>";
 					}
@@ -118,7 +113,7 @@ if(isset($_POST['execute'])){
 	  <tr>
 	    <td colspan="2">
 			
-			<textarea id='scriptInput' name='scriptInput' cols='100' rows='6' style='overflow: auto;'><? echo $_SESSION['scriptInput']; ?></textarea>
+			<textarea id='scriptInput' name='scriptInput' cols='100' rows='6' style='overflow: auto; font-family: monospace, courier;'><? echo htmlspecialchars($_SESSION['scriptInput'],ENT_QUOTES,'UTF-8'); ?></textarea>
 			<p/>
 			<input type='submit' name="execute" value='Execute'/> <input type='reset' value='Reset'/>
 			
@@ -134,6 +129,11 @@ if(isset($_POST['execute'])){
 
 
 <?php
+if(!$apiVersionMatched){
+	show_info("API version used for login is not supported for Apex execution. Execute will use default Apex API version unless otherwise specified.");
+}
+
+
 if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != ""){
 	print "<h2>Results</h2>";
 	
@@ -159,16 +159,8 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 	} else {
 		$error;	
 		
-		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->line)){
-			$error .=  "LINE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->line;
-		}
-		
-		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->column)){
-			$error .=  " COL: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->column;
-		}
-		
 		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem)){
-			$error .=  "\nCOMPILE ERROR: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem;
+			$error .=  "COMPILE ERROR: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem;
 		}
 		
 		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage)){
@@ -179,7 +171,18 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 			$error .= "\nSTACKTRACE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace;
 		}
 		
+			
+		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->line)){
+			$error .=  "\nLINE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->line;
+		}
+		
+		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->column)){
+			$error .=  " COLUMN: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->column;
+		}
+		
 		show_error($error);
+		
+		print('<pre style="color: red;">' . $executeAnonymousResultWithDebugLog->debugLog . '</pre>');
 	}
 	
 //	print('<pre>');
