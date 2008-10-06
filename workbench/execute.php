@@ -4,6 +4,12 @@ require_once ('shared.php');
 require_once('header.php');
 require_once ('soapclient/SforceApexClient.php');
 
+//protect against XSS
+foreach($_POST as $postKey => $postValue){
+	$_POST[$postKey] = htmlspecialchars($postValue,ENT_QUOTES,'UTF-8');
+}
+
+
 //correction for dynamic magic quotes
 if(isset($_POST['scriptInput']) && get_magic_quotes_gpc()){
 	$_POST['scriptInput'] = stripslashes($_POST['scriptInput']);
