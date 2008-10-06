@@ -20,6 +20,26 @@ $config["header_General"] = array(
 	"isHeader" => true
 );
 
+	$config["defaultApiVersion"]  = array(
+		"label" => "Default API Version",
+		"description" => "Default API version to be used for standard login.",
+		"default" => "13.0",
+		"overrideable" => true,
+		"dataType" => "picklist",
+		"valuesToLabels" => array(
+			"14.0" => "14.0",
+			"13.0" => "13.0",
+			"12.0" => "12.0",
+			"11.1" => "11.1",
+			"11.0" => "11.0",
+			"10.0" => "12.0",
+			"9.0" => "9.0",
+			"8.0" => "8.0",
+			"7.0" => "7.0",
+			"6.0" => "6.0"
+		)
+	);
+	
 	$config["abcOrder"] = array(
 		"label" => "Alphabetize Field Names",
 		"description" => "Alphabetizes field names for across application. Otherwise, field names are displayed in the order returned by Salesforce.",

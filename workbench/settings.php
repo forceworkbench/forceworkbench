@@ -65,6 +65,16 @@ require_once('header.php');
 					print "<input name='$configKey' id='$configKey' type='text' value='". $_SESSION['config'][$configKey] . "' size='30'/></td>\n";
 				} else if  ($configValue['dataType'] == "password"){
 					print "<input name='$configKey' id='$configKey' type='password' value='". $_SESSION['config'][$configKey] . "' size='30'/></td>\n";
+				} else if  ($configValue['dataType'] == "picklist"){
+					print "<select name='$configKey' id='$configKey'>";
+					foreach($configValue['valuesToLabels'] as $value => $label){
+						print "<option value=\"" . $value . "\"";
+						if($_SESSION['config'][$configKey] == $value){
+							print " selected=\"selected\"";
+						}
+						print ">" . $label . "</option>";
+					}
+					print "</select>";
 				} else {
 					print "</td>\n";
 				}
