@@ -8,15 +8,13 @@ require_once ('header.php');
 
 
 <p>
-The Workbench is a web-based application that gives administrators on-demand access
-to useful tools to manage their salesforce.com organization.
-Combining the power of both the Apex Data Loader with the Force.com Explorer,
+The Workbench is a web-based application that gives administrators and developers 
+on-demand access to useful tools to manage their salesforce.com organization.
+Starting with a combination of the features of both the Apex Data Loader and the Force.com Explorer,
 the Workbench can insert, upsert, update, export, delete, undelete,
-and purge data as well as describe any object in your salesforce.com organization.
-These functions build on the strengths of both the existing
-products to create an even more powerful and easier-to-use on-demand application.
+and purge data as well as describe any object and execute anonymous Apex scripts in a salesforce.com organization.
 Not only can the Workbench be used as a standalone application
-in your browser, but it can also be integrated within Salesforce as a single-sign-on
+in a web browser, but it can also be integrated within Salesforce as a single-sign-on
 web tab for more convenient access.
 </p>
 
@@ -38,13 +36,13 @@ Developed by Ryan Brainard<br/>
 <strong>The Workbench is NOT a product of or supported by salesforce.com, inc.
 For support from the Open Source community, please visit the recources below:</strong>
 <ul>
-	<li><a href="http://code.google.com/p/forceworkbench/">Main Page</a></li>
-	<li><a href="http://groups.google.com/group/forceworkbench">Feedback &amp; Discussion</a></li>
-  	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench">Wiki</a></li>
-	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#FAQ">FAQ</a></li>
-	<li><a href="http://code.google.com/p/forceworkbench/issues/list">Issue Tracking</a></li>
-	<li><a href="http://code.google.com/p/forceworkbench/source/browse">Source Code</a></li>
-	<li><a href="http://code.google.com/p/forceworkbench/downloads/list">Download</a></li>
+  	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench" target="_blank">Main Page</a></li>
+	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#FAQ" target="_blank">FAQ</a></li>
+	<li><a href="http://groups.google.com/group/forceworkbench" target="_blank">Feedback &amp; Discussion</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/" target="_blank">Development</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/issues/list" target="_blank">Report an Issue</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/source/browse" target="_blank">Source Code</a></li>
+	<li><a href="http://code.google.com/p/forceworkbench/downloads/list" target="_blank">Download</a></li>
 </ul>
 </p>
 
