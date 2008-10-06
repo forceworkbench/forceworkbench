@@ -80,7 +80,7 @@ if(isset($_POST['execute'])){
 	  <tr>
 	    <td colspan="2">
 			
-			<textarea id='scriptInput' name='scriptInput' cols='100' rows='7' style='overflow: auto; font-family: monospace, courier;'><? echo htmlspecialchars($_SESSION['scriptInput'],ENT_QUOTES,'UTF-8'); ?></textarea>
+			<textarea id='scriptInput' name='scriptInput' cols='100' rows='7' style='overflow: auto; font-family: monospace, courier;'><?php echo htmlspecialchars($_SESSION['scriptInput'],ENT_QUOTES,'UTF-8'); ?></textarea>
 			<p/>
 			<input type='submit' name="execute" value='Execute'/> <input type='reset' value='Reset'/>
 			
