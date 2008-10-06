@@ -400,7 +400,7 @@ QUERY_BUILDER_SCRIPT;
 		}
 		print "</select></td>\n";
 
-		print "<td><input type='text' id='QB_limit_txt' size='11' name='QB_limit_txt' value='" . $_POST['QB_limit_txt'] . "' onkeyup='build_query();' /></td>\n";
+		print "<td><input type='text' id='QB_limit_txt' size='11' name='QB_limit_txt' value='" . htmlspecialchars($_POST['QB_limit_txt'],ENT_QUOTES,'UTF-8') . "' onkeyup='build_query();' /></td>\n";
 
 	print "</tr>\n";
 
@@ -444,7 +444,7 @@ QUERY_BUILDER_SCRIPT;
 		}
 	print "</select>\n";
 
-	print "<input type='text' id='QB_filter_txt' size='31' name='QB_filter_txt' value=\"" . $_POST['QB_filter_txt'] . "\" onkeyup='build_query();' />";
+	print "<input type='text' id='QB_filter_txt' size='31' name='QB_filter_txt' value=\"" . htmlspecialchars($_POST['QB_filter_txt'],ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />";
 	print "</td></tr>\n";
 
 
@@ -487,7 +487,7 @@ QUERY_BUILDER_SCRIPT;
 		}
 	print "</select>\n";
 
-	print "<input type='text' id='QB_filter_txt2' size='31' name='QB_filter_txt2' value=\"" . $_POST['QB_filter_txt2'] . "\" onkeyup='build_query();' />\n";
+	print "<input type='text' id='QB_filter_txt2' size='31' name='QB_filter_txt2' value=\"" . htmlspecialchars($_POST['QB_filter_txt2'],ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />\n";
 	print "</td></tr>\n";
 
 
@@ -499,7 +499,7 @@ QUERY_BUILDER_SCRIPT;
 
 
 	print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-			"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='118' rows='4' style='overflow: auto;'>$soql_query</textarea>\n" .
+			"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='118' rows='4'  style='overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($soql_query,ENT_QUOTES,'UTF-8') . "</textarea>\n" .
 		  "</td></tr>\n";
 
 

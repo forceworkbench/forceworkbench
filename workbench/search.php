@@ -148,7 +148,7 @@ SEARCH_BUILDER_SCRIPT;
 	print "<p><strong>Enter a search string and optionally select the objects and fields to return to build a SOSL search below:</strong></p>\n";
 	print "<table border='0' width=1>\n<tr>\n";
     
-    print "<td>Search for </td><td><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . $_POST['SB_searchString'] . "\" size='37' onKeyUp='build_search();' /> in ";
+    print "<td>Search for </td><td><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . htmlspecialchars($_POST['SB_searchString'],ENT_QUOTES,'UTF-8') . "\" size='37' onKeyUp='build_search();' /> in ";
     
 	$fieldTypeSelectOptions = array(
 		'ALL FIELDS' => 'All Fields',
@@ -164,26 +164,26 @@ SEARCH_BUILDER_SCRIPT;
 	}
 	print "</select>";
 
-    print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . $_POST['SB_limit'] . "' size='5' onKeyUp='build_search();' /> maximum records</td></tr>\n";
+    print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . htmlspecialchars($_POST['SB_limit'],ENT_QUOTES,'UTF-8') . "' size='5' onKeyUp='build_search();' /> maximum records</td></tr>\n";
 
 	print "<tr><td colspan='2'></td></tr>";
 	print "<tr><td>returning object </td><td NOWRAP>";
 	myGlobalSelect($_POST['SB_objSelect1'],'SB_objSelect1',20,"onChange='build_search();'");
-	print " including fields <input id='SB_objDetail1' name='SB_objDetail1' type='text' value=\"" . $_POST['SB_objDetail1'] . "\" size='40'  onKeyUp='build_search();' />";
+	print " including fields <input id='SB_objDetail1' name='SB_objDetail1' type='text' value=\"" . htmlspecialchars($_POST['SB_objDetail1'],ENT_QUOTES,'UTF-8') . "\" size='40'  onKeyUp='build_search();' />";
 		print "&nbsp;<img onmouseover=\"Tip('List the API names of the fields to be returned; otherwise, only the Id is returned. Optionally include WHERE and LIMIT statements to futher filter search results.')\" align='absmiddle' src='images/help16.png'/>";
 		print "</td></tr>";
 	print "<tr><td colspan='2'></td></tr>";
 	print "<tr><td>and object </td><td NOWRAP>";
 	myGlobalSelect($_POST['SB_objSelect2'],'SB_objSelect2',20,"onChange='build_search();'");
-	print " including fields <input id='SB_objDetail2' name='SB_objDetail2' type='text' value=\"" . $_POST['SB_objDetail2'] . "\" size='40' onKeyUp='build_search();' /></td></tr>";
+	print " including fields <input id='SB_objDetail2' name='SB_objDetail2' type='text' value=\"" . htmlspecialchars($_POST['SB_objDetail2'],ENT_QUOTES,'UTF-8') . "\" size='40' onKeyUp='build_search();' /></td></tr>";
 	
 	print "<tr><td colspan='2'></td></tr>";
 	print "<tr><td>and object </td><td NOWRAP>";
 	myGlobalSelect($_POST['SB_objSelect3'],'SB_objSelect3',20,"onChange='build_search();'");
-	print " including fields <input id='SB_objDetail3' name='SB_objDetail3' type='text' value=\"" . $_POST['SB_objDetail3'] . "\" size='40' onKeyUp='build_search();' /></td></tr>";
+	print " including fields <input id='SB_objDetail3' name='SB_objDetail3' type='text' value=\"" . htmlspecialchars($_POST['SB_objDetail3'],ENT_QUOTES,'UTF-8') . "\" size='40' onKeyUp='build_search();' /></td></tr>";
 
 	print "<tr><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
-			"<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='110' rows='4' style='overflow: auto;'>$sosl_search</textarea>" .
+			"<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='110' rows='4' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($sosl_search,ENT_QUOTES,'UTF-8') . "</textarea>" .
 		  "</td></tr>";
 
 
