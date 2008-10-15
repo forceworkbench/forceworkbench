@@ -107,13 +107,12 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 	$apexServerUrl = str_replace("/u/","/s/",$_SESSION['location']);
 	$apexServerUrl = preg_replace("/\d\d?\.\d/",$_POST['apiVersion'],$apexServerUrl);
 
-	$apexBinding = new SforceApexClient("soapclient/sforce.140.apex.wsdl",$_SESSION['sessionId'],$apexServerUrl,$_POST['LogCategory'],$_POST['LogCategoryLevel']);
+	$apexBinding = new SforceApexClient("soapclient/sforce.140.apex.wsdl",$apexServerUrl,$_POST['LogCategory'],$_POST['LogCategoryLevel']);
 	
 	try {
 		$executeAnonymousResultWithDebugLog = $apexBinding->executeAnonymous($_POST['scriptInput']);
 	} catch(Exception $e) {
 		show_error($e->getMessage());
-		continue;
 	}
 	
 	if($executeAnonymousResultWithDebugLog->executeAnonymousResult->success){

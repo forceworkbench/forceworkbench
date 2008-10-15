@@ -186,7 +186,7 @@ SEARCH_BUILDER_SCRIPT;
 	print " including fields <input id='SB_objDetail3' name='SB_objDetail3' type='text' value=\"" . htmlspecialchars($_SESSION['SB_objDetail3'],ENT_QUOTES,'UTF-8') . "\" size='40' onKeyUp='build_search();' /></td></tr>";
 
 	print "<tr><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
-			"<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='110' rows='4' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($sosl_search,ENT_QUOTES,'UTF-8') . "</textarea>" .
+			"<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='100' rows='4' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($sosl_search,ENT_QUOTES,'UTF-8') . "</textarea>" .
 		  "</td></tr>";
 
 

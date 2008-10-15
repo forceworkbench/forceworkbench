@@ -58,7 +58,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
-	show_query_form($_POST['soql_query'],'screen',$_POST['query_action'],$_SESSION['default_object']);
+	show_query_form($_POST['soql_query'],'screen',$_POST['query_action']);
 	$queryTimeStart = microtime(true);
 	$records = query(null,'QueryMore',$_SESSION['queryLocator']);
 	$queryTimeEnd = microtime(true);
@@ -68,7 +68,7 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && isset($_POST['soql_query']) && $_POST['export_action'] == 'screen') {
 	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
-	show_query_form($_POST['soql_query'],'screen',$_POST['query_action'],$_SESSION['default_object']);
+	show_query_form($_POST['soql_query'],'screen',$_POST['query_action']);
 	$queryTimeStart = microtime(true);
 	$records = query($_POST['soql_query'],$_POST['query_action']);
 	$queryTimeEnd = microtime(true);
@@ -78,11 +78,11 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 } elseif (isset($_POST['querySubmit']) && $_POST[querySubmit]=='Query' && $_POST[soql_query] && $_POST[export_action] == 'csv') {
 	if (!substr_count($_POST['soql_query'],"count()")){
 		$records = query($_POST['soql_query'],$_POST['query_action'],null,true);
-		export_query_csv($records);
+		export_query_csv($records,$_POST['query_action']);
 	} else {
 		print "<body onLoad='toggleFieldDisabled();'>";
 		require_once ('header.php');
-		show_query_form($_POST['soql_query'],'csv',$_POST['query_action'],$_SESSION['default_object']);
+		show_query_form($_POST['soql_query'],'csv',$_POST['query_action']);
 		print "</form>"; //could include inside because if IE page loading bug
 		print "<p>&nbsp;</p>";
 		show_error("count() is not supported for CSV file export. Change export to Browser or choose fields and try again.");
@@ -429,7 +429,7 @@ QUERY_BUILDER_SCRIPT;
 	print "</tr>\n";
 
 
-	print "<tr><td valign='top' colspan=4>\n";
+	print "<tr><td valign='top' colspan=4 nowrap>\n";
 	print "<br/>Filter results by:<br/>\n";
 
 	print "<select id='QB_filter_field_sel' name='QB_filter_field_sel' style='width: 16em;' onChange='build_query();'>\n";
@@ -472,7 +472,7 @@ QUERY_BUILDER_SCRIPT;
 	print "</td></tr>\n";
 
 
-	print "<tr><td valign='top' colspan=4>\n";
+	print "<tr><td valign='top' colspan=4 nowrap>\n";
 	print "<br/>Then filter results by:<br/>\n";
 
 	print "<select id='QB_filter_field_sel2' name='QB_filter_field_sel2' style='width: 16em;' onChange='build_query();'>\n";
@@ -523,7 +523,7 @@ QUERY_BUILDER_SCRIPT;
 
 
 	print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-			"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='118' rows='4'  style='overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($soql_query,ENT_QUOTES,'UTF-8') . "</textarea>\n" .
+			"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='108' rows='4'  style='overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($soql_query,ENT_QUOTES,'UTF-8') . "</textarea>\n" .
 		  "</td></tr>\n";
 
 
@@ -680,7 +680,7 @@ function show_query_result($records, $queryTimeElapsed){
 
 
 //Export the above query to a CSV file
-function export_query_csv($records){
+function export_query_csv($records,$query_action){
 	if ($records) {
 	    try {
 		    $csv_line = array();
@@ -731,19 +731,18 @@ function export_query_csv($records){
 	      }
 		    fclose($csv_file) or die("Error closing php://output");
 	    } catch (Exception $e) {
-	      	$errors = null;
-			$errors = $e->getMessage();
-			show_query_form($_POST['soql_query'],'csv');
+			require_once("header.php");
+	    	$errors = $e->getMessage();
+			show_query_form($_POST['soql_query'],'csv',$query_action);
 			print "<p />";
 			show_error($errors);
 			include_once('footer.php');
 			exit;
 	    }
-	  }else
-	  {
-	  	$errors = null;
-		$errors = $e->getMessage();
-		show_query_form($_POST['soql_query'],'csv');
+	  } else {
+	  	require_once("header.php");
+		$errors = "No records returned for CSV output.";
+		show_query_form($_POST['soql_query'],'csv',$query_action);
 		print "<p />";
 		show_error($errors);
 		include_once('footer.php');

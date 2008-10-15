@@ -1,5 +1,5 @@
 <?php
-$version = "2.1.14 Beta 3.13";
+$version = "2.1.14 Beta 4.14";
 
 function show_error($errors){
 	print "<div class='show_errors'>\n";
@@ -587,6 +587,7 @@ function idOnlyCallIds($api_call,$field_map,$csv_array,$show_results){
 	      	$errors = null;
 			$errors = $e->getMessage();
 			show_error($errors);
+			include_once("footer.php");
 			exit;
 	    }
 	}
@@ -659,6 +660,7 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 		      	$errors = null;
 				$errors = $e->getMessage();
 				show_error($errors);
+				include_once("footer.php");
 				exit;
 		    }
 		    if(!$results){
@@ -866,7 +868,21 @@ function idOnlyCall($action){
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
 	if($_SESSION['config']['debug'] == true){
 
-		print "<pre style='font-family: monospace; text-align: left;'>";
+		print "<script>
+			function toggleDebugSection(title, sectionId){
+				var section = document.getElementById(sectionId);
+				if(section.style.display == 'inline'){
+					section.style.display = 'none';
+					title.childNodes[0].nodeValue = title.childNodes[0].nodeValue.replace('-','+');
+				} else {
+					title.childNodes[0].nodeValue = title.childNodes[0].nodeValue.replace('+','-');
+					section.style.display = 'inline';
+				}
+			}
+			</script>";
+ 	
+		print "<div style='text-align: left;'>";
+		
 
 		if($customValue){
 			if($customName){
@@ -880,54 +896,103 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 		}
 
 		if($showSuperVars){
-			print "<h1>GLOBALS</h1>\n";
+			print "<h1 onclick=\"toggleDebugSection(this,'container_globals')\">+ SUPERGLOBAL VARIABLES</h1>\n";
+			print "<div id='container_globals' class='debugContainer'>";
+			
+				
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_cookie')\">+ COOKIE SUPERGLOBAL VARIABLE</strong>\n";
+				print "<div id='container_globals_cookie' class='debugContainer'>";
+				var_dump ($_COOKIE);
+				print "<hr/>";
+				print "</div>";
+				
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_session')\">+ SESSION SUPERGLOBAL VARIABLE</strong>\n";
+				print "<div id='container_globals_session' class='debugContainer'>";
+				var_dump ($_SESSION);
+				print "<hr/>";
+				print "</div>";
 
-			print "<strong>COOKIE SUPERGLOBAL VARIABLE</strong>\n";
-			var_dump ($_COOKIE);
-			print "<hr/>";
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_post')\">+ POST SUPERGLOBAL VARIABLE</strong>\n";
+				print "<div id='container_globals_post' class='debugContainer'>";
+				var_dump ($_POST);
+				print "<hr/>";
+				print "</div>";
+				
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_get')\">+ GET SUPERGLOBAL VARIABLE</strong>\n";
+				print "<div id='container_globals_get' class='debugContainer'>";
+				var_dump ($_GET);
+				print "<hr/>";
+				print "</div>";
+				
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_files')\">+ FILES SUPERGLOBAL VARIABLE</strong>\n";
+				print "<div id='container_globals_files' class='debugContainer'>";
+				var_dump ($_FILES);
+				print "<hr/>";
+				print "</div>";
+				
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_env')\">+ ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
+				print "<div id='container_globals_env' class='debugContainer'>";
+				var_dump ($_ENV);
+				print "<hr/>";
+				print "</div>";
 
-			print "<strong>SESSION SUPERGLOBAL VARIABLE</strong>\n";
-			var_dump ($_SESSION);
-			print "<hr/>";
-
-			print "<strong>POST SUPERGLOBAL VARIABLE</strong>\n";
-			var_dump ($_POST);
-			print "<hr/>";
-
-			print "<strong>GET SUPERGLOBAL VARIABLE</strong>\n";
-			var_dump ($_GET);
-			print "<hr/>";
-
-			print "<strong>FILES SUPERGLOBAL VARIABLE</strong>\n";
-			var_dump ($_FILES);
-			print "<hr/>";
-
-			print "<strong>ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
-			var_dump ($_ENV);
-			print "<hr/>";
+			print "</div>";
 		}
+
 
 		global $mySforceConnection;
 		if($showSoap && isset($mySforceConnection)){
 			try{
-				print "<h1>SOAP MESSAGES</h1>\n";
+				print "<h1 onclick=\"toggleDebugSection(this,'partner_soap_container')\">+ PARTNER SOAP MESSAGES</h1>\n";
+				print "<div id='partner_soap_container'  class='debugContainer'>";
 
-				print "<strong>LAST REQUEST HEADER</strong>\n";
-				print htmlspecialchars($mySforceConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
-				print "<hr/>";
+					print "<strong>LAST REQUEST HEADER</strong>\n";
+					print htmlspecialchars($mySforceConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+					print "<hr/>";
+	
+					print "<strong>LAST REQUEST</strong>\n";
+					print htmlspecialchars($mySforceConnection->getLastRequest(),ENT_QUOTES,'UTF-8');
+					print "<hr/>";
+	
+					print "<strong>LAST RESPONSE HEADER</strong>\n";
+					print htmlspecialchars($mySforceConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+					print "<hr/>";
+	
+					print "<strong>LAST RESPONSE</strong>\n";
+					print htmlspecialchars($mySforceConnection->getLastResponse(),ENT_QUOTES,'UTF-8');
+					print "<hr/>";
+				
+				print "</div>";
+			}
+			catch (Exception $e) {
+				print "<strong>SOAP Error</strong>\n";
+				print_r ($e);
+			}
+		}
+		
+		global $apexBinding;
+		if($showSoap && isset($apexBinding)){
+			try{
+				print "<h1 onclick=\"toggleDebugSection(this,'apex_soap_container')\">+ APEX SOAP MESSAGES</h1>\n";
+				print "<div id='apex_soap_container' class='debugContainer'>";
 
-				print "<strong>LAST REQUEST</strong>\n";
-				print htmlspecialchars($mySforceConnection->getLastRequest(),ENT_QUOTES,'UTF-8');
-				print "<hr/>";
-
-				print "<strong>LAST RESPONSE HEADER</strong>\n";
-				print htmlspecialchars($mySforceConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
-				print "<hr/>";
-
-				print "<strong>LAST RESPONSE</strong>\n";
-				print htmlspecialchars($mySforceConnection->getLastResponse(),ENT_QUOTES,'UTF-8');
-			//	print $mySforceConnection->getLastResponse();
-				print "<hr/>";
+					print "<strong>LAST REQUEST HEADER</strong>\n";
+					print htmlspecialchars($apexBinding->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+					print "<hr/>";
+	
+					print "<strong>LAST REQUEST</strong>\n";
+					print htmlspecialchars($apexBinding->getLastRequest(),ENT_QUOTES,'UTF-8');
+					print "<hr/>";
+	
+					print "<strong>LAST RESPONSE HEADER</strong>\n";
+					print htmlspecialchars($apexBinding->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+					print "<hr/>";
+	
+					print "<strong>LAST RESPONSE</strong>\n";
+					print htmlspecialchars($apexBinding->getLastResponse(),ENT_QUOTES,'UTF-8');
+					print "<hr/>";
+					
+				print "</div>";
 			}
 			catch (Exception $e) {
 				print "<strong>SOAP Error</strong>\n";
@@ -935,7 +1000,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 			}
 		}
 
-		print "</pre>";
+		print "</div>";
 	}
 }
 

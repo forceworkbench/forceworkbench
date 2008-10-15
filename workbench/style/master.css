@@ -42,6 +42,13 @@ a{
 	color: #0046ad;
 }
 
+.debugContainer{
+	white-space: pre;
+	font-family: monospace; 
+	text-align: left;
+	display: none;
+}
+
 
 h1{
 	color: #0046ad;
