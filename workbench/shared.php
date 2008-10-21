@@ -1,5 +1,5 @@
 <?php
-$version = "2.1.14 Beta 4.14";
+$version = "2.1.14";
 
 function show_error($errors){
 	print "<div class='show_errors'>\n";
@@ -896,41 +896,41 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 		}
 
 		if($showSuperVars){
-			print "<h1 onclick=\"toggleDebugSection(this,'container_globals')\">+ SUPERGLOBAL VARIABLES</h1>\n";
+			print "<h1 onclick=\"toggleDebugSection(this,'container_globals')\" class=\"debugHeader\">+ SUPERGLOBAL VARIABLES</h1>\n";
 			print "<div id='container_globals' class='debugContainer'>";
 			
 				
-				print "<strong onclick=\"toggleDebugSection(this,'container_globals_cookie')\">+ COOKIE SUPERGLOBAL VARIABLE</strong>\n";
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_cookie')\" class=\"debugHeader\">+ COOKIE SUPERGLOBAL VARIABLE</strong>\n";
 				print "<div id='container_globals_cookie' class='debugContainer'>";
 				var_dump ($_COOKIE);
 				print "<hr/>";
 				print "</div>";
 				
-				print "<strong onclick=\"toggleDebugSection(this,'container_globals_session')\">+ SESSION SUPERGLOBAL VARIABLE</strong>\n";
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_session')\" class=\"debugHeader\">+ SESSION SUPERGLOBAL VARIABLE</strong>\n";
 				print "<div id='container_globals_session' class='debugContainer'>";
 				var_dump ($_SESSION);
 				print "<hr/>";
 				print "</div>";
 
-				print "<strong onclick=\"toggleDebugSection(this,'container_globals_post')\">+ POST SUPERGLOBAL VARIABLE</strong>\n";
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_post')\" class=\"debugHeader\">+ POST SUPERGLOBAL VARIABLE</strong>\n";
 				print "<div id='container_globals_post' class='debugContainer'>";
 				var_dump ($_POST);
 				print "<hr/>";
 				print "</div>";
 				
-				print "<strong onclick=\"toggleDebugSection(this,'container_globals_get')\">+ GET SUPERGLOBAL VARIABLE</strong>\n";
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_get')\" class=\"debugHeader\">+ GET SUPERGLOBAL VARIABLE</strong>\n";
 				print "<div id='container_globals_get' class='debugContainer'>";
 				var_dump ($_GET);
 				print "<hr/>";
 				print "</div>";
 				
-				print "<strong onclick=\"toggleDebugSection(this,'container_globals_files')\">+ FILES SUPERGLOBAL VARIABLE</strong>\n";
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_files')\" class=\"debugHeader\">+ FILES SUPERGLOBAL VARIABLE</strong>\n";
 				print "<div id='container_globals_files' class='debugContainer'>";
 				var_dump ($_FILES);
 				print "<hr/>";
 				print "</div>";
 				
-				print "<strong onclick=\"toggleDebugSection(this,'container_globals_env')\">+ ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
+				print "<strong onclick=\"toggleDebugSection(this,'container_globals_env')\" class=\"debugHeader\">+ ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
 				print "<div id='container_globals_env' class='debugContainer'>";
 				var_dump ($_ENV);
 				print "<hr/>";
@@ -943,7 +943,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 		global $mySforceConnection;
 		if($showSoap && isset($mySforceConnection)){
 			try{
-				print "<h1 onclick=\"toggleDebugSection(this,'partner_soap_container')\">+ PARTNER SOAP MESSAGES</h1>\n";
+				print "<h1 onclick=\"toggleDebugSection(this,'partner_soap_container')\" class=\"debugHeader\">+ PARTNER SOAP MESSAGES</h1>\n";
 				print "<div id='partner_soap_container'  class='debugContainer'>";
 
 					print "<strong>LAST REQUEST HEADER</strong>\n";
@@ -973,7 +973,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 		global $apexBinding;
 		if($showSoap && isset($apexBinding)){
 			try{
-				print "<h1 onclick=\"toggleDebugSection(this,'apex_soap_container')\">+ APEX SOAP MESSAGES</h1>\n";
+				print "<h1 onclick=\"toggleDebugSection(this,'apex_soap_container')\" class=\"debugHeader\">+ APEX SOAP MESSAGES</h1>\n";
 				print "<div id='apex_soap_container' class='debugContainer'>";
 
 					print "<strong>LAST REQUEST HEADER</strong>\n";

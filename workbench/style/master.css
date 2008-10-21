@@ -49,6 +49,9 @@ a{
 	display: none;
 }
 
+.debugHeader{
+	cursor: pointer;	
+}
 
 h1{
 	color: #0046ad;
