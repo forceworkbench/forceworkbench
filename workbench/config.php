@@ -89,6 +89,22 @@ $config["header_General"] = array(
 		"dataType" => "boolean"
 	);
 	
+	$config["displayRequestTime"] = array(
+		"label" => "Display Request Time",
+		"description" => "Display the time to render the page in the footer.",
+		"default" => true,
+		"overrideable" => false,
+		"dataType" => "boolean"
+	);
+	
+	$config["checkSSL"] = array(
+		"label" => "Check for Secure Connection",
+		"description" => "Display a warning to users in the footer if an unsecure connection is detected.",
+		"default" => true,
+		"overrideable" => false,
+		"dataType" => "boolean"
+	);
+			
 	$config["debug"] = array(
 		"label" => "Debug Mode",
 		"description" => "Enables debugging mode for showing supervariables and SOAP messages.",
