@@ -52,6 +52,7 @@ if(isset($_POST['execute'])){
 			<select id="apiVersion" name="apiVersion">
 				<?php
 					$apiVersions = array(
+						"15.0",
 						"14.0",
 						"13.0",
 						"12.0",
@@ -107,7 +108,7 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 	$apexServerUrl = str_replace("/u/","/s/",$_SESSION['location']);
 	$apexServerUrl = preg_replace("/\d\d?\.\d/",$_POST['apiVersion'],$apexServerUrl);
 
-	$apexBinding = new SforceApexClient("soapclient/sforce.140.apex.wsdl",$apexServerUrl,$_POST['LogCategory'],$_POST['LogCategoryLevel']);
+	$apexBinding = new SforceApexClient("soapclient/sforce.150.apex.wsdl",$apexServerUrl,$_POST['LogCategory'],$_POST['LogCategoryLevel']);
 	
 	try {
 		$executeAnonymousResultWithDebugLog = $apexBinding->executeAnonymous($_POST['scriptInput']);

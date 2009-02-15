@@ -1,22 +1,57 @@
 <?php
-//session_start();
 require_once ('session.php');
 require_once('shared.php');
 
+/*
+ * For auto-login by GET params, allow users to either provide un/pw or sid, and optionally serverUrl and/or api version.
+ * If the serverUrl is provided, it will be used alone, but if either
+ */
 
-if(isset($_GET['serverUrl']) && isset($_GET['sid'])){		//simulate adv login from url query params for web tab use
-	$_POST['serverUrl'] = $_GET['serverUrl'];
-	$_POST['sessionId'] = $_GET['sid'];
-	$_POST['login_type'] = "adv";
-	$_POST['actionJumpAdv'] = "select.php";
+if((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])){		
+		
+	$un       = isset($_GET['un'])       ? $_GET['un']       : null;
+	$pw       = isset($_GET['pw'])       ? $_GET['pw']       : null;
+	$sid      = isset($_GET['sid'])      ? $_GET['sid']      : null;
+	$startUrl = isset($_GET['startUrl']) ? $_GET['startUrl'] : "select.php";
+	//error handling for these (so users can't set all three
+	//is already done in the process_Login() function
+	//as it applies to both ui and auto-login
+
+	//make sure the user isn't setting invalid combinations of query params
+	if(isset($_GET['serverUrl']) && isset($_GET['inst']) && isset($_GET['api'])){
+		
+		//display UI login page with error.
+		display_login("Invalid auto-login parameters. Must set either serverUrl OR inst and/or api.");
+		
+	} else if(isset($_GET['serverUrl']) && !(isset($_GET['inst'])  || isset($_GET['api'])) ) {
+		
+		$serverUrl = $_GET['serverUrl'];
+		
+	} else {
+		
+		$serverUrl = "https://";
+		
+		if(isset($_GET['inst'])){
+			$serverUrl .= $_GET['inst'];
+		} else {
+			$serverUrl .= $_SESSION['config']['defaultInstance'];
+		}
+		
+		$serverUrl .= ".salesforce.com/services/Soap/u/";
+		
+		if(isset($_GET['api'])){
+			$serverUrl .= $_GET['api'];
+		} else {
+			$serverUrl .= $_SESSION['config']['defaultApiVersion'];
+		}
+		
+	}
+	
+	$_REQUEST['autoLogin'] = 1;
+	process_Login($un, $pw, $serverUrl, $sid, $startUrl);	
 }
 
-if(isset($_GET['un']) && isset($_GET['pw'])){		//simulate std login from un/pw query params for web tab use
-	$_POST['usernameStd'] = $_GET['un'];
-	$_POST['passwordStd'] = $_GET['pw'];
-	$_POST['login_type'] = "std";
-	$_POST['actionJumpStd'] = "select.php";
-}
+
 
 if(isset($_POST['login_type'])){
 	if ($_POST['login_type']=='std'){
@@ -25,7 +60,6 @@ if(isset($_POST['login_type'])){
 		process_login($_POST['usernameAdv'], $_POST['passwordAdv'], $_POST['serverUrl'], $_POST['sessionId'], $_POST['actionJumpAdv']);
 	} 
 } else {
-	checkLatestVersion();
 	display_login(null);
 }
 
@@ -37,13 +71,13 @@ if (isset($errors)) {
 	show_error($errors);
 }
 
+$isRemembered = "";
 if (isset($_COOKIE['user'])){
 	$user = $_COOKIE['user'];
 	$isRemembered = "checked='checked'";
 	print "<body onLoad='givePassFocus();' />";
 } elseif (isset($_POST['user'])){
 	$user = $_POST['user'];
-	$isRemembered = NULL;
 	print "<body onLoad='giveUserFocus();' />";
 } else {
 	$user = null;
@@ -52,9 +86,34 @@ if (isset($_COOKIE['user'])){
 
 //Display main login form body
 $defaultApiVersion = $_SESSION['config']['defaultApiVersion'];
+
+print "<script type='text/javascript' language='JavaScript'>\n";
+
+print "var instNumDomainMap = [];\n";
+if($_SESSION['config']['fuzzyServerUrlLookup']){
+	foreach($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo){
+		if(isset($instInfo[1]) && $instInfo[1] != ""){
+			print "\t" . "instNumDomainMap['$instInfo[1]'] = '$subdomain';" . "\n";
+		}
+	}
+}
+print "\n";
+
 print <<<LOGIN_FORM
 
-<script type='text/javascript' language='JavaScript'>
+function fuzzyServerUrlSelect(){
+	var sid = document.getElementById('sessionId').value
+	var sidIndex = sid.indexOf('00D');
+		
+	if(sidIndex > -1){
+		var instNum = sid.substring(sidIndex + 3, sidIndex + 4);
+		var instVal = instNumDomainMap[instNum];
+		if(instVal != null){
+			document.getElementById('inst').value = instVal;
+			build_location();
+		}
+	}
+}
 
 function toggleUsernamePasswordSessionDisabled(){
 	if(document.getElementById('sessionId').value){
@@ -100,11 +159,38 @@ function givePassFocus(){
 	document.getElementById('password').focus();
 }
 
+function checkCaps( pwcapsDivId, e ) {
+    var key = 0;
+    var shifted = false;
+
+    // IE
+    if ( document.all ) {
+		key = e.keyCode;
+    // Everything else
+    } else {
+		key = e.which;
+    }
+
+    shifted = e.shiftKey;
+
+    var pwcaps = document.getElementById(pwcapsDivId);
+
+    var upper = (key >= 65 && key <= 90);
+    var lower = (key >= 97 && key <= 122);
+    
+    if ( (upper && !shifted) || (lower && shifted) ) {
+		pwcaps.style.visibility='visible';
+    } else if ( (lower && !shifted) || (upper && shifted) ) {
+		pwcaps.style.visibility='hidden';
+		
+    }
+}
+
 </script>
 
 <div id='intro_text'>
-	<p>Use the standard login to login with your salesforce.com username and password or use the advanced
-	   login to login with a valid salesforce.com session ID or to a specific API version:</p>
+	&nbsp;<!--<p>Use the standard login to login with your salesforce.com username and password to your default instance or use the advanced
+	login for other login options. Go to Settings for more login configurations.</p>-->
 </div>
 
 <div id='logo_block'>
@@ -121,7 +207,7 @@ function givePassFocus(){
 
 		<div id='login_std'>
 			<p><strong>Username: </strong><input type='text' name='usernameStd' id='username' size='45' value='$user' /></p>
-			<p><strong>Password: </strong><input type='password' name='passwordStd'  id='password' size='45' /></p>
+			<p><strong>Password: </strong><input type='password' name='passwordStd'  id='password' size='45' onkeypress="checkCaps('pwcapsStd',event);" /></p>
 			<p><strong>Jump to: </strong>
 			<select name='actionJumpStd' style='width: 24em;'>
 				<option value='select.php'></option>
@@ -137,21 +223,27 @@ function givePassFocus(){
 				<option value='execute.php'>Execute</option>
 				<option value='settings.php'>Settings</option>
 			</select></p>
-			<p  style='text-align: right;'><label><input type='checkbox' name='rememberUser' $isRemembered />Remember username</label></p>
+			<p  style='text-align: right;'><span id='pwcapsStd' style='visibility: hidden; color: red; font-weight: bold; margin-right: 30px;'>Caps lock is on!</span><label><input type='checkbox' name='rememberUser' $isRemembered />Remember username</label></p>
 		</div>
 
 		<div id='login_adv' style='display: none;'>
-			<p><strong>Username: </strong><input type='text' name='usernameAdv' id='usernameAdv' size='65' value='$user' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
-			<p><strong>Password: </strong><input type='password' name='passwordAdv' id='passwordAdv' size='65' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
-			<p>-OR-</p>
-			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='65' onkeyup='toggleUsernamePasswordSessionDisabled();' /></p>
+			<p><strong>Username: </strong><input type='text' name='usernameAdv' id='usernameAdv' size='65' value='$user' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();' /></p>
+			<p><strong>Password: </strong><input type='password' name='passwordAdv' id='passwordAdv' size='65' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();'  onkeypress="checkCaps('pwcapsAdv',event);"/></p>
+			<p>-OR-<span id='pwcapsAdv' style='visibility: hidden; color: red; font-weight: bold; margin-left: 75px;'>Caps lock is on!</span></p>
+			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='65' onkeyup='toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();' onchange="toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();"/></p>
 			<p>&nbsp;</p>
 			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='65' value='https://www.salesforce.com/services/Soap/u/$defaultApiVersion' /></p>
 			<p><strong>QuickSelect: </strong>
 LOGIN_FORM;
 			
 			print "<select name='inst' id='inst' onChange='build_location();'>";
-			printSelectOptions($GLOBALS['config']['defaultInstance']['valuesToLabels'],$_SESSION['config']['defaultInstance']);
+			
+			$instanceNames = array();
+			foreach($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo){
+				$instanceNames[$subdomain] = $instInfo[0];
+			}
+			
+			printSelectOptions($instanceNames,$_SESSION['config']['defaultInstance']);
 			print "</select>";
 
 			print "<select name='endp' id='endp' onChange='build_location();'>";
@@ -187,7 +279,7 @@ LOGIN_FORM_PART_2;
 
 
 //if 'adv' is added to the login url and is not 0, default to advanced login
-if(isset($_GET[adv]) && $_GET[adv] != 0){
+if(isset($_GET['adv']) && $_GET['adv'] != 0){
 	print "<script>
 				document.getElementById('login_become_adv').checked=true; 
 				form_become_adv(); 
@@ -222,9 +314,25 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	try{
 		require_once ('soapclient/SforcePartnerClient.php');
 		require_once ('soapclient/SforceHeaderOptions.php');
-		$wsdl = 'soapclient/sforce.140.partner.wsdl';
+		$wsdl = 'soapclient/sforce.150.partner.wsdl';
 		$mySforceConnection = new SforcePartnerClient();
 	    $mySforceConnection->createConnection($wsdl);
+	    
+	    //set call options header for login before a session exists
+		if(isset($_GET['clientId'])){
+			$mySforceConnection->setCallOptions(new CallOptions($_GET['clientId'], $_SESSION['config']['callOptions_defaultNamespace']));
+			
+		} else if($_SESSION['config']['callOptions_client'] || $_SESSION['config']['callOptions_defaultNamespace']){
+			$mySforceConnection->setCallOptions(new CallOptions($_SESSION['config']['callOptions_client'], $_SESSION['config']['callOptions_defaultNamespace']));
+		}
+
+		//set login scope header for login before a session exists
+		if(isset($_GET['orgId']) || isset($_GET['portalId'])){
+			$mySforceConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));	
+				
+		} else if($_SESSION['config']['loginScopeHeader_organizationId'] || $_SESSION['config']['loginScopeHeader_portalId']){
+			$mySforceConnection->setLoginScopeHeader(new LoginScopeHeader($_SESSION['config']['loginScopeHeader_organizationId'], $_SESSION['config']['loginScopeHeader_portalId']));
+		}		
 
 	    if($username && $password && !$sessionId){
 	    	if($serverUrl){
@@ -247,6 +355,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		session_unset();
 		session_destroy();
 		session_start();
+		
 		    $_SESSION['location'] = $mySforceConnection->getLocation();
 		    $_SESSION['sessionId'] = $mySforceConnection->getSessionId();
 		    $_SESSION['wsdl'] = $wsdl;
@@ -255,8 +364,14 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 			} else {
 				setcookie('user',NULL,time()-3600);
 			}
-		session_write_close();
 
+		if($_REQUEST['autoLogin'] == 1){
+			$actionJump .= "?autoLogin=1";
+			$_SESSION['tempClientId'] = $_GET['clientId'];
+		}
+
+		session_write_close();
+		
 		header("Location: $actionJump");
 
 	} catch (Exception $e) {
@@ -268,30 +383,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 
 }
 
-function checkLatestVersion(){
-	global $version;
-	try{
-		if(extension_loaded('curl')){
-			$ch = curl_init();
-			if(stristr($version,'beta')){
-				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailableBeta.txt');
-			} else {
-				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
-			}
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			$latestVersionAvailable = trim(curl_exec($ch));
-			curl_close($ch);
 
-			if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !stristr($version,'alpha')){
-				if($latestVersionAvailable != $version){
-					print "<span style='font-size: 8pt; font-weight: bold;'><a href='http://code.google.com/p/forceworkbench/'>A newer version of the Workbench is available for download</a></span><br/>";
-				}
-			}
-		}
-	} catch (Exception $e){
-		//do nothing
-	}
-}
 
 ?>
 

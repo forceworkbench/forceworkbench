@@ -4,7 +4,9 @@ if(!isset($GLOBALS['requestTimeStart'])){
 }
 
 session_start();
-if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_SELF'])) || ('settings.php' == basename($_SERVER['PHP_SELF'])) || ('about.php' == basename($_SERVER['PHP_SELF']))) ) {
+if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_SELF'])) || ('settings.php' == basename($_SERVER['PHP_SELF'])) || ('about.php' == basename($_SERVER['PHP_SELF']))|| ('help.php' == basename($_SERVER['PHP_SELF']))) ) {
+  session_unset();
+  session_destroy();
   header('Location: login.php');
   exit;
 } else {
@@ -48,9 +50,10 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 				$_SESSION['default_object'] = $_POST['default_object'];
 			}
 
-			require_once ('soapclient/SforceHeaderOptions.php');
-
-			if($_SESSION['config']['callOptions_client'] || $_SESSION['config']['callOptions_defaultNamespace']){
+			if(isset($_SESSION['tempClientId'])){
+				$header = new CallOptions($_SESSION['tempClientId'], $_SESSION['config']['callOptions_defaultNamespace']);
+				$mySforceConnection->setCallOptions($header);				
+			} else if($_SESSION['config']['callOptions_client'] || $_SESSION['config']['callOptions_defaultNamespace']){
 				$header = new CallOptions($_SESSION['config']['callOptions_client'], $_SESSION['config']['callOptions_defaultNamespace']);
 				$mySforceConnection->setCallOptions($header);
 			}
@@ -80,8 +83,14 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 				$mySforceConnection->setUserTerritoryDeleteHeader($header);
 			}
 
+			if($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation']){
+				$header = new AllowFieldTruncationHeader($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation']);
+				$mySforceConnection->setAllowFieldTruncationHeader($header);
+			}
 
 		} catch (exception $e){
+			session_unset();
+			session_destroy();
 			header('Location: login.php');
 	  		exit;
 		}

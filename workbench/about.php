@@ -8,14 +8,15 @@ require_once ('header.php');
 
 
 <p>
-The Workbench is a web-based application that gives administrators and developers 
-on-demand access to useful tools to manage their salesforce.com organization.
-Starting with a combination of the features of both the Apex Data Loader and the Force.com Explorer,
-the Workbench can insert, upsert, update, export, delete, undelete,
-and purge data as well as describe any object and execute anonymous Apex scripts in a salesforce.com organization.
-Not only can the Workbench be used as a standalone application
-in a web browser, but it can also be integrated within Salesforce as a single-sign-on
-web tab for more convenient access.
+The Workbench is a community-contributed, web-based application that gives administrators 
+and developers on-demand access to useful tools to manage salesforce.com organizations. 
+Starting with a combination of the features of the Apex Data Loader, Force.com Explorer, 
+and System Log, the Workbench can insert, upsert, update, query, search, delete, undelete, 
+and purge data as well as describe any object or execute Apex scripts directly in your web 
+browser. These functions build on the strengths of these existing products to create an even 
+more powerful and easier-to-use on-demand application. Not only can the Workbench be used as 
+a standalone application in your browser, but it can also be integrated within Salesforce as 
+a single-sign-on web tab for more convenient access.
 </p>
 
 <p>
@@ -48,7 +49,7 @@ For support from the Open Source community, please visit the recources below:</s
 
 <strong>
 <p>
-THIS APPLICATION IS STILL IN ACTIVE DEVELOPMENT AND HAS NOT UNDERGONE QUALITY ASSURANCE TESTING.
+THIS APPLICATION IS STILL IN ACTIVE DEVELOPMENT AND HAS NOT UNDERGONE COMPLETE QUALITY ASSURANCE TESTING.
 DO NOT USE WITH PRODUCTION DATA.
 THIS APPLICATION IS PROVIDED 'AS IS' AND THE USER ASSUMES ALL RISKS ASSOCIATED WITH ITS USE.
 

@@ -181,9 +181,9 @@ class SforceBaseClient {
 		}
 
 		if ($call == "create" ||
-		$call == "merge" ||
-		$call == "update" ||
-		$call == "upsert"
+			$call == "merge" ||
+			$call == "update" ||
+			$call == "upsert"
 		) {
 			$header = $this->assignmentRuleHeader;
 			if ($header != NULL) {
@@ -199,9 +199,9 @@ class SforceBaseClient {
 		}
 
 		if ($call == "create" ||
-		$call == "resetPassword" ||
-		$call == "update" ||
-		$call == "upsert"
+		    $call == "resetPassword" ||
+		    $call == "update" ||
+		    $call == "upsert"
 		) {
 			$header = $this->emailHeader;
 			if ($header != NULL) {
@@ -210,11 +210,11 @@ class SforceBaseClient {
 		}
 
 		if ($call == "create" ||
-		$call == "merge" ||
-		$call == "query" ||
-		$call == "retrieve" ||
-		$call == "update" ||
-		$call == "upsert"
+		    $call == "merge" ||
+		    $call == "query" ||
+			$call == "retrieve" ||
+			$call == "update" ||
+			$call == "upsert"
 		) {
 			$header = $this->mruHeader;
 			if ($header != NULL) {
@@ -222,6 +222,20 @@ class SforceBaseClient {
 			}
 		}
 
+		if ($call == "create" ||
+		    $call == "update" ||
+		    $call == "upsert" ||
+			$call == "undelete" ||
+			$call == "createLead" ||
+			$call == "merge" ||
+			$call == "process"
+		) {
+			$header = $this->allowFieldTruncationHeader;
+			if ($header != NULL) {
+				array_push($header_array, $header);
+			}
+		}
+		
 		if ($call == "delete") {
 			$header = $this->userTerritoryDeleteHeader;
 			if ($header != NULL) {
@@ -230,8 +244,8 @@ class SforceBaseClient {
 		}
 
 		if ($call == "query" ||
-		$call == "queryMore" ||
-		$call == "retrieve") {
+			$call == "queryMore" ||
+			$call == "retrieve") {
 			$header = $this->queryHeader;
 			if ($header != NULL) {
 				array_push($header_array, $header);
@@ -314,6 +328,16 @@ class SforceBaseClient {
 			));
 		} else {
 			$this->queryHeader = NULL;
+		}
+	}
+	
+	public function setAllowFieldTruncationHeader($header) {
+		if ($header != NULL) {
+			$this->allowFieldTruncationHeader = new SoapHeader($this->namespace, 'AllowFieldTruncationHeader', array (
+             'allowFieldTruncation' => $header->allowFieldTruncation
+			));
+		} else {
+			$this->allowFieldTruncationHeader = NULL;
 		}
 	}
 

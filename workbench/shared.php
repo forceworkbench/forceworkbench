@@ -1,5 +1,5 @@
 <?php
-$version = "2.1.14";
+$version = "2.2.15";
 
 function show_error($errors){
 	print "<div class='show_errors'>\n";
@@ -30,6 +30,31 @@ function show_info($infos){
 		print htmlspecialchars($infos);
 	}
 	print "</div>\n";
+}
+
+function checkLatestVersion(){
+	global $version;
+	try{
+		if(extension_loaded('curl')){
+			$ch = curl_init();
+			if(stristr($version,'beta')){
+				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailableBeta.txt');
+			} else {
+				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
+			}
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			$latestVersionAvailable = trim(curl_exec($ch));
+			curl_close($ch);
+
+			if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !stristr($version,'alpha')){
+				if($latestVersionAvailable != $version){
+					print "<span style='font-size: 8pt; font-weight: bold;'><a href='http://code.google.com/p/forceworkbench/' target='_blank' style='color: #0046ad;'>A newer version of the Workbench is available for download</a></span><br/>";
+				}
+			}
+		}
+	} catch (Exception $e){
+		//do nothing
+	}
 }
 
 function printSelectOptions($valuesToLabelsArray,$defaultValue){
@@ -681,7 +706,7 @@ function show_put_results($results,$api_call){
 	$error_count = 0;
 	ob_start();
 	for($row=0; $row < count($results); $row++){
-		$excel_row = $row + 2;
+		$excel_row = $row + 1;
 		if ($results[$row]->success){
 			$success_count++;
 			print "<tr>";
@@ -709,7 +734,7 @@ function show_put_results($results,$api_call){
 	$results_table = ob_get_clean();
 	show_info("There were $success_count successes and $error_count errors.");
 	print "<br/>\n<table class='field_mapping'>\n";
-	print "<td>1</td> <th>ID</th> <th>Result</th> <th>Status</th>\n";
+	print "<td>&nbsp;</td> <th>ID</th> <th>Result</th> <th>Status</th>\n";
 	print "<p>$results_table</p>";
 }
 
@@ -722,7 +747,7 @@ function show_idOnlyCall_results($results,$id_array){
 	$error_count = 0;
 	ob_start();
 	for($row=0; $row < count($id_array); $row++){
-		$excel_row = $row + 2;
+		$excel_row = $row + 1;
 		if ($results[$row]->success){
 			$success_count++;
 			print "<tr>";
@@ -745,7 +770,7 @@ function show_idOnlyCall_results($results,$id_array){
 	$results_table = ob_get_clean();
 	show_info("There were $success_count successes and $error_count errors.");
 	print "<p></p><table class='data_table'>\n";
-	print "<td>1</td><th>ID</th><th>Result</th><th>Error Code</th>\n";
+	print "<td>&nbsp;</td><th>ID</th><th>Result</th><th>Error Code</th>\n";
 	print "<p>$results_table</p>";
 }
 

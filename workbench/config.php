@@ -19,51 +19,6 @@ $config["header_General"] = array(
 	"display" => true,
 	"isHeader" => true
 );
-
-	$config["defaultApiVersion"]  = array(
-		"label" => "Default API Version",
-		"description" => "Default API version to be used for login. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
-		"default" => "14.0",
-		"overrideable" => true,
-		"dataType" => "picklist",
-		"valuesToLabels" => array(
-			"14.0" => "14.0",
-			"13.0" => "13.0",
-			"12.0" => "12.0",
-			"11.1" => "11.1",
-			"11.0" => "11.0",
-			"10.0" => "10.0",
-			"9.0" => "9.0",
-			"8.0" => "8.0",
-			"7.0" => "7.0",
-			"6.0" => "6.0"
-		)
-	);
-
-	$config["defaultInstance"]  = array(
-		"label" => "Default Instance",
-		"description" => "Default instance to be used for login. Recommended to use 'www' for all production orgs.",
-		"default" => "www",
-		"overrideable" => true,
-		"dataType" => "picklist",
-		"valuesToLabels" => array(
-			"www" => "Production Login (www)",
-			"na0-api" => "NA0 (SSL)",
-			"na1-api" => "NA1",
-			"na2-api" => "NA2",
-			"na3-api" => "NA3",
-			"na4-api" => "NA4",
-			"na5-api" => "NA5",
-			"na6-api" => "NA6",
-			"ap0-api" => "AP",
-			"eu0-api" => "EMEA",
-			"test" => "Sandbox Login (test)",
-			"tapp0-api" => "Sandbox CS0 (tapp0)",
-			"cs1-api" => "Sandbox CS1",
-			"cs2-api" => "Sandbox CS2",
-			"prerelna1.pre" => "Pre-Release"
-		)
-	);
 	
 	$config["abcOrder"] = array(
 		"label" => "Alphabetize Field Names",
@@ -121,6 +76,85 @@ $config["header_General"] = array(
 		"dataType" => "string"
 	);
 	
+
+
+$config["header_LoginOptions"] = array(
+	"label" => "Login Options",
+	"display" => true,
+	"isHeader" => true
+);
+	$config["defaultApiVersion"]  = array(
+		"label" => "Default API Version",
+		"description" => "Default API version to be used for login. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
+		"default" => "15.0",
+		"overrideable" => true,
+		"dataType" => "picklist",
+		"valuesToLabels" => array(
+			"15.0" => "15.0",
+			"14.0" => "14.0",
+			"13.0" => "13.0",
+			"12.0" => "12.0",
+			"11.1" => "11.1",
+			"11.0" => "11.0",
+			"10.0" => "10.0",
+			"9.0" => "9.0",
+			"8.0" => "8.0",
+			"7.0" => "7.0",
+			"6.0" => "6.0"
+		)
+	);
+	
+	$config["defaultInstance"]  = array(
+		"label" => "Default Instance",
+		"description" => "Default instance to be used for login. Recommended to use 'www' for all production orgs.",
+		"default" => "www",
+		"overrideable" => true,
+		"dataType" => "picklist",
+		"labelKey" => "0",
+		"valuesToLabels" => array(
+			"www" => array("Production Login (www)",""),
+			"na0-api" => array("NA0 (SSL)","0"),
+			"na1-api" => array("NA1","3"),
+			"na2-api" => array("NA2","4"),
+			"na3-api" => array("NA3","5"),
+			"na4-api" => array("NA4","6"),
+			"na5-api" => array("NA5","7"),
+			"na6-api" => array("NA6","8"),
+			"ap0-api" => array("AP","1"),
+			"eu0-api" => array("EMEA","2"),
+			"test" => array("Sandbox Login (test)",""),
+			"tapp0-api" => array("Sandbox CS0 (tapp0)","T"),
+			"cs1-api" => array("Sandbox CS1","S"),
+			"cs2-api" => array("Sandbox CS2","R"),
+			"cs3-api" => array("Sandbox CS3","Q"),	
+			"prerelna1.pre" => array("Pre-Release","t")
+		)
+	);
+
+	$config["fuzzyServerUrlLookup"] = array(
+		"label" => "Enable Server URL Fuzzy Lookup",
+		"description" => "When logging in with a Session Id, Workbench attempts to guess the associated Server URL. This may fail for orgs that have been migrated from one instance to another.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+	
+	$config["loginScopeHeader_organizationId"] = array(
+		"label" => "Portal Organization Id",
+		"description" => "Specify an org id for Self-Service, Customer Portal, and Partner Portal Users. Leave blank for standard Salesforce users.",
+		"default" => null,
+		"overrideable" => true,
+		"dataType" => "string"
+	);
+	
+	$config["loginScopeHeader_portalId"] = array(
+		"label" => "Portal Id",
+		"description" => "Specify an portal id for Customer Portal, and Partner Portal Users. Leave blank for standard Salesforce users.",
+		"default" => null,
+		"overrideable" => true,
+		"dataType" => "string"
+	);
+	
 	$config["callOptions_client"] = array(
 		"label" => "Client Id",
 		"description" => "Specify a Client Id for a partner with special API functionality.",
@@ -128,7 +162,6 @@ $config["header_General"] = array(
 		"overrideable" => true,
 		"dataType" => "string"
 	);
-
 
 $config["header_DataManagement"] = array(
 	"label" => "Data Management Options",
@@ -176,7 +209,14 @@ $config["header_DataManagement"] = array(
 		"overrideable" => true,
 		"dataType" => "boolean"
 	);
-
+	
+	$config["allowFieldTruncationHeader_allowFieldTruncation"] = array(
+		"label" => "Allow Field Truncation",
+		"description" => "For API 15.0 and higher, specifies to automatically truncatrate string values that are too long when performing Insert, Update, Upsert, Updelete, or Execute; otherwise a STRING_TOO_LONG error is returned. This is ignored in all previous API versions.",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 
 	$config["assignmentRuleHeader_useDefaultRule"] = array(
 		"label" => "Use Default Assignment Rule",
@@ -202,11 +242,20 @@ $config["header_DataManagement"] = array(
 		"dataType" => "string"
 	);
 	
+		
 $config["header_queryOptions"] = array(
 	"label" => "Query Options",
 	"display" => true,
 	"isHeader" => true
 );
+
+	$config["linkIdToUi"] = array(
+		"label" => "Link Ids to Record Detail",
+		"description" => "Display queried Id fields as hyperlinks to their cooresponding record in the Salesforce user interface. Note, links to objects without detail pages will fail.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 
 	$config["autoJumpToQueryResults"] = array(
 		"label" => "Automatically Jump to Query Results",
@@ -354,7 +403,7 @@ $config["header_Performance"] = array(
 
 $config["header_proxyOptions"] = array(
 	"label" => "Proxy Options",
-	"display" => true,
+	"display" => false,
 	"isHeader" => true
 );
 
@@ -362,7 +411,7 @@ $config["header_proxyOptions"] = array(
 		"label" => "Connect with Proxy",
 		"description" => "Check this box to use the proxy information below to connect to Salesforce.",
 		"default" => false,
-		"overrideable" => true,
+		"overrideable" => false,
 		"dataType" => "boolean"
 	);
 	
@@ -370,7 +419,7 @@ $config["header_proxyOptions"] = array(
 		"label" => "Proxy Host",
 		"description" => "Proxy Host",
 		"default" => null,
-		"overrideable" => true,
+		"overrideable" => false,
 		"dataType" => "string"
 	);
 	
@@ -379,7 +428,7 @@ $config["header_proxyOptions"] = array(
 		"label" => "Proxy Port Number",
 		"description" => "Proxy Port Number",
 		"default" => null,
-		"overrideable" => true,
+		"overrideable" => false,
 		"dataType" => "int",
 		"minValue" => 0,
 		"maxValue" => 65536
@@ -390,7 +439,7 @@ $config["header_proxyOptions"] = array(
 		"label" => "Proxy Username",
 		"description" => "Proxy Username",
 		"default" => null,
-		"overrideable" => true,
+		"overrideable" => false,
 		"dataType" => "string"
 	);
 	
@@ -399,7 +448,7 @@ $config["header_proxyOptions"] = array(
 		"label" => "Proxy Password",
 		"description" => "Proxy Password",
 		"default" => null,
-		"overrideable" => true,
+		"overrideable" => false,
 		"dataType" => "password"
 	);
 	

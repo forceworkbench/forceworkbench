@@ -68,6 +68,9 @@ require_once('header.php');
 				} else if  ($configValue['dataType'] == "picklist"){
 					print "<select name='$configKey' id='$configKey'>";
 					foreach($configValue['valuesToLabels'] as $value => $label){
+						if(isset($configValue['labelKey'])){
+							$label = $label[$configValue['labelKey']]; //if the label is an array, this will pull the nested label out 
+						}
 						print "<option value=\"" . $value . "\"";
 						if($_SESSION['config'][$configKey] == $value){
 							print " selected=\"selected\"";

@@ -22,7 +22,7 @@ global $version;
 		printf ("Requested in %01.3f sec<BR/>", $requestTimeElapsed);
 	}
 		
-	print "Workbench v$version<br/>";
+	print "Workbench<a href='utilities.php' style='text-decoration:none'> </a>v$version<br/>";
 
 	
 	if(stristr($version,'beta') || stristr($version,'alpha')){

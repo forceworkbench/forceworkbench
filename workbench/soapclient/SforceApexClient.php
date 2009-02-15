@@ -61,7 +61,13 @@ class SforceApexClient {
 	    	$callOptions_header = new SoapHeader($this->namespace, 'CallOptions', $clientBody, false);
 	    	$header_array[] = $callOptions_header;
 	    } 
-
+	    
+    //set allowFieldTruncationHeader header    
+	    if(isset($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation'])){
+	    	$allowFieldTruncationBody = array('allowFieldTruncation' => new SoapVar($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation'], XSD_BOOLEAN));
+	    	$allowFieldTruncationHeader = new SoapHeader($this->namespace, 'AllowFieldTruncationHeader', $allowFieldTruncationBody, false);
+	    	$header_array[] = $allowFieldTruncationHeader;
+	    } 
     $this->sforce->__setSoapHeaders($header_array);
     $this->sforce->__setLocation($apexServerUrl);
 

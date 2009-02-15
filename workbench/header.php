@@ -13,10 +13,39 @@ print "<title>Workbench - " . ucwords($pageTitle[1]) . "</title>"
 
 <body>
 <script type="text/javascript" src="script/wz_tooltip.js"></script>
+<?php
+
+if($_GET['autoLogin'] == 1 || 'login.php'==basename($_SERVER['PHP_SELF'])){
+	checkLatestVersion();
+}
+
+?>
+
+
 <div id='main_block'>
 
 <div id='setupMenu'>
 	<?php
+
+	global $mySforceConnection;
+	if (isset($_SESSION['sessionId']) && $mySforceConnection && 'logout.php' != basename($_SERVER['PHP_SELF'])){
+	
+		if(!$_SESSION['getUserInfo'] || !$_SESSION['config']['cacheGetUserInfo']){
+			try{
+				global $mySforceConnection;
+				$_SESSION['getUserInfo'] = $mySforceConnection->getUserInfo();
+	
+			} catch (Exception $e) {
+				$errors[] = $e->getMessage();
+				
+				session_unset();
+				session_destroy();
+		    }
+		}
+	
+	    
+	}
+
 	$setupBar_items = array ();
 	
 	if(!isset($_SESSION['sessionId']) || 'logout.php' == basename($_SERVER['PHP_SELF'])){
@@ -25,6 +54,7 @@ print "<title>Workbench - " . ucwords($pageTitle[1]) . "</title>"
 		$setupBar_items['logout.php'] = array('Logout','Logs out of your Salesforce organization');
 	}
 	$setupBar_items['settings.php'] = array('Settings','Configure the Workbench');
+	$setupBar_items['help.php'] = array('Help','Get help about using the Workbench');
 	$setupBar_items['about.php'] = array('About','Learn about the Workbench');
 	
 	foreach($setupBar_items as $href => $label){
@@ -70,24 +100,17 @@ print "<title>Workbench - " . ucwords($pageTitle[1]) . "</title>"
 	?>
 </div>
 <p/>
+
 <?php
-global $mySforceConnection;
-if (isset($_SESSION['sessionId']) && $mySforceConnection && 'logout.php' != basename($_SERVER['PHP_SELF'])){
-
-	if(!$_SESSION['getUserInfo'] || !$_SESSION['config']['cacheGetUserInfo']){
-		try{
-			global $mySforceConnection;
-			$_SESSION['getUserInfo'] = $mySforceConnection->getUserInfo();
-
-		} catch (Exception $e) {
-			print "<p/>";
-			$errors[] = $e->getMessage();
-			show_error($errors);
-			include_once('footer.php');
-			exit;
-	    }
-	}
-
-    print "<p id='myuserinfo'>Logged in as " . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . "</p>\n";
+if(isset($_SESSION['getUserInfo'])){
+	print "<p id='myuserinfo'>Logged in as " . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . "</p>\n";
 }
+
+if(isset($errors)){
+	print "<p/>";
+	show_error($errors);
+	include_once('footer.php');
+	exit;
+}
+
 ?>
