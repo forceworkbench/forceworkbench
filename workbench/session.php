@@ -10,6 +10,12 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
   header('Location: login.php');
   exit;
 } else {
+	
+	//clear ResultsWithData from session unless downloading them
+	if(isset($_SESSION[resultsWithData]) && basename($_SERVER['PHP_SELF']) != 'downloadResultsWithData.php'){
+		unset($_SESSION[resultsWithData]);
+	}
+	
 	//load default config values
 	require_once('config.php');
 

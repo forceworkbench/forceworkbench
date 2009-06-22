@@ -9,11 +9,18 @@ require_once ('shared.php');
 <meta http-equiv="Content-Language" content="UTF-8" />
 <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 <link rel="stylesheet" href="style/master.css" type="text/css" />
+<link rel="Shortcut Icon" href="images/blueBox.bmp" />
+
 <title>Workbench CSV Preview</title>
 </head>
 <body>
 
 <?php
-csv_array_show($_SESSION[csv_array]);
+if($_SESSION[csv_array] != null){
+	csv_array_show($_SESSION[csv_array]);
+} else {
+	show_error("No CSV has been uploaded, or it is no longer active");
+}
+
 include_once ('footer.php');
 ?>

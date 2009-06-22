@@ -1,5 +1,5 @@
 <?php
-$version = "2.2.15";
+$version = "2.3.16";
 
 function show_error($errors){
 	print "<div class='show_errors'>\n";
@@ -546,7 +546,7 @@ function csv_file_to_array($file){
 	if ($csv_array !== NULL){
 		return($csv_array);
 	} else {
-		echo("There were errors parsing your CSV file. Please try again.");
+		echo("There were errors parsing the CSV file. Please try again.");
 		exit;
 	}
 
@@ -555,7 +555,7 @@ function csv_file_to_array($file){
 
 function csv_array_show($csv_array){
 	print "<table class='data_table'>\n";
-	print "<tr>";
+	print "<tr><th>&nbsp;</th>";
 		for($col=0; $col < count($csv_array[0]); $col++){
 			print "<th>";
 			print htmlspecialchars($csv_array[0][$col],ENT_QUOTES,'UTF-8');
@@ -563,11 +563,11 @@ function csv_array_show($csv_array){
 		}
 	print "</tr>\n";
 	for($row=1; $row < count($csv_array); $row++){
-		print "<tr>";
+		print "<tr><td>$row</td>";
 		for($col=0; $col < count($csv_array[0]); $col++){
 			print "<td>";
 			if ($csv_array[$row][$col]){
-				print htmlspecialchars($csv_array[$row][$col],ENT_QUOTES,'UTF-8');
+				print addLinksToUiForIds(htmlspecialchars($csv_array[$row][$col],ENT_QUOTES,'UTF-8'));
 			} else {
 				print "&nbsp;";
 			}
@@ -579,6 +579,8 @@ function csv_array_show($csv_array){
 }
 
 function idOnlyCallIds($api_call,$field_map,$csv_array,$show_results){
+	$orig_csv_array = $csv_array;
+	
 	if (!($field_map && $csv_array)){
 		show_error("CSV file and field mapping not initialized successfully. Upload a new file and map fields.");
 	} else {
@@ -616,11 +618,12 @@ function idOnlyCallIds($api_call,$field_map,$csv_array,$show_results){
 			exit;
 	    }
 	}
-	if($show_results) show_idOnlyCall_results($results,$id_array_all);
+	if($show_results) show_putAndId_results($results,$api_call,$orig_csv_array,$id_array_all);
 	}
 }
 
 function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
+	$orig_csv_array = $csv_array;//backing up for results
 	if (!($field_map && $csv_array && $_SESSION['default_object'])){
 		show_error("CSV file and field mapping not initialized. Upload a new file and map fields.");
 	} else {
@@ -667,10 +670,6 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 			    unset($sObject);
 			}
 
-//print "<pre>";
-//print_r($sObjects);
-//print "</pre>";
-//exit;
 
 			try{
 				global $mySforceConnection;
@@ -694,83 +693,81 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 		    	$results = array_merge($results,$results_more);
 		    }
 		}
-		if($show_results) show_put_results($results,$api_call);
+		if($show_results) show_putAndId_results($results,$api_call,$orig_csv_array,null);
 		}
 }
 
-function show_put_results($results,$api_call){
+function show_putAndId_results($results,$api_call,$csv_array,$idArray){	
 	//check if only result is returned
 	if(!is_array($results)) $results = array($results);
-
+	
+	unset($_SESSION[resultsWithData]);
+	$resultsWithData = array(); //create array to hold results with data for download later
+	$_SESSION[resultsWithData][0] = array("Salesforce Id","Result","Status");
+	$_SESSION[resultsWithData][0] = array_merge($_SESSION[resultsWithData][0],$csv_array[0]);
+	
 	$success_count = 0;
 	$error_count = 0;
 	ob_start();
 	for($row=0; $row < count($results); $row++){
 		$excel_row = $row + 1;
+		
+		$_SESSION[resultsWithData][$row+1] = array(); //create array for row
+		
 		if ($results[$row]->success){
 			$success_count++;
 			print "<tr>";
 			print "<td>" . $excel_row . "</td>";
-			print "<td>" . $results[$row]->id . "</td>";
+			print "<td>" . addLinksToUiForIds($results[$row]->id) . "</td>";
+			$_SESSION[resultsWithData][$row+1][0] = $results[$row]->id;
 			print "<td>Success</td>";
+			$_SESSION[resultsWithData][$row+1][1] = "Success";
 			if (($api_call == 'upsert' && $results[$row]->created) || $api_call == 'create'){
 				print "<td>Created</td>";
-			} else {
+				$_SESSION[resultsWithData][$row+1][2] = "Created";
+			} elseif (($api_call == 'upsert' && !$results[$row]->created) || $api_call == 'update') {
 				print "<td>Updated</td>";
+				$_SESSION[resultsWithData][$row+1][2] = "Updated";
+			} elseif (($api_call == 'delete') || ($api_call == 'undelete')) {
+				print "<td>" . ucwords($api_call) . "d </td>";
+				$_SESSION[resultsWithData][$row+1][2] = ucwords($api_call) . "d";
+			} elseif ($api_call == 'emptyRecycleBin') {
+				print "<td>Purged</td>";
+				$_SESSION[resultsWithData][$row+1][2] = "Purged";
 			}
 			print "</tr>\n";
 		} else {
 			$error_count++;
 			print "<tr style='color: red;'>";
 			print "<td>" . $excel_row . "</td>";
-			print "<td>" . $results[$row]->id . "</td>";
+						
+			if(!isset($results[$row]->id) && isset($idArray)){
+				$_SESSION[resultsWithData][$row+1][0] = $idArray[$row]; //add id from idArray for id-only calls
+				print "<td>" . addLinksToUiForIds($idArray[$row]) . "</td>";
+			} else {
+				$_SESSION[resultsWithData][$row+1][0] = $results[$row]->id; //add id from results for everything else
+				print "<td>" . addLinksToUiForIds($results[$row]->id) . "</td>";
+			}
+			
 			print "<td>" . ucwords($results[$row]->errors->message) . "</td>";
+			$_SESSION[resultsWithData][$row+1][1] = ucwords($results[$row]->errors->message);
 			print "<td>" . $results[$row]->errors->statusCode . "</td>";
+			$_SESSION[resultsWithData][$row+1][2] = $results[$row]->errors->statusCode;
 			//print "<td>" . $results[$row]->errors->fields . "</td>"; //APIDOC: Reserved for future use. Array of one or more field names. Identifies which fields in the object, if any, affected the error condition.
 			print "</tr>\n";
 		}
+
+		$_SESSION[resultsWithData][$row+1] = array_merge($_SESSION[resultsWithData][$row+1],$csv_array[$row+1]);
+		
 	}
 	print "</table><br/>";
 	$results_table = ob_get_clean();
 	show_info("There were $success_count successes and $error_count errors.");
-	print "<br/>\n<table class='field_mapping'>\n";
-	print "<td>&nbsp;</td> <th>ID</th> <th>Result</th> <th>Status</th>\n";
-	print "<p>$results_table</p>";
-}
-
-
-function show_idOnlyCall_results($results,$id_array){
-	//check if only result is returned
-	if(!is_array($results)) $results = array($results);
-
-	$success_count = 0;
-	$error_count = 0;
-	ob_start();
-	for($row=0; $row < count($id_array); $row++){
-		$excel_row = $row + 1;
-		if ($results[$row]->success){
-			$success_count++;
-			print "<tr>";
-			print "<td>" . $excel_row . "</td>";
-			print "<td>" . $id_array[$row] . "</td>";
-			print "<td>Success</td><td></td>";
-			print "</tr>";
-		} else {
-			$error_count++;
-			print "<tr style='color: red;'>";
-			print "<td>" . $excel_row . "</td>";
-			print "<td>" . $id_array[$row] . "</td>";
-			print "<td>" . ucwords($results[$row]->errors->message) . "</td>";
-			print "<td>" . $results[$row]->errors->statusCode . "</td>";
-			//print "<td>" . $results[$row]->errors->fields . "</td>"; //APIDOC: Reserved for future use. Array of one or more field names. Identifies which fields in the object, if any, affected the error condition.
-			print "</tr>";
-		}
-	}
-	print "</table><br/>";
-	$results_table = ob_get_clean();
-	show_info("There were $success_count successes and $error_count errors.");
-	print "<p></p><table class='data_table'>\n";
-	print "<td>&nbsp;</td><th>ID</th><th>Result</th><th>Error Code</th>\n";
+	
+	print "<br/><form action='downloadResultsWithData.php' method='GET'><input type='hidden' name='action' value='$api_call'/><input type='submit' value='Download Full Results'/></form>";
+	
+	print "<br/>\n<table class='data_table'>\n";
+	print "<th>&nbsp;</th> <th style='width: 30%'>Salesforce Id</th> <th style='width: 30%'>Result</th> <th style='width: 35%'>Status</th>\n";
 	print "<p>$results_table</p>";
 }
 
@@ -889,6 +886,15 @@ function idOnlyCall($action){
 		}
 }
 
+
+function addLinksToUiForIds($inputStr){
+	if($_SESSION['config']['linkIdToUi']){
+		preg_match("@//(.*)\.salesforce@", $_SESSION['location'], $instUIDomain);
+		return preg_replace("/\b(\w{4}0000\w{10})\b/","<a href='https://$instUIDomain[1].salesforce.com/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$1' target='sfdcUi'>$1</a>",$inputStr);					
+	} else {
+		return $inputStr;					
+	}
+}
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
 	if($_SESSION['config']['debug'] == true){

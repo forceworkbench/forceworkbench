@@ -245,7 +245,7 @@ function show_search_result($records, $searchTimeElapsed){
 	    print "<table class='data_table'>\n";
 		//Print the header row on screen
 		$record0 = $records[0];
-		print "<tr><td>1</td>";
+		print "<tr><td>&nbsp;</td>";
 		//If the user queried for the Salesforce ID, this special method is nessisary
 		//to export it from the nested SOAP message. This will always be displayed
 		//in the first column regardless of search order
@@ -264,20 +264,20 @@ function show_search_result($records, $searchTimeElapsed){
 	    print "</tr>\n";
 	
 			//Print the remaining rows in the body
-			$rowNum = 2;
+			$rowNum = 1;
 	      foreach ($records as $record) {	
 	        print "<tr><td>$rowNum</td>";
 	        $rowNum++;
 	        //Another check if there are ID columns in the body
 	        if (isset($record->Id)){
-	        	print "<td>$record->Id</td>";
+	        	print "<td>" . addLinksToUiForIds($record->Id) . "</td>";
 	        }
 	        //Print the non-ID fields
 	        if (isset($record->fields)){
 			foreach($record->fields as $datum){
 				print "<td>";
 				if($datum){
-				print htmlspecialchars($datum,ENT_QUOTES,'UTF-8');
+				print addLinksToUiForIds(htmlspecialchars($datum,ENT_QUOTES,'UTF-8'));
 				} else {
 					print "&nbsp;";
 				}

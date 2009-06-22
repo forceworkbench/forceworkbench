@@ -19,7 +19,14 @@ $config["header_General"] = array(
 	"display" => true,
 	"isHeader" => true
 );
-	
+	$config["linkIdToUi"] = array(
+		"label" => "Link Ids to Record Detail",
+		"description" => "Display queried Id fields as hyperlinks to their cooresponding record in the Salesforce user interface. Note, links to objects without detail pages will fail.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+		
 	$config["abcOrder"] = array(
 		"label" => "Alphabetize Field Names",
 		"description" => "Alphabetizes field names for across application. Otherwise, field names are displayed in the order returned by Salesforce.",
@@ -43,12 +50,12 @@ $config["header_General"] = array(
 		"overrideable" => true,
 		"dataType" => "boolean"
 	);
-	
+			
 	$config["displayRequestTime"] = array(
 		"label" => "Display Request Time",
 		"description" => "Display the time to render the page in the footer.",
 		"default" => true,
-		"overrideable" => false,
+		"overrideable" => true,
 		"dataType" => "boolean"
 	);
 	
@@ -64,7 +71,7 @@ $config["header_General"] = array(
 		"label" => "Debug Mode",
 		"description" => "Enables debugging mode for showing supervariables and SOAP messages.",
 		"default" => false,
-		"overrideable" => false,
+		"overrideable" => true,
 		"dataType" => "boolean"
 	);
 	
@@ -75,7 +82,7 @@ $config["header_General"] = array(
 		"overrideable" => true,
 		"dataType" => "string"
 	);
-	
+
 
 
 $config["header_LoginOptions"] = array(
@@ -86,10 +93,11 @@ $config["header_LoginOptions"] = array(
 	$config["defaultApiVersion"]  = array(
 		"label" => "Default API Version",
 		"description" => "Default API version to be used for login. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
-		"default" => "15.0",
+		"default" => "16.0",
 		"overrideable" => true,
 		"dataType" => "picklist",
 		"valuesToLabels" => array(
+			"16.0" => "16.0",
 			"15.0" => "15.0",
 			"14.0" => "14.0",
 			"13.0" => "13.0",
@@ -120,13 +128,18 @@ $config["header_LoginOptions"] = array(
 			"na4-api" => array("NA4","6"),
 			"na5-api" => array("NA5","7"),
 			"na6-api" => array("NA6","8"),
+			"na7-api" => array("NA7","A"),
 			"ap0-api" => array("AP","1"),
+			"ap1-api" => array("AP1","9"),
 			"eu0-api" => array("EMEA","2"),
+			"cm0-api" => array("CM0","X"),
 			"test" => array("Sandbox Login (test)",""),
 			"tapp0-api" => array("Sandbox CS0 (tapp0)","T"),
 			"cs1-api" => array("Sandbox CS1","S"),
 			"cs2-api" => array("Sandbox CS2","R"),
-			"cs3-api" => array("Sandbox CS3","Q"),	
+			"cs3-api" => array("Sandbox CS3","Q"),
+			"cs4-api" => array("Sandbox CS4","P"),
+			"cs5-api" => array("Sandbox CS5","O"),
 			"prerelna1.pre" => array("Pre-Release","t")
 		)
 	);
@@ -163,6 +176,36 @@ $config["header_LoginOptions"] = array(
 		"dataType" => "string"
 	);
 
+$config["header_Describe"] = array(
+	"label" => "Describe Results Color Coding",
+	"display" => true,
+	"isHeader" => true
+);	
+	$config["highightBooleanValues"] = array(
+		"label" => "Boolean Values",
+		"description" => "Color code true and false values in Describe results",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+	
+	$config["highlightSystemFields"] = array(
+		"label" => "System Fields",
+		"description" => "Color code system fields (i.e. Id, CreatedById, LastModified, etc.) in Describe results.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+	
+	$config["highlightCustomFields"] = array(
+		"label" => "Custom Fields",
+		"description" => "Color code custom fields in Describe results.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
+				
+	
 $config["header_DataManagement"] = array(
 	"label" => "Data Management Options",
 	"display" => true,
@@ -248,14 +291,6 @@ $config["header_queryOptions"] = array(
 	"display" => true,
 	"isHeader" => true
 );
-
-	$config["linkIdToUi"] = array(
-		"label" => "Link Ids to Record Detail",
-		"description" => "Display queried Id fields as hyperlinks to their cooresponding record in the Salesforce user interface. Note, links to objects without detail pages will fail.",
-		"default" => true,
-		"overrideable" => true,
-		"dataType" => "boolean"
-	);
 
 	$config["autoJumpToQueryResults"] = array(
 		"label" => "Automatically Jump to Query Results",

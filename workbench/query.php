@@ -120,8 +120,9 @@ function show_query_form($soql_query,$export_action,$query_action){
 
 function parentChildRelationshipQueryBlocker(){
     var soql = document.getElementById('soql_query_textarea').value.toUpperCase();
-	if(soql.indexOf('(SELECT') != -1 && soql.indexOf('IN (SELECT') == -1){
-		return confirm ("Parent-to-child relationship queries are not yet supported by the Workbench and may display unexpected results. Are you sure you wish to continue?");
+    
+	if(soql.indexOf('(SELECT') != -1 && soql.indexOf('IN (SELECT') == -1 && document.getElementById('export_action_csv').checked){
+		return confirm ("Export of parent-to-child relationship queries to CSV are not yet supported by the Workbench and may give unexpected results. Are you sure you wish to continue?");
 	}
 	
 }
@@ -379,7 +380,7 @@ QUERY_BUILDER_SCRIPT;
 	if ($export_action == 'screen') print "checked='true'";
 	print " >Browser</label>&nbsp;";
 
-	print "<label><input type='radio' name='export_action' value='csv' ";
+	print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
 	if ($export_action == 'csv') print "checked='true'";
 	print " >CSV File</label>";
 
@@ -568,12 +569,22 @@ function query($soql_query,$query_action,$query_locator = null,$suppressScreenOu
 		} else {
 			$_SESSION['queryLocator'] = null;
 		}
-
+		
+		//correction for documents and attachments with body. issue #176
+	    if($query_response->size > 0 && !is_array($records)){
+			$records = array($records);
+    	}
+		
 		while(($suppressScreenOutput || $_SESSION['config']['autoRunQueryMore']) && !$query_response->done){
 			$query_response = $mySforceConnection->queryMore($query_response->queryLocator);
+			
+			if(!is_array($query_response->records)){
+				$query_response->records = array($query_response->records);
+			}
+			
 			$records = array_merge($records,$query_response->records);
 		}
-
+    	
 		return $records;
 
 	} catch (Exception $e){
@@ -586,7 +597,7 @@ function query($soql_query,$query_action,$query_locator = null,$suppressScreenOu
 	}
 }
 
-function getQueryResultHeaders($sobject, $tail=""){
+function getQueryResultHeaders($sobject, $tail=""){	
 	if(!isset($headerBufferArray)){
 		$headerBufferArray = array();
 	}
@@ -608,36 +619,101 @@ function getQueryResultHeaders($sobject, $tail=""){
 		}
 	}
 
+	if($sobject->queryResult){
+		if(!is_array($sobject->queryResult)) $sobject->queryResult = array($sobject->queryResult);
+		foreach($sobject->queryResult as $qr){
+			$headerBufferArray[] = $qr->records[0]->type;			
+		}
+	}	
+
 	return $headerBufferArray;
 }
 
 
-function getQueryResultRow($sobject){
+function getQueryResultRow($sobject, $escapeHtmlChars=true){
+
 	if(!isset($rowBuffer)){
 		$rowBuffer = array();
 	}
 	 
 	if ($sobject->Id){
-		$rowBuffer[] = htmlspecialchars($sobject->Id,ENT_QUOTES,'UTF-8');
+		$rowBuffer[] = $sobject->Id;
 	}
 
 	if ($sobject->fields){
 		foreach($sobject->fields as $datum){
-			$rowBuffer[] = htmlspecialchars($datum,ENT_QUOTES,'UTF-8');
+			$rowBuffer[] = $escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES,'UTF-8') : $datum;
 		}
 	}
 
 	if($sobject->sobjects){
 		foreach($sobject->sobjects as $sobjects){
-			$rowBuffer = array_merge($rowBuffer, getQueryResultRow($sobjects));
+			$rowBuffer = array_merge($rowBuffer, getQueryResultRow($sobjects,$escapeHtmlChars));
 		}
 	}
-
+	
+	if($sobject->queryResult){
+		$rowBuffer[] = $sobject->queryResult;
+	}
+	
 	return $rowBuffer;
 }
 
+
+function createQueryResultTable($records){
+	$table = "<table class='data_table'>\n";
+	
+	//call shared recusive function above for header printing
+	$table .= "<tr><th>&nbsp;</th><th>";
+	if($records[0] instanceof SObject){
+		$table .= implode("</th><th>", getQueryResultHeaders($records[0]));
+	} else{
+		$table .= implode("</th><th>", getQueryResultHeaders(new SObject($records[0])));
+	}	
+	$table .= "</th></tr>\n";
+		
+	
+	$rowNum = 1;
+	//Print the remaining rows in the body
+	foreach ($records as $record){
+		//call shared recusive function above for row printing
+		$table .= "<tr><td>" . $rowNum++ . "</td><td>";
+		
+		if($record instanceof SObject){
+			$row = getQueryResultRow($record); 
+		} else{
+			$row = getQueryResultRow(new SObject($record)); 
+		}
+
+		
+		for($i = 0; $i < count($row); $i++){				
+			if($row[$i] instanceof QueryResult && !is_array($cell)) $row[$i] = array($row[$i]);		
+			if($row[$i][0] instanceof QueryResult){
+				foreach($row[$i] as $qr){
+					$table .= createQueryResultTable($qr->records);	
+					if($qr != end($row[$i])) $table .= "</td><td>";
+				}
+			} else {
+				$table .= $row[$i];
+			}
+					
+			if($i+1 != count($row)){
+				$table .= "</td><td>";
+			}
+		}
+		
+		$table .= "</td></tr>\n";
+	}
+	
+	$table .= "</table>";
+
+	return $table;
+}
+
+
 //If the user selects to display the form on screen, they are routed to this function
 function show_query_result($records, $queryTimeElapsed){
+	
 	//Check if records were returned
 	if ($records) {
 		try {
@@ -664,32 +740,8 @@ function show_query_result($records, $queryTimeElapsed){
 			if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
 			 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
 			}
-
-
-			print "<table class='data_table'>\n";
-
-			//call shared recusive function above for header printing and then strip off the extra <th>
-			print "<tr><td>&nbsp;</td><th>" . implode("</th><th>", getQueryResultHeaders(new SObject($records[0]))) . "</th></tr>\n";
-
-			if($_SESSION['config']['linkIdToUi']){
-				preg_match("@//(.*)\.salesforce@", $_SESSION['location'], $instUIDomain);
-			}
 			
-			//Print the remaining rows in the body
-			foreach ($records as $record){
-				//call shared recusive function above for row printing and then strip off the extra <td>
-				$queryTableRow = "<tr><td>" . $rowNum++ . "</td><td>" . implode("</td><td>", getQueryResultRow(new SObject($record))) . "</td></tr>\n";
-				
-				if($_SESSION['config']['linkIdToUi']){
-					//$queryTableRow = preg_replace("/[A-Za-z0-9]{18}/","<a href='https://$instUIDomain[1].salesforce.com/$0' target='sfdcUi'>$0</a>",$queryTableRow);
-					$queryTableRow = preg_replace("@<td>([A-Za-z0-9]{4}0000[A-Za-z0-9]{10})</td>@","<td><a href='https://$instUIDomain[1].salesforce.com/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$1' target='sfdcUi'>$1</a></td>",$queryTableRow);
-				}
-				
-				print $queryTableRow;
-				
-			}
-			
-			print "</table>";
+			print addLinksToUiForIds(createQueryResultTable($records));
 
 			if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
 				print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
@@ -726,7 +778,7 @@ function export_query_csv($records,$query_action){
 
 			//Export remaining rows and write to CSV line-by-line
 			foreach ($records as $record) {
-				fputcsv($csv_file, getQueryResultRow(new SObject($record)));
+				fputcsv($csv_file, getQueryResultRow(new SObject($record),false));
 			}
 			
 			fclose($csv_file) or die("Error closing php://output");

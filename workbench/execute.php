@@ -52,6 +52,7 @@ if(isset($_POST['execute'])){
 			<select id="apiVersion" name="apiVersion">
 				<?php
 					$apiVersions = array(
+						"16.0",
 						"15.0",
 						"14.0",
 						"13.0",
@@ -108,7 +109,7 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 	$apexServerUrl = str_replace("/u/","/s/",$_SESSION['location']);
 	$apexServerUrl = preg_replace("/\d\d?\.\d/",$_POST['apiVersion'],$apexServerUrl);
 
-	$apexBinding = new SforceApexClient("soapclient/sforce.150.apex.wsdl",$apexServerUrl,$_POST['LogCategory'],$_POST['LogCategoryLevel']);
+	$apexBinding = new SforceApexClient("soapclient/sforce.160.apex.wsdl",$apexServerUrl,$_POST['LogCategory'],$_POST['LogCategoryLevel']);
 	
 	try {
 		$executeAnonymousResultWithDebugLog = $apexBinding->executeAnonymous($_POST['scriptInput']);
@@ -118,7 +119,7 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 	
 	if($executeAnonymousResultWithDebugLog->executeAnonymousResult->success){
 		if(isset($executeAnonymousResultWithDebugLog->debugLog) && $executeAnonymousResultWithDebugLog->debugLog != ""){
-			print('<pre>' . htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8') . '</pre>');
+			print("<pre>" . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
 		} else {
 			show_info("Execution was successful, but returned no results. Confirm log category and level.");
 		}
@@ -149,7 +150,7 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 		
 		show_error($error);
 		
-		print('<pre style="color: red;">' . htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8') . '</pre>');
+		print('<pre style="color: red;">' . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
 	}
 	
 //	print('<pre>');

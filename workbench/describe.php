@@ -28,7 +28,6 @@ if ($_SESSION['default_object']){
 	exit;
 }
 
-
 //Print a form with the global object types to choose for description
 function show_describeSObject_form(){
 	require_once ('header.php');
@@ -57,6 +56,22 @@ function show_describeSObject_result(){
 
 
 		print "<h2>$_SESSION[default_object] Object Description</h2>";
+		
+		if($_SESSION['config']['colorBooleanValues'] || $_SESSION['config']['highlightCustomFields'] || $_SESSION['config']['highlightSystemFields']){
+			print "<strong>Legend:</strong>";
+			print "<ul>";
+			if($_SESSION['config']['highightBooleanValues']){
+				print "<li class=\"trueColor\">True</span>\n";
+				print "<li class=\"falseColor\">False</span>\n";
+			} 
+			if($_SESSION['config']['highlightCustomFields']){
+				print "<li class=\"highlightCustomField\">Custom Field</li>\n";
+			}
+			if ($_SESSION['config']['highlightSystemFields']) {
+				print "<li class=\"highlightSystemField\">System Field</li>\n";
+			} 
+			print "</ul>";
+		}
 
 
 		print "<a href=\"javascript:ddtreemenu.flatten('describeTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('describeTree', 'contact')\">Collapse All</a> | <a href=\"describeTable.php\">Table View</a>\n";
@@ -67,16 +82,12 @@ function show_describeSObject_result(){
 		foreach($describeSObject_result as $key => $value){
 			//Print strings as is
 			if (is_string($value)){
-				print "<li>$key: <strong>$value</strong></li> \n";
+				stringDisplay($key, $value);
 			}
 			//Change bool data to printed as TRUE and FALSE for visibility in table
 			elseif (is_bool($value)){
 				print "<li>$key: ";
-				if ($value){
-					print "<strong>True</strong>";
-				} else {
-					print "<strong>False</strong>";
-				}
+				booleanDisplay($value);
 				print "</li> \n";
 			}
 		}
@@ -86,19 +97,15 @@ function show_describeSObject_result(){
 
 		print "<li>Fields<ul>\n";
 		foreach($describeSObject_result->fields as $key => $value){
-			print "<li>$value->name<ul>\n";
+			highlightSpecialField($value);
 			foreach($value as $subkey => $subvalue){
 				if (is_string($subvalue)){
-					print "<li>$subkey: <strong>$subvalue</strong></li>\n";
+					stringDisplay($subkey, $subvalue);
 				}
 				//Change bool data to printed as TRUE and FALSE for visibility in table
 				elseif (is_bool($subvalue)){
 					print "<li>$subkey: ";
-					if ($subvalue){
-						print "<strong>True</strong>";
-					} else {
-						print "<strong>False</strong>";
-					}
+					booleanDisplay($subvalue);
 					print "</li> \n";
 				}
 				//Because picklist are deeper in the SOAP message,
@@ -109,15 +116,11 @@ function show_describeSObject_result(){
 						print  "<li>$subsubvalue->label<ul>\n";
 						foreach($subsubvalue as $subsubsubkey => $subsubsubvalue){
 							if (is_string($subsubsubvalue)){
-								print "<li>$subsubsubkey: <strong>$subsubsubvalue</strong></li> \n";
+								stringDisplay( $subsubsubkey, $subsubsubvalue);
 							}
 							elseif (is_bool($subsubsubvalue)){
 								print "<li>$subsubsubkey: ";
-								if ($subsubsubvalue){
-									print "<strong>True</strong>";
-								} else {
-									print "<strong>False</strong>";
-								}
+								booleanDisplay($subsubsubvalue);
 								print "</li> \n";
 							}
 						}
@@ -146,15 +149,11 @@ function show_describeSObject_result(){
 					print "<li>$value->name<ul>\n";
 					foreach($value as $subkey => $subvalue){
 						if (is_string($subvalue)){
-							print "<li>$subkey: <strong>$subvalue</strong><li>\n";
+							stringDisplay( $subkey, $subvalue);
 						}
 						elseif (is_bool($subvalue)){
 							print "<li>$subkey: ";
-							if ($subvalue){
-								print "<strong>True</strong>";
-							} else {
-								print "<strong>False</strong>";
-							}
+							booleanDisplay($subvalue);
 							print "</li> \n";
 						}
 					}
@@ -172,15 +171,11 @@ function show_describeSObject_result(){
 				print "<li>$value->childSObject<ul>\n";
 				foreach($value as $subkey => $subvalue){
 					if (is_string($subvalue)){
-						print "<li>$subkey: <strong>$subvalue</strong></li> \n";
+						stringDisplay( $subkey, $subvalue);
 					}
 					elseif (is_bool($subvalue)){
 						print "<li>$subkey: ";
-						if ($subvalue){
-							print "<strong>True</strong>";
-						} else {
-							print "<strong>False</strong>";
-						}
+						booleanDisplay($subvalue);
 						print "</li> \n";
 					}
 				}
@@ -191,13 +186,46 @@ function show_describeSObject_result(){
 		print "</ul>\n"; //end tree
 }
 
+function booleanDisplay($value) {
+	if($_SESSION['config']['highightBooleanValues']){
+		if ($value){
+			print "<span class='describeValue trueColor'>True</span>";
+		} else {
+			print "<span class='describeValue falseColor'>False</span>";
+		}			
+	}
+	else {
+		if ($value){
+			print "<span class='describeValue'>True</span>";
+		} else {
+			print "<span class='describeValue'>False</span>";
+		}
+	}	
+}
 
+function highlightSpecialField( $value ) {
+	// Define system fields array
+	$systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp","OwnerId","RecordTypeId");
+	
+	if ($_SESSION['config']['highlightSystemFields'] && in_array($value->name,$systemFields)) {
+		print "<li><span class='highlightSystemField'>$value->name</span><ul>\n";
+	} 
+	elseif($_SESSION['config']['highlightCustomFields'] && $value->custom){
+		print "<li><span class='highlightCustomField'>$value->name</span><ul>\n";
+	} 
+	else {
+		print "<li>$value->name<ul>\n";
+	}		
+}
+
+function stringDisplay($key, $value) {
+	print "<li>$key: <span class='describeValue'>$value</span></li> \n";
+}
 ?>
 <script type="text/javascript">
 //ddtreemenu.createTree(treeid, enablepersist, opt_persist_in_days (default is 1))
 ddtreemenu.createTree("describeTree", true);
 </script>
 <?php
-
 include_once('footer.php');
 ?>

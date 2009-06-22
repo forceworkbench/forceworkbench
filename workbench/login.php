@@ -236,7 +236,7 @@ function checkCaps( pwcapsDivId, e ) {
 			<p><strong>QuickSelect: </strong>
 LOGIN_FORM;
 			
-			print "<select name='inst' id='inst' onChange='build_location();'>";
+			print "<select name='inst' id='inst' onChange='build_location();' onkeyup='build_location();'>";
 			
 			$instanceNames = array();
 			foreach($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo){
@@ -246,7 +246,7 @@ LOGIN_FORM;
 			printSelectOptions($instanceNames,$_SESSION['config']['defaultInstance']);
 			print "</select>";
 
-			print "<select name='endp' id='endp' onChange='build_location();'>";
+			print "<select name='endp' id='endp' onChange='build_location();' onkeyup='build_location();'>";
 			printSelectOptions($GLOBALS['config']['defaultApiVersion']['valuesToLabels'],$_SESSION['config']['defaultApiVersion']);	
 			print "</select></p>";
 			
@@ -314,7 +314,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	try{
 		require_once ('soapclient/SforcePartnerClient.php');
 		require_once ('soapclient/SforceHeaderOptions.php');
-		$wsdl = 'soapclient/sforce.150.partner.wsdl';
+		$wsdl = 'soapclient/sforce.160.partner.wsdl';
 		$mySforceConnection = new SforcePartnerClient();
 	    $mySforceConnection->createConnection($wsdl);
 	    

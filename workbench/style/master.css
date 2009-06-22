@@ -5,7 +5,7 @@
 	font-size: 12px;
 }
 
-pre{
+pre, pre a{
 	font-family: monospace;
 	font-size: 12px;
 }
@@ -22,7 +22,7 @@ body{
 }
 
 a{
-	color: #555;
+	color: inherit;
 }
 
 
@@ -121,7 +121,11 @@ table.data_table TD, table.data_table TH{
 	border-style: solid;
 	border-width: thin;
 	text-align: left;
-	vertical-align: top;	
+	vertical-align: top;
+}
+
+table.data_table TD table.data_table{
+	width: 100%;
 }
 
 table.field_mapping{
@@ -140,7 +144,6 @@ table.field_mapping TD, table.field_mapping TH{
 	text-align: left;
 	width: 33%;
 }
-
 
 .show_errors{
  	color: red;
@@ -175,4 +178,25 @@ activateable{
 
 .mono{
 	font-family: monospace;
+}
+
+
+.describeValue {
+	font-weight: bolder;	
+}
+
+.trueColor {
+	color: #669900;	
+}
+
+.falseColor {
+	color: #CC3333;	
+}
+
+.highlightSystemField {
+	color: #CC6600;	
+}
+
+.highlightCustomField {
+	color: #663399;	
 }

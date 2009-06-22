@@ -50,6 +50,9 @@ require_once('header.php');
 	print "<form method='post' action='$_SERVER[PHP_SELF]'>\n";
 
 	print "<table border='0' cellspacing='5' style='border-width-top: 1'>\n";
+	
+		print "<tr> <td colspan='3' align='left'><input type='submit' name='submitConfigSetter' value='Apply Settings'/>&nbsp;<input type='submit' name='restoreDefaults' value='Restore Defaults'/>&nbsp;<input type='reset' value='Cancel'/></td> </tr>";
+	
 		foreach($config as $configKey => $configValue){
 			if(isset($configValue['isHeader']) && $configValue['display']){
 				print "\t<tr><th align='left' colspan='3'><br/>" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</th></tr>\n";
