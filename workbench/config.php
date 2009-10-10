@@ -116,10 +116,11 @@ $config["header_LoginOptions"] = array(
 	$config["defaultApiVersion"]  = array(
 		"label" => "Default API Version",
 		"description" => "Default API version to be used for login. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
-		"default" => "17.0",
+		"default" => "18.0",
 		"overrideable" => true,
 		"dataType" => "picklist",
 		"valuesToLabels" => array(
+			"18.0" => "18.0",
 			"17.0" => "17.0",
 			"16.0" => "16.0",
 			"15.0" => "15.0",
@@ -551,7 +552,7 @@ $config["header_proxyOptions"] = array(
 //  
 ////////////////////////////////////////////////////////////////////////////////////////// 
 
-$GLOBALS["WORKBENCH_VERSION"] = "2.4.17";
+$GLOBALS["WORKBENCH_VERSION"] = "2.5.18 Alpha 1";
 
 class Page {
 	public $title;
