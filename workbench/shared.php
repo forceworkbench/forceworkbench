@@ -1,7 +1,11 @@
 <?php
-$version = "2.3.16";
 
-function show_error($errors){
+function getMyTitle(){
+	return $GLOBALS["PAGES"][basename($_SERVER['PHP_SELF'])]->title;
+}
+
+function show_error($errors, $showHeader=false, $showFooter=false){
+	if($showHeader) include_once("header.php");
 	print "<div class='show_errors'>\n";
 	print "<img src='images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
 	if(is_array($errors)){
@@ -16,6 +20,10 @@ function show_error($errors){
 	}
 	print $errorString;
 	print "</div>\n";
+	if($showFooter) {
+		include_once("footer.php");
+		exit;
+	}
 }
 
 function show_info($infos){
@@ -32,66 +40,66 @@ function show_info($infos){
 	print "</div>\n";
 }
 
-function checkLatestVersion(){
-	global $version;
-	try{
-		if(extension_loaded('curl')){
-			$ch = curl_init();
-			if(stristr($version,'beta')){
-				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailableBeta.txt');
-			} else {
-				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
-			}
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			$latestVersionAvailable = trim(curl_exec($ch));
-			curl_close($ch);
-
-			if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !stristr($version,'alpha')){
-				if($latestVersionAvailable != $version){
-					print "<span style='font-size: 8pt; font-weight: bold;'><a href='http://code.google.com/p/forceworkbench/' target='_blank' style='color: #0046ad;'>A newer version of the Workbench is available for download</a></span><br/>";
-				}
-			}
-		}
-	} catch (Exception $e){
-		//do nothing
-	}
+function getWorkbenchUserAgent(){
+	return "Workbench/" . str_replace(" ", "_", trim($GLOBALS["WORKBENCH_VERSION"]));
 }
 
 function printSelectOptions($valuesToLabelsArray,$defaultValue){
+	$valueAndLabelMatched = false;
 	foreach($valuesToLabelsArray as $value => $label){
 		print "<option value=\"" . $value . "\"";
 		if($defaultValue == $value){
 			print " selected=\"selected\"";
+			$valueAndLabelMatched = true;
 		}
-		print ">" . $label . "</option>";
+		print ">" . $label . "</option>\n";
 	}
+	return $valueAndLabelMatched;
 }
 
 
-function myGlobalSelect($default_object=null, $nameId='default_object', $width=20, $extras=null){
+function myGlobalSelect($default_object=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null){
 	print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";	
 //	print "<select id='myGlobalSelect' name='default_object' style='width: 20em;'>\n";
 	print "<option value=''></option>";
 	if (!$_SESSION['myGlobal'] || !$_SESSION['config']['cacheDescribeGlobal']){
 		try{
 		global $mySforceConnection;
-		$_SESSION['myGlobal'] = $mySforceConnection->describeGlobal();
+		$describeGlobalResponse = $mySforceConnection->describeGlobal();
+		
+		//Change to pre-17.0 format
+		if(isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)){
+			$describeGlobalResponse->types = array(); //create the array
+			foreach($describeGlobalResponse->sobjects as $sobject){
+				$describeGlobalResponse->types[] = $sobject->name; //migarte to pre 17.0 format
+				$describeGlobalResponse->attributeMap["$sobject->name"] = $sobject; //recreate into a map for faster lookup later
+			}
+			unset($describeGlobalResponse->sobjects); //remove from array, since not needed
+		}	
+		
+		$_SESSION['myGlobal'] = $describeGlobalResponse;
 		} catch (Exception $e) {
-			$errors[] = $e->getMessage();
-			show_error($errors);
-			exit;
+			show_error($e->getMessage(),false,true);
 	    }
 	}
 
-	//Print the global object types in a dropdown select box
+	//Print the global object types in a dropdown select box, using the filter set and the API version supports it
 	foreach($_SESSION['myGlobal']->types as $type){
-		print "	<option value='$type'";
-		if ($default_object == $type){
-			print " selected='true'";
+		if(!isset($_SESSION['myGlobal']->attributeMap) || 
+			(($filter1 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter1) && 
+			($filter2 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter2))){	
+				
+			print "	<option value='$type'";
+			if ($default_object == $type){
+				print " selected='true'";
 			}
-		print " />$type</option> \n";
+			print " />$type</option> \n";
+		}	
 	}
 	print "</select>\n";
+			
+	//print "<pre>";
+	//print_r($describeGlobalResponse);
 }
 
 function describeSObject($objectTypes){
@@ -124,9 +132,7 @@ function describeSObject($objectTypes){
 			global $mySforceConnection;
 			$describeSObjects_results = $mySforceConnection->describeSObjects($objectTypesToRetreive);
 		} catch (Exception $e) {
-			$errors[] = $e->getMessage();
-			show_error($errors);
-			exit;
+			show_error($e->getMessage(),false,true);
 		}
 
 		if (!is_array($objectTypes)){
@@ -138,9 +144,7 @@ function describeSObject($objectTypes){
 		}
 
 	} else if(count($objectTypesToRetreive) > 100) {
-		show_error("Too many polymorphic object types: " . count($objectTypesToRetreive));
-		include_once("footer.php");
-		exit;
+		show_error("Too many polymorphic object types: " . count($objectTypesToRetreive),false,true);
 	}
 
 	// move the describe results to the session cache and then copy all the requested object descriptions from the cache
@@ -175,17 +179,30 @@ function describeSObject($objectTypes){
 }
 
 function alphaOrderFields($describeSObject_result){
-	//move field name out to key name and then ksort based on key for field abc order
-	if(isset($describeSObject_result->fields)){
-		foreach($describeSObject_result->fields as $field){
-			$fieldNames[] = $field->name;
-		}
-	
-		$describeSObject_result->fields = array_combine($fieldNames, $describeSObject_result->fields);
-		ksort($describeSObject_result->fields);
-	}
-	return $describeSObject_result;
+    //move field name out to key name and then ksort based on key for field abc order
+    if(isset($describeSObject_result->fields)){
+        foreach($describeSObject_result->fields as $field){
+            $fieldNames[] = $field->name;
+        }
+    
+        $describeSObject_result->fields = array_combine($fieldNames, $describeSObject_result->fields);
+        $describeSObject_result->fields = natcaseksort($describeSObject_result->fields);
+    }
+    return $describeSObject_result;
 }
+
+function natcaseksort($array) {
+  // Like ksort but uses natural sort instead
+  $keys = array_keys($array);
+  natcasesort($keys);
+
+  foreach ($keys as $k)
+    $new_array[$k] = $array[$k];
+
+  return $new_array;
+} 
+
+
 
 function field_mapping_set($action,$csv_array){
 	if ($action == 'insert' || $action == 'upsert' || $action == 'update'){
@@ -412,7 +429,7 @@ function field_mapping_show($field_map,$ext_id){
 		print "<td>" . $fieldMapArray['csvField'] . "</td>";
 		if ($_SESSION['config']['showReferenceBy']){
 			print "<td>";
-			if ($fieldMapArray['relatedObjectName'] && $fieldMapArray['relatedFieldName']){
+			if (isset($fieldMapArray['relatedObjectName']) && isset($fieldMapArray['relatedFieldName'])){
 				print $fieldMapArray['relatedObjectName'] . "." . $fieldMapArray['relatedFieldName'];
 			}
 			print "</td>";
@@ -446,9 +463,7 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 
 	if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')){
 		if (!isset($field_map['Id'])){
-			show_error("Salesforce ID not selected. Please try again.");
-			include_once('footer.php');
-			exit();
+			show_error("Salesforce ID not selected. Please try again.",false,true);
 		} else {
 		ob_start();
 		
@@ -477,17 +492,31 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 	}
 
 	print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
+	
+	if(($action == 'Confirm Insert') || ($action == 'Confirm Update') || ($action == 'Confirm Upsert')){
+		print "<p><label><input type='checkbox' name='doAsync'/> Load records asynchronously via Bulk API</label>" .
+		  "&nbsp;<img onmouseover=\"Tip('Loading records asynchronously is recommended for large data loads. The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" align='absmiddle' src='images/help16.png'/>" . 
+		  "</p><p>&nbsp;</p>";
+	}
+	
 	print "<p><input type='submit' name='action' value='$action' /></p>\n";
 	print "</form>\n";
 	}
 }
 
-function form_upload_objectSelect_show($file_input_name,$showObjectSelect = FALSE){
+function form_upload_objectSelect_show($file_input_name,$showObjectSelect = FALSE,$action=null){
 	print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n";
 	print "<input type='hidden' name='MAX_FILE_SIZE' value='" . $_SESSION['config']['maxFileSize'] . "' />\n";
 	print "<p><input type='file' name='$file_input_name' size=44 /></p>\n";
 	if ($showObjectSelect){
-		 myGlobalSelect($_SESSION['default_object']);
+		$filter1 = null;
+		$filter2 = null;
+		if($action == "insert") $filter1 = "createable";
+		elseif($action == "update") $filter1 = "updateable";
+		elseif($action == "upsert") {$filter1 = "createable"; $filter2 = "updateable";}
+		
+		 myGlobalSelect($_SESSION['default_object'], 'default_object', "20", null, $filter1, $filter2);
+		 
 		 $submitLabel = 'Upload & Select Object';
 	} else {
 		$submitLabel = 'Upload';
@@ -611,11 +640,7 @@ function idOnlyCallIds($api_call,$field_map,$csv_array,$show_results){
 		    }
 
 		} catch (Exception $e) {
-	      	$errors = null;
-			$errors = $e->getMessage();
-			show_error($errors);
-			include_once("footer.php");
-			exit;
+			show_error($e->getMessage(),false,true);
 	    }
 	}
 	if($show_results) show_putAndId_results($results,$api_call,$orig_csv_array,$id_array_all);
@@ -674,12 +699,11 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 			try{
 				global $mySforceConnection;
 				if ($api_call == 'upsert'){
-					$results_more = $mySforceConnection->$api_call($ext_id,$sObjects);
-					unset($sObjects);
+					$results_more = $mySforceConnection->$api_call($ext_id,$sObjects);					
 				} else {
 					$results_more = $mySforceConnection->$api_call($sObjects);
-					unset($sObjects);
 				}
+				unset($sObjects);
 			} catch (Exception $e) {
 		      	$errors = null;
 				$errors = $e->getMessage();
@@ -694,17 +718,107 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
 		    }
 		}
 		if($show_results) show_putAndId_results($results,$api_call,$orig_csv_array,null);
-		}
+	}
 }
+
+function putSObjectsAsync($api_call,$ext_id,$field_map,$csv_array){
+	if (!($field_map && $csv_array && $_SESSION['default_object'])){  
+		show_error("CSV file and field mapping not initialized. Upload a new file and map fields.");
+	} else {
+		require_once ('restclient/AsyncApiClient.php');
+		try{
+			$job = new JobInfo();
+			$job->setObject($_SESSION['default_object']);
+			$job->setOpertion($api_call);
+			$job->setContentType("CSV");
+			$job->setConcurrencyMode($_SESSION['config']['asyncConcurrencyMode']);
+			if($_SESSION['config']['assignmentRuleHeader_assignmentRuleId'] != "") $job->setAssignmentRuleId($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']);
+			if($api_call == "upsert" && isset($ext_id)) $job->setExternalIdFieldName($ext_id);
+			
+			$asyncConnection = new AsyncApiConnection($_SESSION['location'], $_SESSION['sessionId']);
+			$job = $asyncConnection->createJob($job);
+		} catch (Exception $e) {
+			show_error($e->getMessage(), true, true);
+	    }
+		    
+		if($job->getExceptionCode() != null && $job->getExceptionCode() != ""){
+			show_error($job->getExceptionCode() . ": " . $job->getExceptionMessage(), true, true);
+		}
+
+		if($job->getId() == null){
+			show_error("No job id found. Aborting Bulk API operation.", true, true);
+		}
+		
+		$csv_header = array_shift($csv_array);
+		$results = array();
+
+		while($csv_array){
+			$sObjects = array();
+			$csv_arrayBatch = array_splice($csv_array,0,$_SESSION['config']['asyncBatchSize']);
+
+			$asyncCsv = array();
+			
+			$asyncCsvHeaderRow = array();
+			foreach($field_map as $salesforce_field=>$fieldMapArray){
+				if(isset($fieldMapArray['csvField'])){
+					if(isset($fieldMapArray['relationshipName']) && isset($fieldMapArray['relatedFieldName'])){
+						$asyncCsvHeaderRow[] = $fieldMapArray['relationshipName'] . "." . $fieldMapArray['relatedFieldName'];
+					} elseif(isset($salesforce_field)) {
+						$asyncCsvHeaderRow[] = $salesforce_field;
+					}
+				}
+			}
+			$asyncCsv[] = $asyncCsvHeaderRow;
+			
+			for($row=0; $row < count($csv_arrayBatch); $row++){
+				//create new row
+				$asyncCsvRow = array();
+				foreach($field_map as $salesforce_field=>$fieldMapArray){
+					$col = array_search($fieldMapArray['csvField'],$csv_header);
+					if(isset($salesforce_field) && isset($fieldMapArray['csvField'])){
+						if($csv_arrayBatch[$row][$col] == "" && $_SESSION['config']['fieldsToNull']) {
+							$asyncCsvRow[] = "#N/A";
+						} else {
+							$asyncCsvRow[] = htmlspecialchars($csv_arrayBatch[$row][$col],ENT_QUOTES,'UTF-8');
+						}
+					}
+				}
+
+				//add row to the array
+				$asyncCsv[] = $asyncCsvRow;
+			}
+
+			try{
+				$batch = $asyncConnection->createBatch($job, arr_to_csv($asyncCsv));
+			} catch (Exception $e) {
+				show_error($e->getMessage(), true, true);
+		    }
+		    
+			if($batch->getExceptionCode() != null && $batch->getExceptionCode() != ""){
+				show_error($batch->getExceptionCode() . ": " . $batch->getExceptionMessage(), true, true);
+			}
+		    
+		}
+		
+		try{
+			$job = $asyncConnection->updateJobState($job->getId(), "Closed");
+		} catch (Exception $e) {
+			show_error($e->getMessage(), true, true);
+		}
+		
+		header("Location: asyncStatus.php?jobId=" . $job->getId());		
+	}
+}
+
 
 function show_putAndId_results($results,$api_call,$csv_array,$idArray){	
 	//check if only result is returned
 	if(!is_array($results)) $results = array($results);
 	
-	unset($_SESSION[resultsWithData]);
+	unset($_SESSION['resultsWithData']);
 	$resultsWithData = array(); //create array to hold results with data for download later
-	$_SESSION[resultsWithData][0] = array("Salesforce Id","Result","Status");
-	$_SESSION[resultsWithData][0] = array_merge($_SESSION[resultsWithData][0],$csv_array[0]);
+	$_SESSION['resultsWithData'][0] = array("Salesforce Id","Result","Status");
+	$_SESSION['resultsWithData'][0] = array_merge($_SESSION['resultsWithData'][0],$csv_array[0]);
 	
 	$success_count = 0;
 	$error_count = 0;
@@ -712,28 +826,28 @@ function show_putAndId_results($results,$api_call,$csv_array,$idArray){
 	for($row=0; $row < count($results); $row++){
 		$excel_row = $row + 1;
 		
-		$_SESSION[resultsWithData][$row+1] = array(); //create array for row
+		$_SESSION['resultsWithData'][$row+1] = array(); //create array for row
 		
 		if ($results[$row]->success){
 			$success_count++;
 			print "<tr>";
 			print "<td>" . $excel_row . "</td>";
 			print "<td>" . addLinksToUiForIds($results[$row]->id) . "</td>";
-			$_SESSION[resultsWithData][$row+1][0] = $results[$row]->id;
+			$_SESSION['resultsWithData'][$row+1][0] = $results[$row]->id;
 			print "<td>Success</td>";
-			$_SESSION[resultsWithData][$row+1][1] = "Success";
+			$_SESSION['resultsWithData'][$row+1][1] = "Success";
 			if (($api_call == 'upsert' && $results[$row]->created) || $api_call == 'create'){
 				print "<td>Created</td>";
-				$_SESSION[resultsWithData][$row+1][2] = "Created";
+				$_SESSION['resultsWithData'][$row+1][2] = "Created";
 			} elseif (($api_call == 'upsert' && !$results[$row]->created) || $api_call == 'update') {
 				print "<td>Updated</td>";
-				$_SESSION[resultsWithData][$row+1][2] = "Updated";
+				$_SESSION['resultsWithData'][$row+1][2] = "Updated";
 			} elseif (($api_call == 'delete') || ($api_call == 'undelete')) {
 				print "<td>" . ucwords($api_call) . "d </td>";
-				$_SESSION[resultsWithData][$row+1][2] = ucwords($api_call) . "d";
+				$_SESSION['resultsWithData'][$row+1][2] = ucwords($api_call) . "d";
 			} elseif ($api_call == 'emptyRecycleBin') {
 				print "<td>Purged</td>";
-				$_SESSION[resultsWithData][$row+1][2] = "Purged";
+				$_SESSION['resultsWithData'][$row+1][2] = "Purged";
 			}
 			print "</tr>\n";
 		} else {
@@ -742,22 +856,22 @@ function show_putAndId_results($results,$api_call,$csv_array,$idArray){
 			print "<td>" . $excel_row . "</td>";
 						
 			if(!isset($results[$row]->id) && isset($idArray)){
-				$_SESSION[resultsWithData][$row+1][0] = $idArray[$row]; //add id from idArray for id-only calls
+				$_SESSION['resultsWithData'][$row+1][0] = $idArray[$row]; //add id from idArray for id-only calls
 				print "<td>" . addLinksToUiForIds($idArray[$row]) . "</td>";
 			} else {
-				$_SESSION[resultsWithData][$row+1][0] = $results[$row]->id; //add id from results for everything else
+				$_SESSION['resultsWithData'][$row+1][0] = $results[$row]->id; //add id from results for everything else
 				print "<td>" . addLinksToUiForIds($results[$row]->id) . "</td>";
 			}
 			
 			print "<td>" . ucwords($results[$row]->errors->message) . "</td>";
-			$_SESSION[resultsWithData][$row+1][1] = ucwords($results[$row]->errors->message);
+			$_SESSION['resultsWithData'][$row+1][1] = ucwords($results[$row]->errors->message);
 			print "<td>" . $results[$row]->errors->statusCode . "</td>";
-			$_SESSION[resultsWithData][$row+1][2] = $results[$row]->errors->statusCode;
+			$_SESSION['resultsWithData'][$row+1][2] = $results[$row]->errors->statusCode;
 			//print "<td>" . $results[$row]->errors->fields . "</td>"; //APIDOC: Reserved for future use. Array of one or more field names. Identifies which fields in the object, if any, affected the error condition.
 			print "</tr>\n";
 		}
 
-		$_SESSION[resultsWithData][$row+1] = array_merge($_SESSION[resultsWithData][$row+1],$csv_array[$row+1]);
+		$_SESSION['resultsWithData'][$row+1] = array_merge($_SESSION['resultsWithData'][$row+1],$csv_array[$row+1]);
 		
 	}
 	print "</table><br/>";
@@ -776,24 +890,42 @@ function put($action){
 	$confirm_action = 'Confirm ' . ucwords($action);
 
 	if(isset($_POST['action']) && $_POST['action'] == $confirm_action){
-		require_once('header.php');
-		print "<h1>" . ucwords($action) . " Results</h1>";
-		if ($action == 'insert') $api_call = 'create'; else $api_call = $action;
-		if ($action == 'upsert') $ext_id = $_SESSION['_ext_id']; else $ext_id = NULL;
-		putSObjects($api_call,$ext_id,$_SESSION['field_map'],$_SESSION['csv_array'],true);
-		include_once('footer.php');
+		if ($action == 'upsert' && isset($_SESSION['_ext_id'])) $ext_id = $_SESSION['_ext_id']; else $ext_id = NULL;
+		if(isset($_POST['doAsync'])){
+			putSObjectsAsync(
+				$action,
+				$ext_id,
+				isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null, 
+				isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] :  null);
+		} else {
+			require_once('header.php');
+			print "<h1>" . ucwords($action) . " Results</h1>";
+			if ($action == 'insert') $api_call = 'create'; else $api_call = $action;
+			putSObjects(
+				$api_call,
+				$ext_id,
+				isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null, 
+				isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] :  null,
+				true);
+			include_once('footer.php');
+		}
 		unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name']);
 	}
 
 	elseif(isset($_POST['action']) && $_POST['action'] == 'Map Fields'){
 		require_once('header.php');
 		array_pop($_POST); //remove header row
-		if ($_POST['_ext_id']){
+		if (isset($_POST['_ext_id'])){
 			$_SESSION['_ext_id'] = $_POST['_ext_id'];
 			$_POST['_ext_id'] = NULL;
 		}
 		$_SESSION['field_map'] = field_map_to_array($_POST);
-		field_mapping_confirm($confirm_action,$_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id']);
+		field_mapping_confirm(
+			$confirm_action,
+			$_SESSION['field_map'],
+			isset($_SESSION['csv_array'])?$_SESSION['csv_array']:null, 
+			isset($_SESSION['_ext_id'])?$_SESSION['_ext_id']:null
+		);
 		include_once('footer.php');
 	}
 
@@ -808,13 +940,9 @@ function put($action){
 			$_SESSION['csv_array'] = csv_file_to_array($_SESSION['file_tmp_name']);
 			$csv_array_count = count($_SESSION['csv_array']) - 1;
 			if (!$csv_array_count) {
-				show_error("The file uploaded contains no records. Please try again.");
-				include_once('footer.php');
-				exit();
+				show_error("The file uploaded contains no records. Please try again.",false,true);
 			} elseif($csv_array_count > $_SESSION['config']['maxFileLengthRows']){
-				show_error ("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.");
-				include_once('footer.php');
-				exit();
+				show_error ("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.", false, true);
 			}
 			$info = "The file $csv_file_name was uploaded successfully and contains $csv_array_count row";
 			if ($csv_array_count !== 1) $info .= 's';
@@ -828,13 +956,13 @@ function put($action){
 	else {
 		require_once ('header.php');
 		print "<p><strong>Select an object and upload a CSV file to $action:</strong></p>\n";
-		form_upload_objectSelect_show('file',TRUE);
+		form_upload_objectSelect_show('file',TRUE,$action);
 		include_once('footer.php');
 	}
 }
 
 function idOnlyCall($action){
-	if($_POST['action'] == 'Confirm ' . ucfirst($action)){
+	if(isset($_POST['action']) && $_POST['action'] == 'Confirm ' . ucfirst($action)){
 		require_once('header.php');
 		print "<h1>" . ucfirst($action) . " Results</h1>";
 		idOnlyCallIds($action,$_SESSION['field_map'],$_SESSION['csv_array'],true);
@@ -842,7 +970,7 @@ function idOnlyCall($action){
 		include_once('footer.php');
 	}
 
-	elseif($_POST['action'] == 'Map Fields'){
+	elseif(isset($_POST['action']) && $_POST['action'] == 'Map Fields'){
 		require_once('header.php');
 		array_pop($_POST); //remove header row
 		$_SESSION['field_map'] = $_POST;
@@ -850,26 +978,21 @@ function idOnlyCall($action){
 		include_once('footer.php');
 	}
 
-	elseif ($_FILES['file']){
+	elseif (isset($_FILES['file']) && $_FILES['file']){
 		require_once('header.php');
 		if (csv_upload_valid_check($_FILES['file'])){
 			form_upload_objectSelect_show('file',FALSE);
-			show_error(csv_upload_valid_check($_FILES['file']));
-			include_once('footer.php');
+			show_error(csv_upload_valid_check($_FILES['file']), false, true);
 		} else {
 			$csv_file_name = basename($_FILES['file']['name']);
 			$_SESSION['file_tmp_name'] = $_FILES['file']['tmp_name'];
 			$_SESSION['csv_array'] = csv_file_to_array($_SESSION['file_tmp_name']);
 			$csv_array_count = count($_SESSION['csv_array']) - 1;
 			if (!$csv_array_count) {
-				show_error("The file uploaded contains no records. Please try again.");
-				include_once('footer.php');
-				exit();
+				show_error("The file uploaded contains no records. Please try again.", false, true);
 			}
 			elseif ($csv_array_count > $_SESSION['config']['maxFileLengthRows']) {
-				show_error("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.");
-				include_once('footer.php');
-				exit();
+				show_error("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.", false, true);
 			}
 			$info = "The file $csv_file_name was uploaded successfully and contains $csv_array_count row";
 			if ($csv_array_count !== 1) $info .= 's';
@@ -888,16 +1011,16 @@ function idOnlyCall($action){
 
 
 function addLinksToUiForIds($inputStr){
-	if($_SESSION['config']['linkIdToUi']){
-		preg_match("@//(.*)\.salesforce@", $_SESSION['location'], $instUIDomain);
-		return preg_replace("/\b(\w{4}0000\w{10})\b/","<a href='https://$instUIDomain[1].salesforce.com/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$1' target='sfdcUi'>$1</a>",$inputStr);					
+	if(isset($_SESSION['config']['linkIdToUi']) && $_SESSION['config']['linkIdToUi'] == true){
+		preg_match("@(https?://.*)/services@", $_SESSION['location'], $instUIDomain);
+		return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$1' target='sfdcUi'>$1</a>",$inputStr);					
 	} else {
 		return $inputStr;					
 	}
 }
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
-	if($_SESSION['config']['debug'] == true){
+	if(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true){
 
 		print "<script>
 			function toggleDebugSection(title, sectionId){
@@ -1031,8 +1154,37 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 			}
 		}
 
+		if(isset($_REQUEST['restDebugLog'])){
+			print "<h1 onclick=\"toggleDebugSection(this,'rest_debug_container')\" class=\"debugHeader\">+ REST/BULK API LOGS</h1>\n";
+			print "<div id='rest_debug_container' class='debugContainer'>";
+				print "<pre>" . addLinksToUiForIds($_REQUEST['restDebugLog']) . "</pre>";
+				print "<hr/>";
+			print "</div>";
+		}
+		
 		print "</div>";
 	}
+}
+
+function arr_to_csv_line($arr) {
+	$line = array();
+	foreach ($arr as $v) {
+		$line[] = is_array($v) ? arr_to_csv_line($v) : '"' . str_replace('"', '""', $v) . '"';
+	}
+	return implode(",", $line);
+}
+
+function arr_to_csv($arr) {
+	$lines = array();
+	foreach ($arr as $v) {
+		$lines[] = arr_to_csv_line($v);
+	}
+	return implode("\n", $lines);
+}
+
+function simpleFormattedTime($timestamp){
+	$dateTime = new DateTime($timestamp);
+	return date("h:i:s A",$dateTime->format("U"));
 }
 
 

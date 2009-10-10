@@ -31,7 +31,7 @@ function show_select_form(){
 	function toggleObjectSelectDisabled(){
 		var actionJumpVal = document.getElementById('actionJump').value;
 		
-		if(actionJumpVal == '' || actionJumpVal == 'execute.php'|| actionJumpVal == 'settings.php' || actionJumpVal == 'delete.php' || actionJumpVal == 'undelete.php' || actionJumpVal == 'purge.php' || actionJumpVal == 'search.php'){
+		if(actionJumpVal == 'select.php' || actionJumpVal == 'execute.php'|| actionJumpVal == 'settings.php' || actionJumpVal == 'delete.php' || actionJumpVal == 'undelete.php' || actionJumpVal == 'purge.php' || actionJumpVal == 'search.php'){
 			document.getElementById('default_object').disabled = true;		
 		} else {
 			document.getElementById('default_object').disabled = false;			
@@ -46,23 +46,14 @@ function show_select_form(){
 	
 		//Display a list of actions as submit buttons. Jump to the selected
 	//action's page on refresh (see IF statement at top)
-print <<<actionJumper
-	<p><strong>Jump to: </strong>
-		<select name='actionJump' id='actionJump' style='width: 20em;' onChange='toggleObjectSelectDisabled();'>
-			<option value=''></option>
-			<option value='describe.php'>Describe</option>
-			<option value='insert.php'>Insert</option>
-			<option value='upsert.php'>Upsert</option>
-			<option value='update.php'>Update</option>
-			<option value='delete.php'>Delete</option>
-			<option value='undelete.php'>Undelete</option>
-			<option value='purge.php'>Purge</option>
-			<option value='query.php'>Query</option>
-			<option value='search.php'>Search</option>
-			<option value='execute.php'>Execute</option>
-			<option value='settings.php'>Settings</option>
-		</select></p>
-actionJumper;
+	print "<p><strong>Jump to: </strong>" . 
+		  "<select name='actionJump' id='actionJump' style='width: 20em;' onChange='toggleObjectSelectDisabled();'>" . 	
+		  "<option value='select.php'></option>";
+	foreach($GLOBALS["PAGES"] as $filename => $page){
+		if($page->onMenuSelect) print "<option value='" . $filename . "'>" . $page->title . "</option>";
+	}
+	print "</select></p>";
+
 
 	//Describe a list of all the objects in the user's org and display
 	//in a drop down select box
@@ -73,11 +64,8 @@ actionJumper;
 	print "<p/><input type='submit' name='select' value='Select' />";
 	print "</form>\n";
 	} catch (Exception $e) {
-		      	$errors = null;
-				$errors = $e->getMessage();
-				show_error($errors);
-				exit;
+		show_error($e->getMessage(),false,true);
 	}
-	}
+}
 
 ?>

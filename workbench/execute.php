@@ -51,29 +51,7 @@ if(isset($_POST['execute'])){
 			Apex API Version: 
 			<select id="apiVersion" name="apiVersion">
 				<?php
-					$apiVersions = array(
-						"16.0",
-						"15.0",
-						"14.0",
-						"13.0",
-						"12.0",
-						"11.1",
-						"11.0",
-						"10.0",
-						"9.0",
-						"8.0"
-					);
-					
-					$apiVersionMatched = false;
-					foreach($apiVersions as $verion){
-						print "<option value=\"" . $verion . "\"";
-						if($_SESSION['apiVersion'] == $verion){
-							print " selected=\"selected\"";
-							$apiVersionMatched = true;
-						}
-						print ">" . $verion . "</option>";
-					}
-
+					$apiVersionMatched = printSelectOptions($config['defaultApiVersion']['valuesToLabels'],$_SESSION['apiVersion']);	
 				?>
 			</select>
 			&nbsp;<img onmouseover="Tip('Apex API Version defaults to the logged in API version, but can be set independently and specifies against which version the Apex script will be compiled.')" align='absmiddle' src='images/help16.png'/>
@@ -82,7 +60,7 @@ if(isset($_POST['execute'])){
 	  <tr>
 	    <td colspan="2">
 			
-			<textarea id='scriptInput' name='scriptInput' cols='100' rows='7' style='overflow: auto; font-family: monospace, courier;'><?php echo htmlspecialchars($_SESSION['scriptInput'],ENT_QUOTES,'UTF-8'); ?></textarea>
+			<textarea id='scriptInput' name='scriptInput' cols='100' rows='<?php print $_SESSION['config']['textareaRows'] ?>' style='overflow: auto; font-family: monospace, courier;'><?php echo htmlspecialchars(isset($_SESSION['scriptInput'])?$_SESSION['scriptInput']:null,ENT_QUOTES,'UTF-8'); ?></textarea>
 			<p/>
 			<input type='submit' name="execute" value='Execute'/> <input type='reset' value='Reset'/>
 			
@@ -109,12 +87,15 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 	$apexServerUrl = str_replace("/u/","/s/",$_SESSION['location']);
 	$apexServerUrl = preg_replace("/\d\d?\.\d/",$_POST['apiVersion'],$apexServerUrl);
 
-	$apexBinding = new SforceApexClient("soapclient/sforce.160.apex.wsdl",$apexServerUrl,$_POST['LogCategory'],$_POST['LogCategoryLevel']);
+	//use the highest version's WSDL
+	$wsdl = "soapclient/sforce." . str_replace(".","",max($config['defaultApiVersion']['valuesToLabels'])) . ".apex.wsdl";
+
+	$apexBinding = new SforceApexClient($wsdl,$apexServerUrl,$_POST['LogCategory'],$_POST['LogCategoryLevel']);
 	
 	try {
 		$executeAnonymousResultWithDebugLog = $apexBinding->executeAnonymous($_POST['scriptInput']);
 	} catch(Exception $e) {
-		show_error($e->getMessage());
+		show_error($e->getMessage(),false,true);
 	}
 	
 	if($executeAnonymousResultWithDebugLog->executeAnonymousResult->success){
@@ -125,7 +106,7 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 		}
 		
 	} else {
-		$error;	
+		$error = null;	
 		
 		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem)){
 			$error .=  "COMPILE ERROR: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem;

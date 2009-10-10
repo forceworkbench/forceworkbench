@@ -1,7 +1,7 @@
 @CHARSET "ISO-8859-1";
 
 *{
-	font-family: Verdana, Arial;
+	font-family: Verdana, Arial, Kalimati, Utkal, FreeSans, San-Serif;
 	font-size: 12px;
 }
 
@@ -64,7 +64,7 @@ h2{
 }
 
 #myuserinfo{
-	font-size: 10pt;
+	font-size: 9pt;
 	text-transform: uppercase;
 	text-align: left;
 	color: #888;
@@ -145,6 +145,16 @@ table.field_mapping TD, table.field_mapping TH{
 	width: 33%;
 }
 
+.dataLabel{
+	text-align: right;
+	font-weight: bolder;
+	margin-left: 10px;
+}
+
+.dataValue{
+	text-align: left;
+}
+
 .show_errors{
  	color: red;
 	text-align: center;
@@ -165,7 +175,7 @@ table.field_mapping TD, table.field_mapping TH{
  	clear: both;
  }
 
-.disclaimer, .disclaimer a{
+#disclaimer, #disclaimer a{
  	color: #888;
  	font-size: 8pt;
  	text-align: center;

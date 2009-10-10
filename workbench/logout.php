@@ -19,15 +19,18 @@ require_once('shared.php');
 		session_destroy();
 		
 		if($sessionInvatidated == true){
-			show_info('You have been successfully logged out of the Workbench and Salesforce.');
+			show_info('You have been successfully logged out of Workbench and Salesforce.');
 		} else {
-			show_info('You have been successfully logged out of the Workbench.');
+			show_info('You have been successfully logged out of Workbench.');
 		}
+		
+		print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\",2000);</script>";
 		
 		include_once('footer.php');
 	} else {
 		session_unset();
 		session_destroy();
+		
 		header('Location: login.php');
 	}
 ?>

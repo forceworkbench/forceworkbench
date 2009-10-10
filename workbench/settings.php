@@ -9,9 +9,9 @@ if(isset($_POST['submitConfigSetter'])){
   	foreach($config as $configKey => $configValue){
 		if(!isset($configValue['isHeader']) && isset($_POST[$configKey])){
 			if(isset($configValue['maxValue']) && $configValue['maxValue'] < $_POST[$configKey]){
-				$errors[] = $configValue[label] . " must not be greater than " . $configValue['maxValue'];
+				$errors[] = $configValue['label'] . " must not be greater than " . $configValue['maxValue'];
 			} else if(isset($configValue['minValue']) && $configValue['minValue'] > $_POST[$configKey]){
-				$errors[] = $configValue[label] . " must not be less than " . $configValue['minValue'];
+				$errors[] = $configValue['label'] . " must not be less than " . $configValue['minValue'];
 			}
 		}
  	}
@@ -37,6 +37,12 @@ if(isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])){
 				setcookie($configKey,NULL,time()-3600);									//for null strings and numbers (remove cookie)
 			}
 	 	}
+	 	
+	 	//special case for default clientId so that it doesnt persist after upgrading if not customized
+	 	if(isset($_POST['callOptions_client']) && $_POST['callOptions_client'] == getWorkbenchUserAgent()){
+	 		setcookie('callOptions_client',NULL,time()-3600);	
+	 	}
+	 	
 	 	header("Location: $_SERVER[PHP_SELF]");
 	}
 }
@@ -56,7 +62,7 @@ require_once('header.php');
 		foreach($config as $configKey => $configValue){
 			if(isset($configValue['isHeader']) && $configValue['display']){
 				print "\t<tr><th align='left' colspan='3'><br/>" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</th></tr>\n";
-			} else if($configValue['overrideable']){
+			} else if(isset($configValue['overrideable']) && $configValue['overrideable']==true){
 				print "\t<tr onmouseover=\"Tip('" . htmlspecialchars(addslashes($configValue['description']),ENT_NOQUOTES,'UTF-8') . "')\">\n";
 				print "\t\t<td align='right'><label for='$configKey'>" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</label></td><td>&nbsp;&nbsp;</td>\n";
 				print "\t\t<td align='left'>";
@@ -88,13 +94,17 @@ require_once('header.php');
 			}
 		}
 
-	print "<tr> <td></td> <td></td> <td></td> </tr>";
+	print "<tr> <td></td> <td></td> <td></td> </tr>\n";
 
-	print "<tr> <td colspan='3' align='left'><input type='submit' name='submitConfigSetter' value='Apply Settings'/>&nbsp;<input type='submit' name='restoreDefaults' value='Restore Defaults'/>&nbsp;<input type='reset' value='Cancel'/></td> </tr>";
+	print "<tr> <td colspan='3' align='left'>" . 
+		  "<input type='submit' name='submitConfigSetter' value='Apply Settings'/>&nbsp;" . 
+		  "<input type='submit' name='restoreDefaults' value='Restore Defaults'/>&nbsp;" . 
+		  "<input type='reset' value='Cancel'/>" . 
+		  "</td> </tr>\n";
 
-	print "<table>\n";
+	print "</table>\n";
 
-  print "</form>";
+  print "</form>\n";
 
 require_once('footer.php');
 

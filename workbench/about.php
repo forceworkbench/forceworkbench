@@ -8,20 +8,20 @@ require_once ('header.php');
 
 
 <p>
-The Workbench is a community-contributed, web-based application that gives administrators 
+Workbench is a community-contributed, web-based application that gives administrators 
 and developers on-demand access to useful tools to manage salesforce.com organizations. 
 Starting with a combination of the features of the Apex Data Loader, Force.com Explorer, 
-and System Log, the Workbench can insert, upsert, update, query, search, delete, undelete, 
+and System Log, Workbench can insert, upsert, update, query, search, delete, undelete, 
 and purge data as well as describe any object or execute Apex scripts directly in your web 
 browser. These functions build on the strengths of these existing products to create an even 
-more powerful and easier-to-use on-demand application. Not only can the Workbench be used as 
+more powerful and easier-to-use on-demand application. Not only can Workbench be used as 
 a standalone application in your browser, but it can also be integrated within Salesforce as 
 a single-sign-on web tab for more convenient access.
 </p>
 
 <p>
 <strong>
-Workbench v<?php echo $GLOBALS['version']; ?><br/>
+Workbench v<?php echo $GLOBALS['WORKBENCH_VERSION']; ?><br/>
 </strong>
 Distributed under the Open Source BSD License.<br/>
 Developed by Ryan Brainard<br/>
@@ -34,7 +34,7 @@ Developed by Ryan Brainard<br/>
 </p>
 
 <p>
-<strong>The Workbench is NOT a product of or supported by salesforce.com, inc.
+<strong>Workbench is NOT a product of or supported by salesforce.com, inc.
 For support from the Open Source community, please visit the recources below:</strong>
 <ul>
   	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench" target="_blank">Main Page</a></li>

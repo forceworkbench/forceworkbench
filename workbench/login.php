@@ -2,11 +2,37 @@
 require_once ('session.php');
 require_once('shared.php');
 
+//general functions
+function getDefaultServerUrl(){
+	if($_SESSION['config']['useHTTPS'] && !stristr($_SESSION['config']['defaultInstance'],'localhost')){
+	 	$serverUrl = "https://";
+	} else {
+		$serverUrl = "http://";
+	}
+	
+	if(isset($_GET['inst'])){
+		$serverUrl .= $_GET['inst'];
+	} else {
+		$serverUrl .= $_SESSION['config']['defaultInstance'];
+	}
+	
+	$serverUrl .= ".salesforce.com/services/Soap/u/";
+	
+	if(isset($_GET['api'])){
+		$serverUrl .= $_GET['api'];
+	} else {
+		$serverUrl .= $_SESSION['config']['defaultApiVersion'];
+	}
+	
+	return $serverUrl;
+}
+
+//main login
+
 /*
  * For auto-login by GET params, allow users to either provide un/pw or sid, and optionally serverUrl and/or api version.
  * If the serverUrl is provided, it will be used alone, but if either
  */
-
 if((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])){		
 		
 	$un       = isset($_GET['un'])       ? $_GET['un']       : null;
@@ -29,21 +55,7 @@ if((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])){
 		
 	} else {
 		
-		$serverUrl = "https://";
-		
-		if(isset($_GET['inst'])){
-			$serverUrl .= $_GET['inst'];
-		} else {
-			$serverUrl .= $_SESSION['config']['defaultInstance'];
-		}
-		
-		$serverUrl .= ".salesforce.com/services/Soap/u/";
-		
-		if(isset($_GET['api'])){
-			$serverUrl .= $_GET['api'];
-		} else {
-			$serverUrl .= $_SESSION['config']['defaultApiVersion'];
-		}
+		$serverUrl = getDefaultServerUrl();
 		
 	}
 	
@@ -51,13 +63,17 @@ if((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])){
 	process_Login($un, $pw, $serverUrl, $sid, $startUrl);	
 }
 
-
-
 if(isset($_POST['login_type'])){
 	if ($_POST['login_type']=='std'){
 		process_login($_POST['usernameStd'], $_POST['passwordStd'], null, null, $_POST['actionJumpStd']);
 	} elseif ($_POST['login_type']=='adv'){
-		process_login($_POST['usernameAdv'], $_POST['passwordAdv'], $_POST['serverUrl'], $_POST['sessionId'], $_POST['actionJumpAdv']);
+		process_login(
+			isset($_POST['usernameAdv']) ? $_POST['usernameAdv'] : null, 
+			isset($_POST['passwordAdv']) ? $_POST['passwordAdv'] : null, 
+			$_POST['serverUrl'], 
+			isset($_POST['sessionId']) ? $_POST['sessionId'] : null, 
+			$_POST['actionJumpAdv']
+		);
 	} 
 } else {
 	display_login(null);
@@ -85,7 +101,12 @@ if (isset($_COOKIE['user'])){
 
 
 //Display main login form body
+
+//move PHP session vars to simple vars for use in JS
+$useHTTPS = $_SESSION['config']['useHTTPS'];
 $defaultApiVersion = $_SESSION['config']['defaultApiVersion'];
+$defaultInstance = $_SESSION['config']['defaultInstance'];
+$defaultServerUrl = getDefaultServerUrl();
 
 print "<script type='text/javascript' language='JavaScript'>\n";
 
@@ -148,7 +169,7 @@ function form_become_std() {
 function build_location(){
 	var inst = document.getElementById('inst').value;
 	var endp = document.getElementById('endp').value;
-	document.getElementById('serverUrl').value = 'https://' + inst + '.salesforce.com/services/Soap/u/' + endp;
+	document.getElementById('serverUrl').value = 'http' + ($useHTTPS && (inst.search(/localhost/i) == -1) ? 's' : '') + '://' + inst + '.salesforce.com/services/Soap/u/' + endp;
 }
 
 function giveUserFocus(){
@@ -208,21 +229,19 @@ function checkCaps( pwcapsDivId, e ) {
 		<div id='login_std'>
 			<p><strong>Username: </strong><input type='text' name='usernameStd' id='username' size='45' value='$user' /></p>
 			<p><strong>Password: </strong><input type='password' name='passwordStd'  id='password' size='45' onkeypress="checkCaps('pwcapsStd',event);" /></p>
-			<p><strong>Jump to: </strong>
-			<select name='actionJumpStd' style='width: 24em;'>
-				<option value='select.php'></option>
-				<option value='describe.php'>Describe</option>
-				<option value='insert.php'>Insert</option>
-				<option value='upsert.php'>Upsert</option>
-				<option value='update.php'>Update</option>
-				<option value='delete.php'>Delete</option>
-				<option value='undelete.php'>Undelete</option>
-				<option value='purge.php'>Purge</option>
-				<option value='query.php'>Query</option>
-				<option value='search.php'>Search</option>
-				<option value='execute.php'>Execute</option>
-				<option value='settings.php'>Settings</option>
-			</select></p>
+LOGIN_FORM;
+
+//std jumpTo
+print "<p><strong>Jump to: </strong>" . 
+	  "<select name='actionJumpStd' style='width: 14em;'>" . 	
+		  "<option value='select.php'></option>";
+		  
+foreach($GLOBALS["PAGES"] as $filename => $page){
+	if($page->onMenuSelect) print "<option value='" . $filename . "'>" . $page->title . "</option>";
+}
+print "</select></p>";
+
+print <<<LOGIN_FORM_PART_2
 			<p  style='text-align: right;'><span id='pwcapsStd' style='visibility: hidden; color: red; font-weight: bold; margin-right: 30px;'>Caps lock is on!</span><label><input type='checkbox' name='rememberUser' $isRemembered />Remember username</label></p>
 		</div>
 
@@ -232,54 +251,45 @@ function checkCaps( pwcapsDivId, e ) {
 			<p>-OR-<span id='pwcapsAdv' style='visibility: hidden; color: red; font-weight: bold; margin-left: 75px;'>Caps lock is on!</span></p>
 			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='65' onkeyup='toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();' onchange="toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();"/></p>
 			<p>&nbsp;</p>
-			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='65' value='https://www.salesforce.com/services/Soap/u/$defaultApiVersion' /></p>
+			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='65' value='$defaultServerUrl' /></p>
 			<p><strong>QuickSelect: </strong>
-LOGIN_FORM;
-			
-			print "<select name='inst' id='inst' onChange='build_location();' onkeyup='build_location();'>";
-			
-			$instanceNames = array();
-			foreach($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo){
-				$instanceNames[$subdomain] = $instInfo[0];
-			}
-			
-			printSelectOptions($instanceNames,$_SESSION['config']['defaultInstance']);
-			print "</select>";
-
-			print "<select name='endp' id='endp' onChange='build_location();' onkeyup='build_location();'>";
-			printSelectOptions($GLOBALS['config']['defaultApiVersion']['valuesToLabels'],$_SESSION['config']['defaultApiVersion']);	
-			print "</select></p>";
-			
-			
-print <<<LOGIN_FORM_PART_2
-			<p><strong>Jump to: </strong>
-			<select name='actionJumpAdv' style='width: 14em;'>
-				<option value='select.php'></option>
-				<option value='describe.php'>Describe</option>
-				<option value='insert.php'>Insert</option>
-				<option value='upsert.php'>Upsert</option>
-				<option value='update.php'>Update</option>
-				<option value='delete.php'>Delete</option>
-				<option value='undelete.php'>Undelete</option>
-				<option value='purge.php'>Purge</option>
-				<option value='query.php'>Query</option>
-				<option value='search.php'>Search</option>
-				<option value='execute.php'>Execute</option>
-				<option value='settings.php'>Settings</option>
-			</select></p>
-		</div>
-
-		<div id='login_submit' style='text-align: right;'>
-			<input type='submit' name='loginClick' value='Login'>
-		</div>
-
-	</form>
-</div>
 LOGIN_FORM_PART_2;
+
+//instance
+print "<select name='inst' id='inst' onChange='build_location();' onkeyup='build_location();'>";
+$instanceNames = array();
+foreach($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo){
+	$instanceNames[$subdomain] = $instInfo[0];
+}			
+printSelectOptions($instanceNames,$_SESSION['config']['defaultInstance']);
+print "</select>";
+
+//endpoint
+print "<select name='endp' id='endp' onChange='build_location();' onkeyup='build_location();'>";
+printSelectOptions($GLOBALS['config']['defaultApiVersion']['valuesToLabels'],$_SESSION['config']['defaultApiVersion']);	
+print "</select></p>";
+
+//advanced jumpTo
+print "<p><strong>Jump to: </strong>" . 
+	  "<select name='actionJumpAdv' style='width: 14em;'>" . 	
+	  "<option value='select.php'></option>";
+foreach($GLOBALS["PAGES"] as $filename => $page){
+	if($page->onMenuSelect) print "<option value='" . $filename . "'>" . $page->title . "</option>\n";
+}
+print "</select></p></div>";
+
+//submit button
+print "<div id='login_submit' style='text-align: right;'>" . 
+			"<input type='submit' name='loginClick' value='Login'>" . 
+		"</div>" . 
+
+	"</form>" . 
+"</div>";
 
 
 //if 'adv' is added to the login url and is not 0, default to advanced login
-if(isset($_GET['adv']) && $_GET['adv'] != 0){
+if((isset($_GET['adv']) && $_GET['adv'] != 0) || 
+   (isset($_SESSION['config']['defaultLoginType']) && $_SESSION['config']['defaultLoginType']=='Advanced')){
 	print "<script>
 				document.getElementById('login_become_adv').checked=true; 
 				form_become_adv(); 
@@ -301,7 +311,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	$sessionId = htmlspecialchars(trim($sessionId));
 	$actionJump = htmlspecialchars(trim($actionJump));
 
-	if($_POST['rememberUser'] !== 'on') setcookie('user',NULL,time()-3600);
+	if(isset($_POST['rememberUser']) && $_POST['rememberUser'] !== 'on') setcookie('user',NULL,time()-3600);
 
 	if ($username && $password && $sessionId){
 		$errors = null;
@@ -314,7 +324,28 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	try{
 		require_once ('soapclient/SforcePartnerClient.php');
 		require_once ('soapclient/SforceHeaderOptions.php');
-		$wsdl = 'soapclient/sforce.160.partner.wsdl';
+		
+		//build server URL if not already; moved from logic below
+		if(!isset($serverUrl) || $serverUrl == ''){
+			$serverUrl = getDefaultServerUrl();
+		} 
+
+		//block connections to localhost
+		if(stripos($serverUrl,'localhost')) {
+			if(isset($GLOBALS['internal']['localhostLoginError'])){
+				display_login($GLOBALS['internal']['localhostLoginError'],false,true);
+			} else {
+				display_login("Must not connect to 'localhost'",false,true);
+			}
+			exit;
+		}
+		
+		if(preg_match('!/(\d{1,2})\.(\d)!',$serverUrl,$serverUrlMatches) && $serverUrlMatches[1] >= 8){
+			$wsdl = 'soapclient/sforce.' . $serverUrlMatches[1] . $serverUrlMatches[2] . '.partner.wsdl';
+		} else {
+			display_login("Could not find WSDL for this API version. Please try logging in again.");
+		}
+		
 		$mySforceConnection = new SforcePartnerClient();
 	    $mySforceConnection->createConnection($wsdl);
 	    
@@ -335,39 +366,47 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		}		
 
 	    if($username && $password && !$sessionId){
-	    	if($serverUrl){
-	    		$mySforceConnection->setEndpoint($serverUrl);
-	    	} else {
-	    		$mySforceConnection->setEndpoint("https://" . $_SESSION['config']['defaultInstance'] . ".salesforce.com/services/Soap/u/" . $_SESSION['config']['defaultApiVersion']);
-	    	}
+	    	$mySforceConnection->setEndpoint($serverUrl);
 			$mySforceConnection->login($username, $password);
 		} elseif ($sessionId && $serverUrl && !($username && $password)){
-			if (stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
-				$errors = null;
-				$errors = 'Must not connect to login server (www, test, or prerellogin) if providing a session id. Choose your specific Salesforce instance on the QuickSelect menu when using a session id; otherwise, provide a username and password and choose the appropriate a login server.';
-				display_login($errors);
+			if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
+				display_login('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. Choose your specific Salesforce instance on the QuickSelect menu when using a session id; otherwise, provide a username and password and choose the appropriate a login server.');
 				exit;
 			}
+			
 			$mySforceConnection->setEndpoint($serverUrl);
 	    	$mySforceConnection->setSessionHeader($sessionId);
 		}
-
-		session_unset();
-		session_destroy();
-		session_start();
-		
-		    $_SESSION['location'] = $mySforceConnection->getLocation();
-		    $_SESSION['sessionId'] = $mySforceConnection->getSessionId();
-		    $_SESSION['wsdl'] = $wsdl;
-			if($_POST['rememberUser'] == 'on'){
-				 setcookie('user',$username,time()+60*60*24*7,'','','',TRUE);
+	
+		if(stripos($mySforceConnection->getLocation(),'localhost')) {
+			if(isset($GLOBALS['internal']['localhostLoginRedirectError'])){
+				display_login($GLOBALS['internal']['localhostLoginRedirectError'],false,true);
 			} else {
-				setcookie('user',NULL,time()-3600);
+				display_login("Must not connect to 'localhost'",false,true);			
 			}
+			exit;
+		}
 
-		if($_REQUEST['autoLogin'] == 1){
+		//replace HTTPS w/ HTTP if useHTTP config is false
+		$location = $_SESSION['config']['useHTTPS'] ? $mySforceConnection->getLocation() : str_replace("https","http",$mySforceConnection->getLocation());
+		
+		session_unset();
+		session_destroy(); 
+		session_start();
+			
+	    $_SESSION['location'] = $location;
+	    $_SESSION['sessionId'] = $mySforceConnection->getSessionId();
+	    $_SESSION['wsdl'] = $wsdl;
+		if(isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'on'){
+			 setcookie('user',$username,time()+60*60*24*7,'','','',TRUE);
+		} else {
+			setcookie('user',NULL,time()-3600);
+		}
+
+		if(isset($_REQUEST['autoLogin'])){
 			$actionJump .= "?autoLogin=1";
-			$_SESSION['tempClientId'] = $_GET['clientId'];
+			if(isset($_REQUEST['skipVC'])) $actionJump .= "&skipVC=1";
+			if(isset($_GET['clientId'])) $_SESSION['tempClientId'] = $_GET['clientId'];
 		}
 
 		session_write_close();

@@ -42,8 +42,7 @@ class SforceBaseClient {
 	protected $sforce;
 	protected $sessionId;
 	protected $location;
-	protected $version = '11.0';
-
+	
 	protected $namespace;
 
 	// Header Options
@@ -55,6 +54,7 @@ class SforceBaseClient {
 	protected $queryHeader;
 	protected $userTerritoryDeleteHeader;
 	protected $sessionHeader;
+	protected $allowFieldTruncationHeader;
 
 	public function getNamespace() {
 		return $this->namespace;
@@ -707,7 +707,7 @@ class SforceBaseClient {
 
 
 	private function _handleRecords(& $QueryResult) {
-		if ($QueryResult->size > 0) {
+		if ($QueryResult->size > 0 && isset($QueryResult->records)) {
 			if ($QueryResult->size == 1) {
 				$recs = array (
 				$QueryResult->records
@@ -801,7 +801,7 @@ class SforceBaseClient {
 	 */
 	public function logout() {
 		$this->setHeaders("logout");
-		return $this->sforce->logout()->result;
+		return $this->sforce->logout();
 	}
 }
 ?>

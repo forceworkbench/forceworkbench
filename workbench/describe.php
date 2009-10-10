@@ -1,19 +1,6 @@
 <?php
 require_once('session.php');
 require_once('shared.php');
-?>
-
-<script type="text/javascript" src="script/simpletreemenu.js">
-/***********************************************
-* Simple Tree Menu- � Dynamic Drive DHTML code library (www.dynamicdrive.com)
-* This notice MUST stay intact for legal use
-* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
-***********************************************/
-</script>
-
-<link rel="stylesheet" type="text/css" href="style/simpletree.css" />
-
-<?php
 
 //Main Form Logic: If there is a default object in the session,
 //describe it when the page loads; else, prompt to choose one.
@@ -32,6 +19,17 @@ if ($_SESSION['default_object']){
 function show_describeSObject_form(){
 	require_once ('header.php');
 
+	?>	
+	<script type="text/javascript" src="script/simpletreemenu.js">
+	/***********************************************
+	* Simple Tree Menu- � Dynamic Drive DHTML code library (www.dynamicdrive.com)
+	* This notice MUST stay intact for legal use
+	* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
+	***********************************************/
+	</script>
+	<link rel="stylesheet" type="text/css" href="style/simpletree.css" />
+	<?php
+	
 	print "<form name='describeForm' method='post' action='$_SERVER[PHP_SELF]' onChange='document.describeForm.submit();'>";
 	print "<p><strong>Choose an object to describe:</strong></p>\n";
 	myGlobalSelect($_SESSION['default_object']);
@@ -48,16 +46,16 @@ function show_describeSObject_result(){
 			//Ping Apex API
 			$describeSObject_result = describeSObject($_SESSION['default_object']);
 		} catch (Exception $e) {
-	      	$errors = null;
-			$errors = $e->getMessage();
-			show_error($errors);
-			exit;
+			show_error($e->getMessage(), false, true);
     	}
 
 
 		print "<h2>$_SESSION[default_object] Object Description</h2>";
 		
-		if($_SESSION['config']['colorBooleanValues'] || $_SESSION['config']['highlightCustomFields'] || $_SESSION['config']['highlightSystemFields']){
+		if(isset($_SESSION['config']['colorBooleanValues']) || 
+		   isset($_SESSION['config']['highlightCustomFields']) || 
+		   isset($_SESSION['config']['highlightSystemFields'])){
+		   	
 			print "<strong>Legend:</strong>";
 			print "<ul>";
 			if($_SESSION['config']['highightBooleanValues']){
@@ -205,7 +203,7 @@ function booleanDisplay($value) {
 
 function highlightSpecialField( $value ) {
 	// Define system fields array
-	$systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp","OwnerId","RecordTypeId");
+	$systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp");
 	
 	if ($_SESSION['config']['highlightSystemFields'] && in_array($value->name,$systemFields)) {
 		print "<li><span class='highlightSystemField'>$value->name</span><ul>\n";

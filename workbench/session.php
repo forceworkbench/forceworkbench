@@ -1,4 +1,6 @@
 <?php
+require_once('shared.php');
+
 if(!isset($GLOBALS['requestTimeStart'])){
 	$GLOBALS['requestTimeStart'] = microtime(true);
 }
@@ -12,12 +14,13 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 } else {
 	
 	//clear ResultsWithData from session unless downloading them
-	if(isset($_SESSION[resultsWithData]) && basename($_SERVER['PHP_SELF']) != 'downloadResultsWithData.php'){
-		unset($_SESSION[resultsWithData]);
+	if(isset($_SESSION['resultsWithData']) && basename($_SERVER['PHP_SELF']) != 'downloadResultsWithData.php'){
+		unset($_SESSION['resultsWithData']);
 	}
 	
-	//load default config values
+	//load default config values and then any custom overrides.
 	require_once('config.php');
+	if(is_file('configOverrides.php')) require_once('configOverrides.php');
 
 	foreach($config as $configKey => $configValue){
 		//only process non-headers
@@ -36,11 +39,16 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 			}
 		}
 	}
+	
+	if($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_COOKIE["callOptions_client"])){
+		$_SESSION['config']['callOptions_client'] = getWorkbenchUserAgent();
+	}
 
 	//check to make sure we have a session id (this is so users can go to settings.php without session id
 	//before login)
 	if(isset($_SESSION['sessionId'])){
 		try{
+			//setup SOAP client
 			require_once ('soapclient/SforcePartnerClient.php');
 			require_once ('soapclient/SforceHeaderOptions.php');
 			$location = $_SESSION['location'];
@@ -49,12 +57,18 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 			$mySforceConnection = new SforcePartnerClient();
 			$sforceSoapClient = $mySforceConnection->createConnection($wsdl);
 			$mySforceConnection->setEndpoint($location);
-			$mySforceConnection->setSessionHeader($sessionId);
+			$mySforceConnection->setSessionHeader($sessionId);			
+			
+			//setting default object to remove notices through functions
+			if(!isset($_SESSION['default_object'])){
+				$_SESSION['default_object'] = null;
+			}
+			
 			//Has the user selected a default object on? If so,
 			//pass them to the session
 			if (isset($_POST['default_object'])){
 				$_SESSION['default_object'] = $_POST['default_object'];
-			}
+			} 
 
 			if(isset($_SESSION['tempClientId'])){
 				$header = new CallOptions($_SESSION['tempClientId'], $_SESSION['config']['callOptions_defaultNamespace']);

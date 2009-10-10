@@ -113,59 +113,56 @@ function show_describeSObject_result(){
 
 		//Print Child Relationships, if they exists (conditional not working)
 		if ($describeSObject_result->childRelationships){
-		print "<h2>Child Relationships</h2>\n";
-		foreach($describeSObject_result->childRelationships as $key => $value){
-			print "<h3>$value->childSObject</h3>\n";
-			print "<table class='description'>";
-			foreach($value as $subkey => $subvalue){
-				if (is_string($subvalue)){
-					print "<tr><td>$subkey</td><td>$subvalue</td></tr> \n";
-				}
-				elseif (is_bool($subvalue)){
-					print "<tr><td>$subkey</td><td>";
-					if ($subvalue){
-						print "True";
-					} else {
-						print "False";
+			print "<h2>Child Relationships</h2>\n";
+			foreach($describeSObject_result->childRelationships as $key => $value){
+				print "<h3>$value->childSObject</h3>\n";
+				print "<table class='description'>";
+				foreach($value as $subkey => $subvalue){
+					if (is_string($subvalue)){
+						print "<tr><td>$subkey</td><td>$subvalue</td></tr> \n";
 					}
-					print "</td></tr> \n";
+					elseif (is_bool($subvalue)){
+						print "<tr><td>$subkey</td><td>";
+						if ($subvalue){
+							print "True";
+						} else {
+							print "False";
+						}
+						print "</td></tr> \n";
+					}
 				}
+			print "</table>\n</br>";
 			}
-		print "</table>\n</br>";
-		}
 		}
 
 		//Print Record Types, if they exists (conditional not working)
 		if ($describeSObject_result->recordTypeInfos){
-		print "<h2>Record Types</h2>\n";
-		foreach($describeSObject_result->recordTypeInfos as $key => $value){
-			print "<h3>$value->name</h3>\n";
-			print "<table class='description'>";
-			foreach($value as $subkey => $subvalue){
-				if (is_string($subvalue)){
-					print "<tr><td>$subkey</td><td>$subvalue</td></tr> \n";
-				}
-				elseif (is_bool($subvalue)){
-					print "<tr><td>$subkey</td><td>";
-					if ($subvalue){
-						print "True";
-					} else {
-						print "False";
+			print "<h2>Record Types</h2>\n";
+			foreach($describeSObject_result->recordTypeInfos as $key => $value){
+				print "<h3>$value->name</h3>\n";
+				print "<table class='description'>";
+				foreach($value as $subkey => $subvalue){
+					if (is_string($subvalue)){
+						print "<tr><td>$subkey</td><td>$subvalue</td></tr> \n";
 					}
-					print "</td></tr> \n";
+					elseif (is_bool($subvalue)){
+						print "<tr><td>$subkey</td><td>";
+						if ($subvalue){
+							print "True";
+						} else {
+							print "False";
+						}
+						print "</td></tr> \n";
+					}
+	
 				}
-
+				print "</table>\n<br/>";
 			}
-			print "</table>\n<br/>";
-		}
 		}
 
 		} catch (Exception $e) {
-      	$errors = null;
-		$errors = $e->getMessage();
-		show_error($errors);
-		exit;
-    }
+			show_error($e->getMessage(),false,true);
+    	}
 }
 
 include_once('footer.php');

@@ -7,16 +7,37 @@
 <link rel="Shortcut Icon" href="images/blueBox.bmp" />
 
 <?php
-preg_match('/(\w+)\.php/',basename($_SERVER['PHP_SELF']),$pageTitle);
-print "<title>Workbench - " . ucwords($pageTitle[1]) . "</title>"
+print "<title>Workbench - " . $GLOBALS["PAGES"][basename($_SERVER['PHP_SELF'])]->title  . "</title>"
 ?>
 
 <body>
 <script type="text/javascript" src="script/wz_tooltip.js"></script>
 <?php
 
-if($_GET['autoLogin'] == 1 || 'login.php'==basename($_SERVER['PHP_SELF'])){
-	checkLatestVersion();
+//check for latest version
+if(!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))){
+	try{
+		if(extension_loaded('curl')){
+			$ch = curl_init();
+			if(stristr($GLOBALS["WORKBENCH_VERSION"],'beta')){
+				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailableBeta.txt');
+			} else {
+				curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
+			}
+			curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			$latestVersionAvailable = trim(curl_exec($ch));
+			curl_close($ch);
+
+			if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !stristr($GLOBALS["WORKBENCH_VERSION"],'alpha')){
+				if($latestVersionAvailable != $GLOBALS["WORKBENCH_VERSION"]){
+					print "<div style='background-color: #EAE9E4; width: 100%; padding: 2px;'><a href='http://code.google.com/p/forceworkbench/' target='_blank' style='font-size: 8pt; font-weight: bold; color: #0046ad;'>A newer version of Workbench is available for download</a></div><br/>";
+				}
+			}
+		}
+	} catch (Exception $e){
+		//do nothing
+	}
 }
 
 ?>
@@ -30,7 +51,7 @@ if($_GET['autoLogin'] == 1 || 'login.php'==basename($_SERVER['PHP_SELF'])){
 	global $mySforceConnection;
 	if (isset($_SESSION['sessionId']) && $mySforceConnection && 'logout.php' != basename($_SERVER['PHP_SELF'])){
 	
-		if(!$_SESSION['getUserInfo'] || !$_SESSION['config']['cacheGetUserInfo']){
+		if(!isset($_SESSION['getUserInfo']) || !$_SESSION['config']['cacheGetUserInfo']){
 			try{
 				global $mySforceConnection;
 				$_SESSION['getUserInfo'] = $mySforceConnection->getUserInfo();
@@ -46,71 +67,53 @@ if($_GET['autoLogin'] == 1 || 'login.php'==basename($_SERVER['PHP_SELF'])){
 	    
 	}
 
-	$setupBar_items = array ();
-	
-	if(!isset($_SESSION['sessionId']) || 'logout.php' == basename($_SERVER['PHP_SELF'])){
-		$setupBar_items['login.php'] = array('Login','Logs into your Salesforce organization');
-	} else {
-		$setupBar_items['logout.php'] = array('Logout','Logs out of your Salesforce organization');
-	}
-	$setupBar_items['settings.php'] = array('Settings','Configure the Workbench');
-	$setupBar_items['help.php'] = array('Help','Get help about using the Workbench');
-	$setupBar_items['about.php'] = array('About','Learn about the Workbench');
-	
-	foreach($setupBar_items as $href => $label){
+	foreach($GLOBALS["PAGES"] as $href => $page){
+		if(!$page->onMenuSetup) continue;
+		
+		if($href == "login.php" && isset($_SESSION['sessionId']) && basename($_SERVER['PHP_SELF']) != 'logout.php'){
+			continue; //don't print Login
+		} 
+		
+		if($href == "logout.php" && (!isset($_SESSION['sessionId']) || basename($_SERVER['PHP_SELF']) == 'logout.php')) {
+			continue; //don't print Logout
+		}
+		
 		print "<a href='$href'";
 		if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
 			print " style='color: #0046ad;'";
 		}
-		print " onmouseover=\"Tip('$label[1]')\">$label[0]</a>&nbsp;&nbsp;";
+		print " onmouseover=\"Tip('$page->desc')\">$page->title</a>&nbsp;&nbsp;";
 	}
 	?>
+	
 </div>
 
 <div style="clear: both; text-align: center"><p>
 	<img src="images/workbench-2-squared.png" width="257" height="50" alt="Workbench 2 Logo" border="0" /></p>
 </div>
 
-<div id='navmenu' style="clear: both;">
+<div id='navmenu' style="clear: both;">| 
 	<?php
-	$navbar_items = array (
-//	'login.php'=>array('Login','Logs into your Salesforce organization'),
-//	'select.php'=>array('Select','Selects an action to perform on an object'),
-	'describe.php'=>array('Describe','Describes the attributes, fields, record types, and child relationships of an object'),
-	'insert.php'=>array('Insert','Creates new records from a CSV file'),
-	'upsert.php'=>array('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id'),
-	'update.php'=>array('Update','Updates existing records from a CSV file'),
-	'delete.php'=>array('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted'),
-	'undelete.php'=>array('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.'),
-	'purge.php' =>array('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.'),
-	'query.php'=>array('Query','Queries the data in your organization and displays on the screen or exports to a CSV file'),
-	'search.php'=>array('Search','Search the data in your organization across multiple objects'),
-	'execute.php'=>array('Execute','Execute Apex code as an anonymous block')
-//	'settings.php'=>array('Settings','Configure the Workbench'),
-//	'logout.php'=>array('Logout','Logs out of your Salesforce organization')
-	);
-	print "| ";
-	foreach($navbar_items as $href => $label){
+	foreach($GLOBALS["PAGES"] as $href => $page){
+		if(!$page->onMenuMain) continue;
 		print "<a href='$href'";
 		if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
 			print " style='color: #0046ad;' ";
 		}
-		print " onmouseover=\"Tip('$label[1]')\">$label[0]</a> | ";
+		print " onmouseover=\"Tip('$page->desc')\">$page->title</a> | \n";
 	}
 	?>
 </div>
 <p/>
 
 <?php
-if(isset($_SESSION['getUserInfo'])){
+if(isset($_SESSION['getUserInfo'])){ 
 	print "<p id='myuserinfo'>Logged in as " . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . "</p>\n";
 }
 
 if(isset($errors)){
 	print "<p/>";
-	show_error($errors);
-	include_once('footer.php');
-	exit;
+	show_error($errors, false, true);
 }
 
 ?>
