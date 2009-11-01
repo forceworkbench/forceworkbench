@@ -590,7 +590,7 @@ $GLOBALS["PAGES"] = array(
 	    'help.php' => new Page('Help','Get help about using Workbench',false,true,false),
 	    'about.php' => new Page('About','Learn about Workbench',false,true,false),
         'utilities.php' => new Page('Utilities','Random, experimental utilities'),
-		'asyncStatus.php' => new Page('Bulk API Job Status','Asynchronous Data Load Status and Results',false,false,false,true),
+		'asyncStatus.php' => new Page('Bulk API Job Status & Results','Asynchronous Data Load Status and Results',false,false,false,true),
 		'pwdMgmt.php' => new Page('Password Management','Set and Reset Passwords',false,false,false,true),
 		'burn.php' => new Page('API Call Afterburner','',false,false,false,true)
 	);
