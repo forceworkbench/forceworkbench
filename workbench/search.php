@@ -238,10 +238,10 @@ function show_search_result($records, $searchTimeElapsed){
 	foreach($searchResultArray as $recordSetName=>$records){
 		echo "<h3 style='color: #0046ad;'>$recordSetName</h3>";
 		
-	    print "<table class='data_table'>\n";
+	    print "<table id='" . $recordSetName . "_results' class='sortable'>\n";
 		//Print the header row on screen
 		$record0 = $records[0];
-		print "<tr><td>&nbsp;</td>";
+		print "<tr><th></th>";
 		//If the user queried for the Salesforce ID, this special method is nessisary
 		//to export it from the nested SOAP message. This will always be displayed
 		//in the first column regardless of search order

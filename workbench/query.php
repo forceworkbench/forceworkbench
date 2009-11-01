@@ -635,10 +635,10 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true){
 
 
 function createQueryResultTable($records){
-	$table = "<table class='data_table'>\n";
+	$table = "<table id='query_results' class='sortable'>\n";
 	
 	//call shared recusive function above for header printing
-	$table .= "<tr><th>&nbsp;</th><th>";
+	$table .= "<tr><th></th><th>";
 	if($records[0] instanceof SObject){
 		$table .= implode("</th><th>", getQueryResultHeaders($records[0]));
 	} else{

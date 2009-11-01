@@ -5,6 +5,8 @@
 <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 <link rel="stylesheet" href="style/master.css" type="text/css" />
 <link rel="Shortcut Icon" href="images/blueBox.bmp" />
+<script type="text/javascript" src="script/sortable.js"></script>
+</head>
 
 <?php
 print "<title>Workbench - " . $GLOBALS["PAGES"][basename($_SERVER['PHP_SELF'])]->title  . "</title>"
