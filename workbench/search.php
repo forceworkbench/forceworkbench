@@ -284,7 +284,7 @@ function show_search_result($records, $searchTimeElapsed){
 	        	print "</td></tr>\n";
 	        }
 	      }
-	      print "</table><p/>";
+	      print "</table>&nbsp;<p/>";
 	}
 	  print	"</div>\n";
     } catch (Exception $e) {
