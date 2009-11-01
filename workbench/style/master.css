@@ -237,7 +237,7 @@ table.sortable td {
 	border-width: 0px 1px 0px 1px;
 }
 table.sortable tr.odd td {
-	background-color: #ddd;
+	background-color: #eee;
 }
 table.sortable tr.even td {
 	background-color: #fff;
