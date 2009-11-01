@@ -21,7 +21,7 @@ a single-sign-on web tab for more convenient access.
 
 <p>
 <strong>
-Workbench v<?php echo $GLOBALS['WORKBENCH_VERSION']; ?><br/>
+Workbench <?php echo $GLOBALS['WORKBENCH_VERSION']; ?><br/>
 </strong>
 Distributed under the Open Source BSD License.<br/>
 Developed by Ryan Brainard<br/>
