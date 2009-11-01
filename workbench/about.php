@@ -94,7 +94,7 @@ salesforce.com, inc or its contributors. Below is the copyright and license for 
 
 <hr/>
 <p>
-Collapsible tree on Describe page is built on
+Collapsible tree JavaScript on Describe page is built on
 <a href="http://www.dynamicdrive.com/dynamicindex1/navigate1.htm">Simple Tree Menu</a>
 framework from <a href="http://www.dynamicdrive.com">Dynamic Drive DHTML code library</a>
 </p>
@@ -102,10 +102,17 @@ framework from <a href="http://www.dynamicdrive.com">Dynamic Drive DHTML code li
 
 <hr/>
 <p>
-Code for menu bar tool tips is built on
+Menu bar tool JavaScript tips is built on
 <a href="http://www.walterzorn.com/tooltip/tooltip_e.htm">JavaScript, DHTML Tooltips </a>
 framework from <a href="http://www.walterzorn.com/">Walter Zorn</a>
 </p>
+
+<hr/>
+<p>
+<a href="http://yoast.com/articles/sortable-table/">Sortable table</a>
+JavaScript built on a framework from <a href="http://www.kryogenix.org">Stuart Langridge</a>
+</p>
+
 </div>
 
 <?php
