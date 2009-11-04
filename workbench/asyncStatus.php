@@ -82,16 +82,19 @@ if(count($batchInfos) > 0){
 				"<th>Last Modifed</th>" .	
 		       "</tr>";
 	foreach($batchInfos as $batchInfo){		
-		print "<tr>";
-		
-		if($batchInfo->getState() == "Completed"){
-			print "<td class='dataValue'>" .
-				   "<a href='downloadAsyncResults.php?jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "'>" . 
-				   "<img src='images/downloadIcon.gif' border='0' onmouseover=\"Tip('Download Batch Results')\"/>" . 
-				   "</a></td>";
+		print "<tr><td class='dataValue'>";
+		if ($batchInfo->getState() == "Completed"){
+			print "<a href='downloadAsyncResults.php?jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "'>" . 
+				  "<img src='images/downloadIcon.gif' border='0' onmouseover=\"Tip('Download Completed Batch Results')\"/>" . 
+				  "</a>";
+		} else if ($batchInfo->getState() == "Failed"){
+			print "<a href='downloadAsyncResults.php?jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "'>" . 
+				  "<img src='images/downloadIconFailed.gif' border='0' onmouseover=\"Tip('Download Failed Batch Results')\"/>" . 
+				  "</a>";
 		} else {
-			print "<td class='dataValue'>&nbsp;</td>";
+			print "&nbsp;";
 		}
+		print "</td>";
 		
 		$recLabel = $batchInfo->getNumberRecordsProcessed() == "1" ? " record" : " records";
 		
