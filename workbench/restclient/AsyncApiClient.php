@@ -3,14 +3,21 @@
 class AsyncApiConnection {
 	protected $endpoint;
 	protected $sessionId;
-	protected $userAgent;
+	protected $userAgent = "WorkbenchAsyncApiClient/2.5.17";
 	
 	private $logs;
 	private $loggingEnabled = false;
 	
-	public function __construct($partnerEndpoint, $sessionId, $userAgent = "WorkbenchAsyncApiClient/2.5.17"){
+	public function __construct($partnerEndpoint, $sessionId){
 		$this->endpoint = $this->convertEndpointFromPartner($partnerEndpoint);
 		$this->sessionId = $sessionId;
+	}
+	
+	public function getUserAgent(){
+		return $this->userAgent;
+	}
+	
+	public function setUserAgent($userAgent){
 		$this->userAgent = $userAgent;
 	}
 	
