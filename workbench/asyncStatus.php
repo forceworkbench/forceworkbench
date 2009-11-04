@@ -20,7 +20,7 @@ if(!isset($_GET['jobId']) || $_GET['jobId'] == ""){
 }
 
 try {	
-	$asyncConnection = new AsyncApiConnection($_SESSION['location'], $_SESSION['sessionId']);
+	$asyncConnection = getAsyncApiConnection();
 	$jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);
 	if($jobInfo->getExceptionCode() != "") throw new Exception($jobInfo->getExceptionCode() . ": " . $jobInfo->getExceptionMessage());
 	

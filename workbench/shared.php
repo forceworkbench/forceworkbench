@@ -234,6 +234,13 @@ function simpleFormattedTime($timestamp){
 	return date("h:i:s A",$dateTime->format("U"));
 }
 
+function getAsyncApiConnection(){
+	$asyncConnection = new AsyncApiConnection($_SESSION['location'], $_SESSION['sessionId'], getWorkbenchUserAgent());
+	$asyncConnection->setExternalLogReference($_SESSION['restDebugLog']);
+	$asyncConnection->setLoggingEnabled(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true);
+	
+	return $asyncConnection;
+}
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
 	if(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true){
@@ -370,12 +377,14 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 			}
 		}
 
-		if(isset($_REQUEST['restDebugLog'])){
+		if(isset($_SESSION['restDebugLog'])){
 			print "<h1 onclick=\"toggleDebugSection(this,'rest_debug_container')\" class=\"debugHeader\">+ REST/BULK API LOGS</h1>\n";
 			print "<div id='rest_debug_container' class='debugContainer'>";
-				print "<pre>" . addLinksToUiForIds($_REQUEST['restDebugLog']) . "</pre>";
+				print "<pre>" . addLinksToUiForIds($_SESSION['restDebugLog']) . "</pre>";
 				print "<hr/>";
 			print "</div>";
+			
+			$_SESSION['restDebugLog'] = "";
 		}
 		
 		print "</div>";

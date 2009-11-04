@@ -762,7 +762,7 @@ function putSObjectsAsync($api_call,$ext_id,$field_map,$csv_array){
 			if($_SESSION['config']['assignmentRuleHeader_assignmentRuleId'] != "") $job->setAssignmentRuleId($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']);
 			if($api_call == "upsert" && isset($ext_id)) $job->setExternalIdFieldName($ext_id);
 			
-			$asyncConnection = new AsyncApiConnection($_SESSION['location'], $_SESSION['sessionId']);
+			$asyncConnection = getAsyncApiConnection();
 			$job = $asyncConnection->createJob($job);
 		} catch (Exception $e) {
 			show_error($e->getMessage(), true, true);

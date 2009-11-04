@@ -1,13 +1,17 @@
 <?php
-require_once('shared.php');
 
 class AsyncApiConnection {
 	protected $endpoint;
 	protected $sessionId;
+	protected $userAgent;
 	
-	public function __construct($partnerEndpoint, $sessionId){
+	private $logs;
+	private $loggingEnabled = false;
+	
+	public function __construct($partnerEndpoint, $sessionId, $userAgent = "WorkbenchAsyncApiClient/2.5.17"){
 		$this->endpoint = $this->convertEndpointFromPartner($partnerEndpoint);
 		$this->sessionId = $sessionId;
+		$this->userAgent = $userAgent;
 	}
 	
 	function convertEndpointFromPartner($partnerEndpoint){
@@ -75,21 +79,15 @@ class AsyncApiConnection {
 		return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/result");
 	}
 	
-	private function http($isPost, $url, $contentType, $data){
-		$debug=$_SESSION['config']['debug'];
+	private function http($isPost, $url, $contentType, $data){		
+		$this->log("INITIALIZING cURL \n" . print_r(curl_version(), true));
 		
-		if($debug && !isset($_REQUEST['restDebugLog'])){
-			$_REQUEST['restDebugLog'] = null;
-		}
-		
-		if($debug) $_REQUEST['restDebugLog'] .= "cURL VERSION \n" . print_r(curl_version(), true);
-			
 		$ch = curl_init();
 		
 		$httpHeaders = array(
 			"X-SFDC-Session: " . $this->sessionId,
 			"Accept: application/xml",
-			"User-Agent: " . getWorkbenchUserAgent(),
+			"User-Agent: " . $this->userAgent,
 			"Expect:"
 		);
 		if(isset($contentType)){
@@ -106,13 +104,13 @@ class AsyncApiConnection {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); //TODO: use ca-bundle instead
 		if($_SESSION['config']['enableGzip']) curl_setopt($ch, CURLOPT_ENCODING, "gzip");  //TODO: add  outbound compression support
 
-		if($debug) $_REQUEST['restDebugLog'] .=  "DEBUG: REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlentities($data)  . "\n\n"; 
+		$this->log("REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlentities($data)); 
 		
 		$chResponse = curl_exec($ch);
-		if($debug) $_REQUEST['restDebugLog'] .= "DEBUG: RESPONSE \n" . htmlentities($chResponse)  . "\n\n"; 
+		$this->log("RESPONSE \n" . htmlentities($chResponse)); 
 		
 		if(curl_error($ch) != null){
-			if($debug) $_REQUEST['restDebugLog'] .= "DEBUG: ERROR \n" . htmlentities(curl_error($ch))  . "\n\n"; 
+			$this->log("ERROR \n" . htmlentities(curl_error($ch))); 
 			throw new Exception(curl_error($ch));
 		}
 		
@@ -127,6 +125,36 @@ class AsyncApiConnection {
 	
 	private function post($url, $contentType, $data){
 		return $this->http(true, $url, $contentType, $data);
+	}
+	
+	
+	//LOGGING FUNCTIONS
+	
+	public function isLoggingEnabled(){
+		return $this->loggingEnabled;
+	}
+	
+	public function setLoggingEnabled($loggingEnabled){
+		$this->loggingEnabled = $loggingEnabled;
+	}
+	
+	protected function log($txt){
+		if($this->loggingEnabled){ 
+			$this->logs .= $txt .= "\n\n";
+		}
+		return $txt;
+	}
+	
+	public function setExternalLogReference(&$extLogs){
+		$this->logs = &$extLogs;
+	}
+	
+	public function getLogs(){
+		return $this->logs;
+	}
+	
+	public function clearLogs(){
+		$this->logs = null;
 	}
 }
 
