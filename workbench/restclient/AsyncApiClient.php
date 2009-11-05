@@ -342,6 +342,10 @@ class BatchInfo {
 	public function getState(){
 		return $this->xml->state;
 	}
+
+	public function getStateMessage(){
+		return $this->xml->stateMessage;
+	}
 	
 	public function getCreatedDate(){
 		return $this->xml->createdDate;

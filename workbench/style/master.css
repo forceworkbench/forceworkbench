@@ -90,6 +90,17 @@ h2{
 	font-weight: bold;
 }
 
+table.lightlyBoxed{
+	border-style:solid; 
+	border-width: 1px; 
+	border-collapse:collapse; 
+	border-color: #bbb;
+}
+
+table.lightlyBoxed td{
+	vertical-align: top;
+}
+	
 table.description{
 	border-color: #888;
 	border-style: solid;

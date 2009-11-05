@@ -39,7 +39,12 @@ print "<tr>" .
        "</tr>";
 print "</table>";
 
-print "<table width='100%' cellpadding='5' style='border-style:solid; border-width: 1px; border-collapse:collapse; border-color: #bbb;'>";
+if($jobInfo->getStateMessage() != ""){
+	show_info($jobInfo->getStateMessage());
+	print "<p/>";
+}
+
+print "<table width='100%' cellpadding='5' class='lightlyBoxed'>";
 print "<tr>" . 
 		"<td class='dataLabel'>Status</td><td class='dataValue'>" . $jobInfo->getState() . "</td>" .
 		"<td class='dataLabel'>Records Processed</td><td class='dataValue'>" . $jobInfo->getNumberRecordsProcessed() . "</td>" .
@@ -68,28 +73,23 @@ print "<tr>" .
 print "</table>";
 print "<p>&nbsp;</p>";
 
-
 if(count($batchInfos) > 0){
 	print "<h3 style='color: #0046ad'>Batches</h3>";
 	
-	print "<table cellpadding='4' width='100%' style='border-style:solid; border-width: 1px; border-collapse:collapse; border-color: #bbb;'>";
+	print "<table cellpadding='4' width='100%' class='lightlyBoxed'>";
 		print "<tr>" . 
 				"<th>&nbsp;</th>" .		
 				"<th>Id</th>" .
 				"<th>Status</th>" .
 		        "<th>Processed</th>" .
 				"<th>Created</th>" .
-				"<th>Last Modifed</th>" .	
+				"<th>Last Modified</th>" .	
 		       "</tr>";
 	foreach($batchInfos as $batchInfo){		
 		print "<tr><td class='dataValue'>";
-		if ($batchInfo->getState() == "Completed"){
+		if ($batchInfo->getState() == "Completed" || $batchInfo->getState() == "Failed"){
 			print "<a href='downloadAsyncResults.php?jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "'>" . 
-				  "<img src='images/downloadIcon.gif' border='0' onmouseover=\"Tip('Download Completed Batch Results')\"/>" . 
-				  "</a>";
-		} else if ($batchInfo->getState() == "Failed"){
-			print "<a href='downloadAsyncResults.php?jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "'>" . 
-				  "<img src='images/downloadIconFailed.gif' border='0' onmouseover=\"Tip('Download Failed Batch Results')\"/>" . 
+				  "<img src='images/downloadIcon" . $batchInfo->getState() . ".gif' border='0' onmouseover=\"Tip('Download " . $batchInfo->getState() . " Batch Results')\"/>" . 
 				  "</a>";
 		} else {
 			print "&nbsp;";
@@ -99,7 +99,7 @@ if(count($batchInfos) > 0){
 		$recLabel = $batchInfo->getNumberRecordsProcessed() == "1" ? " record" : " records";
 		
 		print	"<td class='dataValue'>" . $batchInfo->getId() . "</td>" .
-				"<td class='dataValue'>" . $batchInfo->getState() . "</td>" .
+				"<td class='dataValue'>" . $batchInfo->getState() . (($batchInfo->getStateMessage() != "") ? (": " . $batchInfo->getStateMessage()) : "") . "</td>" .
 				"<td class='dataValue'>" . $batchInfo->getNumberRecordsProcessed() . $recLabel . "</td>" .
 				"<td class='dataValue'>" . simpleFormattedTime($batchInfo->getCreatedDate()) . "</td>" .
 				"<td class='dataValue'>" . simpleFormattedTime($batchInfo->getSystemModstamp()) . "</td>";
