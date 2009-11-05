@@ -15,9 +15,9 @@ if(!isset($_GET['jobId']) || $_GET['jobId'] == ""){
 			"</form>";
 	include_once('footer.php');
 	exit;
-} else {
-	$_GET['jobId'] = htmlspecialchars($_GET['jobId']);
-}
+} 
+
+$_GET['jobId'] = htmlspecialchars(trim($_GET['jobId']));
 
 try {	
 	$asyncConnection = getAsyncApiConnection();
