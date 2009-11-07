@@ -12,11 +12,11 @@ require_once 'BatchInfo.php';
  *
  */
 
-class BulkApiConnection {
-	protected $endpoint;
-	protected $sessionId;
-	protected $userAgent = "PHP-BulkApiClient/17.0";
-	
+class BulkApiClient {
+	private $endpoint;
+	private $sessionId;
+	private $userAgent = "PHP-BulkApiClient/17.0";
+	private $compressionEnabled = true;
 	private $logs;
 	private $loggingEnabled = false;
 	
@@ -31,6 +31,14 @@ class BulkApiConnection {
 	
 	public function setUserAgent($userAgent){
 		$this->userAgent = $userAgent;
+	}
+
+	public function getCompressionEnabled(){
+		return $this->compressionEnabled;
+	}
+	
+	public function setCompressionEnabled($compressionEnabled){
+		$this->compressionEnabled = $compressionEnabled;
 	}
 	
 	private function convertEndpointFromPartner($partnerEndpoint){
@@ -121,7 +129,7 @@ class BulkApiConnection {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); //TODO: use ca-bundle instead
-		if($_SESSION['config']['enableGzip']) curl_setopt($ch, CURLOPT_ENCODING, "gzip");  //TODO: add  outbound compression support
+		if($this->compressionEnabled) curl_setopt($ch, CURLOPT_ENCODING, "gzip");  //TODO: add  outbound compression support
 
 		$this->log("REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlentities($data)); 
 		
