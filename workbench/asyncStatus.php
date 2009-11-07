@@ -2,7 +2,7 @@
 require_once ('session.php');
 require_once ('shared.php');
 require_once ('header.php');
-require_once ('restclient/AsyncApiClient.php');
+require_once ('restclient/BulkApiClient.php');
 
 print "<h2>" . getMyTitle() . "</h2>";
 

@@ -2,10 +2,20 @@
 require_once 'JobInfo.php';
 require_once 'BatchInfo.php';
 
-class AsyncApiConnection {
+/**
+ * PHP BULK API CLIENT 17.0
+ * @author Ryan Brainard
+ * 
+ * BulkApiClient.php
+ * Main client for interacting with REST-based Force.com Bulk API 17.0.
+ * Requires PHP cURL library to be installed.
+ *
+ */
+
+class BulkApiConnection {
 	protected $endpoint;
 	protected $sessionId;
-	protected $userAgent = "WorkbenchAsyncApiClient/17.0";
+	protected $userAgent = "PHP-BulkApiClient/17.0";
 	
 	private $logs;
 	private $loggingEnabled = false;

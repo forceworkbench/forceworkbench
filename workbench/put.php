@@ -752,7 +752,7 @@ function putSObjectsAsync($api_call,$ext_id,$field_map,$csv_array){
 	if (!($field_map && $csv_array && $_SESSION['default_object'])){  
 		show_error("CSV file and field mapping not initialized. Upload a new file and map fields.");
 	} else {
-		require_once ('restclient/AsyncApiClient.php');
+		require_once ('restclient/BulkApiClient.php');
 		try{
 			$job = new JobInfo();
 			$job->setObject($_SESSION['default_object']);

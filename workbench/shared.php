@@ -235,7 +235,7 @@ function simpleFormattedTime($timestamp){
 }
 
 function getAsyncApiConnection(){
-	$asyncConnection = new AsyncApiConnection($_SESSION['location'], $_SESSION['sessionId']);
+	$asyncConnection = new BulkApiConnection($_SESSION['location'], $_SESSION['sessionId']);
 	$asyncConnection->setUserAgent(getWorkbenchUserAgent());
 	$asyncConnection->setExternalLogReference($_SESSION['restDebugLog']);
 	$asyncConnection->setLoggingEnabled(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true);
