@@ -1,12 +1,12 @@
 <?php
 require_once ('session.php');
 require_once ('shared.php');
-require_once ('restclient/AsyncApiClient.php');
+require_once ('restclient/BulkApiClient.php');
 
 
 if(isset($_GET['jobId']) && isset($_GET['batchId'])){
 	try{
-		$asyncConnection = new AsyncApiConnection($_SESSION['location'], $_SESSION['sessionId']);
+		$asyncConnection = getAsyncApiConnection();
 		$jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);
 		$asyncResults = $asyncConnection->getBatchResults($_GET['jobId'], $_GET['batchId']);
 	} catch (Exception $e){

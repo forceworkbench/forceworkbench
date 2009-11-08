@@ -21,9 +21,7 @@ $_GET['jobId'] = htmlspecialchars(trim($_GET['jobId']));
 
 try {	
 	$asyncConnection = getAsyncApiConnection();
-	$jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);
-	if($jobInfo->getExceptionCode() != "") throw new Exception($jobInfo->getExceptionCode() . ": " . $jobInfo->getExceptionMessage());
-	
+	$jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);	
 	$batchInfos = $asyncConnection->getBatchInfos($_GET['jobId']);	
 } catch (Exception $e) {
 	show_error($e->getMessage(), false, true);
