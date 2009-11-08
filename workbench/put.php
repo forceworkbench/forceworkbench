@@ -56,6 +56,9 @@ function put($action){
 		if (csv_upload_valid_check($_FILES['file'])){
 			form_upload_objectSelect_show('file',TRUE);
 			show_error(csv_upload_valid_check($_FILES['file']));
+		} else if ($_POST['default_object'] == ""){
+			form_upload_objectSelect_show('file',TRUE);
+			show_error("Must select an object to $action.");
 		} else {
 			$csv_file_name = basename($_FILES['file']['name']);
 			$_SESSION['file_tmp_name'] = $_FILES['file']['tmp_name'];
