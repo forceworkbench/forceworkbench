@@ -7,8 +7,15 @@ require_once 'BatchInfo.php';
  * @author Ryan Brainard
  * 
  * BulkApiClient.php
- * Main client for interacting with REST-based Force.com Bulk API 17.0.
- * Requires PHP cURL library to be installed.
+ * Main client for interacting with REST-based Force.com Bulk API 17.0
+ * to asynchronously insert, update, and upsert data into Salesforce.
+ * Requires PHP cURL library to be installed. 
+ * 
+ * This client was orginally created as part of Workbench, a complete
+ * data describing, loading, and extracting tool using multiple Salesforce
+ * APIs. It has been extracted to remove any depenecies; however, it is still 
+ * maintained as part of the Workbench project:
+ * http://code.google.com/p/forceworkbench/
  *
  */
 
@@ -128,7 +135,7 @@ class BulkApiClient {
 		if($isPost) curl_setopt($ch, CURLOPT_POSTFIELDS, $data); 		
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); //TODO: use ca-bundle instead
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 							   //TODO: use ca-bundle instead
 		if($this->compressionEnabled) curl_setopt($ch, CURLOPT_ENCODING, "gzip");  //TODO: add  outbound compression support
 
 		$this->log("REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlentities($data)); 

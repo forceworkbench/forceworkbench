@@ -32,6 +32,10 @@ class JobInfo {
 			$this->xml->contentType = "";
 			$this->xml->assignmentRuleId = "";
 		}
+		
+		if($this->getExceptionCode() != ""){
+			throw new Exception($this->getExceptionCode() . ": " . $this->getExceptionMessage());
+		}
 	}
 	
 	public function asXml(){

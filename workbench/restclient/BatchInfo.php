@@ -18,6 +18,10 @@ class BatchInfo {
 	
 	public function __construct($xml){
 		$this->xml = new SimpleXMLElement($xml);
+			
+		if($this->getExceptionCode() != ""){
+			throw new Exception($this->getExceptionCode() . ": " . $this->getExceptionMessage());
+		}
 	}
 
 	//GETTERS
