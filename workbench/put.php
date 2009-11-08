@@ -767,10 +767,6 @@ function putSObjectsAsync($api_call,$ext_id,$field_map,$csv_array){
 		} catch (Exception $e) {
 			show_error($e->getMessage(), true, true);
 	    }
-		    
-		if($job->getExceptionCode() != null && $job->getExceptionCode() != ""){
-			show_error($job->getExceptionCode() . ": " . $job->getExceptionMessage(), true, true);
-		}
 
 		if($job->getId() == null){
 			show_error("No job id found. Aborting Bulk API operation.", true, true);
@@ -820,11 +816,6 @@ function putSObjectsAsync($api_call,$ext_id,$field_map,$csv_array){
 			} catch (Exception $e) {
 				show_error($e->getMessage(), true, true);
 		    }
-		    
-			if($batch->getExceptionCode() != null && $batch->getExceptionCode() != ""){
-				show_error($batch->getExceptionCode() . ": " . $batch->getExceptionMessage(), true, true);
-			}
-		    
 		}
 		
 		try{
