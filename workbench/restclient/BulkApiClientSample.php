@@ -3,6 +3,7 @@
  * PHP BULK API CLIENT 17.0 SAMPLE CODE
  * @author Ryan Brainard
  * 
+ * BulkApiClientSample.php
  * Sample Code for the using the PHP Bulk API Client 17.0 to
  * bulk load records into Salesforce. See the comments inline
  * to understand what is happening and execute the code to 
@@ -14,9 +15,31 @@
  * For more information about the Force.com Bulk API see:
  * http://www.salesforce.com/us/developer/docs/api_asynch/index.htm
  * 
- * For a working implentation of this client, download Workbench:
+ * For a working implementation of this client, download Workbench:
  * http://code.google.com/p/forceworkbench/
  * 
+ *
+ * This client is NOT a product of or supported by salesforce.com, inc. 
+ * For support from the Open Source community, please visit the resources below:
+ * 
+ * * Main Project Site
+ *   http://code.google.com/p/forceworkbench
+ * 
+ * * Feedback & Discussion 
+ *   http://groups.google.com/group/forceworkbench
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ *  
  */
 
 try{ 

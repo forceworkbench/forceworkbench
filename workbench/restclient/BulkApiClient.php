@@ -10,7 +10,29 @@ require_once 'BatchInfo.php';
  * Main client for interacting with the REST-based Force.com Bulk API 17.0
  * to asynchronously insert, update, and upsert data to Salesforce.
  * Requires PHP cURL library to be installed. 
+ * 
  *
+ * This client is NOT a product of or supported by salesforce.com, inc. 
+ * For support from the Open Source community, please visit the resources below:
+ * 
+ * * Main Project Site
+ *   http://code.google.com/p/forceworkbench
+ * 
+ * * Feedback & Discussion 
+ *   http://groups.google.com/group/forceworkbench
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ *  
  */
 
 class BulkApiClient {
