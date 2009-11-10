@@ -111,15 +111,14 @@ function show_describeSObject_result(){
 				elseif ($subkey == 'picklistValues'){
 					print "<li>$subkey<ul>\n";
 					foreach($subvalue as $subsubkey => $subsubvalue){
-						print  "<li>$subsubvalue->label<ul>\n";
+						print  "<li>$subsubvalue->value<ul>\n";
 						foreach($subsubvalue as $subsubsubkey => $subsubsubvalue){
-							if (is_string($subsubsubvalue)){
-								stringDisplay( $subsubsubkey, $subsubsubvalue);
-							}
-							elseif (is_bool($subsubsubvalue)){
+							if (is_bool($subsubsubvalue)){
 								print "<li>$subsubsubkey: ";
 								booleanDisplay($subsubsubvalue);
 								print "</li> \n";
+							} else {
+								stringDisplay( $subsubsubkey, $subsubsubvalue);
 							}
 						}
 						print "</ul></li>\n"; //end one picklist node
@@ -142,6 +141,7 @@ function show_describeSObject_result(){
 		//Print Record Types, if they exists
 		if (isset($describeSObject_result->recordTypeInfos)){
 			print "<li>Record Types<ul>\n";
+			if(!is_array($describeSObject_result->recordTypeInfos)) $describeSObject_result->recordTypeInfos = array($describeSObject_result->recordTypeInfos);
 			foreach($describeSObject_result->recordTypeInfos as $key => $value){
 				if(isset($value->name)){
 					print "<li>$value->name<ul>\n";

@@ -84,10 +84,7 @@ function show_describeSObject_result(){
 					print "<tr><td colspan=2>$subkey</td></tr> \n";
 					foreach($subvalue as $subsubkey => $subsubvalue){
 						foreach($subsubvalue as $subsubsubkey => $subsubsubvalue){
-							if (is_string($subsubsubvalue)){
-								print "<tr><td>&nbsp; &nbsp; $subsubsubkey</td><td>$subsubsubvalue</td></tr> \n";
-							}
-							elseif (is_bool($subsubsubvalue)){
+							if (is_bool($subsubsubvalue)){
 								print "<tr><td>&nbsp; &nbsp; $subsubsubkey</td><td>";
 								if ($subsubsubvalue){
 									print "True";
@@ -95,6 +92,8 @@ function show_describeSObject_result(){
 									print "False";
 								}
 								print "</td></tr> \n";
+							} else {
+								print "<tr><td>&nbsp; &nbsp; $subsubsubkey</td><td>$subsubsubvalue</td></tr> \n";
 							}
 						}
 						print "<tr><td>&nbsp;</td><td>&nbsp;</td></tr> \n";
@@ -138,6 +137,7 @@ function show_describeSObject_result(){
 		//Print Record Types, if they exists (conditional not working)
 		if ($describeSObject_result->recordTypeInfos){
 			print "<h2>Record Types</h2>\n";
+			if(!is_array($describeSObject_result->recordTypeInfos)) $describeSObject_result->recordTypeInfos = array($describeSObject_result->recordTypeInfos);
 			foreach($describeSObject_result->recordTypeInfos as $key => $value){
 				print "<h3>$value->name</h3>\n";
 				print "<table class='description'>";
