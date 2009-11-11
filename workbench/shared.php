@@ -365,7 +365,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 
 
 		global $mySforceConnection;
-		if($showSoap && isset($mySforceConnection)){
+		if($showSoap && isset($mySforceConnection) && $mySforceConnection->getLastRequestHeaders()){
 			try{
 				print "<h1 onclick=\"toggleDebugSection(this,'partner_soap_container')\" class=\"debugHeader\">+ PARTNER SOAP MESSAGES</h1>\n";
 				print "<div id='partner_soap_container'  class='debugContainer'>";
@@ -395,7 +395,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 		}
 		
 		global $apexBinding;
-		if($showSoap && isset($apexBinding)){
+		if($showSoap && isset($apexBinding) && $apexBinding->getLastRequestHeaders()){
 			try{
 				print "<h1 onclick=\"toggleDebugSection(this,'apex_soap_container')\" class=\"debugHeader\">+ APEX SOAP MESSAGES</h1>\n";
 				print "<div id='apex_soap_container' class='debugContainer'>";
