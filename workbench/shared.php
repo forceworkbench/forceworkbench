@@ -244,6 +244,51 @@ function getAsyncApiConnection(){
 	return $asyncConnection;
 }
 
+
+/**
+* Takes xml as a string and returns it nicely indented
+*
+* @param string $xml The xml to beautify
+* @param boolean $html_output If the xml should be formatted for display on an html page
+* @return string The beautified xml
+*/
+function xml_pretty_printer($xml, $html_output=FALSE)
+{
+	$xml_obj = new SimpleXMLElement($xml);
+	$xml_lines = explode("
+", str_replace("><", ">
+<", $xml_obj->asXML()));
+	$indent_level = 0;
+	
+	$new_xml_lines = array();
+	foreach ($xml_lines as $xml_line) {
+		if (preg_match('#^(<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?>.*<s*/s*[^>]+>)|(<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?s*/s*>)#i', ltrim($xml_line))) {
+			$new_line = str_pad('', $indent_level*4) . ltrim($xml_line);
+			$new_xml_lines[] = $new_line;
+		} elseif (preg_match('#^<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?>#i', ltrim($xml_line))) {
+			$new_line = str_pad('', $indent_level*4) . ltrim($xml_line);
+			$indent_level++;
+			$new_xml_lines[] = $new_line;
+		} elseif (preg_match('#<s*/s*[^>/]+>#i', $xml_line)) {
+			$indent_level--;
+			if (trim($new_xml_lines[sizeof($new_xml_lines)-1]) == trim(str_replace("/", "", $xml_line))) {
+				$new_xml_lines[sizeof($new_xml_lines)-1] .= $xml_line;
+			} else {
+				$new_line = str_pad('', $indent_level*4) . $xml_line;
+				$new_xml_lines[] = $new_line;
+			}
+		} else {
+			$new_line = str_pad('', $indent_level*4) . $xml_line;
+			$new_xml_lines[] = $new_line;
+		}
+	}
+	
+	$xml = join("
+", $new_xml_lines);
+	return ($html_output) ? '<pre>' . htmlentities($xml) . '</pre>' : $xml;
+}
+
+
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
 	if(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true){
 
@@ -330,7 +375,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 					print "<hr/>";
 	
 					print "<strong>LAST REQUEST</strong>\n";
-					print htmlspecialchars($mySforceConnection->getLastRequest(),ENT_QUOTES,'UTF-8');
+					print htmlspecialchars(xml_pretty_printer($mySforceConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
 					print "<hr/>";
 	
 					print "<strong>LAST RESPONSE HEADER</strong>\n";
@@ -338,7 +383,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 					print "<hr/>";
 	
 					print "<strong>LAST RESPONSE</strong>\n";
-					print htmlspecialchars($mySforceConnection->getLastResponse(),ENT_QUOTES,'UTF-8');
+					print htmlspecialchars(xml_pretty_printer($mySforceConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
 					print "<hr/>";
 				
 				print "</div>";
@@ -360,7 +405,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 					print "<hr/>";
 	
 					print "<strong>LAST REQUEST</strong>\n";
-					print htmlspecialchars($apexBinding->getLastRequest(),ENT_QUOTES,'UTF-8');
+					print htmlspecialchars(xml_pretty_printer($apexBinding->getLastRequest()),ENT_QUOTES,'UTF-8');
 					print "<hr/>";
 	
 					print "<strong>LAST RESPONSE HEADER</strong>\n";
@@ -368,7 +413,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 					print "<hr/>";
 	
 					print "<strong>LAST RESPONSE</strong>\n";
-					print htmlspecialchars($apexBinding->getLastResponse(),ENT_QUOTES,'UTF-8');
+					print htmlspecialchars(xml_pretty_printer($apexBinding->getLastResponse()),ENT_QUOTES,'UTF-8');
 					print "<hr/>";
 					
 				print "</div>";
