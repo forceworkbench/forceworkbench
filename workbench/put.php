@@ -166,6 +166,8 @@ function csv_upload_valid_check($file){
  * @return PHP array
  */
 function csv_file_to_array($file){
+	ini_set("auto_detect_line_endings", true); //detect mac os line endings too
+	
 	$csv_array = array();
 	$handle = fopen($file, "r");
 	for ($row=0; ($data = fgetcsv($handle)) !== FALSE; $row++) {
