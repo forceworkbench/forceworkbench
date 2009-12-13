@@ -10,11 +10,11 @@
  */
 function put($action){
 	$confirm_action = 'Confirm ' . ucwords($action);
-
+	
 	if(isset($_POST['action']) && $_POST['action'] == $confirm_action){
 		if ($action == 'upsert' && isset($_SESSION['_ext_id'])) $ext_id = $_SESSION['_ext_id']; else $ext_id = NULL;
 		if(isset($_POST['doAsync'])){
-			putSObjectsAsync(
+			putAsync(
 				$action,
 				$ext_id,
 				isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null, 
@@ -23,12 +23,16 @@ function put($action){
 			require_once('header.php');
 			print "<h1>" . ucwords($action) . " Results</h1>";
 			if ($action == 'insert') $api_call = 'create'; else $api_call = $action;
-			putSObjects(
-				$api_call,
-				$ext_id,
-				isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null, 
-				isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] :  null,
-				true);
+			if ($action == "insert" || $action == "update" || $action == "upsert"){
+				putSync(
+					$api_call,
+					$ext_id,
+					isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null, 
+					isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] :  null,
+					true);
+			} else {
+				putSyncIdOnly($action,$_SESSION['field_map'],$_SESSION['csv_array'],true);
+			}
 			include_once('footer.php');
 		}
 		unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name']);
@@ -51,13 +55,13 @@ function put($action){
 		include_once('footer.php');
 	}
 
-	elseif (isset($_FILES['file']) && isset($_POST['default_object'])){
+	elseif (isset($_FILES['file'])){
 		require_once('header.php');
 		if (csv_upload_valid_check($_FILES['file'])){
 			form_upload_objectSelect_show('file',TRUE);
 			show_error(csv_upload_valid_check($_FILES['file']));
-		} else if ($_POST['default_object'] == ""){
-			form_upload_objectSelect_show('file',TRUE);
+		} else if (($action == "insert" || $action == "update" || $action == "upsert") && $_POST['default_object'] == ""){
+			form_upload_objectSelect_show('file',$action);
 			show_error("Must select an object to $action.");
 		} else {
 			$csv_file_name = basename($_FILES['file']['name']);
@@ -81,10 +85,11 @@ function put($action){
 	else {
 		require_once ('header.php');
 		print "<p><strong>Select an object and upload a CSV file to $action:</strong></p>\n";
-		form_upload_objectSelect_show('file',TRUE,$action);
+		form_upload_objectSelect_show('file', $action);
 		include_once('footer.php');
 	}
 }
+
 
 //CSV UPLOADING FUNCTIONS
 
@@ -95,11 +100,11 @@ function put($action){
  * @param $showObjectSelect
  * @param $action
  */
-function form_upload_objectSelect_show($file_input_name,$showObjectSelect = FALSE,$action=null){
+function form_upload_objectSelect_show($file_input_name, $action){
 	print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n";
 	print "<input type='hidden' name='MAX_FILE_SIZE' value='" . $_SESSION['config']['maxFileSize'] . "' />\n";
 	print "<p><input type='file' name='$file_input_name' size=44 /></p>\n";
-	if ($showObjectSelect){
+	if ($action == "insert" || $action == "update" || $action == "upsert"){
 		$filter1 = null;
 		$filter2 = null;
 		if($action == "insert") $filter1 = "createable";
@@ -264,32 +269,32 @@ function field_mapping_set($action,$csv_array){
 	if ($action == 'insert'){
 		foreach($describeSObject_result->fields as $fields => $field){
 			if ($field->createable){
-				printPutFieldForMapping($field, $csv_array);
+				printPutFieldForMapping($field, $csv_array, true);
 			}
 		}
 	}
 
 	if ($action == 'update'){
-		field_mapping_idOnly_set($csv_array, true);
+		printPutFieldForMappingId($csv_array, true);
 		foreach($describeSObject_result->fields as $fields => $field){
 			if ($field->updateable){
-				printPutFieldForMapping($field, $csv_array);
+				printPutFieldForMapping($field, $csv_array, true);
 			}
 		}
 	}
 
 	if ($action == 'upsert'){
-		field_mapping_idOnly_set($csv_array, true);
+		printPutFieldForMappingId($csv_array, true);
 		foreach($describeSObject_result->fields as $fields => $field){
 			if ($field->updateable && $field->createable){
-				printPutFieldForMapping($field, $csv_array);
+				printPutFieldForMapping($field, $csv_array, true);
 			}
 		}
 	}
 
 
 	if ($action == 'delete' || $action == 'undelete' || $action == 'purge'){
-		field_mapping_idOnly_set($csv_array, false);
+		printPutFieldForMappingId($csv_array, false);
 	}
 
 
@@ -299,26 +304,13 @@ function field_mapping_set($action,$csv_array){
 	print "</form>\n";
 }
 
-/**
- * Print field mapping for the Id field only.
- * Used for id-only PUT functions, and also for 
- * the Id field for other PUT functions.
- *
- * @param $csv_array
- * @param boolean $showRefCol
- */
-function field_mapping_idOnly_set($csv_array, $showRefCol){
-	print "<tr style='color: red;'><td>Id</td>";
-	print "<td><select name='Id' style='width: 100%;'>";
-	print "	<option value=''></option>\n";
-	foreach($csv_array[0] as $col){
-		print   "<option value='$col'";
-		if (strtolower($col) == 'id') print " selected='true' ";
-		print ">$col</option>\n";
-	}
-	print "</select></td>";
-	if ($showRefCol && $_SESSION['config']['showReferenceBy']) print "<td></td>";
-	print"</tr>\n";
+function printPutFieldForMappingId($csv_array, $showRefCol){
+	$idField = new stdClass();
+	$idField->nillable = false;
+	$idField->defaultedOnCreate = false;
+	$idField->name = "Id";
+	
+	printPutFieldForMapping($idField, $csv_array, $showRefCol);
 }
 
 /**
@@ -328,7 +320,7 @@ function field_mapping_idOnly_set($csv_array, $showRefCol){
  * @param $field
  * @param $csv_array
  */
-function printPutFieldForMapping($field, $csv_array){
+function printPutFieldForMapping($field, $csv_array, $showRefCol){
 		print "<tr";
 		if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
 		print "><td>$field->name</td>";
@@ -342,7 +334,7 @@ function printPutFieldForMapping($field, $csv_array){
 		}
 		print "</select></td>";
 
-		if($_SESSION['config']['showReferenceBy']){
+		if($showRefCol && $_SESSION['config']['showReferenceBy']){
 			if(isset($field->referenceTo) && isset($field->relationshipName)){
 				$describeRefObjResult = describeSObject($field->referenceTo);
 				printRefField($field, $describeRefObjResult);
@@ -505,10 +497,12 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 
 	print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
 	
-	if(($action == 'Confirm Insert') || ($action == 'Confirm Update') || ($action == 'Confirm Upsert')){
-		print "<p><label><input type='checkbox' name='doAsync'/> Load records asynchronously via Bulk API</label>" .
-		  "&nbsp;<img onmouseover=\"Tip('Loading records asynchronously is recommended for large data loads. The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" align='absmiddle' src='images/help16.png'/>" . 
-		  "</p><p>&nbsp;</p>";
+	if(getApiVersion() >= 17.0){
+		if(($action == 'Confirm Insert') || ($action == 'Confirm Update') || ($action == 'Confirm Upsert') || ($action == 'Confirm Delete' && (getApiVersion() >= 18.0))){
+			print "<p><label><input type='checkbox' name='doAsync'/> Process records asynchronously via Bulk API</label>" .
+			  "&nbsp;<img onmouseover=\"Tip('Processing records asynchronously is recommended for large data loads. The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" align='absmiddle' src='images/help16.png'/>" . 
+			  "</p><p>&nbsp;</p>";
+		}
 	}
 	
 	print "<p><input type='submit' name='action' value='$action' /></p>\n";
@@ -554,61 +548,6 @@ function field_mapping_show($field_map,$ext_id,$showRefCol){
 
 //FUNCTIONS THAT DO THE ACTUAL PARSING AND PUTting TO THE API
 
-/**
- * Display wrapping screen for doing id-only PUT functions
- * after user has already uploaded the file
- * and confirmed field mappings. This function
- * calls idOnlyCallIds that does the actual work.
- *
- * @param $action
- */
-function idOnlyCall($action){
-	if(isset($_POST['action']) && $_POST['action'] == 'Confirm ' . ucfirst($action)){
-		require_once('header.php');
-		print "<h1>" . ucfirst($action) . " Results</h1>";
-		idOnlyCallIds($action,$_SESSION['field_map'],$_SESSION['csv_array'],true);
-		unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['update_file_tmp_name']);
-		include_once('footer.php');
-	}
-
-	elseif(isset($_POST['action']) && $_POST['action'] == 'Map Fields'){
-		require_once('header.php');
-		array_pop($_POST); //remove header row
-		$_SESSION['field_map'] = $_POST;
-		field_mapping_confirm('Confirm ' . ucfirst($action),$_SESSION['field_map'],$_SESSION['csv_array'],null);
-		include_once('footer.php');
-	}
-
-	elseif (isset($_FILES['file']) && $_FILES['file']){
-		require_once('header.php');
-		if (csv_upload_valid_check($_FILES['file'])){
-			form_upload_objectSelect_show('file',FALSE);
-			show_error(csv_upload_valid_check($_FILES['file']), false, true);
-		} else {
-			$csv_file_name = basename($_FILES['file']['name']);
-			$_SESSION['file_tmp_name'] = $_FILES['file']['tmp_name'];
-			$_SESSION['csv_array'] = csv_file_to_array($_SESSION['file_tmp_name']);
-			$csv_array_count = count($_SESSION['csv_array']) - 1;
-			if (!$csv_array_count) {
-				show_error("The file uploaded contains no records. Please try again.", false, true);
-			}
-			elseif ($csv_array_count > $_SESSION['config']['maxFileLengthRows']) {
-				show_error("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.", false, true);
-			}
-			$info = "The file $csv_file_name was uploaded successfully and contains $csv_array_count row";
-			if ($csv_array_count !== 1) $info .= 's';
-				show_info($info);
-				print "<br/>";
-				field_mapping_set($action,$_SESSION['csv_array']);
-			}
-		}
-		else {
-			require_once ('header.php');
-			print "<p><strong>Upload a CSV file with Salesforce IDs to $action:</strong></p>\n";
-			form_upload_objectSelect_show('file',FALSE);
-			include_once('footer.php');
-		}
-}
 
 /**
  * Does the actual work of PUTting 
@@ -619,7 +558,7 @@ function idOnlyCall($action){
  * @param $csv_array
  * @param $show_results
  */
-function idOnlyCallIds($api_call,$field_map,$csv_array,$show_results){
+function putSyncIdOnly($api_call,$field_map,$csv_array,$show_results){
 	$orig_csv_array = $csv_array;
 	
 	if (!($field_map && $csv_array)){
@@ -669,7 +608,7 @@ function idOnlyCallIds($api_call,$field_map,$csv_array,$show_results){
  * @param $csv_array
  * @param $show_results
  */
-function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
+function putSync($api_call,$ext_id,$field_map,$csv_array,$show_results){
 	$orig_csv_array = $csv_array;//backing up for results
 	if (!($field_map && $csv_array && $_SESSION['default_object'])){
 		show_error("CSV file and field mapping not initialized. Upload a new file and map fields.");
@@ -753,7 +692,7 @@ function putSObjects($api_call,$ext_id,$field_map,$csv_array,$show_results){
  * @param unknown_type $field_map
  * @param unknown_type $csv_array
  */
-function putSObjectsAsync($api_call,$ext_id,$field_map,$csv_array){
+function putAsync($api_call,$ext_id,$field_map,$csv_array){
 	if (!($field_map && $csv_array && $_SESSION['default_object'])){  
 		show_error("CSV file and field mapping not initialized. Upload a new file and map fields.");
 	} else {

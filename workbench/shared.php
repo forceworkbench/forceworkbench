@@ -4,6 +4,11 @@ function getMyTitle(){
 	return $GLOBALS["PAGES"][basename($_SERVER['PHP_SELF'])]->title;
 }
 
+function getApiVersion(){
+	preg_match('!/(\d{1,2}\.\d)!',$_SESSION['location'],$apiVersionMatches);
+	return $apiVersionMatches[1];
+}
+
 function show_error($errors, $showHeader=false, $showFooter=false){
 	if($showHeader) include_once("header.php");
 	print "<div class='show_errors'>\n";

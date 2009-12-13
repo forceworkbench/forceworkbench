@@ -1,10 +1,10 @@
 <?php
 /**
- * PHP BULK API CLIENT 17.0 SAMPLE CODE
+ * PHP BULK API CLIENT 18.0 SAMPLE CODE
  * @author Ryan Brainard
  * 
  * BulkApiClientSample.php
- * Sample Code for the using the PHP Bulk API Client 17.0 to
+ * Sample Code for the using the PHP Bulk API Client 18.0 to
  * bulk load records into Salesforce. See the comments inline
  * to understand what is happening and execute the code to 
  * see it in action and see output. 

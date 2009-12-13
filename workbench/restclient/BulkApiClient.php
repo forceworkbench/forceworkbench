@@ -3,11 +3,11 @@ require_once 'JobInfo.php';
 require_once 'BatchInfo.php';
 
 /**
- * PHP BULK API CLIENT 17.0
+ * PHP BULK API CLIENT 18.0
  * @author Ryan Brainard
  * 
  * BulkApiClient.php
- * Main client for interacting with the REST-based Force.com Bulk API 17.0
+ * Main client for interacting with the REST-based Force.com Bulk API 18.0
  * to asynchronously insert, update, and upsert data to Salesforce.
  * Requires PHP cURL library to be installed. 
  * 
@@ -38,7 +38,7 @@ require_once 'BatchInfo.php';
 class BulkApiClient {
 	private $endpoint;
 	private $sessionId;
-	private $userAgent = "PHP-BulkApiClient/17.0";
+	private $userAgent = "PHP-BulkApiClient/18.0";
 	private $compressionEnabled = true;
 	private $logs;
 	private $loggingEnabled = false;
@@ -66,7 +66,7 @@ class BulkApiClient {
 	
 	private function convertEndpointFromPartner($partnerEndpoint){
 	
-		if(preg_match('!/(\d{1,2})\.(\d)!',$partnerEndpoint,$apiVersionMatches) && $apiVersionMatches[1] < 17){
+		if($this->getApiVersionFromEndpoint($partnerEndpoint) < 17.0){
 			throw new Exception("Bulk API operations only supported in API 17.0 and higher.");
 		}
 		
@@ -81,12 +81,25 @@ class BulkApiClient {
 		return $endpoint;
 	}
 	
+	private function getApiVersionFromEndpoint($endpoint){
+		preg_match('!/(\d{1,2}\.\d)!',$endpoint,$apiVersionMatches);
+		return $apiVersionMatches[1];
+	}
+	
 	public function createJob(JobInfo $job){
+		$this->validateJob($job);
 		return new JobInfo($this->post($this->endpoint . "/job", "application/xml", $job->asXml()));
 	}
 	
 	public function updateJob(JobInfo $job){
+		$this->validateJob($job);
 		return new JobInfo($this->post($this->endpoint . "/job/" . $job->getId(), "application/xml", $job->asXml()));
+	}
+	
+	private function validateJob(JobInfo $job){
+		if($job->getOpertion() == "delete" && getApiVersionFromEndpoint($this->endpoint) < 18.0){
+			throw new Exception("Bulk API 'Delete' operation only supported in API 18.0 and higher.");
+		}
 	}
 
 	public function updateJobState($jobId, $state){

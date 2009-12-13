@@ -3,5 +3,5 @@ require_once ('session.php');
 require_once ('shared.php');
 require_once('put.php');
 
-idOnlyCall('undelete');
+put('undelete');
 ?>
