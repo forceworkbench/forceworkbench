@@ -497,8 +497,8 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 
 	print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
 	
-	if(getApiVersion() >= 17.0){
-		if(($action == 'Confirm Insert') || ($action == 'Confirm Update') || ($action == 'Confirm Upsert') || ($action == 'Confirm Delete' && (getApiVersion() >= 18.0))){
+	if(apiVersionIsAtLeast(17.0)){
+		if(($action == 'Confirm Insert') || ($action == 'Confirm Update') || ($action == 'Confirm Upsert') || ($action == 'Confirm Delete' && apiVersionIsAtLeast(18.0))){
 			print "<p><label><input type='checkbox' name='doAsync'/> Process records asynchronously via Bulk API</label>" .
 			  "&nbsp;<img onmouseover=\"Tip('Processing records asynchronously is recommended for large data loads. The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" align='absmiddle' src='images/help16.png'/>" . 
 			  "</p><p>&nbsp;</p>";

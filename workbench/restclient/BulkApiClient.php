@@ -66,7 +66,7 @@ class BulkApiClient {
 	
 	private function convertEndpointFromPartner($partnerEndpoint){
 	
-		if($this->getApiVersionFromEndpoint($partnerEndpoint) < 17.0){
+		if(!$this->apiVersionIsAtLeast($partnerEndpoint, 17.0)){
 			throw new Exception("Bulk API operations only supported in API 17.0 and higher.");
 		}
 		
@@ -81,9 +81,9 @@ class BulkApiClient {
 		return $endpoint;
 	}
 	
-	private function getApiVersionFromEndpoint($endpoint){
+	private function apiVersionIsAtLeast($endpoint, $minVersion){
 		preg_match('!/(\d{1,2}\.\d)!',$endpoint,$apiVersionMatches);
-		return $apiVersionMatches[1];
+		return $apiVersionMatches[1] >= $minVersion;
 	}
 	
 	public function createJob(JobInfo $job){
@@ -97,7 +97,7 @@ class BulkApiClient {
 	}
 	
 	private function validateJob(JobInfo $job){
-		if($job->getOpertion() == "delete" && getApiVersionFromEndpoint($this->endpoint) < 18.0){
+		if($job->getOpertion() == "delete" && !$this->apiVersionIsAtLeast($this->endpoint, 18.0)){
 			throw new Exception("Bulk API 'Delete' operation only supported in API 18.0 and higher.");
 		}
 	}
