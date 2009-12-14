@@ -3,7 +3,7 @@
 	<name>workbench-test</name>
 	<comment></comment>
 	<projects>
-		<project>workbench-test</project>
+		<project>workbench</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
