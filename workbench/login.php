@@ -186,11 +186,19 @@ function build_location(){
 }
 
 function giveUserFocus(){
-	document.getElementById('username').focus();
+	if (document.getElementById('login_become_adv').checked){
+		document.getElementById('usernameAdv').focus();
+	} else {
+		document.getElementById('username').focus();
+	}
 }
 
 function givePassFocus(){
-	document.getElementById('password').focus();
+	if (document.getElementById('login_become_adv').checked){
+		document.getElementById('passwordAdv').focus();
+	} else {
+		document.getElementById('password').focus();
+	}
 }
 
 function checkCaps( pwcapsDivId, e ) {
