@@ -96,6 +96,7 @@ if (isset($_COOKIE['user'])){
 	$user = $_POST['user'];
 	print "<body onLoad='giveUserFocus();' />";
 } else {
+	print "<body onLoad='giveUserFocus();' />";
 	$user = null;
 }
 
@@ -158,12 +159,24 @@ function form_become_adv() {
 	document.getElementById('login_std').style.display='none';
 	//document.getElementById('apexLogo').style.display='none';
 	document.getElementById('login_adv').style.display='inline';
+	
+	if(document.getElementById('usernameAdv').value == null || document.getElementById('usernameAdv').value == "") {
+		document.getElementById('usernameAdv').focus();
+	} else {
+		document.getElementById('passwordAdv').focus();
+	}
 }
 
 function form_become_std() {
 	document.getElementById('login_std').style.display='inline';
 	//document.getElementById('apexLogo').style.display='inline'
 	document.getElementById('login_adv').style.display='none';
+	
+	if(document.getElementById('username').value == null || document.getElementById('username').value == "") {
+		document.getElementById('username').focus();
+	} else {
+		document.getElementById('password').focus();
+	}
 }
 
 function build_location(){
