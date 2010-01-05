@@ -6,7 +6,7 @@ require_once('shared.php');
 //describe it when the page loads; else, prompt to choose one.
 //Note: The POSTed default object is passed to the SESSION default object
 //in the session.php include
-if ($_SESSION[default_object]){
+if ($_SESSION['default_object']){
 	show_describeSObject_form();
 	show_describeSObject_result();
 } else {
@@ -21,7 +21,7 @@ function show_describeSObject_form(){
 
 	print "<form method='post' action='$_SERVER[PHP_SELF]'>";
 	print "<p><strong>Choose an object to describe:</strong></p>\n";
-	myGlobalSelect($_SESSION[default_object]);
+	myGlobalSelect($_SESSION['default_object']);
 	print "<input type='submit' name='action' value='Describe' />";
 	print "</form>";
 }
@@ -31,22 +31,18 @@ function show_describeSObject_form(){
 function show_describeSObject_result(){
 	try{
 		//Ping Apex API
-		$describeSObject_result = describeSObject($_SESSION[default_object]);
+		$describeSObject_result = describeSObject($_SESSION['default_object']);
 
-		print "<h1>$_SESSION[default_object] Object Description</h1>";
-		
+		print "<h1>" . $_SESSION['default_object'] . " Object Description</h1>";
+
 		print "<a href='describe.php'>Return to Tree View</a>";
 
 		//Print attributes table
 		print "<h2>Attributes</h2>\n";
 		print "<table class='description'>";
 		foreach($describeSObject_result as $key => $value){
-			//Print strings as is
-			if (is_string($value)){
-				print "<tr><td>$key</td><td>$value</td></tr> \n";
-			}
 			//Change bool data to printed as TRUE and FALSE for visibility in table
-			elseif (is_bool($value)){
+			if (is_bool($value)){
 				print "<tr><td>$key</td><td>";
 				if ($value){
 					print "True";
@@ -54,6 +50,8 @@ function show_describeSObject_result(){
 					print "False";
 				}
 				print "</td></tr> \n";
+			} elseif(is_string($value) || is_numeric($value)) {
+				print "<tr><td>$key</td><td>$value</td></tr> \n";
 			}
 		}
 		print "</table>";
@@ -65,11 +63,8 @@ function show_describeSObject_result(){
 			print "<h3>$value->name</h3>\n";
 			print "<table class='description'>";
 			foreach($value as $subkey => $subvalue){
-				if (is_string($subvalue)){
-					print "<tr><td>$subkey</td><td>$subvalue</td></tr> \n";
-				}
 				//Change bool data to printed as TRUE and FALSE for visibility in table
-				elseif (is_bool($subvalue)){
+				if (is_bool($subvalue)){
 					print "<tr><td>$subkey</td><td>";
 					if ($subvalue){
 						print "True";
@@ -98,15 +93,21 @@ function show_describeSObject_result(){
 						}
 						print "<tr><td>&nbsp;</td><td>&nbsp;</td></tr> \n";
 					}
-				} elseif ($subkey == 'referenceTo'){ //do this for referenceTo arrays 
-					print "<tr><td colspan=2>$subkey</td></tr>\n";
-					foreach($subvalue as $subsubkey => $subsubvalue){
-						print  "<tr><td>&nbsp;</td><td>$subsubvalue</td></tr>\n";
+				} elseif ($subkey == 'referenceTo'){ //do this for referenceTo arrays
+					if(is_array($subvalue)){
+						print "<tr><td colspan=2>$subkey</td></tr>\n";
+						foreach($subvalue as $subsubkey => $subsubvalue){
+							print  "<tr><td>&nbsp;</td><td>$subsubvalue</td></tr>\n";
+						}
+						print "<tr><td>&nbsp;</td><td>&nbsp;</td></tr> \n"; //end referenceTo node
+					} elseif(is_string($subvalue) || is_numeric($subvalue)) {
+						print "<tr><td>$subkey</td><td>$subvalue</td></tr> \n";
 					}
-					print "<tr><td>&nbsp;</td><td>&nbsp;</td></tr> \n"; //end referenceTo node
+				} elseif(is_string($subvalue) || is_numeric($subvalue)) {
+					print "<tr><td>$subkey</td><td>$subvalue</td></tr> \n";
 				}
 			}
-		print "</table>\n<br/>";
+			print "</table>\n<br/>";
 		}
 
 
@@ -117,7 +118,7 @@ function show_describeSObject_result(){
 				print "<h3>$value->childSObject</h3>\n";
 				print "<table class='description'>";
 				foreach($value as $subkey => $subvalue){
-					if (is_string($subvalue)){
+					if (is_string($subvalue) || is_numeric($subvalue)){
 						print "<tr><td>$subkey</td><td>$subvalue</td></tr> \n";
 					}
 					elseif (is_bool($subvalue)){
@@ -130,7 +131,7 @@ function show_describeSObject_result(){
 						print "</td></tr> \n";
 					}
 				}
-			print "</table>\n</br>";
+				print "</table>\n</br>";
 			}
 		}
 
@@ -142,7 +143,7 @@ function show_describeSObject_result(){
 				print "<h3>$value->name</h3>\n";
 				print "<table class='description'>";
 				foreach($value as $subkey => $subvalue){
-					if (is_string($subvalue)){
+					if (is_string($subvalue) || is_numeric($subvalue)){
 						print "<tr><td>$subkey</td><td>$subvalue</td></tr> \n";
 					}
 					elseif (is_bool($subvalue)){
@@ -154,15 +155,15 @@ function show_describeSObject_result(){
 						}
 						print "</td></tr> \n";
 					}
-	
+
 				}
 				print "</table>\n<br/>";
 			}
 		}
 
-		} catch (Exception $e) {
-			show_error($e->getMessage(),false,true);
-    	}
+	} catch (Exception $e) {
+		show_error($e->getMessage(),false,true);
+	}
 }
 
 include_once('footer.php');

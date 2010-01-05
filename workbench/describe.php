@@ -78,15 +78,13 @@ function show_describeSObject_result(){
 
 		print "<li>Attributes<ul>\n";
 		foreach($describeSObject_result as $key => $value){
-			//Print strings as is
-			if (is_string($value)){
-				stringDisplay($key, $value);
-			}
 			//Change bool data to printed as TRUE and FALSE for visibility in table
-			elseif (is_bool($value)){
+			if (is_bool($value)){
 				print "<li>$key: ";
 				booleanDisplay($value);
 				print "</li> \n";
+			} elseif(is_string($value) || is_numeric($value)) {
+				stringDisplay($key, $value);
 			}
 		}
 		print "</ul></li>\n"; ///end attributes node
@@ -97,15 +95,12 @@ function show_describeSObject_result(){
 		foreach($describeSObject_result->fields as $key => $value){
 			highlightSpecialField($value);
 			foreach($value as $subkey => $subvalue){
-				if (is_string($subvalue)){
-					stringDisplay($subkey, $subvalue);
-				}
 				//Change bool data to printed as TRUE and FALSE for visibility in table
-				elseif (is_bool($subvalue)){
+				if (is_bool($subvalue)){
 					print "<li>$subkey: ";
 					booleanDisplay($subvalue);
 					print "</li> \n";
-				}
+				} 
 				//Because picklist are deeper in the SOAP message,
 				//it requires more nested foreach loops
 				elseif ($subkey == 'picklistValues'){
@@ -117,7 +112,7 @@ function show_describeSObject_result(){
 								print "<li>$subsubsubkey: ";
 								booleanDisplay($subsubsubvalue);
 								print "</li> \n";
-							} else {
+							} elseif(is_string($subsubsubvalue) || is_numeric($subsubsubvalue)) {
 								stringDisplay( $subsubsubkey, $subsubsubvalue);
 							}
 						}
@@ -125,11 +120,17 @@ function show_describeSObject_result(){
 					}
 					print "</ul></li>\n"; //end picklist node
 				} elseif ($subkey == 'referenceTo'){ //do this for referenceTo arrays 
-					print "<li>$subkey<ul>\n";
-					foreach($subvalue as $subsubkey => $subsubvalue){
-						print  "<li>$subsubvalue</li>\n";
+					if(is_array($subvalue)) {
+						print "<li>$subkey<ul>\n";
+						foreach($subvalue as $subsubkey => $subsubvalue){
+							print  "<li><strong>$subsubvalue</strong></li>\n";
+						}
+						print "</ul></li>\n"; //end referenceTo node
+					} elseif(is_string($subvalue) || is_numeric($subvalue)){
+						stringDisplay($subkey, $subvalue);
 					}
-					print "</ul></li>\n"; //end referenceTo node
+				} elseif(is_string($subvalue) || is_numeric($subvalue)){
+					stringDisplay($subkey, $subvalue);
 				}
 			}
 			print "</ul></li>\n"; ///end one field node
@@ -146,10 +147,9 @@ function show_describeSObject_result(){
 				if(isset($value->name)){
 					print "<li>$value->name<ul>\n";
 					foreach($value as $subkey => $subvalue){
-						if (is_string($subvalue)){
+						if (is_string($subvalue) || is_numeric($subvalue)){
 							stringDisplay( $subkey, $subvalue);
-						}
-						elseif (is_bool($subvalue)){
+						} elseif (is_bool($subvalue)){
 							print "<li>$subkey: ";
 							booleanDisplay($subvalue);
 							print "</li> \n";
@@ -168,10 +168,9 @@ function show_describeSObject_result(){
 			foreach($describeSObject_result->childRelationships as $key => $value){
 				print "<li>$value->childSObject<ul>\n";
 				foreach($value as $subkey => $subvalue){
-					if (is_string($subvalue)){
+					if (is_string($subvalue) || is_numeric($subvalue)){
 						stringDisplay( $subkey, $subvalue);
-					}
-					elseif (is_bool($subvalue)){
+					} elseif (is_bool($subvalue)){
 						print "<li>$subkey: ";
 						booleanDisplay($subvalue);
 						print "</li> \n";
