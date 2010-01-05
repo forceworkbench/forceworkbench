@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Salesforce.com Partner Web Services API Version 18.0
-Generated on 2009-09-11 00:14:18 +0000.
+Generated on 2010-01-04 18:26:34 +0000.
 
-Copyright 1999-2009 salesforce.com, inc.
+Copyright 1999-2010 salesforce.com, inc.
 All Rights Reserved
 -->
 <definitions targetNamespace="urn:partner.soap.sforce.com" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fns="urn:fault.partner.soap.sforce.com" xmlns:tns="urn:partner.soap.sforce.com" xmlns:ens="urn:sobject.partner.soap.sforce.com">
@@ -286,6 +286,7 @@ All Rights Reserved
                     <enumeration value="NUMBER_OUTSIDE_VALID_RANGE"/>
                     <enumeration value="NUM_HISTORY_FIELDS_BY_SOBJECT_EXCEEDED"/>
                     <enumeration value="OPTED_OUT_OF_MASS_MAIL"/>
+                    <enumeration value="OP_WITH_INVALID_USER_TYPE_EXCEPTION"/>
                     <enumeration value="PACKAGE_LICENSE_REQUIRED"/>
                     <enumeration value="PORTAL_USER_ALREADY_EXISTS_FOR_CONTACT"/>
                     <enumeration value="PRIVATE_CONTACT_ON_ASSET"/>
@@ -294,6 +295,7 @@ All Rights Reserved
                     <enumeration value="REQUIRED_FIELD_MISSING"/>
                     <enumeration value="SELF_REFERENCE_FROM_TRIGGER"/>
                     <enumeration value="SHARE_NEEDED_FOR_CHILD_OWNER"/>
+                    <enumeration value="SINGLE_EMAIL_LIMIT_EXCEEDED"/>
                     <enumeration value="STANDARD_PRICE_NOT_DEFINED"/>
                     <enumeration value="STORAGE_LIMIT_EXCEEDED"/>
                     <enumeration value="STRING_TOO_LONG"/>
@@ -493,7 +495,7 @@ All Rights Reserved
                 </sequence>
             </complexType>
 
-			<!-- this is a subset of properties for each SObject that is returned by the describeGlobal call -->
+            <!-- this is a subset of properties for each SObject that is returned by the describeGlobal call -->
             <complexType name="DescribeGlobalSObjectResult">
                 <sequence>
                     <element name="activateable" type="xsd:boolean"/>
@@ -506,12 +508,12 @@ All Rights Reserved
                     <element name="label" type="xsd:string"/>
                     <element name="labelPlural" type="xsd:string"/>
                     <element name="layoutable" type="xsd:boolean"/>
-					<element name="mergeable" type="xsd:boolean"/>
+                    <element name="mergeable" type="xsd:boolean"/>
                     <element name="name" type="xsd:string"/>
                     <element name="queryable" type="xsd:boolean"/>
                     <element name="replicateable" type="xsd:boolean"/>
                     <element name="retrieveable" type="xsd:boolean"/>
-					<element name="searchable" type="xsd:boolean"/>
+                    <element name="searchable" type="xsd:boolean"/>
                     <element name="triggerable" type="xsd:boolean"/>
                     <element name="undeletable" type="xsd:boolean"/>
                     <element name="updateable" type="xsd:boolean"/>
@@ -594,6 +596,7 @@ All Rights Reserved
                     <element name="digits" type="xsd:int"/>
                     <element name="externalId" type="xsd:boolean" minOccurs="0"/>
                     <element name="filterable" type="xsd:boolean"/>
+                    <element name="groupable" type="xsd:boolean"/>
                     <element name="htmlFormatted" type="xsd:boolean" minOccurs="0"/>
                     <element name="idLookup" type="xsd:boolean"/>
                     <element name="inlineHelpText" type="xsd:string" minOccurs="0"/>
@@ -629,6 +632,41 @@ All Rights Reserved
                 </sequence>
             </complexType>
 
+            <complexType name="DescribeDataCategoryGroupResult">
+                <sequence>
+                    <element name="categoryCount" type="xsd:int"/>
+                    <element name="description" type="xsd:string"/>
+                    <element name="label" type="xsd:string"/>
+                    <element name="name" type="xsd:string"/>
+                    <element name="sobject" type="xsd:string"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="DescribeDataCategoryGroupStructureResult">
+                <sequence>
+                    <element name="description" type="xsd:string"/>
+                    <element name="label" type="xsd:string"/>
+                    <element name="name" type="xsd:string"/>
+                    <element name="sobject" type="xsd:string"/>
+                    <element name="topCategories" type="tns:DataCategory" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="DataCategoryGroupSobjectTypePair">
+                <sequence>
+                    <element name="dataCategoryGroupName" type="xsd:string"/>
+                    <element name="sobject" type="xsd:string"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="DataCategory">
+                <sequence>
+                    <element name="childCategories" type="tns:DataCategory" minOccurs="0" maxOccurs="unbounded"/>
+                    <element name="label" type="xsd:string"/>
+                    <element name="name" type="xsd:string"/>
+                </sequence>
+            </complexType>
+
             <complexType name="DescribeSoftphoneLayoutResult">
                 <sequence>
                     <element name="callTypes" type="tns:DescribeSoftphoneLayoutCallType" maxOccurs="unbounded"/>
@@ -641,7 +679,17 @@ All Rights Reserved
                 <sequence>
                     <element name="infoFields" type="tns:DescribeSoftphoneLayoutInfoField" maxOccurs="unbounded"/>
                     <element name="name" type="xsd:string"/>
+                    <element name="screenPopOptions" type="tns:DescribeSoftphoneScreenPopOption" minOccurs="0" maxOccurs="unbounded"/>
+                    <element name="screenPopsOpenWithin" type="xsd:string" minOccurs="0"/>
                     <element name="sections" type="tns:DescribeSoftphoneLayoutSection" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+
+            <complexType name="DescribeSoftphoneScreenPopOption">
+                <sequence>
+                    <element name="matchType" type="xsd:string"/>
+                    <element name="screenPopData" type="xsd:string"/>
+                    <element name="screenPopType" type="xsd:string"/>
                 </sequence>
             </complexType>
 
@@ -965,6 +1013,36 @@ All Rights Reserved
                 </complexType>
             </element>
 
+            <!-- Describe Data Category Groups Message Types -->
+            <element name="describeDataCategoryGroups">
+                <complexType>
+                    <sequence>
+                        <element name="sObjectType" type="xsd:string" minOccurs="0" maxOccurs="10"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="describeDataCategoryGroupsResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="tns:DescribeDataCategoryGroupResult" minOccurs="0" maxOccurs="100"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="describeDataCategoryGroupStructures">
+                <complexType>
+                    <sequence>
+                        <element name="pairs" type="tns:DataCategoryGroupSobjectTypePair" minOccurs="0" maxOccurs="100"/>
+                        <element name="topCategoriesOnly" type="xsd:boolean"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="describeDataCategoryGroupStructuresResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="tns:DescribeDataCategoryGroupStructureResult" minOccurs="0" maxOccurs="100"/>
+                    </sequence>
+                </complexType>
+            </element>
             <element name="describeLayout">
                 <complexType>
                     <sequence>
@@ -1471,14 +1549,6 @@ All Rights Reserved
             </element>
 
 
-            <element name="DisableFeedTrackingHeader">
-                <complexType>
-                    <sequence>
-                        <element name="disableFeedTracking" type="xsd:boolean"/>
-                    </sequence>
-                </complexType>
-            </element>
-
 
             <!-- ideally this could of just been elem name="..." type="xsd:boolean"
                  but is required to be nested within a complexType for .NET 1.1 compatibility -->
@@ -1593,6 +1663,7 @@ All Rights Reserved
                     <enumeration value="NO_SOFTPHONE_LAYOUT"/>
                     <enumeration value="NUMBER_OUTSIDE_VALID_RANGE"/>
                     <enumeration value="OPERATION_TOO_LARGE"/>
+                    <enumeration value="ORG_IN_MAINTENANCE"/>
                     <enumeration value="ORG_LOCKED"/>
                     <enumeration value="ORG_NOT_OWNED_BY_INSTANCE"/>
                     <enumeration value="PASSWORD_LOCKOUT"/>
@@ -1674,6 +1745,7 @@ All Rights Reserved
                     <enumeration value="fns:NO_SOFTPHONE_LAYOUT"/>
                     <enumeration value="fns:NUMBER_OUTSIDE_VALID_RANGE"/>
                     <enumeration value="fns:OPERATION_TOO_LARGE"/>
+                    <enumeration value="fns:ORG_IN_MAINTENANCE"/>
                     <enumeration value="fns:ORG_LOCKED"/>
                     <enumeration value="fns:ORG_NOT_OWNED_BY_INSTANCE"/>
                     <enumeration value="fns:PASSWORD_LOCKOUT"/>
@@ -1793,8 +1865,6 @@ All Rights Reserved
         <part element="tns:AssignmentRuleHeader" name="AssignmentRuleHeader"/>
         <part element="tns:AllowFieldTruncationHeader" name="AllowFieldTruncationHeader"/>
 
-        <part element="tns:DisableFeedTrackingHeader" name="DisableFeedTrackingHeader"/>
-
         <part element="tns:MruHeader" name="MruHeader"/>
         <part element="tns:EmailHeader" name="EmailHeader"/>
 
@@ -1868,6 +1938,20 @@ All Rights Reserved
     </message>
     <message name="describeGlobalResponse">
         <part element="tns:describeGlobalResponse" name="parameters"/>
+    </message>
+
+    <message name="describeDataCategoryGroupsRequest">
+        <part element="tns:describeDataCategoryGroups" name="parameters"/>
+    </message>
+    <message name="describeDataCategoryGroupsResponse">
+        <part element="tns:describeDataCategoryGroupsResponse" name="parameters"/>
+    </message>
+
+    <message name="describeDataCategoryGroupStructuresRequest">
+        <part element="tns:describeDataCategoryGroupStructures" name="parameters"/>
+    </message>
+    <message name="describeDataCategoryGroupStructuresResponse">
+        <part element="tns:describeDataCategoryGroupStructuresResponse" name="parameters"/>
     </message>
 
     <message name="describeLayoutRequest">
@@ -2085,6 +2169,22 @@ All Rights Reserved
             <documentation>Describe the Global state</documentation>
             <input message="tns:describeGlobalRequest"/>
             <output message="tns:describeGlobalResponse"/>
+            <fault message="tns:UnexpectedErrorFault" name="UnexpectedErrorFault"/>
+        </operation>
+
+        <operation name="describeDataCategoryGroups">
+            <documentation>Describe all the data category groups available for a given set of types</documentation>
+            <input message="tns:describeDataCategoryGroupsRequest"/>
+            <output message="tns:describeDataCategoryGroupsResponse"/>
+            <fault message="tns:InvalidSObjectFault" name="InvalidSObjectFault"/>
+            <fault message="tns:UnexpectedErrorFault" name="UnexpectedErrorFault"/>
+        </operation>
+
+        <operation name="describeDataCategoryGroupStructures">
+            <documentation>Describe the data category group structures for a given set of pair of types and data category group name</documentation>
+            <input message="tns:describeDataCategoryGroupStructuresRequest"/>
+            <output message="tns:describeDataCategoryGroupStructuresResponse"/>
+            <fault message="tns:InvalidSObjectFault" name="InvalidSObjectFault"/>
             <fault message="tns:UnexpectedErrorFault" name="UnexpectedErrorFault"/>
         </operation>
 
@@ -2387,6 +2487,42 @@ All Rights Reserved
                 <soap:fault name="UnexpectedErrorFault" use="literal"/>
             </fault>
         </operation>
+        <operation name="describeDataCategoryGroups">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:header use="literal" message="tns:Header" part="SessionHeader"/>
+                <soap:header use="literal" message="tns:Header" part="CallOptions"/>
+                <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
+                <soap:body parts="parameters" use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="InvalidSObjectFault">
+                <soap:fault name="InvalidSObjectFault" use="literal"/>
+            </fault>
+            <fault name="UnexpectedErrorFault">
+                <soap:fault name="UnexpectedErrorFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="describeDataCategoryGroupStructures">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:header use="literal" message="tns:Header" part="SessionHeader"/>
+                <soap:header use="literal" message="tns:Header" part="CallOptions"/>
+                <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
+                <soap:body parts="parameters" use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="InvalidSObjectFault">
+                <soap:fault name="InvalidSObjectFault" use="literal"/>
+            </fault>
+            <fault name="UnexpectedErrorFault">
+                <soap:fault name="UnexpectedErrorFault" use="literal"/>
+            </fault>
+        </operation>
         <operation name="describeLayout">
             <soap:operation soapAction=""/>
             <input>
@@ -2446,7 +2582,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="AssignmentRuleHeader"/>
                 <soap:header use="literal" message="tns:Header" part="MruHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
-                <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
                 <soap:header use="literal" message="tns:Header" part="EmailHeader"/>
@@ -2477,7 +2612,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="AssignmentRuleHeader"/>
                 <soap:header use="literal" message="tns:Header" part="MruHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
-                <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
                 <soap:header use="literal" message="tns:Header" part="EmailHeader"/>
@@ -2508,7 +2642,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="AssignmentRuleHeader"/>
                 <soap:header use="literal" message="tns:Header" part="MruHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
-                <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
                 <soap:header use="literal" message="tns:Header" part="EmailHeader"/>
@@ -2539,7 +2672,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="AssignmentRuleHeader"/>
                 <soap:header use="literal" message="tns:Header" part="MruHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
-                <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
                 <soap:header use="literal" message="tns:Header" part="EmailHeader"/>
@@ -2571,7 +2703,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="UserTerritoryDeleteHeader"/>
                 <soap:header use="literal" message="tns:Header" part="EmailHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
-                <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:body parts="parameters" use="literal"/>
             </input>
@@ -2589,7 +2720,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="SessionHeader"/>
                 <soap:header use="literal" message="tns:Header" part="CallOptions"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
-                <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
                 <soap:body parts="parameters" use="literal"/>
@@ -2651,7 +2781,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="SessionHeader"/>
                 <soap:header use="literal" message="tns:Header" part="CallOptions"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
-                <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
                 <soap:body parts="parameters" use="literal"/>
@@ -2673,7 +2802,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="SessionHeader"/>
                 <soap:header use="literal" message="tns:Header" part="CallOptions"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
-                <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
                 <soap:body parts="parameters" use="literal"/>
@@ -2942,7 +3070,7 @@ All Rights Reserved
     <service name="SforceService">
         <documentation>Sforce SOAP API</documentation>
         <port binding="tns:SoapBinding" name="Soap">
-            <soap:address location="https://www-blitz01.soma.salesforce.com/services/Soap/u/18.0"/>
+            <soap:address location="https://login.salesforce.com/services/Soap/u/18.0"/>
         </port>
     </service>
 </definitions>
