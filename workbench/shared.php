@@ -76,7 +76,7 @@ function myGlobalSelect($default_object=null, $nameId='default_object', $width=2
 		if(isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)){
 			$describeGlobalResponse->types = array(); //create the array
 			foreach($describeGlobalResponse->sobjects as $sobject){
-				$describeGlobalResponse->types[] = $sobject->name; //migarte to pre 17.0 format
+				$describeGlobalResponse->types[] = $sobject->name; //migrate to pre 17.0 format
 				$describeGlobalResponse->attributeMap["$sobject->name"] = $sobject; //recreate into a map for faster lookup later
 			}
 			unset($describeGlobalResponse->sobjects); //remove from array, since not needed

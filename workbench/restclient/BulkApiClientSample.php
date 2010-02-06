@@ -52,8 +52,8 @@ try{
 	//
 	// Partner API Doc: http://www.salesforce.com/us/developer/docs/api/index.htm
 	// PHP Toolkit: http://wiki.developerforce.com/index.php/PHP_Toolkit 
-	$partnerApiEndpoint = "https://na4-api.salesforce.com/services/Soap/u/17.0/00D600000006veT";
-	$sessionId = "00D600000006veT!AQkAQBHagP4AUVvAZmtkxdKSwpIBqlwuT59BXuf_.P4TvOrSvWlBsNJy7rWWZY0P2q15vbrO8.dTjsipPRJaHlupekHEsv56";
+	$partnerApiEndpoint = "https://cs2-api.salesforce.com/services/Soap/u/18.0/00DR0000000EKXC";
+	$sessionId = "00DR0000000EKXC!ARYAQDK7LkfkO0GJoxWxtRviprMspd2e2ooS9pAkewptBFMbvf6M1GUzD06RCFiuLpMDWMp6wGVLRP08HK2kldPIfbr31BqN";
 	
 	
 	// STEP 2: INITIALIZE THE BULK API CLIENT
@@ -110,7 +110,7 @@ try{
 
 // PRINT EVERYTHING THAT HAPPENED ABOVE
 print "<pre>" .
-	  "PHP BULK API CLIENT 17.0 SAMPLE CODE OUTPUT\n" . 
+	  "PHP BULK API CLIENT 18.0 SAMPLE CODE OUTPUT\n" . 
 	  "This is the output of the PHP Bulk API Client Sample Code. View the source code for step-by-step explanations.\n\n";
 print "== CSV DATA == \n" . $csvData . "\n\n";
 print "== BATCH RESULTS == \n" . $batchResults . "\n\n";

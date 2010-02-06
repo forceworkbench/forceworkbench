@@ -2,7 +2,7 @@
 <!--
 Salesforce.com Apex API version 18.0
 
-Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
+Copyright 2006-2010 Salesforce.com, inc. All Rights Reserved
 -->
 <definitions targetNamespace="http://soap.sforce.com/2006/08/apex" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://soap.sforce.com/2006/08/apex">
  <types>
@@ -12,6 +12,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="column" type="xsd:int"/>
      <xsd:element name="compileProblem" type="xsd:string" nillable="true"/>
      <xsd:element name="compiled" type="xsd:boolean"/>
+
      <xsd:element name="exceptionMessage" type="xsd:string" nillable="true"/>
      <xsd:element name="exceptionStackTrace" type="xsd:string" nillable="true"/>
      <xsd:element name="line" type="xsd:int"/>
@@ -21,6 +22,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <xsd:complexType name="CompileClassResult">
     <xsd:sequence>
      <xsd:element name="bodyCrc" minOccurs="0" type="xsd:int"/>
+
      <xsd:element name="column" type="xsd:int"/>
      <xsd:element name="id" type="tns:ID" nillable="true"/>
      <xsd:element name="line" type="xsd:int"/>
@@ -30,6 +32,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="warnings" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
     </xsd:sequence>
    </xsd:complexType>
+
    <xsd:complexType name="CompileTriggerResult">
     <xsd:sequence>
      <xsd:element name="bodyCrc" minOccurs="0" type="xsd:int"/>
@@ -39,6 +42,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="name" minOccurs="0" type="xsd:string"/>
      <xsd:element name="problem" type="xsd:string" nillable="true"/>
      <xsd:element name="success" type="xsd:boolean"/>
+
     </xsd:sequence>
    </xsd:complexType>
    <xsd:complexType name="CompileAndTestResult">
@@ -48,6 +52,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="deleteTriggers" minOccurs="0" maxOccurs="unbounded" type="tns:DeleteApexResult"/>
      <xsd:element name="runTestsResult" type="tns:RunTestsResult"/>
      <xsd:element name="success" type="xsd:boolean"/>
+
      <xsd:element name="triggers" minOccurs="0" maxOccurs="unbounded" type="tns:CompileTriggerResult"/>
     </xsd:sequence>
    </xsd:complexType>
@@ -57,6 +62,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="problem" minOccurs="0" type="xsd:string"/>
      <xsd:element name="success" type="xsd:boolean"/>
     </xsd:sequence>
+
    </xsd:complexType>
    <xsd:complexType name="RunTestsResult">
     <xsd:sequence>
@@ -66,6 +72,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="numFailures" type="xsd:int"/>
      <xsd:element name="numTestsRun" type="xsd:int"/>
      <xsd:element name="successes" minOccurs="0" maxOccurs="unbounded" type="tns:RunTestSuccess"/>
+
      <xsd:element name="totalTime" type="xsd:double"/>
     </xsd:sequence>
    </xsd:complexType>
@@ -75,6 +82,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="id" type="tns:ID"/>
      <xsd:element name="locationsNotCovered" minOccurs="0" maxOccurs="unbounded" type="tns:CodeLocation"/>
      <xsd:element name="methodInfo" minOccurs="0" maxOccurs="unbounded" type="tns:CodeLocation"/>
+
      <xsd:element name="name" type="xsd:string"/>
      <xsd:element name="namespace" type="xsd:string" nillable="true"/>
      <xsd:element name="numLocations" type="xsd:int"/>
@@ -84,6 +92,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="type" type="xsd:string"/>
     </xsd:sequence>
    </xsd:complexType>
+
    <xsd:complexType name="CodeLocation">
     <xsd:sequence>
      <xsd:element name="column" type="xsd:int"/>
@@ -93,6 +102,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     </xsd:sequence>
    </xsd:complexType>
    <xsd:complexType name="CodeCoverageWarning">
+
     <xsd:sequence>
      <xsd:element name="id" type="tns:ID"/>
      <xsd:element name="message" type="xsd:string"/>
@@ -102,6 +112,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    </xsd:complexType>
    <xsd:complexType name="RunTestFailure">
     <xsd:sequence>
+
      <xsd:element name="id" type="tns:ID"/>
      <xsd:element name="message" type="xsd:string"/>
      <xsd:element name="methodName" type="xsd:string" nillable="true"/>
@@ -111,6 +122,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="time" type="xsd:double"/>
      <xsd:element name="type" type="xsd:string"/>
     </xsd:sequence>
+
    </xsd:complexType>
    <xsd:complexType name="RunTestSuccess">
     <xsd:sequence>
@@ -120,6 +132,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="namespace" type="xsd:string" nillable="true"/>
      <xsd:element name="time" type="xsd:double"/>
     </xsd:sequence>
+
    </xsd:complexType>
    <xsd:complexType name="WsdlToApexResult">
     <xsd:sequence>
@@ -129,6 +142,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     </xsd:sequence>
    </xsd:complexType>
    <xsd:element name="DebuggingInfo">
+
     <xsd:complexType>
      <xsd:sequence>
       <xsd:element name="debugLog" type="xsd:string"/>
@@ -138,6 +152,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <xsd:complexType name="CompileAndTestRequest">
     <xsd:sequence>
      <xsd:element name="checkOnly" type="xsd:boolean"/>
+
      <xsd:element name="classes" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
      <xsd:element name="deleteClasses" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
      <xsd:element name="deleteTriggers" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
@@ -147,6 +162,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    </xsd:complexType>
    <xsd:complexType name="RunTestsRequest">
     <xsd:sequence>
+
      <xsd:element name="allTests" type="xsd:boolean"/>
      <xsd:element name="classes" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
      <xsd:element name="namespace" type="xsd:string"/>
@@ -156,16 +172,17 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <xsd:simpleType name="LogCategory">
     <xsd:restriction base="xsd:string">
      <xsd:enumeration value="Db"/>
+
      <xsd:enumeration value="Workflow"/>
      <xsd:enumeration value="Validation"/>
      <xsd:enumeration value="Callout"/>
      <xsd:enumeration value="Apex_code"/>
      <xsd:enumeration value="Apex_profiling"/>
-     <xsd:enumeration value="Visualforce"/>
      <xsd:enumeration value="All"/>
     </xsd:restriction>
    </xsd:simpleType>
    <xsd:simpleType name="LogCategoryLevel">
+
     <xsd:restriction base="xsd:string">
      <xsd:enumeration value="Internal"/>
      <xsd:enumeration value="Finest"/>
@@ -175,6 +192,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:enumeration value="Info"/>
      <xsd:enumeration value="Warn"/>
      <xsd:enumeration value="Error"/>
+
     </xsd:restriction>
    </xsd:simpleType>
    <xsd:complexType name="LogInfo">
@@ -184,6 +202,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     </xsd:sequence>
    </xsd:complexType>
    <xsd:simpleType name="LogType">
+
     <xsd:restriction base="xsd:string">
      <xsd:enumeration value="None"/>
      <xsd:enumeration value="Debugonly"/>
@@ -193,6 +212,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:enumeration value="Detail"/>
     </xsd:restriction>
    </xsd:simpleType>
+
    <xsd:complexType name="NamespacePackagePair">
     <xsd:sequence>
      <xsd:element name="namespace" type="xsd:string"/>
@@ -202,6 +222,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <xsd:complexType name="PackageVersion">
     <xsd:sequence>
      <xsd:element name="majorNumber" type="xsd:int"/>
+
      <xsd:element name="minorNumber" type="xsd:int"/>
      <xsd:element name="namespace" type="xsd:string"/>
     </xsd:sequence>
@@ -211,6 +232,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="mapping" minOccurs="0" maxOccurs="unbounded" type="tns:NamespacePackagePair"/>
      <xsd:element name="wsdl" type="xsd:string"/>
     </xsd:sequence>
+
    </xsd:complexType>
    <xsd:element name="PackageVersionHeader">
     <xsd:complexType>
@@ -220,6 +242,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     </xsd:complexType>
    </xsd:element>
    <xsd:element name="SessionHeader">
+
     <xsd:complexType>
      <xsd:sequence>
       <xsd:element name="sessionId" type="xsd:string"/>
@@ -229,6 +252,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <xsd:element name="DisableFeedTrackingHeader">
     <xsd:complexType>
      <xsd:sequence>
+
       <xsd:element name="disableFeedTracking" type="xsd:boolean"/>
      </xsd:sequence>
     </xsd:complexType>
@@ -238,6 +262,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:sequence>
       <xsd:element name="allowFieldTruncation" type="xsd:boolean"/>
      </xsd:sequence>
+
     </xsd:complexType>
    </xsd:element>
    <xsd:element name="DebuggingHeader">
@@ -247,6 +272,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
       <xsd:element name="debugLevel" type="tns:LogType"/>
      </xsd:sequence>
     </xsd:complexType>
+
    </xsd:element>
    <xsd:element name="CallOptions">
     <xsd:complexType>
@@ -256,6 +282,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     </xsd:complexType>
    </xsd:element>
    <xsd:simpleType name="ID">
+
     <xsd:restriction base="xsd:string">
      <xsd:length value="18"/>
      <xsd:pattern value="[a-zA-Z0-9]{18}"/>
@@ -265,6 +292,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     <xsd:complexType>
      <xsd:sequence>
       <xsd:element name="CompileAndTestRequest" type="tns:CompileAndTestRequest"/>
+
      </xsd:sequence>
     </xsd:complexType>
    </xsd:element>
@@ -274,6 +302,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
       <xsd:element name="result" type="tns:CompileAndTestResult"/>
      </xsd:sequence>
     </xsd:complexType>
+
    </xsd:element>
    <xsd:element name="compileClasses">
     <xsd:complexType>
@@ -283,6 +312,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     </xsd:complexType>
    </xsd:element>
    <xsd:element name="compileClassesResponse">
+
     <xsd:complexType>
      <xsd:sequence>
       <xsd:element name="result" minOccurs="0" maxOccurs="unbounded" type="tns:CompileClassResult"/>
@@ -292,6 +322,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <xsd:element name="compileTriggers">
     <xsd:complexType>
      <xsd:sequence>
+
       <xsd:element name="scripts" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
      </xsd:sequence>
     </xsd:complexType>
@@ -301,6 +332,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      <xsd:sequence>
       <xsd:element name="result" minOccurs="0" maxOccurs="unbounded" type="tns:CompileTriggerResult"/>
      </xsd:sequence>
+
     </xsd:complexType>
    </xsd:element>
    <xsd:element name="executeAnonymous">
@@ -310,6 +342,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
      </xsd:sequence>
     </xsd:complexType>
    </xsd:element>
+
    <xsd:element name="executeAnonymousResponse">
     <xsd:complexType>
      <xsd:sequence>
@@ -319,6 +352,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    </xsd:element>
    <xsd:element name="runTests">
     <xsd:complexType>
+
      <xsd:sequence>
       <xsd:element name="RunTestsRequest" type="tns:RunTestsRequest"/>
      </xsd:sequence>
@@ -328,6 +362,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     <xsd:complexType>
      <xsd:sequence>
       <xsd:element name="result" type="tns:RunTestsResult"/>
+
      </xsd:sequence>
     </xsd:complexType>
    </xsd:element>
@@ -337,6 +372,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
       <xsd:element name="info" type="tns:WsdlToApexInfo"/>
      </xsd:sequence>
     </xsd:complexType>
+
    </xsd:element>
    <xsd:element name="wsdlToApexResponse">
     <xsd:complexType>
@@ -346,6 +382,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     </xsd:complexType>
    </xsd:element>
   </xsd:schema>
+
  </types>
  <!-- Message for the header parts -->
  <message name="Header">
@@ -355,6 +392,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
   <part name="DebuggingInfo" element="tns:DebuggingInfo"/>
   <part name="DisableFeedTrackingHeader" element="tns:DisableFeedTrackingHeader"/>
   <part name="PackageVersionHeader" element="tns:PackageVersionHeader"/>
+
   <part name="SessionHeader" element="tns:SessionHeader"/>
  </message>
  <!-- Operation Messages -->
@@ -364,6 +402,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
  <message name="compileAndTestResponse">
   <part element="tns:compileAndTestResponse" name="parameters"/>
  </message>
+
  <message name="compileClassesRequest">
   <part element="tns:compileClasses" name="parameters"/>
  </message>
@@ -373,6 +412,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
  <message name="compileTriggersRequest">
   <part element="tns:compileTriggers" name="parameters"/>
  </message>
+
  <message name="compileTriggersResponse">
   <part element="tns:compileTriggersResponse" name="parameters"/>
  </message>
@@ -382,6 +422,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
  <message name="executeAnonymousResponse">
   <part element="tns:executeAnonymousResponse" name="parameters"/>
  </message>
+
  <message name="runTestsRequest">
   <part element="tns:runTests" name="parameters"/>
  </message>
@@ -391,6 +432,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
  <message name="wsdlToApexRequest">
   <part element="tns:wsdlToApex" name="parameters"/>
  </message>
+
  <message name="wsdlToApexResponse">
   <part element="tns:wsdlToApexResponse" name="parameters"/>
  </message>
@@ -399,6 +441,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <documentation>Compile one or more Apex Classes, Triggers, and run tests.</documentation>
    <input message="tns:compileAndTestRequest"/>
    <output message="tns:compileAndTestResponse"/>
+
   </operation>
   <operation name="compileClasses">
    <documentation>Compile one or more Apex Classes.</documentation>
@@ -407,6 +450,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
   </operation>
   <operation name="compileTriggers">
    <documentation>Compile Apex Trigger code blocks.</documentation>
+
    <input message="tns:compileTriggersRequest"/>
    <output message="tns:compileTriggersResponse"/>
   </operation>
@@ -415,6 +459,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <input message="tns:executeAnonymousRequest"/>
    <output message="tns:executeAnonymousResponse"/>
   </operation>
+
   <operation name="runTests">
    <documentation>Execute test methods</documentation>
    <input message="tns:runTestsRequest"/>
@@ -423,6 +468,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
   <operation name="wsdlToApex">
    <documentation>Generate Apex packages from WSDL for web service callouts</documentation>
    <input message="tns:wsdlToApexRequest"/>
+
    <output message="tns:wsdlToApexResponse"/>
   </operation>
  </portType>
@@ -432,6 +478,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <soap:operation soapAction=""/>
    <input>
     <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+
     <soap:header use="literal" part="DebuggingHeader" message="tns:Header"/>
     <soap:header use="literal" part="PackageVersionHeader" message="tns:Header"/>
     <soap:header use="literal" part="CallOptions" message="tns:Header"/>
@@ -441,6 +488,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     <soap:header use="literal" part="DebuggingInfo" message="tns:Header"/>
     <soap:body use="literal"/>
    </output>
+
   </operation>
   <operation name="compileClasses">
    <soap:operation soapAction=""/>
@@ -450,6 +498,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     <soap:header use="literal" part="CallOptions" message="tns:Header"/>
     <soap:body use="literal" parts="parameters"/>
    </input>
+
    <output>
     <soap:body use="literal"/>
    </output>
@@ -459,6 +508,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <input>
     <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
     <soap:header use="literal" part="PackageVersionHeader" message="tns:Header"/>
+
     <soap:header use="literal" part="CallOptions" message="tns:Header"/>
     <soap:body use="literal" parts="parameters"/>
    </input>
@@ -468,6 +518,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
   </operation>
   <operation name="executeAnonymous">
    <soap:operation soapAction=""/>
+
    <input>
     <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
     <soap:header use="literal" part="DebuggingHeader" message="tns:Header"/>
@@ -477,6 +528,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     <soap:header use="literal" part="DisableFeedTrackingHeader" message="tns:Header"/>
     <soap:body use="literal" parts="parameters"/>
    </input>
+
    <output>
     <soap:header use="literal" part="DebuggingInfo" message="tns:Header"/>
     <soap:body use="literal"/>
@@ -486,6 +538,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    <soap:operation soapAction=""/>
    <input>
     <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+
     <soap:header use="literal" part="DebuggingHeader" message="tns:Header"/>
     <soap:header use="literal" part="CallOptions" message="tns:Header"/>
     <soap:body use="literal" parts="parameters"/>
@@ -495,6 +548,7 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
     <soap:body use="literal"/>
    </output>
   </operation>
+
   <operation name="wsdlToApex">
    <soap:operation soapAction=""/>
    <input>
@@ -504,13 +558,15 @@ Copyright 2006-2009 Salesforce.com, inc. All Rights Reserved
    </input>
    <output>
     <soap:body use="literal"/>
+
    </output>
   </operation>
  </binding>
  <service name="ApexService">
   <documentation>Manage your Salesforce.com Apex classes and triggers</documentation>
   <port binding="tns:ApexBinding" name="Apex">
-   <soap:address location="https://na1-api-blitz01.soma.salesforce.com/services/Soap/s/18.0"/>
+   <soap:address location="https://login.salesforce.com/services/Soap/s/18.0"/>
   </port>
+
  </service>
 </definitions>
