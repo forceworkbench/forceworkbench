@@ -1,9 +1,8 @@
 <?php
-
 class QueryRequest {	
 	//FIELDS
 	private $exportTo 		= "screen";
-	private $queryAction	= "query";
+	private $queryAction	= "Query";
 	
 	private $object			= null;
 	private $fields			= null;
@@ -20,67 +19,91 @@ class QueryRequest {
 	
 	//CONSTRUCTORS
 	public function __construct($source){
-		$this->object        = $source['QB_object_sel'];
-		$this->fields 		 = $source['QB_field_sel'];
-		$this->orderByField  = $source['QB_orderby_field'];
-		$this->orderByDir	 = $source['QB_orderby_sort'];
-		$this->orderByNulls  = $source['QB_nulls'];
-		$this->limit		 = $source['QB_limit_txt'];
-		$this->orderByField  = $source['QB_orderby_field'];
+		if(isset($source['QB_object_sel'])) 	$this->object        = $source['QB_object_sel'];
+		if(isset($source['QB_field_sel'])) 		$this->fields 		 = $source['QB_field_sel'];
+		if(isset($source['QB_orderby_field'])) 	$this->orderByField  = $source['QB_orderby_field'];
+		if(isset($source['QB_orderby_sort'])) 	$this->orderByDir	 = $source['QB_orderby_sort'];
+		if(isset($source['QB_nulls'])) 			$this->orderByNulls  = $source['QB_nulls'];
+		if(isset($source['QB_limit_txt'])) 		$this->limit		 = $source['QB_limit_txt'];
+		if(isset($source['QB_orderby_field'])) 	$this->orderByField  = $source['QB_orderby_field'];
 		
-		$this->filters[0] = new QueryRequestFilter($source['QB_filter_field_sel'], $source['QB_oper_sel'], $source['QB_filter_txt']);
-		$this->filters[1] = new QueryRequestFilter($source['QB_filter_field_sel2'], $source['QB_oper_sel2'], $source['QB_filter_txt2']);
-		
-		if(get_magic_quotes_gpc()){
-			$this->soqlQuery = stripslashes($source['soql_query']);
+		if(isset($source['QB_filter_field_sel']) && isset($source['QB_oper_sel']) && isset($source['QB_filter_txt'])){
+			$this->filters[0] = new QueryRequestFilter($source['QB_filter_field_sel'], $source['QB_oper_sel'], $source['QB_filter_txt']);
 		} else {
-			$this->soqlQuery = $source['soql_query'];
+			$this->filters[0] = new QueryRequestFilter(null, null, null);
+		}
+		
+		if(isset($source['QB_filter_field_sel2']) && isset($source['QB_oper_sel2']) && isset($source['QB_filter_txt2'])){
+			$this->filters[1] = new QueryRequestFilter($source['QB_filter_field_sel2'], $source['QB_oper_sel2'], $source['QB_filter_txt2']);
+		} else {
+			$this->filters[1] = new QueryRequestFilter(null, null, null);
+		}
+				
+		if(isset($source['soql_query'])){
+			if(get_magic_quotes_gpc()){
+				$this->soqlQuery = stripslashes($source['soql_query']);
+			} else {
+				$this->soqlQuery = $source['soql_query'];
+			}
 		}
 
-		$this->exportTo		 = $source['export_action'];
-		$this->queryAction	 = $source['query_action'];
+		if(isset($source['export_action']))		$this->exportTo		 = $source['export_action'];
+		if(isset($source['query_action']))		$this->queryAction	 = $source['query_action'];
 	}
 	
 	//GETTERS
-	function getExportTo(){
+	public function getExportTo(){
 		return $this->exportTo;
 	}	
 	
-	function getQueryAction(){
+	public function getQueryAction(){
 		return $this->queryAction;
 	}	
 	
-	function getObject(){
+	public function getObject(){
 		return $this->object;
 	}	
 	
-	function getFields(){
+	public function getFields(){
 		return $this->fields;
 	}
 		
-	function getOrderByField(){
+	public function getOrderByField(){
 		return $this->orderByField;
 	}	
 	
-	function getOrderByDir(){
+	public function getOrderByDir(){
 		return $this->orderByDir;
 	}	
 
-	function getOrderByNulls(){
+	public function getOrderByNulls(){
 		return $this->orderByNulls;
 	}
 	
-	function getLimit(){
+	public function getLimit(){
 		return $this->limit;
 	}	
 	
-	function getFilter($filterIndex){
+	public function getFilter($filterIndex){
 		return $this->filters[$filterIndex];
 	}
 
-	function getSoqlQuery(){
+	public function getSoqlQuery(){
 		return $this->soqlQuery;
 	}
+	
+	//SETTERS	
+	public function setQueryAction($queryAction){
+		$this->queryAction = $queryAction;
+	}	
+	
+	public function setExportTo($exportTo){
+		$this->exportTo = $exportTo;
+	}
+
+	public function setObject($object){
+		$this->object = $object;
+	}	
 }
 
 class QueryRequestFilter {
@@ -95,18 +118,17 @@ class QueryRequestFilter {
 		$this->value = $value;
 	}
 
-	function getField(){
+	public function getField(){
 		return $this->field;
 	}	
 	
-	function getCompOper(){
+	public function getCompOper(){
 		return $this->compOper;
 	}	
 
-	function getValue(){
+	public function getValue(){
 		return $this->value;
 	}
 	
 }
-
-?> 
+?>

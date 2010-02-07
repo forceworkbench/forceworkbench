@@ -1,55 +1,25 @@
 <?php
+
+require_once ('soxl/QueryObjects.php');
 require_once ('session.php');
 require_once ('shared.php');
 
-if(isset($_POST['soql_query'])){
-	//correction for dynamic magic quotes
-	if(get_magic_quotes_gpc()){
-		$_POST['soql_query'] = stripslashes($_POST['soql_query']);
-	}
 
-	$_SESSION['soql_query'] = isset($_POST['soql_query']) ? $_POST['soql_query'] : null;
+if(isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query'){
+	$_SESSION['queryRequestHistory'][0] = new QueryRequest($_REQUEST);
+} 
 
-	$_SESSION['QB_field_sel'] = isset($_POST['QB_field_sel']) ? $_POST['QB_field_sel'] : null;
-	$_SESSION['QB_filter_field_sel'] = isset($_POST['QB_filter_field_sel']) ? $_POST['QB_filter_field_sel'] : null;
-	$_SESSION['QB_oper_sel'] = isset($_POST['QB_oper_sel']) ? $_POST['QB_oper_sel'] : null;
-	$_SESSION['QB_filter_txt'] = isset($_POST['QB_filter_txt']) ? $_POST['QB_filter_txt'] : null;
-	$_SESSION['QB_filter_field_sel2'] = isset($_POST['QB_filter_field_sel2']) ? $_POST['QB_filter_field_sel2'] : null;
-	$_SESSION['QB_oper_sel2'] = isset($_POST['QB_oper_sel2']) ? $_POST['QB_oper_sel2'] : null;
-	$_SESSION['QB_filter_txt2'] = isset($_POST['QB_filter_txt2']) ? $_POST['QB_filter_txt2'] : null;
-	$_SESSION['QB_nulls'] = isset($_POST['QB_nulls']) ? $_POST['QB_nulls'] : null;
-	$_SESSION['QB_orderby_sort'] = isset($_POST['QB_orderby_sort']) ? $_POST['QB_orderby_sort'] : null;
-	$_SESSION['QB_orderby_field'] = isset($_POST['QB_orderby_field']) ? $_POST['QB_orderby_field'] : null;
-	$_SESSION['QB_limit_txt'] = isset($_POST['QB_limit_txt']) ? $_POST['QB_limit_txt'] : null;
+if(isset($_SESSION['queryRequestHistory'][0])){
+	$queryRequest = $_SESSION['queryRequestHistory'][0];
+} else {
+	$queryRequest = new QueryRequest(null);
 }
-
-$_POST['QB_field_sel'] = isset($_SESSION['QB_field_sel']) ? $_SESSION['QB_field_sel'] : null;
-$_POST['QB_filter_field_sel'] = isset($_SESSION['QB_filter_field_sel']) ? $_SESSION['QB_filter_field_sel'] : null;
-$_POST['QB_oper_sel'] = isset($_SESSION['QB_oper_sel']) ? $_SESSION['QB_oper_sel'] : null;
-$_POST['QB_filter_txt'] = isset($_SESSION['QB_filter_txt']) ? $_SESSION['QB_filter_txt'] : null;
-$_POST['QB_filter_field_sel2'] = isset($_SESSION['QB_filter_field_sel2']) ? $_SESSION['QB_filter_field_sel2'] : null;
-$_POST['QB_oper_sel2'] = isset($_SESSION['QB_oper_sel2']) ? $_SESSION['QB_oper_sel2'] : null;
-$_POST['QB_filter_txt2'] = isset($_SESSION['QB_filter_txt2']) ? $_SESSION['QB_filter_txt2'] : null;
-$_POST['QB_nulls'] = isset($_SESSION['QB_nulls']) ? $_SESSION['QB_nulls'] : null;
-$_POST['QB_orderby_sort'] = isset($_SESSION['QB_orderby_sort']) ? $_SESSION['QB_orderby_sort'] : null;
-$_POST['QB_orderby_field'] = isset($_SESSION['QB_orderby_field']) ? $_SESSION['QB_orderby_field'] : null;
-$_POST['QB_limit_txt'] = isset($_SESSION['QB_limit_txt']) ? $_SESSION['QB_limit_txt'] : null;
 
 if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 	if (isset($_POST['default_object'])) $_SESSION['default_object'] = $_POST['default_object'];
-	unset($_POST['QB_field_sel']);
-	unset($_POST['QB_filter_field_sel']);
-	unset($_POST['QB_oper_sel']);
-	unset($_POST['QB_filter_txt']);
-	unset($_POST['QB_filter_field_sel2']);
-	unset($_POST['QB_oper_sel2']);
-	unset($_POST['QB_filter_txt2']);
-	unset($_POST['QB_nulls']);
-	unset($_POST['QB_orderby_sort']);
-	unset($_POST['QB_orderby_field']);
-	unset($_POST['QB_limit_txt']);
+	$queryRequest = new QueryRequest(null);
+	$queryRequest->setObject($_POST['default_object']);
 }
-
 
 //Main form logic: When the user first enters the page, display form defaulted to
 //show the query results with default object selected on a previous page, otherwise
@@ -58,31 +28,34 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
-	show_query_form($_POST['soql_query'],'screen',$_POST['query_action']);
+	$queryRequest->setExportTo('screen');
+	show_query_form($queryRequest);
 	$queryTimeStart = microtime(true);
 	$records = query(null,'QueryMore',$_SESSION['queryLocator']);
 	$queryTimeEnd = microtime(true);
 	$queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
 	show_query_result($records,$queryTimeElapsed);
 	include_once('footer.php');
-} else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && isset($_POST['soql_query']) && $_POST['export_action'] == 'screen') {
+} else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'screen') {
 	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
-	show_query_form($_POST['soql_query'],'screen',$_POST['query_action']);
+	$queryRequest->setExportTo('screen');
+	show_query_form($queryRequest);
 	$queryTimeStart = microtime(true);
-	$records = query($_POST['soql_query'],$_POST['query_action']);
+	$records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction());
 	$queryTimeEnd = microtime(true);
 	$queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
 	show_query_result($records,$queryTimeElapsed);
 	include_once('footer.php');
-} elseif (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $_POST['soql_query'] && $_POST['export_action'] == 'csv') {
+} elseif (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
 	if (!substr_count($_POST['soql_query'],"count()")){
-		$records = query($_POST['soql_query'],$_POST['query_action'],null,true);
-		export_query_csv($records,$_POST['query_action']);
+		$records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction(),null,true);
+		export_query_csv($records,$queryRequest->getExportTo());
 	} else {
 		print "<body onLoad='toggleFieldDisabled();'>";
 		require_once ('header.php');
-		show_query_form($_POST['soql_query'],'csv',$_POST['query_action']);
+		$queryRequest->setExportTo('csv');
+		show_query_form($queryRequest);
 		print "</form>"; //could include inside because if IE page loading bug
 		print "<p>&nbsp;</p>";
 		show_error("count() is not supported for CSV file export. Change export to Browser or choose fields and try again.");
@@ -91,7 +64,9 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 } else {
 	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
-	show_query_form(isset($_SESSION['soql_query'])?$_SESSION['soql_query']:null,'screen','Query');
+	$queryRequest->setExportTo('screen');
+	$queryRequest->setQueryAction('Query');
+	show_query_form($queryRequest);
 	print "</form>"; //could include inside because if IE page loading bug
 	include_once('footer.php');
 }
@@ -100,7 +75,7 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 
 //Show the main SOQL query form with default query or last submitted query and export action (screen or CSV)
 
-function show_query_form($soql_query,$export_action,$query_action){
+function show_query_form($queryRequest){
 
 	if ($_SESSION['default_object']){
 		$describeSObject_result = describeSObject($_SESSION['default_object'], true);
@@ -328,8 +303,8 @@ QUERY_BUILDER_SCRIPT;
 	if(isset($describeSObject_result)){
 
 		print   " <option value='count()'";
-		if(isset($_POST['QB_field_sel'])){ //check to make sure something is selected; otherwise warnings will display
-			foreach ($_POST['QB_field_sel'] as $selected_field){
+		if($queryRequest->getFields() != null){ //check to make sure something is selected; otherwise warnings will display
+			foreach ($queryRequest->getFields() as $selected_field){
 				if ('count()' == $selected_field) print " selected='selected' ";
 			}
 		}
@@ -338,8 +313,8 @@ QUERY_BUILDER_SCRIPT;
 		print ">$field->name</option>\n";
 		foreach($describeSObject_result->fields as $fields => $field){
 			print   " <option value='$field->name'";
-			if(isset($_POST['QB_field_sel'])){ //check to make sure something is selected; otherwise warnings will display
-				foreach ($_POST['QB_field_sel'] as $selected_field){
+			if($queryRequest->getFields() != null){ //check to make sure something is selected; otherwise warnings will display
+				foreach ($queryRequest->getFields() as $selected_field){
 					if ($field->name == $selected_field) print " selected='selected' ";
 				}
 			}
@@ -355,20 +330,20 @@ QUERY_BUILDER_SCRIPT;
 	print "<table border='0' align='right'>\n";
 	print "<tr><td valign='top' colspan=2>Export to:<br/>" .
 			"<label><input type='radio' name='export_action' value='screen' ";
-	if ($export_action == 'screen') print "checked='true'";
+	if ($queryRequest->getExportTo() == 'screen') print "checked='true'";
 	print " >Browser</label>&nbsp;";
 
 	print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
-	if ($export_action == 'csv') print "checked='true'";
+	if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
 	print " >CSV File</label>";
 
 	print "<td valign='top' colspan=2>Deleted and archived records:<br/>" .
 			"<label><input type='radio' name='query_action' value='Query' ";
-	if ($query_action == 'Query') print "checked='true'";
+	if ($queryRequest->getQueryAction() == 'Query') print "checked='true'";
 	print " >Exclude</label>&nbsp;";
 
 	print "<label><input type='radio' name='query_action' value='QueryAll' ";
-	if ($query_action == 'QueryAll') print "checked='true'";
+	if ($queryRequest->getQueryAction() == 'QueryAll') print "checked='true'";
 	print " >Include</label></td></tr>\n";
 
 
@@ -381,57 +356,58 @@ QUERY_BUILDER_SCRIPT;
 	if(isset($describeSObject_result)){
 		foreach($describeSObject_result->fields as $fields => $field){
 			print   " <option value='$field->name'";
-			if (isset($_POST['QB_orderby_field']) && $field->name == $_POST['QB_orderby_field']) print " selected='selected' ";
+			if ($queryRequest->getOrderByField() != null && $field->name == $queryRequest->getOrderByField()) print " selected='selected' ";
 			print ">$field->name</option>\n";
 		}
 	}
 	print "</select></td>\n";
 
 	$QB_orderby_sort_options = array(
-			'ASC' => 'A to Z',
-			'DESC' => 'Z to A'
-			);
-			print "<td><select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 10em;' onChange='build_query();'>\n";
-			foreach ($QB_orderby_sort_options as $op_key => $op){
-				print "<option value='$op_key'";
-				if (isset($_POST['QB_orderby_sort']) && $op_key == $_POST['QB_orderby_sort']) print " selected='selected' ";
-				print ">$op</option>\n";
-			}
-			print "</select></td>\n";
+		'ASC' => 'A to Z',
+		'DESC' => 'Z to A'
+	);
+	
+	print "<td><select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 10em;' onChange='build_query();'>\n";
+	foreach ($QB_orderby_sort_options as $op_key => $op){
+		print "<option value='$op_key'";
+		if (isset($_POST['QB_orderby_sort']) && $op_key == $_POST['QB_orderby_sort']) print " selected='selected' ";
+		print ">$op</option>\n";
+	}
+	print "</select></td>\n";
 
-			$QB_nulls_options = array(
-			'FIRST' => 'Nulls First',
-			'LAST' => 'Nulls Last'
-			);
-			print "<td><select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='build_query();'>\n";
-			foreach ($QB_nulls_options as $op_key => $op){
-				print "<option value='$op_key'";
-				if (isset($_POST['QB_nulls']) && $op_key == $_POST['QB_nulls']) print " selected='selected' ";
-				print ">$op</option>\n";
-			}
-			print "</select></td>\n";
+	$QB_nulls_options = array(
+	'FIRST' => 'Nulls First',
+	'LAST' => 'Nulls Last'
+	);
+	print "<td><select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='build_query();'>\n";
+	foreach ($QB_nulls_options as $op_key => $op){
+		print "<option value='$op_key'";
+		if ($queryRequest->getOrderByNulls() != null && $op_key == $queryRequest->getOrderByNulls()) print " selected='selected' ";
+		print ">$op</option>\n";
+	}
+	print "</select></td>\n";
 
-			print "<td><input type='text' id='QB_limit_txt' size='11' name='QB_limit_txt' value='" . htmlspecialchars(isset($_POST['QB_limit_txt']) ? $_POST['QB_limit_txt'] : null,ENT_QUOTES,'UTF-8') . "' onkeyup='build_query();' /></td>\n";
+	print "<td><input type='text' id='QB_limit_txt' size='11' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() != null ? $queryRequest->getLimit() : null,ENT_QUOTES,'UTF-8') . "' onkeyup='build_query();' /></td>\n";
 
-			print "</tr>\n";
-
-
-			print "<tr><td valign='top' colspan=4 nowrap>\n";
-			print "<br/>Filter results by:<br/>\n";
-
-			print "<select id='QB_filter_field_sel' name='QB_filter_field_sel' style='width: 16em;' onChange='build_query();'>\n";
-			print "<option value=''></option>";
-			if(isset($describeSObject_result)){
-				foreach($describeSObject_result->fields as $fields => $field){
-					print   " <option value='$field->name'";
-					if (isset($_POST['QB_filter_field_sel']) && $field->name == $_POST['QB_filter_field_sel']) print " selected='selected' ";
-					print ">$field->name</option>\n";
-				}
-			}
-			print "</select>\n";
+	print "</tr>\n";
 
 
-			$ops = array(
+	print "<tr><td valign='top' colspan=4 nowrap>\n";
+	print "<br/>Filter results by:<br/>\n";
+
+	print "<select id='QB_filter_field_sel' name='QB_filter_field_sel' style='width: 16em;' onChange='build_query();'>\n";
+	print "<option value=''></option>";
+	if(isset($describeSObject_result)){
+		foreach($describeSObject_result->fields as $fields => $field){
+			print   " <option value='$field->name'";
+			if ($queryRequest->getFilter(0)->getField() != null && $field->name == $queryRequest->getFilter(0)->getField()) print " selected='selected' ";
+			print ">$field->name</option>\n";
+		}
+	}
+	print "</select>\n";
+
+
+	$ops = array(
 		'=' => '=',
 		'!=' => '&ne;',
 		'<' => '&lt;',
@@ -445,75 +421,58 @@ QUERY_BUILDER_SCRIPT;
 		'NOT IN' => 'not in',
 		'INCLUDES' => 'includes',
 		'EXCLUDES' => 'excludes'
-		);
+	);
 
-		print "<select id='QB_oper_sel' name='QB_oper_sel' style='width: 10em;' onChange='build_query();'>\n";
-		foreach ($ops as $op_key => $op){
-			print "<option value='$op_key'";
-			if (isset($_POST['QB_oper_sel']) && $op_key == $_POST['QB_oper_sel']) print " selected='selected' ";
-			print ">$op</option>\n";
+	print "<select id='QB_oper_sel' name='QB_oper_sel' style='width: 10em;' onChange='build_query();'>\n";
+	foreach ($ops as $op_key => $op){
+		print "<option value='$op_key'";
+		if ($queryRequest->getFilter(0)->getCompOper() != null && $op_key == $queryRequest->getFilter(0)->getCompOper() ) print " selected='selected' ";
+		print ">$op</option>\n";
+	}
+	print "</select>\n";
+
+	print "<input type='text' id='QB_filter_txt' size='31' name='QB_filter_txt' value=\"" . htmlspecialchars($queryRequest->getFilter(0)->getValue() != null ? $queryRequest->getFilter(0)->getValue() : null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />";
+	print "</td></tr>\n";
+
+
+	print "<tr><td valign='top' colspan=4 nowrap>\n";
+	print "<br/>Then filter results by:<br/>\n";
+
+	print "<select id='QB_filter_field_sel2' name='QB_filter_field_sel2' style='width: 16em;' onChange='build_query();'>\n";
+	print "<option value=''></option>\n";
+	if(isset($describeSObject_result)){
+		foreach($describeSObject_result->fields as $fields => $field){
+			print   " <option value='$field->name'";
+			if ($queryRequest->getFilter(1)->getField() != null && $field->name == $queryRequest->getFilter(1)->getField()) print " selected='selected' ";
+			print ">$field->name</option>\n";
 		}
-		print "</select>\n";
+	}
+	print "</select> \n";
 
-		print "<input type='text' id='QB_filter_txt' size='31' name='QB_filter_txt' value=\"" . htmlspecialchars(isset($_POST['QB_filter_txt'])?$_POST['QB_filter_txt']:null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />";
-		print "</td></tr>\n";
+	print "<select id='QB_oper_sel2' name='QB_oper_sel2' style='width: 10em;' onChange='build_query();'>";
+	foreach ($ops as $op_key => $op){
+		print "<option value='$op_key'";
+		if ($queryRequest->getFilter(1)->getCompOper() != null && $op_key == $queryRequest->getFilter(1)->getCompOper() ) print " selected='selected' ";
+		print ">$op</option>";
+	}
+	print "</select>\n";
 
+	print "<input type='text' id='QB_filter_txt2' size='31' name='QB_filter_txt2' value=\"" . htmlspecialchars($queryRequest->getFilter(1)->getValue() != null ? $queryRequest->getFilter(1)->getValue() : null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />\n";
+	print "</td></tr>\n";
 
-		print "<tr><td valign='top' colspan=4 nowrap>\n";
-		print "<br/>Then filter results by:<br/>\n";
+	print "</table>\n";
 
-		print "<select id='QB_filter_field_sel2' name='QB_filter_field_sel2' style='width: 16em;' onChange='build_query();'>\n";
-		print "<option value=''></option>\n";
-		if(isset($describeSObject_result)){
-			foreach($describeSObject_result->fields as $fields => $field){
-				print   " <option value='$field->name'";
-				if (isset($_POST['QB_filter_field_sel2']) && $field->name == $_POST['QB_filter_field_sel2']) print " selected='selected' ";
-				print ">$field->name</option>\n";
-			}
-		}
-		print "</select> \n";
+	print "</td></tr>\n";
 
 
-		$ops = array(
-		'=' => '=',
-		'!=' => '&ne;',
-		'<' => '&lt;',
-		'<=' => '&le;',
-		'>' => '&gt;',
-		'>=' => '&ge;',
-		'starts' => 'starts with',
-		'ends' => 'ends with',
-		'contains' => 'contains',
-		'IN' => 'in',
-		'NOT IN' => 'not in',
-		'INCLUDES' => 'includes',
-		'EXCLUDES' => 'excludes'
-		);
-
-		print "<select id='QB_oper_sel2' name='QB_oper_sel2' style='width: 10em;' onChange='build_query();'>";
-		foreach ($ops as $op_key => $op){
-			print "<option value='$op_key'";
-			if (isset($_POST['QB_oper_sel2']) && $op_key == $_POST['QB_oper_sel2']) print " selected='selected' ";
-			print ">$op</option>";
-		}
-		print "</select>\n";
-
-		print "<input type='text' id='QB_filter_txt2' size='31' name='QB_filter_txt2' value=\"" . htmlspecialchars(isset($_POST['QB_filter_txt2'])?$_POST['QB_filter_txt2']:null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />\n";
-		print "</td></tr>\n";
-
-		print "</table>\n";
-
-		print "</td></tr>\n";
+	print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
+		"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='108' rows='" . $_SESSION['config']['textareaRows'] . "'  style='overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES,'UTF-8') . "</textarea>\n" .
+	  "</td></tr>\n";
 
 
-		print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-			"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='108' rows='" . $_SESSION['config']['textareaRows'] . "'  style='overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($soql_query,ENT_QUOTES,'UTF-8') . "</textarea>\n" .
-		  "</td></tr>\n";
-
-
-		print "<tr><td colspan=5><input type='submit' name='querySubmit' value='Query' onclick='return parentChildRelationshipQueryBlocker();' />\n";
-		print "<input type='reset' value='Reset' />\n";
-		print "</td></tr></table><p/>\n";
+	print "<tr><td colspan=5><input type='submit' name='querySubmit' value='Query' onclick='return parentChildRelationshipQueryBlocker();' />\n";
+	print "<input type='reset' value='Reset' />\n";
+	print "</td></tr></table><p/>\n";
 }
 
 
@@ -755,12 +714,14 @@ function export_query_csv($records,$query_action){
 			
 		} catch (Exception $e) {
 			require_once("header.php");
+			//TODO: work w/ request obj
 			show_query_form($_POST['soql_query'],'csv',$query_action);
 			print "<p />";
 			show_error($e->getMessage(),false,true);
 		}
 	} else {
 		require_once("header.php");
+		//TODO: work w/ request obj
 		show_query_form($_POST['soql_query'],'csv',$query_action);
 		print "<p />";
 		show_error("No records returned for CSV output.",false,true);
