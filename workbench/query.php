@@ -4,13 +4,23 @@ require_once ('soxl/QueryObjects.php');
 require_once ('session.php');
 require_once ('shared.php');
 
-
-if(isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query'){
-	$_SESSION['queryRequestHistory'][0] = new QueryRequest($_REQUEST);
+//save as named query
+if(isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0){
+	$_SESSION['savedQueryRequests'][$_REQUEST['saveQr']] = new QueryRequest($_REQUEST);
 } 
 
-if(isset($_SESSION['queryRequestHistory'][0])){
-	$queryRequest = $_SESSION['queryRequestHistory'][0];
+//save last query. always do this even if named.
+if(isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query'){
+	$_SESSION['lastQueryRequest'] = new QueryRequest($_REQUEST);
+} 
+
+//populate queryRequest for this page view. first see if user wants to retreive a saved query,
+//then see if ther was a last query, else just show a null query.
+if(isset($_REQUEST['getQr']) && isset($_REQUEST['getQr']) != "" && isset($_SESSION['savedQueryRequests'][$_REQUEST['getQr']])){
+	$queryRequest = $_SESSION['savedQueryRequests'][$_REQUEST['getQr']];
+	$queryRequest->setName($_REQUEST['getQr']);
+} else if(isset($_SESSION['lastQueryRequest'])){
+	$queryRequest = $_SESSION['lastQueryRequest'];
 } else {
 	$queryRequest = new QueryRequest(null);
 }
@@ -470,8 +480,25 @@ QUERY_BUILDER_SCRIPT;
 	  "</td></tr>\n";
 
 
-	print "<tr><td colspan=5><input type='submit' name='querySubmit' value='Query' onclick='return parentChildRelationshipQueryBlocker();' />\n";
-	print "<input type='reset' value='Reset' />\n";
+	print "<tr><td colspan=1><input type='submit' name='querySubmit' value='Query' onclick='return parentChildRelationshipQueryBlocker();' />\n" .
+	      "<input type='reset' value='Reset' />\n" .
+	      "</td>";
+	
+	//save and retrieve named queries
+	print "<td colspan=4 align='right'>" . 	
+	      "&nbsp;Save as: <input type='text' name='saveQr' value='" . $queryRequest->getName() . "' />\n" .
+	
+		  "&nbsp;Retreive: " .
+		  "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();'>" . 
+	      "<option value='' selected='selected'></option>";
+	foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr){
+		if($qrName != null) print "<option value='$qrName'>$qrName</option>";
+	}
+	print "</select>" . 
+		  "&nbsp;&nbsp;" . 
+	      "<img onmouseover=\"Tip('Provide a name for a query and retreive it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
+	
+	
 	print "</td></tr></table><p/>\n";
 }
 
@@ -714,14 +741,12 @@ function export_query_csv($records,$query_action){
 			
 		} catch (Exception $e) {
 			require_once("header.php");
-			//TODO: work w/ request obj
 			show_query_form($_POST['soql_query'],'csv',$query_action);
 			print "<p />";
 			show_error($e->getMessage(),false,true);
 		}
 	} else {
 		require_once("header.php");
-		//TODO: work w/ request obj
 		show_query_form($_POST['soql_query'],'csv',$query_action);
 		print "<p />";
 		show_error("No records returned for CSV output.",false,true);
