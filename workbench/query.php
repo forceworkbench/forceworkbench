@@ -406,22 +406,6 @@ QUERY_BUILDER_SCRIPT;
 
 	print "</tr>\n";
 
-
-	print "<tr><td valign='top' colspan=4 nowrap>\n";
-	print "<br/>Filter results by:<br/>\n";
-
-	print "<select id='QB_filter_field_0' name='QB_filter_field_0' style='width: 16em;' onChange='build_query();'>\n";
-	print "<option value=''></option>";
-	if(isset($describeSObject_result)){
-		foreach($describeSObject_result->fields as $fields => $field){
-			print   " <option value='$field->name'";
-			if ($queryRequest->getFilter(0)->getField() != null && $field->name == $queryRequest->getFilter(0)->getField()) print " selected='selected' ";
-			print ">$field->name</option>\n";
-		}
-	}
-	print "</select>\n";
-
-
 	$ops = array(
 		'=' => '=',
 		'!=' => '&ne;',
@@ -438,42 +422,33 @@ QUERY_BUILDER_SCRIPT;
 		'EXCLUDES' => 'excludes'
 	);
 
-	print "<select id='QB_filter_compOper_0' name='QB_filter_compOper_0' style='width: 10em;' onChange='build_query();'>\n";
-	foreach ($ops as $op_key => $op){
-		print "<option value='$op_key'";
-		if ($queryRequest->getFilter(0)->getCompOper() != null && $op_key == $queryRequest->getFilter(0)->getCompOper() ) print " selected='selected' ";
-		print ">$op</option>\n";
-	}
-	print "</select>\n";
-
-	print "<input type='text' id='QB_filter_value_0' size='31' name='QB_filter_value_0' value=\"" . htmlspecialchars($queryRequest->getFilter(0)->getValue() != null ? $queryRequest->getFilter(0)->getValue() : null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />";
-	print "</td></tr>\n";
-
-
-	print "<tr><td valign='top' colspan=4 nowrap>\n";
-	print "<br/>Then filter results by:<br/>\n";
-
-	print "<select id='QB_filter_field_1' name='QB_filter_field_1' style='width: 16em;' onChange='build_query();'>\n";
-	print "<option value=''></option>\n";
-	if(isset($describeSObject_result)){
-		foreach($describeSObject_result->fields as $fields => $field){
-			print   " <option value='$field->name'";
-			if ($queryRequest->getFilter(1)->getField() != null && $field->name == $queryRequest->getFilter(1)->getField()) print " selected='selected' ";
-			print ">$field->name</option>\n";
+	$numFilters = 2; //TODO: make dynamic
+	for($f = 0; $f < $numFilters; $f++){	
+		print "<tr><td valign='top' colspan=4 nowrap>\n";
+		print "<br/>Filter results by:<br/>\n";
+		
+		print "<select id='QB_filter_field_$f' name='QB_filter_field_$f' style='width: 16em;' onChange='build_query();'>\n";
+		print "<option value=''></option>";
+		if(isset($describeSObject_result)){
+			foreach($describeSObject_result->fields as $fields => $field){
+				print   " <option value='$field->name'";
+				if ($queryRequest->getFilter($f)->getField() != null && $field->name == $queryRequest->getFilter($f)->getField()) print " selected='selected' ";
+				print ">$field->name</option>\n";
+			}
 		}
+		print "</select>\n";
+	
+		print "<select id='QB_filter_compOper_$f' name='QB_filter_compOper_$f' style='width: 10em;' onChange='build_query();'>\n";
+		foreach ($ops as $op_key => $op){
+			print "<option value='$op_key'";
+			if ($queryRequest->getFilter($f)->getCompOper() != null && $op_key == $queryRequest->getFilter($f)->getCompOper() ) print " selected='selected' ";
+			print ">$op</option>\n";
+		}
+		print "</select>\n";
+	
+		print "<input type='text' id='QB_filter_value_$f' size='31' name='QB_filter_value_$f' value=\"" . htmlspecialchars($queryRequest->getFilter($f)->getValue() != null ? $queryRequest->getFilter($f)->getValue() : null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />";
+		print "</td></tr>\n";
 	}
-	print "</select> \n";
-
-	print "<select id='QB_filter_compOper_1' name='QB_filter_compOper_1' style='width: 10em;' onChange='build_query();'>";
-	foreach ($ops as $op_key => $op){
-		print "<option value='$op_key'";
-		if ($queryRequest->getFilter(1)->getCompOper() != null && $op_key == $queryRequest->getFilter(1)->getCompOper() ) print " selected='selected' ";
-		print ">$op</option>";
-	}
-	print "</select>\n";
-
-	print "<input type='text' id='QB_filter_value_1' size='31' name='QB_filter_value_1' value=\"" . htmlspecialchars($queryRequest->getFilter(1)->getValue() != null ? $queryRequest->getFilter(1)->getValue() : null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />\n";
-	print "</td></tr>\n";
 
 	print "</table>\n";
 
