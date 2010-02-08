@@ -355,7 +355,7 @@ function addFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue)
 	defaultValue = defaultValue != null ? defaultValue : "";
 	row +=  "</select>&nbsp;" +
 			"<input type='text' id='QB_filter_value_" + filterRuwNum + "' size='31' name='QB_filter_value_" + filterRuwNum + "' value='" + defaultValue + "' onkeyup='build_query();' />" + 
-			"<span onclick='addFilterRow();' onMouseOver='this.style.cursor=\"pointer\"'>&nbsp;+</span>";	
+			"<!-- <span onclick='addFilterRow();' onMouseOver='this.style.cursor=\"pointer\"'>&nbsp;+</span> -->";	
 
 
 	//add to the DOM
