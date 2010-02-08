@@ -552,7 +552,7 @@ $config["header_proxyOptions"] = array(
 //  
 ////////////////////////////////////////////////////////////////////////////////////////// 
 
-$GLOBALS["WORKBENCH_VERSION"] = "2.5.18 Alpha 1";
+$GLOBALS["WORKBENCH_VERSION"] = "2.5.18 Alpha 2";
 
 class Page {
 	public $title;
