@@ -29,16 +29,13 @@ class QueryRequest {
 		if(isset($source['QB_limit_txt'])) 		$this->limit		 = $source['QB_limit_txt'];
 		if(isset($source['QB_orderby_field'])) 	$this->orderByField  = $source['QB_orderby_field'];
 		
-		if(isset($source['QB_filter_field_sel']) && isset($source['QB_oper_sel']) && isset($source['QB_filter_txt'])){
-			$this->filters[0] = new QueryRequestFilter($source['QB_filter_field_sel'], $source['QB_oper_sel'], $source['QB_filter_txt']);
-		} else {
-			$this->filters[0] = new QueryRequestFilter(null, null, null);
-		}
-		
-		if(isset($source['QB_filter_field_sel2']) && isset($source['QB_oper_sel2']) && isset($source['QB_filter_txt2'])){
-			$this->filters[1] = new QueryRequestFilter($source['QB_filter_field_sel2'], $source['QB_oper_sel2'], $source['QB_filter_txt2']);
-		} else {
-			$this->filters[1] = new QueryRequestFilter(null, null, null);
+		$numFilters = 2; //TODO: make dynamic
+		for($f = 0; $f < $numFilters; $f++){		
+			if(isset($source["QB_filter_field_sel_$f"]) && isset($source["QB_oper_sel_$f"]) && isset($source["QB_filter_txt_$f"])){
+				$this->filters[$f] = new QueryRequestFilter($source["QB_filter_field_sel_$f"], $source["QB_oper_sel_$f"], $source["QB_filter_txt_$f"]);
+			} else {
+				$this->filters[$f] = new QueryRequestFilter(null, null, null);
+			}	
 		}
 				
 		if(isset($source['soql_query'])){

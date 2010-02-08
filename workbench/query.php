@@ -133,41 +133,41 @@ function toggleFieldDisabled(){
 			isFieldSelected = true;
 
 	if(isFieldSelected){
-			document.getElementById('QB_filter_field_sel').disabled = false;
+			document.getElementById('QB_filter_field_sel_0').disabled = false;
 			document.getElementById('QB_orderby_field').disabled = false;
 			document.getElementById('QB_orderby_sort').disabled = false;
 			document.getElementById('QB_nulls').disabled = false;
 			document.getElementById('QB_limit_txt').disabled = false;
-			if(document.getElementById('QB_filter_field_sel').value){
-				document.getElementById('QB_filter_txt').disabled = false;
-				document.getElementById('QB_oper_sel').disabled = false;
+			if(document.getElementById('QB_filter_field_sel_0').value){
+				document.getElementById('QB_filter_txt_0').disabled = false;
+				document.getElementById('QB_oper_sel_0').disabled = false;
 			} else {
-				document.getElementById('QB_filter_txt').disabled = true;
-				document.getElementById('QB_oper_sel').disabled = true;
+				document.getElementById('QB_filter_txt_0').disabled = true;
+				document.getElementById('QB_oper_sel_0').disabled = true;
 			}
 	} else{
-			document.getElementById('QB_filter_field_sel').disabled = true;
-			document.getElementById('QB_oper_sel').disabled = true;
-			document.getElementById('QB_filter_txt').disabled = true;
+			document.getElementById('QB_filter_field_sel_0').disabled = true;
+			document.getElementById('QB_oper_sel_0').disabled = true;
+			document.getElementById('QB_filter_txt_0').disabled = true;
 			document.getElementById('QB_orderby_field').disabled = true;
 			document.getElementById('QB_orderby_sort').disabled = true;
 			document.getElementById('QB_nulls').disabled = true;
 			document.getElementById('QB_limit_txt').disabled = true;
 	}
 
-	if (isFieldSelected && document.getElementById('QB_filter_field_sel').value && document.getElementById('QB_oper_sel').value && document.getElementById('QB_filter_txt').value){
-		document.getElementById('QB_filter_field_sel2').disabled = false;
-		if(document.getElementById('QB_filter_field_sel2').value){
-			document.getElementById('QB_filter_txt2').disabled = false;
-			document.getElementById('QB_oper_sel2').disabled = false;
+	if (isFieldSelected && document.getElementById('QB_filter_field_sel_0').value && document.getElementById('QB_oper_sel_0').value && document.getElementById('QB_filter_txt_0').value){
+		document.getElementById('QB_filter_field_sel_1').disabled = false;
+		if(document.getElementById('QB_filter_field_sel_1').value){
+			document.getElementById('QB_filter_txt_1').disabled = false;
+			document.getElementById('QB_oper_sel_1').disabled = false;
 		} else {
-			document.getElementById('QB_filter_txt2').disabled = true;
-			document.getElementById('QB_oper_sel2').disabled = true;
+			document.getElementById('QB_filter_txt_1').disabled = true;
+			document.getElementById('QB_oper_sel_1').disabled = true;
 		}
 	} else {
-		document.getElementById('QB_filter_field_sel2').disabled = true;
-		document.getElementById('QB_oper_sel2').disabled = true;
-		document.getElementById('QB_filter_txt2').disabled = true;
+		document.getElementById('QB_filter_field_sel_1').disabled = true;
+		document.getElementById('QB_oper_sel_1').disabled = true;
+		document.getElementById('QB_filter_txt_1').disabled = true;
 	}
 }
 
@@ -195,80 +195,80 @@ function build_query(){
 	}
 
 
-	var QB_filter_field_sel = document.getElementById('QB_filter_field_sel').value;
-	var QB_oper_sel = document.getElementById('QB_oper_sel').value;
-	var QB_filter_txt = document.getElementById('QB_filter_txt').value;
-	if (QB_filter_field_sel && QB_oper_sel && QB_filter_txt){
-		if (QB_oper_sel == 'starts'){
-			QB_oper_sel = 'LIKE'
-			QB_filter_txt = QB_filter_txt + '%';
-		} else if (QB_oper_sel == 'ends'){
-			QB_oper_sel = 'LIKE'
-			QB_filter_txt = '%' + QB_filter_txt;
-		} else if (QB_oper_sel == 'contains'){
-			QB_oper_sel = 'LIKE'
-			QB_filter_txt = '%' + QB_filter_txt + '%';
+	var QB_filter_field_sel_0 = document.getElementById('QB_filter_field_sel_0').value;
+	var QB_oper_sel_0 = document.getElementById('QB_oper_sel_0').value;
+	var QB_filter_txt_0 = document.getElementById('QB_filter_txt_0').value;
+	if (QB_filter_field_sel_0 && QB_oper_sel_0 && QB_filter_txt_0){
+		if (QB_oper_sel_0 == 'starts'){
+			QB_oper_sel_0 = 'LIKE'
+			QB_filter_txt_0 = QB_filter_txt_0 + '%';
+		} else if (QB_oper_sel_0 == 'ends'){
+			QB_oper_sel_0 = 'LIKE'
+			QB_filter_txt_0 = '%' + QB_filter_txt_0;
+		} else if (QB_oper_sel_0 == 'contains'){
+			QB_oper_sel_0 = 'LIKE'
+			QB_filter_txt_0 = '%' + QB_filter_txt_0 + '%';
 		}
 
-		if (QB_oper_sel == 'IN' || 
-			QB_oper_sel == 'NOT IN' || 
-			QB_oper_sel == 'INCLUDES' || 
-			QB_oper_sel == 'EXCLUDES'){
-				QB_filter_txt_q = '(' + QB_filter_txt + ')';
-		} else if ((QB_filter_txt == 'null') ||
-			(field_type_array[QB_filter_field_sel] == "datetime") ||
-		    (field_type_array[QB_filter_field_sel] == "date") ||
-		    (field_type_array[QB_filter_field_sel] == "currency") ||
-		    (field_type_array[QB_filter_field_sel] == "percent") ||
-		    (field_type_array[QB_filter_field_sel] == "double") ||
-		    (field_type_array[QB_filter_field_sel] == "int") ||
-		    (field_type_array[QB_filter_field_sel] == "boolean")){
-				QB_filter_txt_q = QB_filter_txt;
+		if (QB_oper_sel_0 == 'IN' || 
+			QB_oper_sel_0 == 'NOT IN' || 
+			QB_oper_sel_0 == 'INCLUDES' || 
+			QB_oper_sel_0 == 'EXCLUDES'){
+				QB_filter_txt_q = '(' + QB_filter_txt_0 + ')';
+		} else if ((QB_filter_txt_0 == 'null') ||
+			(field_type_array[QB_filter_field_sel_0] == "datetime") ||
+		    (field_type_array[QB_filter_field_sel_0] == "date") ||
+		    (field_type_array[QB_filter_field_sel_0] == "currency") ||
+		    (field_type_array[QB_filter_field_sel_0] == "percent") ||
+		    (field_type_array[QB_filter_field_sel_0] == "double") ||
+		    (field_type_array[QB_filter_field_sel_0] == "int") ||
+		    (field_type_array[QB_filter_field_sel_0] == "boolean")){
+				QB_filter_txt_q = QB_filter_txt_0;
 		} else {
-			QB_filter_txt_q = '\'' + QB_filter_txt + '\'';
+			QB_filter_txt_q = '\'' + QB_filter_txt_0 + '\'';
 		}
 
-		var soql_where = ' WHERE ' + QB_filter_field_sel + ' ' + QB_oper_sel + ' ' + QB_filter_txt_q;
+		var soql_where = ' WHERE ' + QB_filter_field_sel_0 + ' ' + QB_oper_sel_0 + ' ' + QB_filter_txt_q;
 	} else {
 		var soql_where = '';
 	}
 
 
-	var QB_filter_field_sel2 = document.getElementById('QB_filter_field_sel2').value;
-	var QB_oper_sel2 = document.getElementById('QB_oper_sel2').value;
-	var QB_filter_txt2 = document.getElementById('QB_filter_txt2').value;
-	if (QB_filter_field_sel2 && QB_oper_sel2 && QB_filter_txt2){
-		if (QB_oper_sel2 == 'starts'){
-			QB_oper_sel2 = 'LIKE'
-			QB_filter_txt2 = QB_filter_txt2 + '%';
-		} else if (QB_oper_sel2 == 'ends'){
-			QB_oper_sel2 = 'LIKE'
-			QB_filter_txt2 = '%' + QB_filter_txt2;
-		} else if (QB_oper_sel2 == 'contains'){
-			QB_oper_sel2 = 'LIKE'
-			QB_filter_txt2 = '%' + QB_filter_txt2 + '%';
+	var QB_filter_field_sel_1 = document.getElementById('QB_filter_field_sel_1').value;
+	var QB_oper_sel_1 = document.getElementById('QB_oper_sel_1').value;
+	var QB_filter_txt_1 = document.getElementById('QB_filter_txt_1').value;
+	if (QB_filter_field_sel_1 && QB_oper_sel_1 && QB_filter_txt_1){
+		if (QB_oper_sel_1 == 'starts'){
+			QB_oper_sel_1 = 'LIKE'
+			QB_filter_txt_1 = QB_filter_txt_1 + '%';
+		} else if (QB_oper_sel_1 == 'ends'){
+			QB_oper_sel_1 = 'LIKE'
+			QB_filter_txt_1 = '%' + QB_filter_txt_1;
+		} else if (QB_oper_sel_1 == 'contains'){
+			QB_oper_sel_1 = 'LIKE'
+			QB_filter_txt_1 = '%' + QB_filter_txt_1 + '%';
 		}
 		
 		
-		if (QB_oper_sel2 == 'IN' || 
-			QB_oper_sel2 == 'NOT IN' ||
-			QB_oper_sel2 == 'INCLUDES' || 
-			QB_oper_sel2 == 'EXCLUDES'){
-				QB_filter_txt_q2 = '(' + QB_filter_txt2 + ')';
-		} else if ((QB_filter_txt2 == 'null') ||
-			(field_type_array[QB_filter_field_sel2] == "datetime") ||
-		    (field_type_array[QB_filter_field_sel2] == "date") ||
-		    (field_type_array[QB_filter_field_sel2] == "currency") ||
-		    (field_type_array[QB_filter_field_sel2] == "percent") ||
-		    (field_type_array[QB_filter_field_sel2] == "double") ||
-		    (field_type_array[QB_filter_field_sel2] == "int") ||
-		    (field_type_array[QB_filter_field_sel2] == "boolean")){
-				QB_filter_txt_q2 = QB_filter_txt2;
+		if (QB_oper_sel_1 == 'IN' || 
+			QB_oper_sel_1 == 'NOT IN' ||
+			QB_oper_sel_1 == 'INCLUDES' || 
+			QB_oper_sel_1 == 'EXCLUDES'){
+				QB_filter_txt_q2 = '(' + QB_filter_txt_1 + ')';
+		} else if ((QB_filter_txt_1 == 'null') ||
+			(field_type_array[QB_filter_field_sel_1] == "datetime") ||
+		    (field_type_array[QB_filter_field_sel_1] == "date") ||
+		    (field_type_array[QB_filter_field_sel_1] == "currency") ||
+		    (field_type_array[QB_filter_field_sel_1] == "percent") ||
+		    (field_type_array[QB_filter_field_sel_1] == "double") ||
+		    (field_type_array[QB_filter_field_sel_1] == "int") ||
+		    (field_type_array[QB_filter_field_sel_1] == "boolean")){
+				QB_filter_txt_q2 = QB_filter_txt_1;
 		} else {
-			QB_filter_txt_q2 = '\'' + QB_filter_txt2 + '\'';
+			QB_filter_txt_q2 = '\'' + QB_filter_txt_1 + '\'';
 		}
 
-		var soql_where2 = ' AND ' + QB_filter_field_sel2 + ' ' + QB_oper_sel2 + ' ' + QB_filter_txt_q2;
+		var soql_where2 = ' AND ' + QB_filter_field_sel_1 + ' ' + QB_oper_sel_1 + ' ' + QB_filter_txt_q2;
 	} else {
 		var soql_where2 = '';
 	}
@@ -410,7 +410,7 @@ QUERY_BUILDER_SCRIPT;
 	print "<tr><td valign='top' colspan=4 nowrap>\n";
 	print "<br/>Filter results by:<br/>\n";
 
-	print "<select id='QB_filter_field_sel' name='QB_filter_field_sel' style='width: 16em;' onChange='build_query();'>\n";
+	print "<select id='QB_filter_field_sel_0' name='QB_filter_field_sel_0' style='width: 16em;' onChange='build_query();'>\n";
 	print "<option value=''></option>";
 	if(isset($describeSObject_result)){
 		foreach($describeSObject_result->fields as $fields => $field){
@@ -438,7 +438,7 @@ QUERY_BUILDER_SCRIPT;
 		'EXCLUDES' => 'excludes'
 	);
 
-	print "<select id='QB_oper_sel' name='QB_oper_sel' style='width: 10em;' onChange='build_query();'>\n";
+	print "<select id='QB_oper_sel_0' name='QB_oper_sel_0' style='width: 10em;' onChange='build_query();'>\n";
 	foreach ($ops as $op_key => $op){
 		print "<option value='$op_key'";
 		if ($queryRequest->getFilter(0)->getCompOper() != null && $op_key == $queryRequest->getFilter(0)->getCompOper() ) print " selected='selected' ";
@@ -446,14 +446,14 @@ QUERY_BUILDER_SCRIPT;
 	}
 	print "</select>\n";
 
-	print "<input type='text' id='QB_filter_txt' size='31' name='QB_filter_txt' value=\"" . htmlspecialchars($queryRequest->getFilter(0)->getValue() != null ? $queryRequest->getFilter(0)->getValue() : null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />";
+	print "<input type='text' id='QB_filter_txt_0' size='31' name='QB_filter_txt_0' value=\"" . htmlspecialchars($queryRequest->getFilter(0)->getValue() != null ? $queryRequest->getFilter(0)->getValue() : null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />";
 	print "</td></tr>\n";
 
 
 	print "<tr><td valign='top' colspan=4 nowrap>\n";
 	print "<br/>Then filter results by:<br/>\n";
 
-	print "<select id='QB_filter_field_sel2' name='QB_filter_field_sel2' style='width: 16em;' onChange='build_query();'>\n";
+	print "<select id='QB_filter_field_sel_1' name='QB_filter_field_sel_1' style='width: 16em;' onChange='build_query();'>\n";
 	print "<option value=''></option>\n";
 	if(isset($describeSObject_result)){
 		foreach($describeSObject_result->fields as $fields => $field){
@@ -464,7 +464,7 @@ QUERY_BUILDER_SCRIPT;
 	}
 	print "</select> \n";
 
-	print "<select id='QB_oper_sel2' name='QB_oper_sel2' style='width: 10em;' onChange='build_query();'>";
+	print "<select id='QB_oper_sel_1' name='QB_oper_sel_1' style='width: 10em;' onChange='build_query();'>";
 	foreach ($ops as $op_key => $op){
 		print "<option value='$op_key'";
 		if ($queryRequest->getFilter(1)->getCompOper() != null && $op_key == $queryRequest->getFilter(1)->getCompOper() ) print " selected='selected' ";
@@ -472,7 +472,7 @@ QUERY_BUILDER_SCRIPT;
 	}
 	print "</select>\n";
 
-	print "<input type='text' id='QB_filter_txt2' size='31' name='QB_filter_txt2' value=\"" . htmlspecialchars($queryRequest->getFilter(1)->getValue() != null ? $queryRequest->getFilter(1)->getValue() : null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />\n";
+	print "<input type='text' id='QB_filter_txt_1' size='31' name='QB_filter_txt_1' value=\"" . htmlspecialchars($queryRequest->getFilter(1)->getValue() != null ? $queryRequest->getFilter(1)->getValue() : null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />\n";
 	print "</td></tr>\n";
 
 	print "</table>\n";
