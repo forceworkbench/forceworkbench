@@ -4,31 +4,36 @@ require_once ('soxl/QueryObjects.php');
 require_once ('session.php');
 require_once ('shared.php');
 
-//save as named query
-if(isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0){
-	$_SESSION['savedQueryRequests'][$_REQUEST['saveQr']] = new QueryRequest($_REQUEST);
-} 
 
-//save last query. always do this even if named.
-if(isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query'){
-	$_SESSION['lastQueryRequest'] = new QueryRequest($_REQUEST);
-} 
-
-//populate queryRequest for this page view. first see if user wants to retreive a saved query,
-//then see if ther was a last query, else just show a null query.
-if(isset($_REQUEST['getQr']) && isset($_REQUEST['getQr']) != "" && isset($_SESSION['savedQueryRequests'][$_REQUEST['getQr']])){
-	$queryRequest = $_SESSION['savedQueryRequests'][$_REQUEST['getQr']];
-	$queryRequest->setName($_REQUEST['getQr']);
-} else if(isset($_SESSION['lastQueryRequest'])){
-	$queryRequest = $_SESSION['lastQueryRequest'];
-} else {
-	$queryRequest = new QueryRequest(null);
-}
-
+//clear the form if the user changes the object
 if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
-	if (isset($_POST['default_object'])) $_SESSION['default_object'] = $_POST['default_object'];
 	$queryRequest = new QueryRequest(null);
-	$queryRequest->setObject($_POST['default_object']);
+	$queryRequest->setObject($_POST['QB_object_sel']);
+} else {
+	//create a new QueryRequest object to save named and/or last query
+	$lastQr = new QueryRequest($_REQUEST);	
+	
+	//save as named query
+	if(isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0){
+		$lastQr->setName(htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES,'UTF-8'));
+		$_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES,'UTF-8')] = $lastQr;
+	} 
+	
+	//save last query. always do this even if named.
+	if(isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query'){
+		$_SESSION['lastQueryRequest'] = $lastQr;
+	} 
+	
+	//populate queryRequest for this page view. first see if user wants to retreive a saved query,
+	//then see if ther was a last query, else just show a null query.
+	if(isset($_REQUEST['getQr']) && isset($_REQUEST['getQr']) != "" && isset($_SESSION['savedQueryRequests'][$_REQUEST['getQr']])){
+		$queryRequest = $_SESSION['savedQueryRequests'][$_REQUEST['getQr']];
+	} else if(isset($_SESSION['lastQueryRequest'])){
+		$queryRequest = $_SESSION['lastQueryRequest'];
+	} else {
+		$queryRequest = new QueryRequest(null);
+		$queryRequest->setObject($_SESSION['default_object']);
+	}
 }
 
 //Main form logic: When the user first enters the page, display form defaulted to
@@ -87,8 +92,8 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 
 function show_query_form($queryRequest){
 
-	if ($_SESSION['default_object']){
-		$describeSObject_result = describeSObject($_SESSION['default_object'], true);
+	if ($queryRequest->getObject()){
+		$describeSObject_result = describeSObject($queryRequest->getObject(), true);
 	} else {
 		show_info('First choose an object to use the SOQL builder wizard.');
 	}
@@ -115,7 +120,7 @@ function parentChildRelationshipQueryBlocker(){
 function toggleFieldDisabled(){
 	var QB_field_sel = document.getElementById('QB_field_sel');
 
-	if(document.getElementById('default_object').value){
+	if(document.getElementById('QB_object_sel').value){
 		QB_field_sel.disabled = false;
 	} else {
 		QB_field_sel.disabled = true;
@@ -173,7 +178,7 @@ function updateObject(){
 
 function build_query(){
 	toggleFieldDisabled();
-	var default_object = document.getElementById('default_object').value;
+	var QB_object_sel = document.getElementById('QB_object_sel').value;
 	var QB_field_sel = document.getElementById('QB_field_sel');
 	QB_fields_selected = new Array();
 	for (var i = 0; i < QB_field_sel.options.length; i++){
@@ -186,7 +191,7 @@ function build_query(){
 	if(QB_fields_selected.toString().indexOf('count()') != -1 && QB_fields_selected.length > 1){
 		alert('Warning: Choosing count() with other fields will result in a malformed query. Unselect either count() or the other fields to continue.');
 	} else	if (QB_fields_selected.length > 0){
-		var soql_select = 'SELECT ' + QB_fields_selected + ' FROM ' + default_object;
+		var soql_select = 'SELECT ' + QB_fields_selected + ' FROM ' + QB_object_sel;
 	}
 
 
@@ -307,7 +312,7 @@ QUERY_BUILDER_SCRIPT;
 	print "<table border='0' width=1>\n";
 	print "<tr><td valign='top' width='1'>Object:";
 
-	myGlobalSelect($_SESSION['default_object'], 'default_object', "16", "onChange='updateObject();'", "queryable");
+	myGlobalSelect($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
 
 	print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='10' style='width: 16em;' onChange='build_query();'>\n";
 	if(isset($describeSObject_result)){
@@ -488,7 +493,7 @@ QUERY_BUILDER_SCRIPT;
 	print "<td colspan=4 align='right'>" . 	
 	      "&nbsp;Save as: <input type='text' name='saveQr' value='" . $queryRequest->getName() . "' />\n" .
 	
-		  "&nbsp;Retreive: " .
+		  "&nbsp;Retrieve: " .
 		  "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();'>" . 
 	      "<option value='' selected='selected'></option>";
 	foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr){
@@ -496,7 +501,7 @@ QUERY_BUILDER_SCRIPT;
 	}
 	print "</select>" . 
 		  "&nbsp;&nbsp;" . 
-	      "<img onmouseover=\"Tip('Provide a name for a query and retreive it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
+	      "<img onmouseover=\"Tip('Provide a name for a query and retrieve it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
 	
 	
 	print "</td></tr></table><p/>\n";
