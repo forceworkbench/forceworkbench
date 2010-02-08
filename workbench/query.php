@@ -99,11 +99,34 @@ function show_query_form($queryRequest){
 	}
 
 	print "<script>\n";
-	print "var field_type_array = new Array()\n";
+	
+	print "var field_type_array = new Array();\n";
 	if(isset($describeSObject_result)){
 		foreach($describeSObject_result->fields as $fields => $field){
 			print " field_type_array[\"$field->name\"]=[\"$field->type\"];\n";
 		}
+	}
+	
+	$ops = array(
+		'=' => '=',
+		'!=' => '&ne;',
+		'<' => '&lt;',
+		'<=' => '&le;',
+		'>' => '&gt;',
+		'>=' => '&ge;',
+		'starts' => 'starts with',
+		'ends' => 'ends with',
+		'contains' => 'contains',
+		'IN' => 'in',
+		'NOT IN' => 'not in',
+		'INCLUDES' => 'includes',
+		'EXCLUDES' => 'excludes'
+	);
+
+	
+	print "var compOper_array = new Array();\n";
+	foreach($ops as $op_value => $op_label){
+		print " compOper_array[\"$op_value\"]=[\"$op_label\"];\n";
 	}
 
 	print <<<QUERY_BUILDER_SCRIPT
@@ -298,9 +321,61 @@ function build_query(){
 		document.getElementById('soql_query_textarea').value = soql_select + soql_where + soql_orderby + soql_limit ;
 
 }
+
+
+function buildFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue){
+
+			
+	return row;	
+}
+
+function addFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue){
+	//build the row inner html
+	var row = "";
+	row += 	"<br/>Filter results by:<br/>" + 
+			"<select id='QB_filter_field_" + filterRuwNum + "' name='QB_filter_field_" + filterRuwNum + "' style='width: 16em;' onChange='build_query();'>" +
+			"<option value=''></option>";
+	
+	for (var field in field_type_array) {
+		row += "<option value='" + field + "'";
+		if (defaultField == field) row += " selected='selected' ";
+		row += "'>" + field + "</option>";
+	} 	
+	
+	row += "</select>&nbsp;" +
+			"" +
+			"<select id='QB_filter_compOper_" + filterRuwNum + "' name='QB_filter_compOper_" + filterRuwNum + "' style='width: 10em;' onChange='build_query();'>";
+
+	for (var opKey in compOper_array) {
+		row += "<option value='" + opKey + "'";
+		if (defaultCompOper == opKey) row += " selected='selected' ";
+		row += ">" + compOper_array[opKey] + "</option>";
+	} 
+	
+	row +=  "</select>&nbsp;" +
+			"<input type='text' id='QB_filter_value_" + filterRuwNum + "' size='31' name='QB_filter_value_" + filterRuwNum + "' value='" + defaultValue + "' onkeyup='build_query();' />" + 
+			"<span onclick='addFilterRow();' onMouseOver='this.style.cursor=\"pointer\"'>&nbsp;+</span>";	
+
+
+	//add to the DOM
+	var newFilterCell = document.createElement('td');
+	newFilterCell.setAttribute('valign','top');
+	newFilterCell.setAttribute('colspan',4);
+	newFilterCell.setAttribute('nowrap','true');
+	newFilterCell.innerHTML = row;
+	
+	var newFilterRow = document.createElement('tr');
+	newFilterRow.appendChild(newFilterCell);
+	
+	document.getElementById('QB_right_sub_table').getElementsByTagName("tbody")[0].appendChild(newFilterRow);
+	
+	//expand the field list so it looks right
+	QB_field_sel.size += 4;
+}
+
 </script>
 QUERY_BUILDER_SCRIPT;
-
+	
 
 	if($_SESSION['config']['autoJumpToQueryResults']){
 		print "<form method='POST' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
@@ -314,7 +389,7 @@ QUERY_BUILDER_SCRIPT;
 
 	myGlobalSelect($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
 
-	print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='10' style='width: 16em;' onChange='build_query();'>\n";
+	print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='2' style='width: 16em;' onChange='build_query();'>\n";
 	if(isset($describeSObject_result)){
 
 		print   " <option value='count()'";
@@ -342,7 +417,7 @@ QUERY_BUILDER_SCRIPT;
 
 
 
-	print "<table border='0' align='right'>\n";
+	print "<table id='QB_right_sub_table' border='0' align='right'>\n";
 	print "<tr><td valign='top' colspan=2>Export to:<br/>" .
 			"<label><input type='radio' name='export_action' value='screen' ";
 	if ($queryRequest->getExportTo() == 'screen') print "checked='true'";
@@ -406,53 +481,18 @@ QUERY_BUILDER_SCRIPT;
 
 	print "</tr>\n";
 
-	$ops = array(
-		'=' => '=',
-		'!=' => '&ne;',
-		'<' => '&lt;',
-		'<=' => '&le;',
-		'>' => '&gt;',
-		'>=' => '&ge;',
-		'starts' => 'starts with',
-		'ends' => 'ends with',
-		'contains' => 'contains',
-		'IN' => 'in',
-		'NOT IN' => 'not in',
-		'INCLUDES' => 'includes',
-		'EXCLUDES' => 'excludes'
-	);
-
-	$numFilters = 2; //TODO: make dynamic
-	for($f = 0; $f < $numFilters; $f++){	
-		print "<tr><td valign='top' colspan=4 nowrap>\n";
-		print "<br/>Filter results by:<br/>\n";
-		
-		print "<select id='QB_filter_field_$f' name='QB_filter_field_$f' style='width: 16em;' onChange='build_query();'>\n";
-		print "<option value=''></option>";
-		if(isset($describeSObject_result)){
-			foreach($describeSObject_result->fields as $fields => $field){
-				print   " <option value='$field->name'";
-				if ($queryRequest->getFilter($f)->getField() != null && $field->name == $queryRequest->getFilter($f)->getField()) print " selected='selected' ";
-				print ">$field->name</option>\n";
-			}
-		}
-		print "</select>\n";
-	
-		print "<select id='QB_filter_compOper_$f' name='QB_filter_compOper_$f' style='width: 10em;' onChange='build_query();'>\n";
-		foreach ($ops as $op_key => $op){
-			print "<option value='$op_key'";
-			if ($queryRequest->getFilter($f)->getCompOper() != null && $op_key == $queryRequest->getFilter($f)->getCompOper() ) print " selected='selected' ";
-			print ">$op</option>\n";
-		}
-		print "</select>\n";
-	
-		print "<input type='text' id='QB_filter_value_$f' size='31' name='QB_filter_value_$f' value=\"" . htmlspecialchars($queryRequest->getFilter($f)->getValue() != null ? $queryRequest->getFilter($f)->getValue() : null,ENT_QUOTES,'UTF-8') . "\" onkeyup='build_query();' />";
-		print "</td></tr>\n";
-	}
-
 	print "</table>\n";
-
 	print "</td></tr>\n";
+	
+	$filterRowNum = 0;
+	foreach($queryRequest->getFilters() as $filter){		
+		print "<script>addFilterRow(" . 
+		$filterRowNum++ . ", " . 
+		"\"" . $filter->getField() 	. "\", " . 
+		"\"" . $filter->getCompOper()  . "\", " . 
+		"\"" . $filter->getValue()     . "\"" .
+		");</script>";
+	}
 
 
 	print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .

@@ -30,9 +30,9 @@ class QueryRequest {
 		if(isset($source['QB_orderby_field'])) 	$this->orderByField  = $source['QB_orderby_field'];
 		
 		$numFilters = 2; //TODO: make dynamic
-		for($f = 0; $f < $numFilters; $f++){		
-			if(isset($source["QB_filter_field_$f"]) && isset($source["QB_compOper_$f"]) && isset($source["QB_filter_value_$f"])){
-				$this->filters[$f] = new QueryRequestFilter($source["QB_compOper_$f"], $source["QB_oper_sel_$f"], $source["QB_filter_value_$f"]);
+		for($f = 0; $f < $numFilters; $f++){				
+			if(isset($source["QB_filter_field_$f"]) && isset($source["QB_filter_compOper_$f"]) && isset($source["QB_filter_value_$f"])){
+				$this->filters[$f] = new QueryRequestFilter($source["QB_filter_field_$f"], $source["QB_filter_compOper_$f"], $source["QB_filter_value_$f"]);
 			} else {
 				$this->filters[$f] = new QueryRequestFilter(null, null, null);
 			}	
@@ -87,8 +87,8 @@ class QueryRequest {
 		return $this->limit;
 	}	
 	
-	public function getFilter($filterIndex){
-		return $this->filters[$filterIndex];
+	public function getFilters(){
+		return $this->filters;
 	}
 
 	public function getSoqlQuery(){
