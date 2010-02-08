@@ -352,6 +352,7 @@ function addFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue)
 		row += ">" + compOper_array[opKey] + "</option>";
 	} 
 	
+	defaultValue = defaultValue != null ? defaultValue : "";
 	row +=  "</select>&nbsp;" +
 			"<input type='text' id='QB_filter_value_" + filterRuwNum + "' size='31' name='QB_filter_value_" + filterRuwNum + "' value='" + defaultValue + "' onkeyup='build_query();' />" + 
 			"<span onclick='addFilterRow();' onMouseOver='this.style.cursor=\"pointer\"'>&nbsp;+</span>";	
@@ -488,7 +489,7 @@ QUERY_BUILDER_SCRIPT;
 	foreach($queryRequest->getFilters() as $filter){		
 		print "<script>addFilterRow(" . 
 		$filterRowNum++ . ", " . 
-		"\"" . $filter->getField() 	. "\", " . 
+		"\"" . $filter->getField()     . "\", " . 
 		"\"" . $filter->getCompOper()  . "\", " . 
 		"\"" . $filter->getValue()     . "\"" .
 		");</script>";
