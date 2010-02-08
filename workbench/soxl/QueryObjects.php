@@ -31,8 +31,8 @@ class QueryRequest {
 		
 		$numFilters = 2; //TODO: make dynamic
 		for($f = 0; $f < $numFilters; $f++){		
-			if(isset($source["QB_filter_field_sel_$f"]) && isset($source["QB_oper_sel_$f"]) && isset($source["QB_filter_txt_$f"])){
-				$this->filters[$f] = new QueryRequestFilter($source["QB_filter_field_sel_$f"], $source["QB_oper_sel_$f"], $source["QB_filter_txt_$f"]);
+			if(isset($source["QB_filter_field_$f"]) && isset($source["QB_compOper_$f"]) && isset($source["QB_filter_value_$f"])){
+				$this->filters[$f] = new QueryRequestFilter($source["QB_compOper_$f"], $source["QB_oper_sel_$f"], $source["QB_filter_value_$f"]);
 			} else {
 				$this->filters[$f] = new QueryRequestFilter(null, null, null);
 			}	
