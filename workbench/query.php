@@ -360,8 +360,8 @@ function addFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue)
 
 	//add to the DOM
 	var newFilterCell = document.createElement('td');
+	newFilterCell.setAttribute('colSpan','4');
 	newFilterCell.setAttribute('valign','top');
-	newFilterCell.setAttribute('colspan',4);
 	newFilterCell.setAttribute('nowrap','true');
 	newFilterCell.innerHTML = row;
 	
@@ -371,7 +371,7 @@ function addFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue)
 	document.getElementById('QB_right_sub_table').getElementsByTagName("tbody")[0].appendChild(newFilterRow);
 	
 	//expand the field list so it looks right
-	QB_field_sel.size += 4;
+	document.getElementById('QB_field_sel').size += 4;
 }
 
 </script>
