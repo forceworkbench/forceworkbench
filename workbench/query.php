@@ -467,7 +467,7 @@ QUERY_BUILDER_SCRIPT;
 
 
 	print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-		"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='108' rows='" . $_SESSION['config']['textareaRows'] . "'  style='overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES,'UTF-8') . "</textarea>\n" .
+		"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='104' rows='" . $_SESSION['config']['textareaRows'] . "'  style='overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES,'UTF-8') . "</textarea>\n" .
 	  "</td></tr>\n";
 
 
