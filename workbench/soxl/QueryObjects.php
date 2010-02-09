@@ -16,6 +16,7 @@ class QueryRequest {
 	private $limit			= null;
 	
 	private $filters		= array();
+	private $numFilters		= null;
 		
 	private $soqlQuery		= null;
 	
@@ -28,9 +29,9 @@ class QueryRequest {
 		if(isset($source['QB_nulls'])) 			$this->orderByNulls  = $source['QB_nulls'];
 		if(isset($source['QB_limit_txt'])) 		$this->limit		 = $source['QB_limit_txt'];
 		if(isset($source['QB_orderby_field'])) 	$this->orderByField  = $source['QB_orderby_field'];
+		if(isset($source['numFilters'])) 		$this->numFilters    = $source['numFilters'];
 		
-		$numFilters = 2; //TODO: make dynamic
-		for($f = 0; $f < $numFilters; $f++){				
+		for($f = 0; $f < $this->numFilters; $f++){				
 			if(isset($source["QB_filter_field_$f"]) && isset($source["QB_filter_compOper_$f"]) && isset($source["QB_filter_value_$f"])){
 				$this->filters[$f] = new QueryRequestFilter($source["QB_filter_field_$f"], $source["QB_filter_compOper_$f"], $source["QB_filter_value_$f"]);
 			} else {

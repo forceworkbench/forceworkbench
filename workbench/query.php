@@ -4,10 +4,10 @@ require_once ('soxl/QueryObjects.php');
 require_once ('session.php');
 require_once ('shared.php');
 
-
+$defaultSettings['numFilters'] = 1;
 //clear the form if the user changes the object
 if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
-	$queryRequest = new QueryRequest(null);
+	$queryRequest = new QueryRequest($defaultSettings);
 	$queryRequest->setObject($_POST['QB_object_sel']);
 } else {
 	//create a new QueryRequest object to save named and/or last query
@@ -31,7 +31,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 	} else if(isset($_SESSION['lastQueryRequest'])){
 		$queryRequest = $_SESSION['lastQueryRequest'];
 	} else {
-		$queryRequest = new QueryRequest(null);
+		$queryRequest = new QueryRequest($defaultSettings);
 		$queryRequest->setObject($_SESSION['default_object']);
 	}
 }
@@ -128,7 +128,7 @@ function show_query_form($queryRequest){
 	foreach($ops as $op_value => $op_label){
 		print " compOper_array[\"$op_value\"]=[\"$op_label\"];\n";
 	}
-
+	
 	print <<<QUERY_BUILDER_SCRIPT
 
 function parentChildRelationshipQueryBlocker(){
@@ -139,7 +139,7 @@ function parentChildRelationshipQueryBlocker(){
 	}
 	
 }
-	
+
 function toggleFieldDisabled(){
 	var QB_field_sel = document.getElementById('QB_field_sel');
 
@@ -156,11 +156,12 @@ function toggleFieldDisabled(){
 			isFieldSelected = true;
 
 	if(isFieldSelected){
-			document.getElementById('QB_filter_field_0').disabled = false;
 			document.getElementById('QB_orderby_field').disabled = false;
 			document.getElementById('QB_orderby_sort').disabled = false;
 			document.getElementById('QB_nulls').disabled = false;
 			document.getElementById('QB_limit_txt').disabled = false;
+			
+			document.getElementById('QB_filter_field_0').disabled = false;
 			if(document.getElementById('QB_filter_field_0').value){
 				document.getElementById('QB_filter_value_0').disabled = false;
 				document.getElementById('QB_filter_compOper_0').disabled = false;
@@ -178,19 +179,26 @@ function toggleFieldDisabled(){
 			document.getElementById('QB_limit_txt').disabled = true;
 	}
 
-	if (isFieldSelected && document.getElementById('QB_filter_field_0').value && document.getElementById('QB_filter_compOper_0').value && document.getElementById('QB_filter_value_0').value){
-		document.getElementById('QB_filter_field_1').disabled = false;
-		if(document.getElementById('QB_filter_field_1').value){
-			document.getElementById('QB_filter_value_1').disabled = false;
-			document.getElementById('QB_filter_compOper_1').disabled = false;
+	var allPreviousRowsUsed = true;
+	for(var r = 1; r < document.getElementById('numFilters').value; r++){
+		var lastRow = r-1;
+		var thisRow = r;
+		
+		if (isFieldSelected && allPreviousRowsUsed && document.getElementById('QB_filter_field_' + lastRow).value && document.getElementById('QB_filter_compOper_' + lastRow).value && document.getElementById('QB_filter_value_' + lastRow).value){
+			document.getElementById('QB_filter_field_' + thisRow).disabled = false;
+			if(document.getElementById('QB_filter_field_' + thisRow).value){
+				document.getElementById('QB_filter_value_' + thisRow).disabled = false;
+				document.getElementById('QB_filter_compOper_' + thisRow).disabled = false;
+			} else {
+				document.getElementById('QB_filter_value_' + thisRow).disabled = true;
+				document.getElementById('QB_filter_compOper_' + thisRow).disabled = true;
+			}
 		} else {
-			document.getElementById('QB_filter_value_1').disabled = true;
-			document.getElementById('QB_filter_compOper_1').disabled = true;
+			allPreviousRowsUsed = false;
+			document.getElementById('QB_filter_field_' + thisRow).disabled = true;
+			document.getElementById('QB_filter_compOper_' + thisRow).disabled = true;
+			document.getElementById('QB_filter_value_' + thisRow).disabled = true;
 		}
-	} else {
-		document.getElementById('QB_filter_field_1').disabled = true;
-		document.getElementById('QB_filter_compOper_1').disabled = true;
-		document.getElementById('QB_filter_value_1').disabled = true;
 	}
 }
 
@@ -217,88 +225,55 @@ function build_query(){
 		var soql_select = 'SELECT ' + QB_fields_selected + ' FROM ' + QB_object_sel;
 	}
 
-
-	var QB_filter_field_0 = document.getElementById('QB_filter_field_0').value;
-	var QB_filter_compOper_0 = document.getElementById('QB_filter_compOper_0').value;
-	var QB_filter_value_0 = document.getElementById('QB_filter_value_0').value;
-	if (QB_filter_field_0 && QB_filter_compOper_0 && QB_filter_value_0){
-		if (QB_filter_compOper_0 == 'starts'){
-			QB_filter_compOper_0 = 'LIKE'
-			QB_filter_value_0 = QB_filter_value_0 + '%';
-		} else if (QB_filter_compOper_0 == 'ends'){
-			QB_filter_compOper_0 = 'LIKE'
-			QB_filter_value_0 = '%' + QB_filter_value_0;
-		} else if (QB_filter_compOper_0 == 'contains'){
-			QB_filter_compOper_0 = 'LIKE'
-			QB_filter_value_0 = '%' + QB_filter_value_0 + '%';
-		}
-
-		if (QB_filter_compOper_0 == 'IN' || 
-			QB_filter_compOper_0 == 'NOT IN' || 
-			QB_filter_compOper_0 == 'INCLUDES' || 
-			QB_filter_compOper_0 == 'EXCLUDES'){
-				QB_filter_value_q = '(' + QB_filter_value_0 + ')';
-		} else if ((QB_filter_value_0 == 'null') ||
-			(field_type_array[QB_filter_field_0] == "datetime") ||
-		    (field_type_array[QB_filter_field_0] == "date") ||
-		    (field_type_array[QB_filter_field_0] == "currency") ||
-		    (field_type_array[QB_filter_field_0] == "percent") ||
-		    (field_type_array[QB_filter_field_0] == "double") ||
-		    (field_type_array[QB_filter_field_0] == "int") ||
-		    (field_type_array[QB_filter_field_0] == "boolean")){
-				QB_filter_value_q = QB_filter_value_0;
-		} else {
-			QB_filter_value_q = '\'' + QB_filter_value_0 + '\'';
-		}
-
-		var soql_where = ' WHERE ' + QB_filter_field_0 + ' ' + QB_filter_compOper_0 + ' ' + QB_filter_value_q;
-	} else {
-		var soql_where = '';
-	}
-
-
-	var QB_filter_field_1 = document.getElementById('QB_filter_field_1').value;
-	var QB_filter_compOper_1 = document.getElementById('QB_filter_compOper_1').value;
-	var QB_filter_value_1 = document.getElementById('QB_filter_value_1').value;
-	if (QB_filter_field_1 && QB_filter_compOper_1 && QB_filter_value_1){
-		if (QB_filter_compOper_1 == 'starts'){
-			QB_filter_compOper_1 = 'LIKE'
-			QB_filter_value_1 = QB_filter_value_1 + '%';
-		} else if (QB_filter_compOper_1 == 'ends'){
-			QB_filter_compOper_1 = 'LIKE'
-			QB_filter_value_1 = '%' + QB_filter_value_1;
-		} else if (QB_filter_compOper_1 == 'contains'){
-			QB_filter_compOper_1 = 'LIKE'
-			QB_filter_value_1 = '%' + QB_filter_value_1 + '%';
-		}
+	soql_where = '';
+	for(var f = 0; f < document.getElementById('numFilters').value; f++){
+	
+		var QB_filter_field = document.getElementById('QB_filter_field_' + f).value;
+		var QB_filter_compOper = document.getElementById('QB_filter_compOper_' + f).value;
+		var QB_filter_value = document.getElementById('QB_filter_value_' + f).value;
 		
+		var soql_where_logicOper = '';
+		if(f > 0){
+			soql_where_logicOper = ' AND ';
+		}	
 		
-		if (QB_filter_compOper_1 == 'IN' || 
-			QB_filter_compOper_1 == 'NOT IN' ||
-			QB_filter_compOper_1 == 'INCLUDES' || 
-			QB_filter_compOper_1 == 'EXCLUDES'){
-				QB_filter_value_q2 = '(' + QB_filter_value_1 + ')';
-		} else if ((QB_filter_value_1 == 'null') ||
-			(field_type_array[QB_filter_field_1] == "datetime") ||
-		    (field_type_array[QB_filter_field_1] == "date") ||
-		    (field_type_array[QB_filter_field_1] == "currency") ||
-		    (field_type_array[QB_filter_field_1] == "percent") ||
-		    (field_type_array[QB_filter_field_1] == "double") ||
-		    (field_type_array[QB_filter_field_1] == "int") ||
-		    (field_type_array[QB_filter_field_1] == "boolean")){
-				QB_filter_value_q2 = QB_filter_value_1;
+		if (QB_filter_field && QB_filter_compOper && QB_filter_value){
+			if (QB_filter_compOper == 'starts'){
+				QB_filter_compOper = 'LIKE'
+				QB_filter_value = QB_filter_value + '%';
+			} else if (QB_filter_compOper == 'ends'){
+				QB_filter_compOper = 'LIKE'
+				QB_filter_value = '%' + QB_filter_value;
+			} else if (QB_filter_compOper == 'contains'){
+				QB_filter_compOper = 'LIKE'
+				QB_filter_value = '%' + QB_filter_value + '%';
+			}
+			
+			
+			if (QB_filter_compOper == 'IN' || 
+				QB_filter_compOper == 'NOT IN' ||
+				QB_filter_compOper == 'INCLUDES' || 
+				QB_filter_compOper == 'EXCLUDES'){
+					QB_filter_value_q = '(' + QB_filter_value + ')';
+			} else if ((QB_filter_value == 'null') ||
+				(field_type_array[QB_filter_field] == "datetime") ||
+				(field_type_array[QB_filter_field] == "date") ||
+				(field_type_array[QB_filter_field] == "currency") ||
+				(field_type_array[QB_filter_field] == "percent") ||
+				(field_type_array[QB_filter_field] == "double") ||
+				(field_type_array[QB_filter_field] == "int") ||
+				(field_type_array[QB_filter_field] == "boolean")){
+					QB_filter_value_q = QB_filter_value;
+			} else {
+				QB_filter_value_q = '\'' + QB_filter_value + '\'';
+			}
+
+			soql_where += soql_where_logicOper + QB_filter_field + ' ' + QB_filter_compOper + ' ' + QB_filter_value_q;
 		} else {
-			QB_filter_value_q2 = '\'' + QB_filter_value_1 + '\'';
+			break;
 		}
-
-		var soql_where2 = ' AND ' + QB_filter_field_1 + ' ' + QB_filter_compOper_1 + ' ' + QB_filter_value_q2;
-	} else {
-		var soql_where2 = '';
 	}
-
-	if(soql_where && soql_where2){
-		soql_where = soql_where + soql_where2;
-	}
+	soql_where = soql_where != '' ? ' WHERE ' + soql_where : '';
 
 	var QB_orderby_field = document.getElementById('QB_orderby_field').value;
 	var QB_orderby_sort = document.getElementById('QB_orderby_sort').value;
@@ -323,17 +298,11 @@ function build_query(){
 }
 
 
-function buildFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue){
-
-			
-	return row;	
-}
-
-function addFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue){
+function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue){
 	//build the row inner html
 	var row = "";
 	row += 	"<br/>Filter results by:<br/>" + 
-			"<select id='QB_filter_field_" + filterRuwNum + "' name='QB_filter_field_" + filterRuwNum + "' style='width: 16em;' onChange='build_query();'>" +
+			"<select id='QB_filter_field_" + filterRowNum + "' name='QB_filter_field_" + filterRowNum + "' style='width: 16em;' onChange='build_query();'>" +
 			"<option value=''></option>";
 	
 	for (var field in field_type_array) {
@@ -344,7 +313,7 @@ function addFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue)
 	
 	row += "</select>&nbsp;" +
 			"" +
-			"<select id='QB_filter_compOper_" + filterRuwNum + "' name='QB_filter_compOper_" + filterRuwNum + "' style='width: 10em;' onChange='build_query();'>";
+			"<select id='QB_filter_compOper_" + filterRowNum + "' name='QB_filter_compOper_" + filterRowNum + "' style='width: 10em;' onChange='build_query();'>";
 
 	for (var opKey in compOper_array) {
 		row += "<option value='" + opKey + "'";
@@ -354,9 +323,7 @@ function addFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue)
 	
 	defaultValue = defaultValue != null ? defaultValue : "";
 	row +=  "</select>&nbsp;" +
-			"<input type='text' id='QB_filter_value_" + filterRuwNum + "' size='31' name='QB_filter_value_" + filterRuwNum + "' value='" + defaultValue + "' onkeyup='build_query();' />" + 
-			"<!-- <span onclick='addFilterRow();' onMouseOver='this.style.cursor=\"pointer\"'>&nbsp;+</span> -->";	
-
+			"<input type='text' id='QB_filter_value_" + filterRowNum + "' size='31' name='QB_filter_value_" + filterRowNum + "' value='" + defaultValue + "' onkeyup='build_query();' />";
 
 	//add to the DOM
 	var newFilterCell = document.createElement('td');
@@ -368,7 +335,7 @@ function addFilterRow(filterRuwNum, defaultField, defaultCompOper, defaultValue)
 	var newFilterRow = document.createElement('tr');
 	newFilterRow.appendChild(newFilterCell);
 	
-	document.getElementById('QB_right_sub_table').getElementsByTagName("tbody")[0].appendChild(newFilterRow);
+	addFilterRowButton.parentNode.insertBefore(newFilterRow,addFilterRowButton);
 	
 	//expand the field list so it looks right
 	document.getElementById('QB_field_sel').size += 4;
@@ -384,13 +351,14 @@ QUERY_BUILDER_SCRIPT;
 		print "<form method='POST' name='query_form' action='$_SERVER[PHP_SELF]'>\n";
 	}
 	print "<input type='hidden' name='justUpdate' value='0' />";
+	print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
 	print "<p><strong>Choose the object, fields, and critera to build a SOQL query below:</strong></p>\n";
 	print "<table border='0' width=1>\n";
 	print "<tr><td valign='top' width='1'>Object:";
 
 	myGlobalSelect($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
 
-	print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='2' style='width: 16em;' onChange='build_query();'>\n";
+	print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='build_query();'>\n";
 	if(isset($describeSObject_result)){
 
 		print   " <option value='count()'";
@@ -481,6 +449,8 @@ QUERY_BUILDER_SCRIPT;
 	print "<td><input type='text' id='QB_limit_txt' size='11' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() != null ? $queryRequest->getLimit() : null,ENT_QUOTES,'UTF-8') . "' onkeyup='build_query();' /></td>\n";
 
 	print "</tr>\n";
+	
+	print "<tr id='addFilterRowButton'><td colspan='4'><img src='images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='Tip(\"Click to add an additional filter\"); this.style.cursor=\"pointer\"'  style='padding-top: 4px;'/></td></tr>"; //this.style.cursor=\"pointer\";
 
 	print "</table>\n";
 	print "</td></tr>\n";
