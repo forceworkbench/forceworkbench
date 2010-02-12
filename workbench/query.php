@@ -300,9 +300,8 @@ function build_query(){
 
 function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue){
 	//build the row inner html
-	var row = "";
-	row += 	"<br/>Filter results by:<br/>" + 
-			"<select id='QB_filter_field_" + filterRowNum + "' name='QB_filter_field_" + filterRowNum + "' style='width: 16em;' onChange='build_query();'>" +
+	var row = filterRowNum == 0 ? "<br/>Filter results by:<br/>" : "" ;
+	row += 	"<select id='QB_filter_field_" + filterRowNum + "' name='QB_filter_field_" + filterRowNum + "' style='width: 16em;' onChange='build_query();'>" +
 			"<option value=''></option>";
 	
 	for (var field in field_type_array) {
@@ -324,6 +323,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
 	defaultValue = defaultValue != null ? defaultValue : "";
 	row +=  "</select>&nbsp;" +
 			"<input type='text' id='QB_filter_value_" + filterRowNum + "' size='31' name='QB_filter_value_" + filterRowNum + "' value='" + defaultValue + "' onkeyup='build_query();' />";
+			
 
 	//add to the DOM
 	var newFilterCell = document.createElement('td');
@@ -331,14 +331,28 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
 	newFilterCell.setAttribute('valign','top');
 	newFilterCell.setAttribute('nowrap','true');
 	newFilterCell.innerHTML = row;
+
+	var newPlusCell = document.createElement('td');
+	newPlusCell.setAttribute('id','filter_plus_cell');
+	newPlusCell.setAttribute('valign','bottom');
+	newPlusCell.innerHTML = "<img src='images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='Tip(\"Click to add an additional filter\"); this.style.cursor=\"pointer\"'  style='padding-top: 4px;'/>";
 	
 	var newFilterRow = document.createElement('tr');
+	newFilterRow.setAttribute('id','filter_row_' + filterRowNum);
 	newFilterRow.appendChild(newFilterCell);
+	newFilterRow.appendChild(newPlusCell);
+	//addFilterRowButton.parentNode.insertBefore(newFilterRow,addFilterRowButton);
 	
-	addFilterRowButton.parentNode.insertBefore(newFilterRow,addFilterRowButton);
+	document.getElementById('QB_right_sub_table').appendChild(newFilterRow);
+	
+	if(filterRowNum > 0){
+		var lastFilterRowNum = filterRowNum - 1;
+		var filter_plus_cell = document.getElementById('filter_plus_cell');
+		filter_plus_cell.parentNode.removeChild(filter_plus_cell);
+	}
 	
 	//expand the field list so it looks right
-	document.getElementById('QB_field_sel').size += 4;
+	document.getElementById('QB_field_sel').size += 2;
 }
 
 </script>
@@ -446,11 +460,11 @@ QUERY_BUILDER_SCRIPT;
 	}
 	print "</select></td>\n";
 
-	print "<td><input type='text' id='QB_limit_txt' size='11' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() != null ? $queryRequest->getLimit() : null,ENT_QUOTES,'UTF-8') . "' onkeyup='build_query();' /></td>\n";
+	print "<td><input type='text' id='QB_limit_txt' size='10' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() != null ? $queryRequest->getLimit() : null,ENT_QUOTES,'UTF-8') . "' onkeyup='build_query();' /></td>\n";
 
 	print "</tr>\n";
 	
-	print "<tr id='addFilterRowButton'><td colspan='4'><img src='images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='Tip(\"Click to add an additional filter\"); this.style.cursor=\"pointer\"'  style='padding-top: 4px;'/></td></tr>"; //this.style.cursor=\"pointer\";
+	//print "<tr id='addFilterRowButton'><td colspan='4'><img src='images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='Tip(\"Click to add an additional filter\"); this.style.cursor=\"pointer\"'  style='padding-top: 4px;'/></td></tr>"; //this.style.cursor=\"pointer\";
 
 	print "</table>\n";
 	print "</td></tr>\n";
@@ -467,7 +481,7 @@ QUERY_BUILDER_SCRIPT;
 
 
 	print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-		"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='104' rows='" . $_SESSION['config']['textareaRows'] . "'  style='overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES,'UTF-8') . "</textarea>\n" .
+		"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='107' rows='" . $_SESSION['config']['textareaRows'] . "'  style='overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES,'UTF-8') . "</textarea>\n" .
 	  "</td></tr>\n";
 
 
