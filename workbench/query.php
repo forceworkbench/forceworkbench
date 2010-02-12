@@ -334,16 +334,15 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
 
 	var newPlusCell = document.createElement('td');
 	newPlusCell.setAttribute('id','filter_plus_cell');
-	newPlusCell.setAttribute('valign','bottom');
-	newPlusCell.innerHTML = "<img src='images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='Tip(\"Click to add an additional filter\"); this.style.cursor=\"pointer\"'  style='padding-top: 4px;'/>";
+	newPlusCell.setAttribute('vAlign','bottom');
+	newPlusCell.innerHTML = "<img src='images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='Tip(\"Add an additional filter\"); this.style.cursor=\"pointer\"'  style='padding-top: 4px;'/>";
 	
 	var newFilterRow = document.createElement('tr');
 	newFilterRow.setAttribute('id','filter_row_' + filterRowNum);
 	newFilterRow.appendChild(newFilterCell);
 	newFilterRow.appendChild(newPlusCell);
-	//addFilterRowButton.parentNode.insertBefore(newFilterRow,addFilterRowButton);
 	
-	document.getElementById('QB_right_sub_table').appendChild(newFilterRow);
+	document.getElementById('QB_right_sub_table').getElementsByTagName("TBODY").item(0).appendChild(newFilterRow);
 	
 	if(filterRowNum > 0){
 		var lastFilterRowNum = filterRowNum - 1;
@@ -464,8 +463,6 @@ QUERY_BUILDER_SCRIPT;
 
 	print "</tr>\n";
 	
-	//print "<tr id='addFilterRowButton'><td colspan='4'><img src='images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='Tip(\"Click to add an additional filter\"); this.style.cursor=\"pointer\"'  style='padding-top: 4px;'/></td></tr>"; //this.style.cursor=\"pointer\";
-
 	print "</table>\n";
 	print "</td></tr>\n";
 	
