@@ -22,6 +22,7 @@ class QueryRequest {
 	
 	//CONSTRUCTORS
 	public function __construct($source){		
+		if(isset($source['saveQr'])) 			$this->name          = $source['saveQr'];
 		if(isset($source['QB_object_sel'])) 	$this->object        = $source['QB_object_sel'];
 		if(isset($source['QB_field_sel'])) 		$this->fields 		 = $source['QB_field_sel'];
 		if(isset($source['QB_orderby_field'])) 	$this->orderByField  = $source['QB_orderby_field'];

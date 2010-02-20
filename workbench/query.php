@@ -14,20 +14,20 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 	$lastQr = new QueryRequest($_REQUEST);	
 	
 	//save as named query
-	if(isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0){
-		$lastQr->setName(htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES,'UTF-8'));
+	if(isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' && isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0){
 		$_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES,'UTF-8')] = $lastQr;
 	} 
 	
 	//save last query. always do this even if named.
-	if(isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query'){
+	if((isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query') || (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' )){
 		$_SESSION['lastQueryRequest'] = $lastQr;
 	} 
 	
 	//populate queryRequest for this page view. first see if user wants to retreive a saved query,
-	//then see if ther was a last query, else just show a null query.
+	//then see if there was a last query, else just show a null query with default object.
 	if(isset($_REQUEST['getQr']) && isset($_REQUEST['getQr']) != "" && isset($_SESSION['savedQueryRequests'][$_REQUEST['getQr']])){
 		$queryRequest = $_SESSION['savedQueryRequests'][$_REQUEST['getQr']];
+		$_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
 	} else if(isset($_SESSION['lastQueryRequest'])){
 		$queryRequest = $_SESSION['lastQueryRequest'];
 	} else {
@@ -139,6 +139,17 @@ function parentChildRelationshipQueryBlocker(){
 	}
 	
 }
+
+function doesQueryHaveName(){
+    var saveQr = document.getElementById('saveQr');
+	if(saveQr.value == null || saveQr.value.length == 0){
+		alert('Query must have a name to save.');
+		return false;
+	}	
+	
+	return true;
+}
+
 
 function toggleFieldDisabled(){
 	var QB_field_sel = document.getElementById('QB_field_sel');
@@ -486,19 +497,23 @@ QUERY_BUILDER_SCRIPT;
 	      "</td>";
 	
 	//save and retrieve named queries
-	print "<td colspan=4 align='right'>" . 	
-	      "&nbsp;Save as: <input type='text' name='saveQr' value='" . $queryRequest->getName() . "' />\n" .
-	
-		  "&nbsp;Retrieve: " .
+	print "<td colspan=4 align='right'>";
+
+	print "&nbsp;Run: " .
 		  "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();'>" . 
 	      "<option value='' selected='selected'></option>";
 	foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr){
 		if($qrName != null) print "<option value='$qrName'>$qrName</option>";
 	}
-	print "</select>" . 
-		  "&nbsp;&nbsp;" . 
-	      "<img onmouseover=\"Tip('Provide a name for a query and retrieve it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
+	print "</select>";
 	
+	
+	print "&nbsp;&nbsp;Save as: <input type='text' id='saveQr' name='saveQr' value='" . htmlspecialchars($queryRequest->getName(),ENT_QUOTES,'UTF-8') . "' style='width: 10em;'/>\n";
+	
+	print "<input type='submit' name='doSaveQr' value='Save' onclick='return doesQueryHaveName();' />\n";
+	
+	print "&nbsp;&nbsp;" . 
+	      "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
 	
 	print "</td></tr></table><p/>\n";
 }
