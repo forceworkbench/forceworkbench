@@ -72,6 +72,8 @@ function toggleFieldDisabled(){
 		document.getElementById('SB_objSelect_0').disabled = false;
 		if(document.getElementById('SB_objSelect_0').value){
 			document.getElementById('SB_objDetail_0').disabled = false;
+		} else {
+			document.getElementById('SB_objDetail_0').disabled = true;
 		}
 	} else {
 		document.getElementById('SB_limit').disabled = true;
