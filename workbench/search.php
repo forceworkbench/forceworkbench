@@ -1,30 +1,42 @@
 <?php
+require_once ('soxl/SearchObjects.php');
 require_once ('session.php');
 require_once ('shared.php');
 
-if(isset($_POST['sosl_search'])){
-	
-	//correction for dynamic magic quotes
-	if(get_magic_quotes_gpc()){
-		$_POST['sosl_search'] = stripslashes($_POST['sosl_search']);
-	}
-	
-	foreach($_POST as $postKey => $postValue){
-		$_SESSION[$postKey] = $postValue;
-	}
+$lastSr = new SearchRequest($_REQUEST);
+
+//save as named search
+if(isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST['saveSr']) && strlen($_REQUEST['saveSr']) > 0){
+	$_SESSION['savedSearchRequests'][htmlspecialchars($_REQUEST['saveSr'],ENT_QUOTES,'UTF-8')] = $lastSr;
+} 
+
+//save last search. always do this even if named.
+if((isset($_POST['searchSubmit']) && $_POST['searchSubmit']=='Search') || (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' )){
+	$_SESSION['lastSearchRequest'] = $lastSr;
+}
+
+//populate searchRequest for this page view. first see if user wants to retreive a saved search,
+//then see if there was a last search, else just show a null search with default object.
+if(isset($_REQUEST['getSr']) && isset($_REQUEST['getSr']) != "" && isset($_SESSION['savedSearchRequests'][$_REQUEST['getSr']])){
+	$searchRequest = $_SESSION['savedSearchRequests'][$_REQUEST['getSr']];
+	$_POST['searchSubmit'] = 'Search'; //simulate the user clicking 'search' to run immediately
+} else if(isset($_SESSION['lastSearchRequest'])){
+	$searchRequest = $_SESSION['lastSearchRequest'];
+} else {
+	$defaultSettings['numReturningObjects'] = 1;
+	$searchRequest = new SearchRequest($defaultSettings);
 }
 
 
 //Main form logic: When the user first enters the page, display form defaulted to
 //show the search results with default object selected on a previous page, otherwise
-// just display the blank form. When the user selects the SCREEN or CSV options, the
-//search is processed by the correct function
-if (isset($_POST['searchSubmit']) && isset($_POST['sosl_search'])) {
+// just display the blank form. 
+if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
 	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
-	show_search_form($_POST['sosl_search']);
+	show_search_form($searchRequest);
 	$searchTimeStart = microtime(true);
-	$records = search($_POST['sosl_search']);
+	$records = search($searchRequest);
 	$searchTimeEnd = microtime(true);
 	$searchTimeElapsed = $searchTimeEnd - $searchTimeStart;
 	show_search_result($records,$searchTimeElapsed);
@@ -32,7 +44,7 @@ if (isset($_POST['searchSubmit']) && isset($_POST['sosl_search'])) {
 } else {
 	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
-	show_search_form(isset($_SESSION['sosl_search'])?$_SESSION['sosl_search']:null);
+	show_search_form($searchRequest);
 	include_once('footer.php');
 }
 
@@ -40,57 +52,55 @@ if (isset($_POST['searchSubmit']) && isset($_POST['sosl_search'])) {
 
 //Show the main SOSL search form with default search or last submitted search and export action (screen or CSV)
 
-function show_search_form($sosl_search){
+function show_search_form($searchRequest){
 
 
 print "<script>\n";
+	
+print "var searchable_objects = new Array();\n";
+foreach(describeGlobal("searchable") as $obj){
+	print "searchable_objects[\"$obj\"]=\"$obj\";\n";
+}
 
 print <<<SEARCH_BUILDER_SCRIPT
 
 function toggleFieldDisabled(){
+
 	if(document.getElementById('SB_searchString').value){
 		document.getElementById('SB_limit').disabled = false;
 		document.getElementById('SB_fieldTypeSelect').disabled = false;
-		document.getElementById('SB_objSelect1').disabled = false;
-		document.getElementById('SB_objDetail1').disabled = false;
+		document.getElementById('SB_objSelect_0').disabled = false;
+		if(document.getElementById('SB_objSelect_0').value){
+			document.getElementById('SB_objDetail_0').disabled = false;
+		}
 	} else {
 		document.getElementById('SB_limit').disabled = true;
 		document.getElementById('SB_fieldTypeSelect').disabled = true;
-		document.getElementById('SB_objSelect1').disabled = true;
-		document.getElementById('SB_objDetail1').disabled = true;
-	}
-	
-	if(!document.getElementById('SB_objSelect1').value || document.getElementById('SB_objSelect1').disabled){
-		document.getElementById('SB_objDetail1').disabled = true;
-		document.getElementById('SB_objSelect2').disabled = true;
-		document.getElementById('SB_objDetail2').disabled = true;
-	} else {
-		document.getElementById('SB_objDetail1').disabled = false;
-		document.getElementById('SB_objSelect2').disabled = false;
-		document.getElementById('SB_objDetail2').disabled = false;
+		document.getElementById('SB_objSelect_0').disabled = true;
+		document.getElementById('SB_objDetail_0').disabled = true;
 	}
 
-	if(!document.getElementById('SB_objSelect2').value || document.getElementById('SB_objSelect2').disabled){
-		document.getElementById('SB_objDetail2').disabled = true;
-		document.getElementById('SB_objSelect3').disabled = true;
-		document.getElementById('SB_objDetail3').disabled = true;
-	} else {
-		document.getElementById('SB_objDetail2').disabled = false;
-		document.getElementById('SB_objSelect3').disabled = false;
-		document.getElementById('SB_objDetail3').disabled = false;
-	}
-	
-	if(!document.getElementById('SB_objSelect3').value || document.getElementById('SB_objSelect3').disabled){
-		document.getElementById('SB_objDetail3').disabled = true;
-	} else {
-		document.getElementById('SB_objDetail3').disabled = false;
+	var allPreviousRowsUsed = true;
+	for(var ro = 1; ro < document.getElementById('numReturningObjects').value; ro++){
+		var this_SB_objSelect = document.getElementById('SB_objSelect_' + ro);
+		var this_SB_objDetail = document.getElementById('SB_objDetail_' + ro);
+		
+		var last_SB_objSelect = document.getElementById('SB_objSelect_' + (ro - 1));
+		var last_SB_objDetail = document.getElementById('SB_objDetail_' + (ro - 1));
+		
+		if(allPreviousRowsUsed && last_SB_objSelect.value && last_SB_objDetail.value){
+			this_SB_objSelect.disabled = false;
+			this_SB_objDetail.disabled = false;
+			if(this_SB_objSelect.value){
+				this_SB_objDetail.disabled = false;
+			} 
+		} else {
+			this_SB_objSelect.disabled = true;
+			this_SB_objDetail.disabled = true;
+			allPreviousRowsUsed = false;
+		}
 	}
 }
-
-//function updateObject(){
-//  document.search_form.justUpdate.value = 1;
-//  document.search_form.submit();
-//}
 
 function build_search(){
 	toggleFieldDisabled();
@@ -102,30 +112,19 @@ function build_search(){
 		fieldTypeSelect = ' IN ' + document.getElementById('SB_fieldTypeSelect').value;
 	}
 	
-	var objSelect1 = '';
-	if(document.getElementById('SB_objSelect1').value && !document.getElementById('SB_objSelect1').disabled){
-		objSelect1 = ' RETURNING ' + document.getElementById('SB_objSelect1').value;
+	var roString = '';
+	for(var ro = 0; ro < document.getElementById('numReturningObjects').value; ro++){
+		var SB_objSelect = document.getElementById('SB_objSelect_' + ro);
+		var SB_objDetail = document.getElementById('SB_objDetail_' + ro);
+		
+		if(SB_objSelect.value && !SB_objSelect.disabled){
+			roString += ro == 0 ? ' RETURNING ' : ', ';
+			
+			roString += SB_objSelect.value;
 
-		if(document.getElementById('SB_objDetail1').value && !document.getElementById('SB_objDetail1').disabled){
-			objSelect1 += '(' + document.getElementById('SB_objDetail1').value + ')';
-		}
-	}
-	
-	var objSelect2 = '';
-	if(document.getElementById('SB_objSelect2').value && !document.getElementById('SB_objSelect2').disabled){
-		objSelect2 = ', ' + document.getElementById('SB_objSelect2').value;
-
-		if(document.getElementById('SB_objDetail2').value && !document.getElementById('SB_objDetail2').disabled){
-			objSelect2 += '(' + document.getElementById('SB_objDetail2').value + ')';
-		}
-	}
-	
-	var objSelect3 = '';
-	if(document.getElementById('SB_objSelect3').value && !document.getElementById('SB_objSelect3').disabled){
-		objSelect3 = ', ' + document.getElementById('SB_objSelect3').value;
-
-		if(document.getElementById('SB_objDetail3').value && !document.getElementById('SB_objDetail3').disabled){
-			objSelect3 += '(' + document.getElementById('SB_objDetail3').value + ')';
+			if(SB_objDetail.value && !SB_objDetail.disabled){
+				roString += '(' + SB_objDetail.value + ')';
+			}
 		}
 	}
 	
@@ -135,10 +134,58 @@ function build_search(){
 	}
 
 
-	if (searchString)
-		document.getElementById('sosl_search_textarea').value = searchString + fieldTypeSelect + objSelect1 + objSelect2 + objSelect3 + limit;
-
+	if (searchString){
+		document.getElementById('sosl_search_textarea').value = searchString + fieldTypeSelect + roString + limit;
+	}
 }
+
+function addReturningObjectRow(rowNum, defaultObject, defaultFields){
+	//build the row inner html
+	var row = "";
+	
+	row += 	"<select id='SB_objSelect_" + rowNum + "' name='SB_objSelect_" + rowNum + "' style='width: 20em;' onChange='build_search();'>" +
+			"<option value=''></option>";
+	
+	for (var obj in searchable_objects) {
+		row += "<option value='" + obj + "'";
+		if (defaultObject == obj) row += " selected='selected' ";
+		row += "'>" + obj + "</option>";
+	} 	
+	
+	defaultFields = defaultFields != null ? defaultFields : "";
+	row +=  "</select>&nbsp;" +
+			"<input type='text' id='SB_objDetail_" + rowNum + "' size='51' name='SB_objDetail_" + rowNum + "' value='" + defaultFields + "' onkeyup='build_search();' />";
+			
+
+	//add to the DOM
+	var leadingTxtCell = document.createElement('td');
+	leadingTxtCell.setAttribute('nowrap','true');
+	leadingTxtCell.innerHTML = rowNum == 0 ? "returning object:" : "and object:" ;
+	
+	var bodyCell = document.createElement('td');
+	bodyCell.setAttribute('nowrap','true');
+	bodyCell.innerHTML = row;
+
+	var newPlusCell = document.createElement('td');
+	newPlusCell.setAttribute('id','add_row_plus_cell_' + rowNum);
+	newPlusCell.setAttribute('vAlign','bottom');
+	newPlusCell.innerHTML = "<img id='row_plus_button' src='images/plus_icon.jpg' onclick='addReturningObjectRow(document.getElementById(\"numReturningObjects\").value++);toggleFieldDisabled();' onmouseover='this.style.cursor=\"pointer\";'  style='padding-top: 4px;'/>";
+	
+	var newRow = document.createElement('tr');
+	newRow.setAttribute('id','returning_objects_row_' + rowNum);
+	newRow.appendChild(leadingTxtCell);
+	newRow.appendChild(bodyCell);
+	newRow.appendChild(newPlusCell);
+	
+	var lastRow = document.getElementById('sosl_search_textarea_row');	
+	lastRow.parentNode.insertBefore(newRow, lastRow);
+	
+	if(rowNum > 0){
+		var row_plus_button = document.getElementById('row_plus_button');
+		row_plus_button.parentNode.removeChild(row_plus_button);
+	}
+}
+
 </script>
 SEARCH_BUILDER_SCRIPT;
 
@@ -148,10 +195,12 @@ SEARCH_BUILDER_SCRIPT;
 		print "<form method='POST' name='search_form' action='$_SERVER[PHP_SELF]#sr'>\n";
 	}
 	
+	print "<input type='hidden' id='numReturningObjects' name='numReturningObjects' value='" . count($searchRequest->getReturningObjects()) ."' />";
+	
 	print "<p><strong>Enter a search string and optionally select the objects and fields to return to build a SOSL search below:</strong></p>\n";
-	print "<table border='0' width=1>\n<tr>\n";
+	print "<table id='search_form_table' border='0' width='1'>\n<tr>\n";
     
-    print "<td>Search for </td><td><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . htmlspecialchars(isset($_SESSION['SB_searchString'])?$_SESSION['SB_searchString']:null,ENT_QUOTES,'UTF-8') . "\" size='37' onKeyUp='build_search();' /> in ";
+    print "<td NOWRAP>Search for </td><td NOWRAP colspan='2'><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . htmlspecialchars($searchRequest->getSearchString(),ENT_QUOTES,'UTF-8') . "\" size='37' onKeyUp='build_search();' /> in ";
     
 	$fieldTypeSelectOptions = array(
 		'ALL FIELDS' => 'All Fields',
@@ -162,45 +211,57 @@ SEARCH_BUILDER_SCRIPT;
 	print "<select id='SB_fieldTypeSelect' name='SB_fieldTypeSelect' onChange='build_search();'>\n";
 	foreach ($fieldTypeSelectOptions as $op_key => $op){
 		print "<option value='$op_key'";
-		if (isset($_SESSION['SB_fieldTypeSelect']) && $op_key == $_SESSION['SB_fieldTypeSelect']) print " selected='selected' ";
+		if ($op_key == $searchRequest->getFieldType()) print " selected='selected' ";
 		print ">$op</option>";
 	}
 	print "</select>";
 
-    print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . htmlspecialchars(isset($_SESSION['SB_limit'])?$_SESSION['SB_limit']:null,ENT_QUOTES,'UTF-8') . "' size='5' onKeyUp='build_search();' /> maximum records</td></tr>\n";
+    print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . htmlspecialchars($searchRequest->getLimit(),ENT_QUOTES,'UTF-8') . "' size='5' onKeyUp='build_search();' /> maximum records</td></tr>\n";
 
-	print "<tr><td colspan='2'></td></tr>";
-	print "<tr><td>returning object </td><td NOWRAP>";
-	myGlobalSelect(isset($_SESSION['SB_objSelect1'])?$_SESSION['SB_objSelect1']:null,'SB_objSelect1',20,"onChange='build_search();'","searchable");
-	print " including fields <input id='SB_objDetail1' name='SB_objDetail1' type='text' value=\"" . htmlspecialchars(isset($_SESSION['SB_objDetail1'])?$_SESSION['SB_objDetail1']:null,ENT_QUOTES,'UTF-8') . "\" size='40'  onKeyUp='build_search();' />";
-		print "&nbsp;<img onmouseover=\"Tip('List the API names of the fields to be returned; otherwise, only the Id is returned. Optionally include WHERE and LIMIT statements to futher filter search results.')\" align='absmiddle' src='images/help16.png'/>";
-		print "</td></tr>";
-	print "<tr><td colspan='2'></td></tr>";
-	print "<tr><td>and object </td><td NOWRAP>";
-	myGlobalSelect(isset($_SESSION['SB_objSelect2'])?$_SESSION['SB_objSelect2']:null,'SB_objSelect2',20,"onChange='build_search();'","searchable");
-	print " including fields <input id='SB_objDetail2' name='SB_objDetail2' type='text' value=\"" . htmlspecialchars(isset($_SESSION['SB_objDetail2'])?$_SESSION['SB_objDetail2']:null,ENT_QUOTES,'UTF-8') . "\" size='40' onKeyUp='build_search();' /></td></tr>";
+	print "<tr id='sosl_search_textarea_row'><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
+		"<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='100' rows='" . $_SESSION['config']['textareaRows'] . "' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($searchRequest->getSoslSearch(),ENT_QUOTES,'UTF-8') . "</textarea>" .
+	  "</td></tr>";
 	
-	print "<tr><td colspan='2'></td></tr>";
-	print "<tr><td>and object </td><td NOWRAP>";
-	myGlobalSelect(isset($_SESSION['SB_objSelect3'])?$_SESSION['SB_objSelect3']:null,'SB_objSelect3',20,"onChange='build_search();'","searchable");
-	print " including fields <input id='SB_objDetail3' name='SB_objDetail3' type='text' value=\"" . htmlspecialchars(isset($_SESSION['SB_objDetail3'])?$_SESSION['SB_objDetail3']:null,ENT_QUOTES,'UTF-8') . "\" size='40' onKeyUp='build_search();' /></td></tr>";
+	print "<tr><td><input type='submit' name='searchSubmit' value='Search' />";
+	//print "<input type='reset' value='Reset' />";
+	
+	//save and retrieve named searches
+	print "<td align='right' colspan='2'>";
 
-	print "<tr><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
-			"<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='100' rows='" . $_SESSION['config']['textareaRows'] . "' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($sosl_search,ENT_QUOTES,'UTF-8') . "</textarea>" .
-		  "</td></tr>";
+	print "&nbsp;Run: " .
+		  "<select name='getSr' style='width: 10em;' onChange='document.search_form.submit();'>" . 
+	      "<option value='' selected='selected'></option>";
+	foreach ($_SESSION['savedSearchRequests'] as $srName => $sr){
+		if($srName != null) print "<option value='$srName'>$srName</option>";
+	}
+	print "</select>";
+	
+	print "&nbsp;&nbsp;Save as: <input type='text' id='saveSr' name='saveSr' value='" . htmlspecialchars($searchRequest->getName(),ENT_QUOTES,'UTF-8') . "' style='width: 10em;'/>\n";
+	
+	print "<input type='submit' name='doSaveSr' value='Save' onclick='return doesSearchHaveName();' />\n";
+	
+	print "&nbsp;&nbsp;" . 
+	      "<img onmouseover=\"Tip('Save a search with a name and run it at a later time during your session. Note, if a search is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
 
-
-	print "<tr><td colspan=3><input type='submit' name='searchSubmit' value='Search' />";
-	print "<input type='reset' value='Reset' />";
+	
 	print "</td></tr></table><p/></form>\n";
+	
+	$rowNum = 0;
+	foreach($searchRequest->getReturningObjects() as $ro){		
+		print "<script>addReturningObjectRow(" . 
+		$rowNum++ . ", " . 
+		"\"" . $ro->getObject()     . "\", " . 
+		"\"" . $ro->getFields()  . "\"" .
+		");</script>";
+	}
 }
 
 
-function search($sosl_search){
+function search($searchRequest){
 	try{
 
 		global $mySforceConnection;
-		$search_response = $mySforceConnection->search($sosl_search);
+		$search_response = $mySforceConnection->search($searchRequest->getSoslSearch());
 	
 		if(isset($search_response->searchRecords)){
 			$records = $search_response->searchRecords;

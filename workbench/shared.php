@@ -62,29 +62,25 @@ function printSelectOptions($valuesToLabelsArray,$defaultValue){
 	return $valueAndLabelMatched;
 }
 
-
-function myGlobalSelect($default_object=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null){
-	$_SESSION['default_object'] = $default_object;
+function describeGlobal($filter1=null, $filter2=null){
+	$processedDescribeGlobalResponse = array();
 	
-	print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";	
-//	print "<select id='myGlobalSelect' name='default_object' style='width: 20em;'>\n";
-	print "<option value=''></option>";
 	if (!$_SESSION['myGlobal'] || !$_SESSION['config']['cacheDescribeGlobal']){
 		try{
-		global $mySforceConnection;
-		$describeGlobalResponse = $mySforceConnection->describeGlobal();
-		
-		//Change to pre-17.0 format
-		if(isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)){
-			$describeGlobalResponse->types = array(); //create the array
-			foreach($describeGlobalResponse->sobjects as $sobject){
-				$describeGlobalResponse->types[] = $sobject->name; //migrate to pre 17.0 format
-				$describeGlobalResponse->attributeMap["$sobject->name"] = $sobject; //recreate into a map for faster lookup later
-			}
-			unset($describeGlobalResponse->sobjects); //remove from array, since not needed
-		}	
-		
-		$_SESSION['myGlobal'] = $describeGlobalResponse;
+			global $mySforceConnection;
+			$describeGlobalResponse = $mySforceConnection->describeGlobal();
+			
+			//Change to pre-17.0 format
+			if(isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)){
+				$describeGlobalResponse->types = array(); //create the array
+				foreach($describeGlobalResponse->sobjects as $sobject){
+					$describeGlobalResponse->types[] = $sobject->name; //migrate to pre 17.0 format
+					$describeGlobalResponse->attributeMap["$sobject->name"] = $sobject; //recreate into a map for faster lookup later
+				}
+				unset($describeGlobalResponse->sobjects); //remove from array, since not needed
+			}	
+			
+			$_SESSION['myGlobal'] = $describeGlobalResponse;
 		} catch (Exception $e) {
 			show_error($e->getMessage(),false,true);
 	    }
@@ -95,18 +91,28 @@ function myGlobalSelect($default_object=null, $nameId='default_object', $width=2
 		if(!isset($_SESSION['myGlobal']->attributeMap) || 
 			(($filter1 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter1) && 
 			($filter2 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter2))){	
-				
-			print "	<option value='$type'";
-			if ($default_object == $type){
-				print " selected='true'";
-			}
-			print " />$type</option> \n";
+			
+			$processedDescribeGlobalResponse[] = $type;
 		}	
 	}
+	
+	return $processedDescribeGlobalResponse;
+}
+
+function myGlobalSelect($default_object=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null){
+	$_SESSION['default_object'] = $default_object;
+	
+	print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";	
+
+	//Print the global object types in a dropdown select box, using the filter set and the API version supports it
+	foreach(describeGlobal($filter1, $filter2) as $type){
+		print "	<option value='$type'";
+		if ($default_object == $type){
+			print " selected='true'";
+		}
+		print " />$type</option> \n";
+	}
 	print "</select>\n";
-			
-	//print "<pre>";
-	//print_r($describeGlobalResponse);
 }
 
 function describeSObject($objectTypes){
