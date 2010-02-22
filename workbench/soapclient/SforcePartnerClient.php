@@ -220,99 +220,61 @@ class SObject {
 			if (isset($response->Id)) $this->Id = $response->Id[0];
 			if (isset($response->type)) $this->type = $response->type;
 			if (isset($response->fieldsToNull)) $this->fieldsToNull = $response->fieldsToNull;
-			if (isset($response->any)) {
-				try {
-					//$this->fields = $this->convertFields($response->any);
-					// If ANY is an object, instantiate another SObject
-					if ($response->any instanceof stdClass) {
-						if ($this->isSObject($response->any)) {
-							$anArray = array();
-							$sobject = new SObject($response->any);
-							array_push($anArray, $sobject);
-							$this->sobjects = $anArray;
-						} else {
-							// this is for parent to child relationships
-							$this->queryResult = new QueryResult($response->any);
-						}
-
+			if (isset($response->any)) {			
+				// If ANY is an object, it is either a nested sObject or a nested QueryResult
+				if ($response->any instanceof stdClass) {
+					//Nested sObjects (child to parent relationships)
+					if ($this->isSObject($response->any)) {
+						$parentSObjects = array();
+						$sobject = new SObject($response->any);
+						array_push($parentSObjects, $sobject);
+						$this->sobjects = $parentSObjects;
+					//Nested QueryResult (parent to child relationships)
 					} else {
-						// If ANY is an array
-						if (is_array($response->any)) {
-							// Loop through each and perform some action.
-							$anArray = array();
-							foreach ($response->any as $item) {
-								if ($item instanceof stdClass) {
-									if ($this->isSObject($item)) {
-										$sobject = new SObject($item);
-										array_push($anArray, $sobject);
-									} else {
-										// this is for parent to child relationships
-										//$this->queryResult = new QueryResult($item);
-										if (!isset($this->queryResult)) {
-											$this->queryResult = array();
-										}
-										array_push($this->queryResult, new QueryResult($item));
-									}
-								} else {
-									//$this->fields = $this->convertFields($item);
-									if (!isset($fieldsToConvert)) {
-										$fieldsToConvert = $item;
-									} else {
-										$fieldsToConvert .= $item;
-									}
+						$this->queryResult = new QueryResult($response->any);
+					}
+				//Otherwise ANY must be just a field
+				} else {
+					//if ANY is not an array, make it one.
+					if(!is_array($response->any)){
+						$response->any = array($response->any);
+					}
+					
+					$anArray = array();
+					$fieldsToConvert = "";
+					$unknownFieldNum = 1;
+					foreach ($response->any as $item) {
+						if ($item instanceof stdClass) {
+							if ($this->isSObject($item)) {
+								$sobject = new SObject($item);
+								array_push($anArray, $sobject);
+							} else {
+								// this is for parent to child relationships
+								if (!isset($this->queryResult)) {
+									$this->queryResult = array();
 								}
-								if (isset($fieldsToConvert)) {
-									$this->fields = $this->convertFields($fieldsToConvert);
-								}
+								array_push($this->queryResult, new QueryResult($item));
 							}
-							if (sizeof($anArray) > 0) {
-								$this->sobjects = $anArray;
-							}
-
-							/*
-               $this->fields = $this->convertFields($response->any[0]);
-               if (isset($response->any[1]->records)) {
-               $anArray = array();
-               if ($response->any[1]->size == 1) {
-               $records = array (
-               $response->any[1]->records
-               );
-               } else {
-               $records = $response->any[1]->records;
-               }
-               foreach ($records as $record) {
-               $sobject = new SObject($record);
-               array_push($anArray, $sobject);
-               }
-               $this->sobjects = $anArray;
-               } else {
-               $anArray = array();
-               $sobject = new SObject($response->any[1]);
-               array_push($anArray, $sobject);
-               $this->sobjects = $anArray;
-               }
-							 */
 						} else {
-							$this->fields = $this->convertFields($response->any);
+							//if the field is not wrapped in sf tag, consider it of an unknown type
+							if(!strstr($item, '<sf:')){
+								$unknownTag = "Unknown_Field__" . $unknownFieldNum++;
+								$item = "<$unknownTag>$item</$unknownTag>";
+							}
+							$fieldsToConvert .= $item;
 						}
 					}
-				} catch (Exception $e) {
-					var_dump($e);
+					if (isset($fieldsToConvert)) {
+						$convertedFields = preg_replace('/sf:/', '', $fieldsToConvert);
+						$convertedFields = '<Object xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'.$convertedFields.'</Object>';
+						$this->fields = simplexml_load_string($convertedFields);						
+					}
+					if (sizeof($anArray) > 0) {
+						$this->sobjects = $anArray;
+					}
 				}
 			}
 		}
-	}
-
-	/**
-	 * Parse the "any" string from an sObject.  First strip out the sf: and then
-	 * enclose string with <Object></Object>.  Load the string using
-	 * simplexml_load_string and return an array that can be traversed.
-	 */
-	function convertFields($any) {
-		$new_string = ereg_replace('sf:', '', $any);
-		$new_string = '<Object xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'.$new_string.'</Object>';
-		$xml = simplexml_load_string($new_string);
-		return $xml;
 	}
 
 	/*
