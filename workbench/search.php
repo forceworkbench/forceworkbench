@@ -64,6 +64,16 @@ foreach(describeGlobal("searchable") as $obj){
 
 print <<<SEARCH_BUILDER_SCRIPT
 
+function doesSearchHaveName(){
+    var saveSr = document.getElementById('saveSr');
+	if(saveSr.value == null || saveSr.value.length == 0){
+		alert('Search must have a name to save.');
+		return false;
+	}	
+	
+	return true;
+}
+
 function toggleFieldDisabled(){
 
 	if(document.getElementById('SB_searchString').value){
@@ -95,7 +105,9 @@ function toggleFieldDisabled(){
 			this_SB_objDetail.disabled = false;
 			if(this_SB_objSelect.value){
 				this_SB_objDetail.disabled = false;
-			} 
+			} else {
+				this_SB_objDetail.disabled = true;
+			}
 		} else {
 			this_SB_objSelect.disabled = true;
 			this_SB_objDetail.disabled = true;
@@ -145,7 +157,7 @@ function addReturningObjectRow(rowNum, defaultObject, defaultFields){
 	//build the row inner html
 	var row = "";
 	
-	row += 	"<select id='SB_objSelect_" + rowNum + "' name='SB_objSelect_" + rowNum + "' style='width: 20em;' onChange='build_search();'>" +
+	row += 	"<select id='SB_objSelect_" + rowNum + "' name='SB_objSelect_" + rowNum + "' style='width: 20em;' onChange='build_search();' onkeyup='build_search();'>" +
 			"<option value=''></option>";
 	
 	for (var obj in searchable_objects) {
@@ -210,7 +222,7 @@ SEARCH_BUILDER_SCRIPT;
 		'PHONE FIELDS' => 'Phone Fields',
 		'EMAIL FIELDS' => 'Email Fields'			
 	);
-	print "<select id='SB_fieldTypeSelect' name='SB_fieldTypeSelect' onChange='build_search();'>\n";
+	print "<select id='SB_fieldTypeSelect' name='SB_fieldTypeSelect' onChange='build_search();' onkeyup='build_search();'>\n";
 	foreach ($fieldTypeSelectOptions as $op_key => $op){
 		print "<option value='$op_key'";
 		if ($op_key == $searchRequest->getFieldType()) print " selected='selected' ";

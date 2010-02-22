@@ -312,7 +312,7 @@ function build_query(){
 function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue){
 	//build the row inner html
 	var row = filterRowNum == 0 ? "<br/>Filter results by:<br/>" : "" ;
-	row += 	"<select id='QB_filter_field_" + filterRowNum + "' name='QB_filter_field_" + filterRowNum + "' style='width: 16em;' onChange='build_query();'>" +
+	row += 	"<select id='QB_filter_field_" + filterRowNum + "' name='QB_filter_field_" + filterRowNum + "' style='width: 16em;' onChange='build_query();' onkeyup='build_query();'>" +
 			"<option value=''></option>";
 	
 	for (var field in field_type_array) {
@@ -323,7 +323,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
 	
 	row += "</select>&nbsp;" +
 			"" +
-			"<select id='QB_filter_compOper_" + filterRowNum + "' name='QB_filter_compOper_" + filterRowNum + "' style='width: 10em;' onChange='build_query();'>";
+			"<select id='QB_filter_compOper_" + filterRowNum + "' name='QB_filter_compOper_" + filterRowNum + "' style='width: 10em;' onChange='build_query();' onkeyup='build_query();'>";
 
 	for (var opKey in compOper_array) {
 		row += "<option value='" + opKey + "'";
@@ -449,7 +449,7 @@ QUERY_BUILDER_SCRIPT;
 		'DESC' => 'Z to A'
 	);
 	
-	print "<td><select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 10em;' onChange='build_query();'>\n";
+	print "<td><select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 10em;' onChange='build_query();' onkeyup='build_query();'>\n";
 	foreach ($QB_orderby_sort_options as $op_key => $op){
 		print "<option value='$op_key'";
 		if (isset($_POST['QB_orderby_sort']) && $op_key == $_POST['QB_orderby_sort']) print " selected='selected' ";
@@ -461,7 +461,7 @@ QUERY_BUILDER_SCRIPT;
 	'FIRST' => 'Nulls First',
 	'LAST' => 'Nulls Last'
 	);
-	print "<td><select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='build_query();'>\n";
+	print "<td><select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='build_query();' onkeyup='build_query();'>\n";
 	foreach ($QB_nulls_options as $op_key => $op){
 		print "<option value='$op_key'";
 		if ($queryRequest->getOrderByNulls() != null && $op_key == $queryRequest->getOrderByNulls()) print " selected='selected' ";
