@@ -1,10 +1,6 @@
 package forceworkbench.tests;
 
-import java.util.*;
-
 import org.apache.log4j.Logger;
-
-import com.thoughtworks.selenium.SeleneseTestCase;
 
 public class LoginTests extends WorkbenchSeleneseTestCase {
 	

@@ -6,18 +6,7 @@
 		<project>workbench</project>
 	</projects>
 	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.php.core.PhpIncrementalProjectBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.php.core.ValidationManagerWrapper</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.php.core.PHPNature</nature>
 	</natures>
 </projectDescription>

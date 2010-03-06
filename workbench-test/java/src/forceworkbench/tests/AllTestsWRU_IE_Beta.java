@@ -1,10 +1,10 @@
 package forceworkbench.tests;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 
 public class AllTestsWRU_IE_Beta {
 	

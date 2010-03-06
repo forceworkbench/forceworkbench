@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.thoughtworks.selenium.SeleneseTestCase;
-
 public class QueryTests extends WorkbenchSeleneseTestCase {
 	
 	private static Logger logger = Logger.getLogger(QueryTests.class);

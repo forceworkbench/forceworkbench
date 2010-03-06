@@ -9,14 +9,6 @@ public abstract class WorkbenchSeleneseTestCase extends SeleneseTestCase {
 	private static Logger logger = Logger.getLogger(WorkbenchSeleneseTestCase.class);
 	
 	static Configuration config; 
-
-	public Configuration getConfig() {
-		return config;
-	}
-
-	public void setConfig(Configuration config) {
-		this.config = config;
-	}
 	
 	public void setUp() throws Exception {
 		logger.info("Starting WorkbenchSeleneseTestCase");

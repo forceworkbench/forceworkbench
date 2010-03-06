@@ -1,9 +1,6 @@
 package forceworkbench.tests;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.log4j.Logger;
-import com.thoughtworks.selenium.SeleneseTestCase;
 
 public class DescribeTests extends WorkbenchSeleneseTestCase {
 	
