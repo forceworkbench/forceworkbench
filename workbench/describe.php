@@ -105,8 +105,10 @@ function show_describeSObject_result(){
 				//it requires more nested foreach loops
 				elseif ($subkey == 'picklistValues'){
 					print "<li>$subkey<ul>\n";
+					if(!is_array($subvalue)) $subvalue = array($subvalue);
 					foreach($subvalue as $subsubkey => $subsubvalue){
-						print  "<li>$subsubvalue->value<ul>\n";
+						if($value->name == "Division") print "<li>$subsubvalue->label<ul>\n";
+						else print  "<li>$subsubvalue->value<ul>\n";
 						foreach($subsubvalue as $subsubsubkey => $subsubsubvalue){
 							if (is_bool($subsubsubvalue)){
 								print "<li>$subsubsubkey: ";
@@ -165,6 +167,7 @@ function show_describeSObject_result(){
 		//Print Child Relationships, if they exists
 		if (isset($describeSObject_result->childRelationships)){
 			print "<li>Child Relationships<ul>\n";
+			if(!is_array($describeSObject_result->childRelationships)) $describeSObject_result->childRelationships = array($describeSObject_result->childRelationships);
 			foreach($describeSObject_result->childRelationships as $key => $value){
 				print "<li>$value->childSObject<ul>\n";
 				foreach($value as $subkey => $subvalue){

@@ -103,6 +103,8 @@ function myGlobalSelect($default_object=null, $nameId='default_object', $width=2
 	$_SESSION['default_object'] = $default_object;
 	
 	print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";	
+	
+	print "<option value=''></option>";
 
 	//Print the global object types in a dropdown select box, using the filter set and the API version supports it
 	foreach(describeGlobal($filter1, $filter2) as $type){
@@ -194,7 +196,8 @@ function describeSObject($objectTypes){
 function alphaOrderFields($describeSObject_result){
     //move field name out to key name and then ksort based on key for field abc order
     if(isset($describeSObject_result->fields)){
-        foreach($describeSObject_result->fields as $field){
+        if(!is_array($describeSObject_result->fields)) $describeSObject_result->fields = array($describeSObject_result->fields);
+    	foreach($describeSObject_result->fields as $field){
             $fieldNames[] = $field->name;
         }
     
