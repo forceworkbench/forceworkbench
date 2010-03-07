@@ -22,7 +22,7 @@ function show_describeSObject_form(){
 	?>	
 	<script type="text/javascript" src="script/simpletreemenu.js">
 	/***********************************************
-	* Simple Tree Menu- � Dynamic Drive DHTML code library (www.dynamicdrive.com)
+	* Simple Tree Menu - Dynamic Drive DHTML code library (www.dynamicdrive.com)
 	* This notice MUST stay intact for legal use
 	* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
 	***********************************************/
@@ -72,7 +72,7 @@ function show_describeSObject_result(){
 		}
 
 
-		print "<a href=\"javascript:ddtreemenu.flatten('describeTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('describeTree', 'contact')\">Collapse All</a> | <a href=\"describeTable.php\">Table View</a>\n";
+		print "<a href=\"javascript:ddtreemenu.flatten('describeTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('describeTree', 'contact')\">Collapse All</a>\n";
 		print "<ul id='describeTree' class='treeview'>\n";
 
 
