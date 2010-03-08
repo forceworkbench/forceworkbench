@@ -14,7 +14,61 @@ public class QueryTests extends WorkbenchSeleneseTestCase {
 		loginWithConfig();
 	}
 	
-	public void testSampleQueries() throws Exception{
+	public void testSavedQuerues() throws Exception {
+		selenium.open("query.php");
+		selenium.waitForPageToLoad(WAIT_TIMEOUT);
+		
+		final String SOQL1 = "SELECT Id FROM Account LIMIT 1";
+		final String SOQL1_NAME = "SOQL 1";
+		
+		final String SOQL2 = "SELECT Id FROM Contact LIMIT 1";
+		final String SOQL2_NAME = "SOQL 2";
+		
+		final String SOQL3 = "SELECT Id FROM Opportunity LIMIT 1";
+		
+		selenium.type("soql_query_textarea", SOQL1);
+		selenium.type("saveQr", SOQL1_NAME);
+		selenium.click("doSaveQr");
+		selenium.waitForPageToLoad(WAIT_TIMEOUT);
+		assertEquals(SOQL1, selenium.getText("soql_query_textarea"));
+		assertEquals(SOQL1_NAME, selenium.getValue("saveQr"));
+		assertFalse(selenium.isTextPresent("Query Results"));
+		assertNoPhpErrors();
+
+		selenium.type("soql_query_textarea", SOQL2);
+		selenium.type("saveQr", SOQL2_NAME);
+		selenium.click("doSaveQr");
+		selenium.waitForPageToLoad(WAIT_TIMEOUT);
+		assertEquals(SOQL2, selenium.getText("soql_query_textarea"));
+		assertEquals(SOQL2_NAME, selenium.getValue("saveQr"));
+		assertFalse(selenium.isTextPresent("Query Results"));
+		assertNoPhpErrors();
+		
+		selenium.select("getQr", SOQL1_NAME);
+		selenium.waitForPageToLoad(WAIT_TIMEOUT);
+		assertEquals(SOQL1, selenium.getText("soql_query_textarea"));
+		assertEquals(SOQL1_NAME, selenium.getValue("saveQr"));
+		assertTrue(selenium.isTextPresent("Query Results"));
+		assertNoPhpErrors();
+		
+		selenium.type("soql_query_textarea", SOQL3);
+		selenium.click("querySubmit");
+		selenium.waitForPageToLoad(WAIT_TIMEOUT);
+		assertEquals(SOQL1_NAME, selenium.getValue("saveQr"));
+		assertTrue(selenium.isTextPresent("Query Results"));
+		assertNoPhpErrors();
+		
+		selenium.select("QB_object_sel", "Case");
+		selenium.waitForPageToLoad(WAIT_TIMEOUT);
+		selenium.type("soql_query_textarea", SOQL3);
+		selenium.click("querySubmit");
+		selenium.waitForPageToLoad(WAIT_TIMEOUT);
+		assertEquals("", selenium.getValue("saveQr"));
+		assertTrue(selenium.isTextPresent("Query Results"));
+		assertNoPhpErrors();
+	}
+	
+	public void testSampleQueries() throws Exception {
 		logger.info("Starting testSampleQueries()");
 		
 		final List<String> SAMPLE_QUERIES = new ArrayList<String>();
