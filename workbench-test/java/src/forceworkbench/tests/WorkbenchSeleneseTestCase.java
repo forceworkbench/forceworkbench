@@ -52,10 +52,10 @@ public abstract class WorkbenchSeleneseTestCase extends SeleneseTestCase {
     void assertNoPhpErrors() {
     	final String html = selenium.getHtmlSource();
     	
-    	assertFalse(html.contains("<b>Notice</b>:"));
-    	assertFalse(html.contains("<b>Warning</b>:"));
-    	assertFalse(html.contains("<b>Error</b>:"));
-    	assertFalse(html.contains("Fatal")); //TODO: make more specific
+    	assertFalse("Should not contain PHP notices:\n" + html, html.contains("<b>Notice</b>:"));
+    	assertFalse("Should not contain PHP warnings:\n" + html, html.contains("<b>Warning</b>:"));
+    	assertFalse("Should not contain PHP errors:\n" + html, html.contains("<b>Error</b>:"));
+    	assertFalse("Should not contain PHP fatal errors:\n" + html, html.contains("Fatal")); //TODO: make more specific
 	}
 
 }

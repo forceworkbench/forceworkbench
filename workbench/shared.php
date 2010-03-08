@@ -69,7 +69,7 @@ function printSelectOptions($valuesToLabelsArray,$defaultValue){
 function describeGlobal($filter1=null, $filter2=null){
 	$processedDescribeGlobalResponse = array();
 	
-	if (!$_SESSION['myGlobal'] || !$_SESSION['config']['cacheDescribeGlobal']){
+	if (!isset($_SESSION['myGlobal']) || !$_SESSION['config']['cacheDescribeGlobal']){
 		try{
 			global $mySforceConnection;
 			$describeGlobalResponse = $mySforceConnection->describeGlobal();
