@@ -571,7 +571,6 @@ $GLOBALS["PAGES"] = array(
 		'logout.php' => new Page('Logout','Logs out of your Salesforce organization',false,true,false),
 		'select.php' => new Page('Select','Select action to which to jump',false,false,false),
 		'describe.php' => new Page('Describe','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,false,true),
-		'describeTable.php' => new Page('Describe','Describes the attributes, fields, record types, and child relationships of an object in a tabular format',false,false,false),
 		'insert.php' => new Page('Insert','Creates new records from a CSV file',true,false,true),
 		'upsert.php' => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,false,true),
 		'update.php' => new Page('Update','Updates existing records from a CSV file',true,false,true),
