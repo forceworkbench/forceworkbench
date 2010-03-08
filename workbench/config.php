@@ -331,18 +331,26 @@ $config["header_DataManagement"] = array(
 		)
 	);	
 		
-$config["header_queryOptions"] = array(
-	"label" => "Query Options",
+$config["header_queryAndSearchOptions"] = array(
+	"label" => "Query & Search Options",
 	"display" => true,
 	"isHeader" => true
 );
 
-	$config["autoJumpToQueryResults"] = array(
-		"label" => "Automatically Jump to Query Results",
+	$config["autoJumpToResults"] = array(
+		"label" => "Automatically Jump to Results",
 		"description" => "When displaying query results in the browser, automatically jump to the top of the query results.",
 		"default" => true,
 		"overrideable" => true,
 		"dataType" => "boolean"
+	);
+	
+	$config["areTablesSortable"] = array(
+		"label" => "Sortable Results (Beta)",
+		"description" => "Allow results tables to be sorted directly in the browser after the query or search has been completed. This feature is currently in beta, as some complex queries produce unexpected results.",
+		"default" => false,
+		"overrideable" => true,
+		"dataType" => "boolean",
 	);
 
 	$config["autoRunQueryMore"] = array(
@@ -363,20 +371,6 @@ $config["header_queryOptions"] = array(
 		"maxValue" => 2000
 	);
 	
-$config["header_searchOptions"] = array(
-	"label" => "Search Options",
-	"display" => true,
-	"isHeader" => true
-);
-
-	$config["autoJumpToSearchResults"] = array(
-		"label" => "Automatically Jump to Search Results",
-		"description" => "When displaying search results in the browser, automatically jump to the top of the search results.",
-		"default" => true,
-		"overrideable" => true,
-		"dataType" => "boolean"
-	);
-
 	
 $config["header_Execute"] = array(
 	"label" => "Apex Execute Logging Options",

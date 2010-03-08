@@ -4,6 +4,10 @@ function getMyTitle(){
 	return $GLOBALS["PAGES"][basename($_SERVER['PHP_SELF'])]->title;
 }
 
+function getTableClass($defaultClass = 'data_table'){
+	return $_SESSION['config']['areTablesSortable'] ? "sortable" : $defaultClass;
+}
+
 function apiVersionIsAtLeast($minVersion){
 	preg_match('!/(\d{1,2}\.\d)!',$_SESSION['location'],$apiVersionMatches);
 	return $apiVersionMatches[1] >= $minVersion;

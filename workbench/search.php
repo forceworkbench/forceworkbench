@@ -203,7 +203,7 @@ function addReturningObjectRow(rowNum, defaultObject, defaultFields){
 </script>
 SEARCH_BUILDER_SCRIPT;
 
-	if($_SESSION['config']['autoJumpToSearchResults']){
+	if($_SESSION['config']['autoJumpToResults']){
 		print "<form method='POST' name='search_form' action='$_SERVER[PHP_SELF]#sr'>\n";
 	} else {
 		print "<form method='POST' name='search_form' action='$_SERVER[PHP_SELF]#sr'>\n";
@@ -245,8 +245,10 @@ SEARCH_BUILDER_SCRIPT;
 	print "&nbsp;Run: " .
 		  "<select name='getSr' style='width: 10em;' onChange='document.search_form.submit();'>" . 
 	      "<option value='' selected='selected'></option>";
-	foreach ($_SESSION['savedSearchRequests'] as $srName => $sr){
-		if($srName != null) print "<option value='$srName'>$srName</option>";
+	if(isset($_SESSION['savedSearchRequests'])){
+		foreach ($_SESSION['savedSearchRequests'] as $srName => $sr){
+			if($srName != null) print "<option value='$srName'>$srName</option>";
+		}
 	}
 	print "</select>";
 	
@@ -313,7 +315,7 @@ function show_search_result($records, $searchTimeElapsed){
 	foreach($searchResultArray as $recordSetName=>$records){
 		echo "<h3 style='color: #0046ad;'>$recordSetName</h3>";
 		
-	    print "<table id='" . $recordSetName . "_results' class='sortable'>\n";
+	    print "<table id='" . $recordSetName . "_results' class='" . getTableClass() ."'>\n";
 		//Print the header row on screen
 		$record0 = $records[0];
 		print "<tr><th></th>";

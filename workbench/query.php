@@ -368,7 +368,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
 QUERY_BUILDER_SCRIPT;
 	
 
-	if($_SESSION['config']['autoJumpToQueryResults']){
+	if($_SESSION['config']['autoJumpToResults']){
 		print "<form method='POST' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
 	} else {
 		print "<form method='POST' name='query_form' action='$_SERVER[PHP_SELF]'>\n";
@@ -502,8 +502,10 @@ QUERY_BUILDER_SCRIPT;
 	print "&nbsp;Run: " .
 		  "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();'>" . 
 	      "<option value='' selected='selected'></option>";
-	foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr){
-		if($qrName != null) print "<option value='$qrName'>$qrName</option>";
+	if(isset($_SESSION['savedQueryRequests'])){
+		foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr){
+			if($qrName != null) print "<option value='$qrName'>$qrName</option>";
+		}
 	}
 	print "</select>";
 	
@@ -637,7 +639,7 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true){
 
 
 function createQueryResultTable($records){
-	$table = "<table id='query_results' class='sortable'>\n";
+	$table = "<table id='query_results' class='" . getTableClass() . "'>\n";
 	
 	//call shared recusive function above for header printing
 	$table .= "<tr><th></th><th>";
@@ -663,7 +665,7 @@ function createQueryResultTable($records){
 
 		
 		for($i = 0; $i < count($row); $i++){				
-			if($row[$i] instanceof QueryResult && !is_array($cell)) $row[$i] = array($row[$i]);		
+			if($row[$i] instanceof QueryResult && !is_array($row[$i])) $row[$i] = array($row[$i]);		
 			if(isset($row[$i][0]) && $row[$i][0] instanceof QueryResult){
 				foreach($row[$i] as $qr){
 					$table .= createQueryResultTable($qr->records);	
