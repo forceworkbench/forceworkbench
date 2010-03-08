@@ -49,7 +49,7 @@ public class LoginTests extends WorkbenchSeleneseTestCase {
 			assertEquals("Workbench - Login", selenium.getTitle());
 			assertTrue(selenium.isTextPresent("Username:"));
 			assertTrue(selenium.isTextPresent("Password:"));
-			assertFalse(selenium.isTextPresent("Session ID:"));
+			assertFalse(selenium.isVisible("sessionId"));
 			assertNoPhpErrors();
 			
 			selenium.type("username", config.getUsername());
@@ -73,7 +73,7 @@ public class LoginTests extends WorkbenchSeleneseTestCase {
 			selenium.click("login_become_adv");
 			assertTrue(selenium.isTextPresent("Username:"));
 			assertTrue(selenium.isTextPresent("Password:"));
-			assertTrue(selenium.isTextPresent("Session ID:"));
+			assertTrue(selenium.isVisible("sessionId"));
 			assertNoPhpErrors();
 			
 			selenium.type("usernameAdv", config.getUsername());

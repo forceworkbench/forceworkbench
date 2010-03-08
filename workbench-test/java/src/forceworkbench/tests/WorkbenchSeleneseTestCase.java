@@ -17,8 +17,8 @@ public abstract class WorkbenchSeleneseTestCase extends SeleneseTestCase {
 	
 	public void setUp() throws Exception {       
 		config = new BaseWruConfiguration();
-		config.setBaseUrl("http://localhost:8888/~ryan/workbench%20(trunk)/workbench/");
-		config.setBrowser("*chrome");
+		config.setBaseUrl(System.getProperty("baseUrl"));
+		config.setBrowser(System.getProperty("browser"));
 		
 		logger.info("Starting WorkbenchSeleneseTestCase");
 		setUp(config.getBaseUrl(), config.getBrowser());
@@ -31,7 +31,7 @@ public abstract class WorkbenchSeleneseTestCase extends SeleneseTestCase {
 	void simpleLogin(String username, String password, String instance, String apiVersion){
 		logger.info("Logging in as " + username + " on " + instance + " with API version " + apiVersion);
 		selenium.open("login.php?&un=" + username + "&pw=" + password + "&inst=" + instance + "&api=" + apiVersion);
-		verifyEquals("Workbench - Select", selenium.getTitle());			
+		assertEquals("Workbench - Select", selenium.getTitle());			
 		logger.info("Login successful");
 	}
 
