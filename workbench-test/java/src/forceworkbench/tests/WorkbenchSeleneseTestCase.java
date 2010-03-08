@@ -1,5 +1,6 @@
 package forceworkbench.tests;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import com.thoughtworks.selenium.SeleneseTestCase;
@@ -7,10 +8,18 @@ import com.thoughtworks.selenium.SeleneseTestCase;
 public abstract class WorkbenchSeleneseTestCase extends SeleneseTestCase {
 
 	private static Logger logger = Logger.getLogger(WorkbenchSeleneseTestCase.class);
+	static {
+		BasicConfigurator.configure();		
+	}
 	
-	static Configuration config; 
+	final String WAIT_TIMEOUT = "30000";
+	Configuration config; 
 	
-	public void setUp() throws Exception {
+	public void setUp() throws Exception {       
+		config = new BaseWruConfiguration();
+		config.setBaseUrl("http://localhost:8888/~ryan/workbench%20(trunk)/workbench/");
+		config.setBrowser("*chrome");
+		
 		logger.info("Starting WorkbenchSeleneseTestCase");
 		setUp(config.getBaseUrl(), config.getBrowser());
 	}
@@ -28,10 +37,25 @@ public abstract class WorkbenchSeleneseTestCase extends SeleneseTestCase {
 
     void setApiVersion(String version){
         selenium.open("settings.php");
-        selenium.waitForPageToLoad("30000");
+        selenium.waitForPageToLoad(WAIT_TIMEOUT);
         selenium.select("defaultApiVersion", "label=" + version);
         selenium.click("submitConfigSetter");
-        selenium.waitForPageToLoad("30000");            
+        selenium.waitForPageToLoad(WAIT_TIMEOUT);            
     }
+    
+    @Override
+    public void tearDown() throws Exception {
+    	assertNoPhpErrors();
+    	super.tearDown();
+    }
+    
+    void assertNoPhpErrors() {
+    	final String html = selenium.getHtmlSource();
+    	
+    	assertFalse(html.contains("<b>Notice</b>:"));
+    	assertFalse(html.contains("<b>Warning</b>:"));
+    	assertFalse(html.contains("<b>Error</b>:"));
+    	assertFalse(html.contains("Fatal")); //TODO: make more specific
+	}
 
 }

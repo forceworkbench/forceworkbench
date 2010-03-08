@@ -13,29 +13,21 @@ public class DescribeTests extends WorkbenchSeleneseTestCase {
 
 	public void testDescribeAllObjects()throws Exception{
 		selenium.open("describe.php");			
-		selenium.waitForPageToLoad("30000");
+		selenium.waitForPageToLoad(WAIT_TIMEOUT);
 		verifyFalse(selenium.isTextPresent("Object Description"));
 		
 		for(String type : selenium.getSelectOptions("default_object")){
 			logger.info("Testing describe of: " + type);
-			if(!type.equalsIgnoreCase("")){
-				selenium.click("link=Describe");
-				selenium.waitForPageToLoad("30000");
-				selenium.select("default_object", "label=" + type);
-				selenium.click("action");
-				selenium.waitForPageToLoad("30000");
-				if(selenium.isTextPresent(type + " Object Description")){
-					selenium.click("link=Expand All");
-					selenium.click("link=Collapse All");
-					selenium.click("link=Table View");
-					//selenium.captureScreenshot("describe_test_success_" + type + ".png");
-				} else {
-					verifyTrue(false);
-					selenium.captureScreenshot("describe_test_failure_" + type + ".png");
-				}
-			} else {
-				continue;
-			}
+			
+			if(type.equalsIgnoreCase("")) continue;
+			
+			selenium.click("link=Describe");
+			selenium.waitForPageToLoad(WAIT_TIMEOUT);
+			selenium.select("default_object", "label=" + type);
+			selenium.waitForPageToLoad(WAIT_TIMEOUT);
+			
+			assertTrue(selenium.isTextPresent(type + " Object Description"));
+			assertNoPhpErrors();
 		}
 	}
 	
