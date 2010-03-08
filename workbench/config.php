@@ -546,7 +546,7 @@ $config["header_proxyOptions"] = array(
 //  
 ////////////////////////////////////////////////////////////////////////////////////////// 
 
-$GLOBALS["WORKBENCH_VERSION"] = "2.5.18 Beta 1";
+$GLOBALS["WORKBENCH_VERSION"] = "trunk";
 
 class Page {
 	public $title;
