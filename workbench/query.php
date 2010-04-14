@@ -12,20 +12,24 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 } else {
 	//create a new QueryRequest object to save named and/or last query
 	$lastQr = new QueryRequest($_REQUEST);	
-	
-	//save as named query
-	if(isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' && isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0){
-		$_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES,'UTF-8')] = $lastQr;
-	} 
-	
+		
 	//save last query. always do this even if named.
 	if((isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query') || (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' )){
 		$_SESSION['lastQueryRequest'] = $lastQr;
 	} 
 	
+	$persistedSavedQueryRequestsKey = "PSQR@";
+	if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'USER'){
+		$persistedSavedQueryRequestsKey .= $_SESSION['getUserInfo']->userId . "@" . $_SESSION['getUserInfo']->organizationId;
+	} else if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == "ORG"){
+		$persistedSavedQueryRequestsKey .= $_SESSION['getUserInfo']->organizationId;
+	} else if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'ALL'){
+		$persistedSavedQueryRequestsKey .= "ALL";
+	}
+	
 	//populate queryRequest for this page view. first see if user wants to retreive a saved query,
 	//then see if there was a last query, else just show a null query with default object.
-	if(isset($_REQUEST['getQr']) && isset($_REQUEST['getQr']) != "" && isset($_SESSION['savedQueryRequests'][$_REQUEST['getQr']])){
+	if(isset($_REQUEST['getQr']) && $_REQUEST['getQr'] != "" && isset($_SESSION['savedQueryRequests'][$_REQUEST['getQr']])){
 		$queryRequest = $_SESSION['savedQueryRequests'][$_REQUEST['getQr']];
 		$_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
 	} else if(isset($_SESSION['lastQueryRequest'])){
@@ -33,7 +37,26 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 	} else {
 		$queryRequest = new QueryRequest($defaultSettings);
 		$queryRequest->setObject($_SESSION['default_object']);
+		if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE' && !isset($_SESSION['savedQueryRequests']) && isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
+			$_SESSION['savedQueryRequests'] = unserialize($_COOKIE[$persistedSavedQueryRequestsKey]);
+		}
 	}
+
+	//clear  all saved queries in scope if user requests
+	if(isset($_POST['clearAllQr']) && $_POST['clearAllQr'] == 'Clear All'){
+		$_SESSION['savedQueryRequests'] = null;
+		if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE'){
+			setcookie($persistedSavedQueryRequestsKey,null,time()-3600);
+		}
+	} 
+	
+	//save as named query
+	if(isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' && isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0){
+		$_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES,'UTF-8')] = $lastQr;
+		if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE'){
+			setcookie($persistedSavedQueryRequestsKey,serialize($_SESSION['savedQueryRequests']),time()+60*60*24*7);
+		}
+	} 
 }
 
 //Main form logic: When the user first enters the page, display form defaulted to
@@ -513,6 +536,7 @@ QUERY_BUILDER_SCRIPT;
 	print "&nbsp;&nbsp;Save as: <input type='text' id='saveQr' name='saveQr' value='" . htmlspecialchars($queryRequest->getName(),ENT_QUOTES,'UTF-8') . "' style='width: 10em;'/>\n";
 	
 	print "<input type='submit' name='doSaveQr' value='Save' onclick='return doesQueryHaveName();' />\n";
+	print "<input type='submit' name='clearAllQr' value='Clear All'/>\n";	
 	
 	print "&nbsp;&nbsp;" . 
 	      "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";

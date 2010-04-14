@@ -370,7 +370,20 @@ $config["header_queryAndSearchOptions"] = array(
 		"minValue" => 200,
 		"maxValue" => 2000
 	);
-	
+
+	$config["savedQueriesAndSearchesPersistanceLevel"]  = array(
+		"label" => "Persist Saved Queries and Searches (Beta)",
+		"description" => "Scope at which to save queries and searches across Workbench sessions. Larger scopes will allow different users and organizations to see queries",
+		"default" => "USER",
+		"overrideable" => true,
+		"dataType" => "picklist",
+		"valuesToLabels" => array(
+			"NONE" => "Disabled",
+			"USER" => "User-specific",
+			"ORG" => "Organization-specific",
+			"ALL" => "All (not recommended)"
+		)
+	);	
 	
 $config["header_Execute"] = array(
 	"label" => "Apex Execute Logging Options",
