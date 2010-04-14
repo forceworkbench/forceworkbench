@@ -16,7 +16,13 @@ function getDefaultServerUrl(){
 		$serverUrl .= $_SESSION['config']['defaultInstance'];
 	}
 	
-	$serverUrl .= ".salesforce.com/services/Soap/u/";
+	$serverUrl .= ".salesforce.com";
+		
+	if(isset($_GET['port'])){
+		$serverUrl .= ":" . $_GET['port'];
+	}
+	
+	$serverUrl .= "/services/Soap/u/";
 	
 	if(isset($_GET['api'])){
 		$serverUrl .= $_GET['api'];
