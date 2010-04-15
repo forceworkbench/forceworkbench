@@ -5,19 +5,24 @@ require_once ('shared.php');
 
 $lastSr = new SearchRequest($_REQUEST);
 
-//save as named search
-if(isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST['saveSr']) && strlen($_REQUEST['saveSr']) > 0){
-	$_SESSION['savedSearchRequests'][htmlspecialchars($_REQUEST['saveSr'],ENT_QUOTES,'UTF-8')] = $lastSr;
-} 
 
 //save last search. always do this even if named.
 if((isset($_POST['searchSubmit']) && $_POST['searchSubmit']=='Search') || (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' )){
 	$_SESSION['lastSearchRequest'] = $lastSr;
 }
 
+$persistedSavedSearchRequestsKey = "PSSR@";
+if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'USER'){
+	$persistedSavedSearchRequestsKey .= $_SESSION['getUserInfo']->userId . "@" . $_SESSION['getUserInfo']->organizationId;
+} else if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == "ORG"){
+	$persistedSavedSearchRequestsKey .= $_SESSION['getUserInfo']->organizationId;
+} else if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'ALL'){
+	$persistedSavedSearchRequestsKey .= "ALL";
+}
+
 //populate searchRequest for this page view. first see if user wants to retreive a saved search,
 //then see if there was a last search, else just show a null search with default object.
-if(isset($_REQUEST['getSr']) && isset($_REQUEST['getSr']) != "" && isset($_SESSION['savedSearchRequests'][$_REQUEST['getSr']])){
+if(isset($_REQUEST['getSr']) && $_REQUEST['getSr'] != "" && isset($_SESSION['savedSearchRequests'][$_REQUEST['getSr']])){
 	$searchRequest = $_SESSION['savedSearchRequests'][$_REQUEST['getSr']];
 	$_POST['searchSubmit'] = 'Search'; //simulate the user clicking 'search' to run immediately
 } else if(isset($_SESSION['lastSearchRequest'])){
@@ -25,6 +30,25 @@ if(isset($_REQUEST['getSr']) && isset($_REQUEST['getSr']) != "" && isset($_SESSI
 } else {
 	$defaultSettings['numReturningObjects'] = 1;
 	$searchRequest = new SearchRequest($defaultSettings);
+	if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE' && !isset($_SESSION['savedSearchRequests']) && isset($_COOKIE[$persistedSavedSearchRequestsKey])) {
+		$_SESSION['savedSearchRequests'] = unserialize($_COOKIE[$persistedSavedSearchRequestsKey]);
+	}
+}
+
+//clear  all saved searches in scope if user requests
+if(isset($_POST['clearAllSr']) && $_POST['clearAllSr'] == 'Clear All'){
+	$_SESSION['savedSearchRequests'] = null;
+	if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE'){
+		setcookie($persistedSavedSearchRequestsKey,null,time()-3600);
+	}
+} 
+
+//save as named search
+if(isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST['saveSr']) && strlen($_REQUEST['saveSr']) > 0){
+	$_SESSION['savedSearchRequests'][htmlspecialchars($_REQUEST['saveSr'],ENT_QUOTES,'UTF-8')] = $lastSr;
+	if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE'){
+		setcookie($persistedSavedSearchRequestsKey,serialize($_SESSION['savedSearchRequests']),time()+60*60*24*7);
+	}
 }
 
 
@@ -255,6 +279,7 @@ SEARCH_BUILDER_SCRIPT;
 	print "&nbsp;&nbsp;Save as: <input type='text' id='saveSr' name='saveSr' value='" . htmlspecialchars($searchRequest->getName(),ENT_QUOTES,'UTF-8') . "' style='width: 10em;'/>\n";
 	
 	print "<input type='submit' name='doSaveSr' value='Save' onclick='return doesSearchHaveName();' />\n";
+	print "<input type='submit' name='clearAllSr' value='Clear All'/>\n";	
 	
 	print "&nbsp;&nbsp;" . 
 	      "<img onmouseover=\"Tip('Save a search with a name and run it at a later time during your session. Note, if a search is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
