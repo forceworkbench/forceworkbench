@@ -4,22 +4,28 @@ require_once('shared.php');
 
 //general functions
 function getDefaultServerUrl(){
-	if($_SESSION['config']['useHTTPS'] && !stristr($_SESSION['config']['defaultInstance'],'localhost')){
-	 	$serverUrl = "https://";
-	} else {
-		$serverUrl = "http://";
-	}
+	$serverUrl = '';
 	
-	if(isset($_GET['inst'])){
-		$serverUrl .= $_GET['inst'];
+	if(isset($_GET['serverUrlPrefix'])){
+		$serverUrl .= $_GET['serverUrlPrefix'];
 	} else {
-		$serverUrl .= $_SESSION['config']['defaultInstance'];
-	}
-	
-	$serverUrl .= ".salesforce.com";
+		if($_SESSION['config']['useHTTPS'] && !stristr($_SESSION['config']['defaultInstance'],'localhost')){
+			$serverUrl .= "https://";
+		} else {
+			$serverUrl .= "http://";
+		}
 		
-	if(isset($_GET['port'])){
-		$serverUrl .= ":" . $_GET['port'];
+		if(isset($_GET['inst'])){
+			$serverUrl .= $_GET['inst'];
+		} else {
+			$serverUrl .= $_SESSION['config']['defaultInstance'];
+		}
+		
+		$serverUrl .= ".salesforce.com";
+			
+		if(isset($_GET['port'])){
+			$serverUrl .= ":" . $_GET['port'];
+		}
 	}
 	
 	$serverUrl .= "/services/Soap/u/";
