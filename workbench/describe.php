@@ -1,24 +1,22 @@
 <?php
 require_once('session.php');
 require_once('shared.php');
+require_once ('header.php');
 
 //Main Form Logic: If there is a default object in the session,
 //describe it when the page loads; else, prompt to choose one.
 //Note: The POSTed default object is passed to the SESSION default object
 //in the session.php include
-if ($_SESSION['default_object']){
-	show_describeSObject_form();
+
+show_describeSObject_form();
+if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']){
 	show_describeSObject_result();
-} else {
-	show_describeSObject_form();
-	include_once('footer.php');
-	exit;
 }
+require_once ('footer.php');
+
 
 //Print a form with the global object types to choose for description
 function show_describeSObject_form(){
-	require_once ('header.php');
-
 	?>	
 	<script type="text/javascript" src="script/simpletreemenu.js">
 	/***********************************************
@@ -30,12 +28,11 @@ function show_describeSObject_form(){
 	<link rel="stylesheet" type="text/css" href="style/simpletree.css" />
 	<?php
 	
-	print "<form name='describeForm' method='post' action='$_SERVER[PHP_SELF]' onChange='document.describeForm.submit();'>";
-	print "<p><strong>Choose an object to describe:</strong></p>\n";
+	print "<form name='describeForm' method='post' action='$_SERVER[PHP_SELF]' onChange='document.describeForm.submit();'>" .
+		  "<p><strong>Choose an object to describe:</strong></p>\n";
 	myGlobalSelect($_SESSION['default_object']);
-
-	print "<input type='submit' name='action' value='Describe' />";
-	print "</form>";
+	print "<input type='submit' name='action' value='Describe' />" .
+		  "</form>";
 }
 
 
@@ -49,7 +46,7 @@ function show_describeSObject_result(){
 			show_error($e->getMessage(), false, true);
     	}
 
-
+    	
 		print "<h2>$_SESSION[default_object] Object Description</h2>";
 		
 		if(isset($_SESSION['config']['colorBooleanValues']) || 
@@ -89,9 +86,7 @@ function show_describeSObject_result(){
 		}
 		print "</ul></li>\n"; ///end attributes node
 
-
-
-		print "<li>Fields<ul>\n";
+		print "<li>Fields (" . count($describeSObject_result->fields) . ")<ul>\n";
 		foreach($describeSObject_result->fields as $key => $value){
 			highlightSpecialField($value);
 			foreach($value as $subkey => $subvalue){
@@ -104,8 +99,8 @@ function show_describeSObject_result(){
 				//Because picklist are deeper in the SOAP message,
 				//it requires more nested foreach loops
 				elseif ($subkey == 'picklistValues'){
-					print "<li>$subkey<ul>\n";
 					if(!is_array($subvalue)) $subvalue = array($subvalue);
+					print "<li>$subkey (" . count($subvalue) . ")<ul>\n";
 					foreach($subvalue as $subsubkey => $subsubvalue){
 						if($value->name == "Division") print "<li>$subsubvalue->label<ul>\n";
 						else print  "<li>$subsubvalue->value<ul>\n";
@@ -143,8 +138,8 @@ function show_describeSObject_result(){
 
 		//Print Record Types, if they exists
 		if (isset($describeSObject_result->recordTypeInfos)){
-			print "<li>Record Types<ul>\n";
 			if(!is_array($describeSObject_result->recordTypeInfos)) $describeSObject_result->recordTypeInfos = array($describeSObject_result->recordTypeInfos);
+			print "<li>Record Types (" . count($describeSObject_result->recordTypeInfos) . ")<ul>\n";
 			foreach($describeSObject_result->recordTypeInfos as $key => $value){
 				if(isset($value->name)){
 					print "<li>$value->name<ul>\n";
@@ -166,8 +161,8 @@ function show_describeSObject_result(){
 
 		//Print Child Relationships, if they exists
 		if (isset($describeSObject_result->childRelationships)){
-			print "<li>Child Relationships<ul>\n";
 			if(!is_array($describeSObject_result->childRelationships)) $describeSObject_result->childRelationships = array($describeSObject_result->childRelationships);
+			print "<li>Child Relationships (" . count($describeSObject_result->childRelationships) . ")<ul>\n";
 			foreach($describeSObject_result->childRelationships as $key => $value){
 				print "<li>$value->childSObject<ul>\n";
 				foreach($value as $subkey => $subvalue){
@@ -226,6 +221,3 @@ function stringDisplay($key, $value) {
 //ddtreemenu.createTree(treeid, enablepersist, opt_persist_in_days (default is 1))
 ddtreemenu.createTree("describeTree", true);
 </script>
-<?php
-include_once('footer.php');
-?>
