@@ -32,7 +32,7 @@ if(isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])){
 			} else if(isset($configValue['dataType']) && $configValue['dataType'] == "boolean"){							//for boolean falses
 				setcookie($configKey,0,time()+60*60*24*365*10);
 	 		} else if(isset($_POST[$configKey])){
-				setcookie($configKey,$_POST[$configKey],time()+60*60*24*365*10);		//for non-null strings and numbers
+	 			setcookie($configKey,$_POST[$configKey],time()+60*60*24*365*10);		//for non-null strings and numbers
 			} else {
 				setcookie($configKey,NULL,time()-3600);									//for null strings and numbers (remove cookie)
 			}
@@ -42,6 +42,12 @@ if(isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])){
 	 	if(isset($_POST['callOptions_client']) && $_POST['callOptions_client'] == getWorkbenchUserAgent()){
 	 		setcookie('callOptions_client',NULL,time()-3600);	
 	 	}
+	 	
+		if(isset($_POST['currentApiVersion']) && $_POST['currentApiVersion'] !== getApiVersion()){
+			clearSessionCache();
+			$_SESSION['location'] = preg_replace("/\d\d?\.\d/",$_POST['currentApiVersion'],$_SESSION['location']);
+			$_SESSION['wsdl'] = 'soapclient/sforce.' . str_replace('.', '', $_POST['currentApiVersion']) . '.partner.wsdl';
+	 	}	 	
 	 	
 	 	header("Location: $_SERVER[PHP_SELF]");
 	}

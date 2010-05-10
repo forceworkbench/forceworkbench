@@ -9,8 +9,17 @@ function getTableClass($defaultClass = 'data_table'){
 }
 
 function apiVersionIsAtLeast($minVersion){
+	return getApiVersion() >= $minVersion;
+}
+
+function getApiVersion(){
 	preg_match('!/(\d{1,2}\.\d)!',$_SESSION['location'],$apiVersionMatches);
-	return $apiVersionMatches[1] >= $minVersion;
+	return $apiVersionMatches[1];
+}
+
+function clearSessionCache(){
+	$_SESSION['myGlobal'] = null;
+	$_SESSION['describeSObjects_results'] = null;
 }
 
 function show_error($errors, $showHeader=false, $showFooter=false){

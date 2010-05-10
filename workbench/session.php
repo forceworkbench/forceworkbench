@@ -39,11 +39,13 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 			}
 		}
 	}
-	
+		
 	if($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_COOKIE["callOptions_client"])){
 		$_SESSION['config']['callOptions_client'] = getWorkbenchUserAgent();
 	}
 
+	$_SESSION['config']['currentApiVersion'] = getApiVersion();
+	
 	//check to make sure we have a session id (this is so users can go to settings.php without session id
 	//before login)
 	if(isset($_SESSION['sessionId'])){

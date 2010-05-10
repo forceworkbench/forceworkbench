@@ -112,29 +112,6 @@ $config["header_LoginOptions"] = array(
 			"Advanced" => "Advanced"
 		)
 	);
-
-	$config["defaultApiVersion"]  = array(
-		"label" => "Default API Version",
-		"description" => "Default API version to be used for login. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
-		"default" => "18.0",
-		"overrideable" => true,
-		"dataType" => "picklist",
-		"valuesToLabels" => array(
-			"19.0" => "19.0",
-		    "18.0" => "18.0",
-			"17.0" => "17.0",
-			"16.0" => "16.0",
-			"15.0" => "15.0",
-			"14.0" => "14.0",
-			"13.0" => "13.0",
-			"12.0" => "12.0",
-			"11.1" => "11.1",
-			"11.0" => "11.0",
-			"10.0" => "10.0",
-			"9.0" => "9.0",
-			"8.0" => "8.0"
-		)
-	);
 	
 	$config["defaultInstance"]  = array(
 		"label" => "Default Instance",
@@ -170,7 +147,41 @@ $config["header_LoginOptions"] = array(
 			"prerelna1.pre" => array("Pre-Release","t")
 		)
 	);
+	
+	$apiVersions = array(
+			"19.0" => "19.0",
+		    "18.0" => "18.0",
+			"17.0" => "17.0",
+			"16.0" => "16.0",
+			"15.0" => "15.0",
+			"14.0" => "14.0",
+			"13.0" => "13.0",
+			"12.0" => "12.0",
+			"11.1" => "11.1",
+			"11.0" => "11.0",
+			"10.0" => "10.0",
+			"9.0" => "9.0",
+			"8.0" => "8.0"
+	);
+	
+	$config["defaultApiVersion"]  = array(
+		"label" => "Default API Version",
+		"description" => "Default API version to be used for login. This setting does not affect the API version of the current session. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
+		"default" => "18.0",
+		"overrideable" => true,
+		"dataType" => "picklist",
+		"valuesToLabels" => $apiVersions
+	);
 
+	$config["currentApiVersion"]  = array(
+		"label" => "Current API Version",
+		"description" => "Current API version used during this session only.",
+		"overrideable" => true,
+		"dataType" => "picklist",
+		"valuesToLabels" => $apiVersions
+	);
+	
+	
 	$config["useHTTPS"] = array(
 		"label" => "Connect to Salesforce over HTTPS",
 		"description" => "Use HTTPS to connect to Salesforce API from Workbench server. Does not guarantee HTTPS will be used from this computer to Workbench server. Disabling this setting will also change redirect Server URLs returned from Salesforce to use HTTP. Must login again for changes to take effect.",
