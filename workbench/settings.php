@@ -66,6 +66,10 @@ require_once('header.php');
 		print "<tr> <td colspan='3' align='left'><input type='submit' name='submitConfigSetter' value='Apply Settings'/>&nbsp;<input type='submit' name='restoreDefaults' value='Restore Defaults'/>&nbsp;<input type='reset' value='Cancel'/></td> </tr>";
 	
 		foreach($config as $configKey => $configValue){
+			if($configKey == 'currentApiVersion' && !isset($_SESSION['location'])) {
+				continue;
+			}
+			
 			if(isset($configValue['isHeader']) && $configValue['display']){
 				print "\t<tr><th align='left' colspan='3'><br/>" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</th></tr>\n";
 			} else if(isset($configValue['overrideable']) && $configValue['overrideable']==true){
