@@ -71,17 +71,19 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 			if (isset($_POST['default_object'])){
 				$_SESSION['default_object'] = $_POST['default_object'];
 			} 
-
+			
+			$defaultNamespace = isset($_SESSION['config']['callOptions_defaultNamespace']) ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
 			if(isset($_SESSION['tempClientId'])){
-				$header = new CallOptions($_SESSION['tempClientId'], $_SESSION['config']['callOptions_defaultNamespace']);
+				$header = new CallOptions($_SESSION['tempClientId'], $defaultNamespace);
 				$mySforceConnection->setCallOptions($header);				
-			} else if($_SESSION['config']['callOptions_client'] || $_SESSION['config']['callOptions_defaultNamespace']){
-				$header = new CallOptions($_SESSION['config']['callOptions_client'], $_SESSION['config']['callOptions_defaultNamespace']);
+			} else if($_SESSION['config']['callOptions_client'] || $defaultNamespace){
+				$header = new CallOptions($_SESSION['config']['callOptions_client'], $defaultNamespace);
 				$mySforceConnection->setCallOptions($header);
 			}
 
-			if($_SESSION['config']['assignmentRuleHeader_assignmentRuleId'] || $_SESSION['config']['assignmentRuleHeader_useDefaultRule']){
-				$header = new AssignmentRuleHeader($_SESSION['config']['assignmentRuleHeader_assignmentRuleId'], $_SESSION['config']['assignmentRuleHeader_useDefaultRule']);
+			$assignmentRuleId = isset($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']) ? $_SESSION['config']['assignmentRuleHeader_assignmentRuleId'] : null;
+			if($assignmentRuleId || $_SESSION['config']['assignmentRuleHeader_useDefaultRule']){
+				$header = new AssignmentRuleHeader($assignmentRuleId, $_SESSION['config']['assignmentRuleHeader_useDefaultRule']);
 				$mySforceConnection->setAssignmentRuleHeader($header);
 			}
 
@@ -100,7 +102,7 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 				$mySforceConnection->setEmailHeader($header);
 			}
 
-			if($_SESSION['config']['UserTerritoryDeleteHeader_transferToUserId']){
+			if(isset($_SESSION['config']['UserTerritoryDeleteHeader_transferToUserId'])){
 				$header = new UserTerritoryDeleteHeader($_SESSION['config']['UserTerritoryDeleteHeader_transferToUserId']);
 				$mySforceConnection->setUserTerritoryDeleteHeader($header);
 			}
