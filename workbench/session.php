@@ -34,7 +34,7 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 			//check if user has cookies that override defaults
 			if(isset($_COOKIE[$configKey])){
 				$_SESSION['config'][$configKey] = $_COOKIE[$configKey];
-			} else {
+			} else if(isset($configValue['default'])) {
 				$_SESSION['config'][$configKey] = $configValue['default'];
 			}
 		}
@@ -43,8 +43,6 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 	if($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_COOKIE["callOptions_client"])){
 		$_SESSION['config']['callOptions_client'] = getWorkbenchUserAgent();
 	}
-
-	$_SESSION['config']['currentApiVersion'] = getApiVersion();
 	
 	//check to make sure we have a session id (this is so users can go to settings.php without session id
 	//before login)
@@ -60,6 +58,8 @@ if (!isset($_SESSION['sessionId']) && !(('login.php' == basename($_SERVER['PHP_S
 			$sforceSoapClient = $mySforceConnection->createConnection($wsdl);
 			$mySforceConnection->setEndpoint($location);
 			$mySforceConnection->setSessionHeader($sessionId);			
+			
+			$_SESSION['config']['currentApiVersion'] = getApiVersion();
 			
 			//setting default object to remove notices through functions
 			if(!isset($_SESSION['default_object'])){
