@@ -76,14 +76,14 @@ require_once('header.php');
 				print "\t<tr onmouseover=\"Tip('" . htmlspecialchars(addslashes($configValue['description']),ENT_NOQUOTES,'UTF-8') . "')\">\n";
 				print "\t\t<td align='right'><label for='$configKey'>" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</label></td><td>&nbsp;&nbsp;</td>\n";
 				print "\t\t<td align='left'>";
-				if($configValue['dataType'] == "boolean"){
+				if ($configValue['dataType'] == "boolean"){
 						print "<input name='$configKey' id='$configKey' type='checkbox' ";
 						if($_SESSION['config'][$configKey]) print " checked='true'";
 						print "/></td>\n";
 				} else if  ($configValue['dataType'] == "string" || $configValue['dataType'] == "int"){
-					print "<input name='$configKey' id='$configKey' type='text' value='". $_SESSION['config'][$configKey] . "' size='30'/></td>\n";
+					print "<input name='$configKey' id='$configKey' type='text' value='" . (isset($_SESSION['config'][$configKey]) ? $_SESSION['config'][$configKey] : "") . "' size='30'/></td>\n";
 				} else if  ($configValue['dataType'] == "password"){
-					print "<input name='$configKey' id='$configKey' type='password' value='". $_SESSION['config'][$configKey] . "' size='30'/></td>\n";
+					print "<input name='$configKey' id='$configKey' type='password' value='". (isset($_SESSION['config'][$configKey]) ? $_SESSION['config'][$configKey] : "")  . "' size='30'/></td>\n";
 				} else if  ($configValue['dataType'] == "picklist"){
 					print "<select name='$configKey' id='$configKey'>";
 					foreach($configValue['valuesToLabels'] as $value => $label){
@@ -91,7 +91,7 @@ require_once('header.php');
 							$label = $label[$configValue['labelKey']]; //if the label is an array, this will pull the nested label out 
 						}
 						print "<option value=\"" . $value . "\"";
-						if($_SESSION['config'][$configKey] == $value){
+						if(isset($_SESSION['config'][$configKey]) && $_SESSION['config'][$configKey] == $value){
 							print " selected=\"selected\"";
 						}
 						print ">" . $label . "</option>";
