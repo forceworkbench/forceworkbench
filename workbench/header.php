@@ -80,7 +80,7 @@ if($myPage->showTitle) {
 	print "<td id='pagetitle'>" . $myPage->title . "</td>";
 }
 if(isLoggedIn()){
-	print "<td id='myuserinfo'>" . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . " on API " . getApiVersion() . "</td>";
+	print "<td id='myuserinfo'><a href='sessionInfo.php'>" . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . " on API " . getApiVersion() . "</a></td>";
 }
 print "</tr></table>";
 

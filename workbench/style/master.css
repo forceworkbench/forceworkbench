@@ -38,8 +38,9 @@ a{
 	font-size: 11px;
 }
 
-#navmenu a:hover, #setupMenu a:hover{
+* a:hover, #navmenu a:hover, #setupMenu a:hover, #myuserinfo a:hover{
 	color: #2C75BE;
+	text-decoration: underline;
 }
 
 .debugContainer{
@@ -68,9 +69,8 @@ h2{
 	font-size: medium;
 }
 
-#pagetitle, #myuserinfo {
+#pagetitle, #myuserinfo a {
 	font-size: 8pt;
-	
 	text-align: left;
 	color: #888;
 	vertical-align: top;
@@ -83,9 +83,10 @@ h2{
 	font-size: medium;
 }
 
-#myuserinfo{
+#myuserinfo, #myuserinfo a{
 	text-align: right;
 	text-transform: uppercase;
+	text-decoration: none;
 }
 
 #login_block{
