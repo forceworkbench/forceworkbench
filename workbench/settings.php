@@ -59,7 +59,7 @@ require_once('header.php');
 		show_error($errors);
 	}
 
-	print "<form method='post' action='$_SERVER[PHP_SELF]'>\n";
+	print "<p/><form method='post' action='$_SERVER[PHP_SELF]'>\n";
 
 	print "<table border='0' cellspacing='5' style='border-width-top: 1'>\n";
 	

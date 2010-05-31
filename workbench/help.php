@@ -3,9 +3,6 @@ require_once ('session.php');
 require_once ('shared.php');
 require_once ('header.php');
 ?>
-
-<h1>Help</h1>
-
 <p>
 Workbench is not a product of or supported by salesforce.com, inc.
 For support from the Open Source community, please visit the recources below:

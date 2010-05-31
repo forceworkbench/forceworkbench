@@ -1,17 +1,22 @@
 <?php
 
 function isLoggedIn() {
-	return isset($_SESSION['getUserInfo']);
+	return isset($_SESSION['sessionId']);
 }
 
-function getMyTitle(){
+function getMyPage(){
 	foreach($GLOBALS["MENUS"] as $pages) {
 		foreach($pages as $href => $page) {
 			if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
-				return $page->title;
+				return $page;
 			}
 		}
 	}
+}
+
+function getMyTitle(){
+	$myPage = getMyPage();
+	return $myPage->title;
 }
 
 function getTableClass($defaultClass = 'data_table'){
@@ -33,7 +38,10 @@ function clearSessionCache(){
 }
 
 function show_error($errors, $showHeader=false, $showFooter=false){
-	if($showHeader) include_once("header.php");
+	if($showHeader) {
+		include_once("header.php");
+		print "<p/>";
+	}
 	print "<div class='show_errors'>\n";
 	print "<img src='images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
 	if(is_array($errors)){

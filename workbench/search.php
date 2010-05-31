@@ -235,7 +235,7 @@ SEARCH_BUILDER_SCRIPT;
 	
 	print "<input type='hidden' id='numReturningObjects' name='numReturningObjects' value='" . count($searchRequest->getReturningObjects()) ."' />";
 	
-	print "<p><strong>Enter a search string and optionally select the objects and fields to return to build a SOSL search below:</strong></p>\n";
+	print "<p class='instructions'>Enter a search string and optionally select the objects and fields to return to build a SOSL search below:</p>\n";
 	print "<table id='search_form_table' border='0' width='1'>\n<tr>\n";
     
     print "<td NOWRAP>Search for </td><td NOWRAP colspan='2'><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . htmlspecialchars($searchRequest->getSearchString(),ENT_QUOTES,'UTF-8') . "\" size='37' onKeyUp='build_search();' /> in ";

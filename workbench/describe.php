@@ -29,8 +29,8 @@ function show_describeSObject_form(){
 	<?php
 	
 	print "<form name='describeForm' method='post' action='$_SERVER[PHP_SELF]' onChange='document.describeForm.submit();'>" .
-		  "<p><strong>Choose an object to describe:</strong></p>\n";
-	myGlobalSelect($_SESSION['default_object']);
+		  "<p class='instructions'>Choose an object to describe:</p>\n";
+	myGlobalSelect($_SESSION['default_object'], 'default_object', 30);
 	print "<input type='submit' name='action' value='Describe' />" .
 		  "</form>";
 }
@@ -45,16 +45,14 @@ function show_describeSObject_result(){
 		} catch (Exception $e) {
 			show_error($e->getMessage(), false, true);
     	}
-
-    	
-		print "<h2>$_SESSION[default_object] Object Description</h2>";
 		
-		if(isset($_SESSION['config']['colorBooleanValues']) || 
-		   isset($_SESSION['config']['highlightCustomFields']) || 
-		   isset($_SESSION['config']['highlightSystemFields'])){
+		if(isset($_SESSION['config']['colorBooleanValues']) && $_SESSION['config']['colorBooleanValues'] || 
+		   isset($_SESSION['config']['highlightCustomFields']) && $_SESSION['config']['highlightCustomFields'] || 
+		   isset($_SESSION['config']['highlightSystemFields']) && $_SESSION['config']['highlightSystemFields']){
 		   	
-			print "<strong>Legend:</strong>";
-			print "<ul>";
+			print "<div style='float: right; border:1px solid #bbb; padding:0.5em; margin-right:1em;'>" .
+		   	      "<strong>Legend:</strong>" . 
+			      "<ul style='margin:0; padding-left: 2em'>";
 			if($_SESSION['config']['highightBooleanValues']){
 				print "<li class=\"trueColor\">True</span>\n";
 				print "<li class=\"falseColor\">False</span>\n";
@@ -65,11 +63,11 @@ function show_describeSObject_result(){
 			if ($_SESSION['config']['highlightSystemFields']) {
 				print "<li class=\"highlightSystemField\">System Field</li>\n";
 			} 
-			print "</ul>";
+			print "</ul>" . 
+			      "</div>";
 		}
 
-
-		print "<a href=\"javascript:ddtreemenu.flatten('describeTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('describeTree', 'contact')\">Collapse All</a>\n";
+		print "<a href=\"javascript:ddtreemenu.flatten('describeTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('describeTree', 'collapse')\">Collapse All</a>\n";
 		print "<ul id='describeTree' class='treeview'>\n";
 
 
@@ -221,3 +219,8 @@ function stringDisplay($key, $value) {
 //ddtreemenu.createTree(treeid, enablepersist, opt_persist_in_days (default is 1))
 ddtreemenu.createTree("describeTree", true);
 </script>
+<?php
+if(isset($_REQUEST['default_object_changed']) && $_REQUEST['default_object_changed']){
+	print "<script type='text/javascript'>ddtreemenu.flatten('describeTree', 'collapse');</script>";
+}
+?>

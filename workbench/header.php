@@ -51,31 +51,6 @@ if(!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basenam
 
 <div id='main_block'>
 
-<div id='setupMenu'>
-	<?php
-
-	global $mySforceConnection;
-	if (isset($_SESSION['sessionId']) && $mySforceConnection && 'logout.php' != basename($_SERVER['PHP_SELF'])){
-	
-		if(!isset($_SESSION['getUserInfo']) || !$_SESSION['config']['cacheGetUserInfo']){
-			try{
-				global $mySforceConnection;
-				$_SESSION['getUserInfo'] = $mySforceConnection->getUserInfo();
-	
-			} catch (Exception $e) {
-				$errors[] = $e->getMessage();
-				
-				session_unset();
-				session_destroy();
-		    }
-		}
-	
-	    
-	}
-	?>
-	
-</div>
-
 <div id='navmenu' style="clear: both;">
 <span class="preload1"></span>
 <span class="preload2"></span>
@@ -85,24 +60,29 @@ if(!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basenam
 		print "<li class='top'><a class='top_link'><span class='down'>" . strtolower($menu) ."</span></a>\n" . 
 		      "<ul class='sub'>";
 		foreach($pages as $href => $page) {
-			if(!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || 
-			  (isLoggedIn() && $page->title == 'Login') || (!isLoggedIn() && $page->title == 'Logout')){
+			if(!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || (isLoggedIn() && $page->title == 'Login')){
 				continue;
 			}
 			print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\">$page->title</a></li>\n";
 		}
 		print "</li></ul>";
 		
-		if(!isLoggedIn()) break;
+		if(!isLoggedIn()) break; //only show first "Workbench" menu if not logged in
 	}
 	?>
 </ul>
 </div>
 
 <?php
-if(isLoggedIn()){ 
-	print "<p id='myuserinfo'>Logged in as " . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . " on API " . getApiVersion() . "</p>\n";
+print "<table width='100%' border='0'><tr>";
+$myPage = getMyPage();
+if($myPage->showTitle) {
+	print "<td id='pagetitle'>" . $myPage->title . "</td>";
 }
+if(isLoggedIn()){
+	print "<td id='myuserinfo'>" . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . " on API " . getApiVersion() . "</td>";
+}
+print "</tr></table>";
 
 if(isset($errors)){
 	print "<p/>";

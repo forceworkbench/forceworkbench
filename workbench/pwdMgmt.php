@@ -120,9 +120,6 @@ function displayForm($infos=null, $errors=null){
 	<?php 
 	if(isset($infos)) show_info($infos);
 	if(isset($errors)) show_error($errors); 
-	
-
-	print "<h2>" . getMyTitle() . "</h2>";
 	?>
 
 	<form name='passwordChange' method='post' action='<?php $_SERVER['PHP_SELF'] ?>'>

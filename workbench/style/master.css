@@ -39,7 +39,7 @@ a{
 }
 
 #navmenu a:hover, #setupMenu a:hover{
-	color: #0046ad;
+	color: #2C75BE;
 }
 
 .debugContainer{
@@ -53,21 +53,39 @@ a{
 	cursor: pointer;	
 }
 
+.instructions {
+	font-weight: bold;
+}
+	
+
 h1{
-	color: #0046ad;
+	color: #2C75BE;
 	font-size: large;
 }
 
 h2{
-	color: #0046ad;
+	color: #2C75BE;
+	font-size: medium;
+}
+
+#pagetitle, #myuserinfo {
+	font-size: 8pt;
+	
+	text-align: left;
+	color: #888;
+	vertical-align: top;
+}
+	
+#pagetitle{
+	text-align: left;
+	color: #2C75BE;
+	font-weight: bold;
 	font-size: medium;
 }
 
 #myuserinfo{
-	font-size: 8pt;
+	text-align: right;
 	text-transform: uppercase;
-	text-align: left;
-	color: #888;
 }
 
 #login_block{
@@ -177,11 +195,11 @@ table.field_mapping TD, table.field_mapping TH{
  }
 
 .show_info{
- 	color: #0046ad;
+ 	color: #2C75BE;
 	text-align: center;
 	font-size: 12px;
  	padding: 10px;
- 	border: #0046ad solid thin;
+ 	border: #2C75BE solid thin;
  	-moz-border-radius: 10px;
  	clear: both;
  }

@@ -84,7 +84,7 @@ function put($action){
 
 	else {
 		require_once ('header.php');
-		print "<p><strong>Select an object and upload a CSV file to $action:</strong></p>\n";
+		print "<p class='instructions'>Select an object and upload a CSV file to $action:</p>\n";
 		form_upload_objectSelect_show('file', $action);
 		include_once('footer.php');
 	}
@@ -241,7 +241,7 @@ function field_mapping_set($action,$csv_array){
 	print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
 
 	if ($action == 'upsert'){
-		print "<p><strong>Choose the Salesforce field to use as the External Id. Be sure to also map this field below:</strong></p>\n";
+		print "<p class='instructions'>Choose the Salesforce field to use as the External Id. Be sure to also map this field below:</p>\n";
 		print "<table class='field_mapping'><tr>\n";
 		print "<td style='color: red;'>External Id</td>";
 		print "<td><select name='_ext_id' style='width: 100%;'>\n";
@@ -258,7 +258,7 @@ function field_mapping_set($action,$csv_array){
 
 	} //end if upsert
 
-	print "<p><strong>Map the Salesforce fields to the columns from the uploaded CSV:</strong></p>\n";
+	print "<p class='instructions'>Map the Salesforce fields to the columns from the uploaded CSV:</p>\n";
 	print "<table class='field_mapping'>\n";
 	print "<tr><th>Salesforce Field</th>";
 	print "<th>CSV Field</th>";
@@ -462,7 +462,7 @@ function field_map_to_array($field_map){
  */
 function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 	if (!($field_map && $csv_array)){
-		show_error("CSV file and field mapping not initialized successfully. Upload a new file and map fields.");
+		show_error("CSV file and field mapping not initialized successfully. Upload a new file and map fields.",true,true);
 	} else {
 
 	if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')){
@@ -485,13 +485,13 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 		}
 		$field_mapping_table = ob_get_clean();
 		show_info ("The file uploaded contains $id_count records with Salesforce IDs with the field mapping below.");
-		print "<p><strong>Confirm the mappings below:</strong></p>";
+		print "<p class='instructions'>Confirm the mappings below:</p>";
 		print "<p>$field_mapping_table</p>";
 		}
 	} else {
 		$record_count = count($csv_array) - 1;
 		show_info ("The file uploaded contains $record_count records to be added to " . $_SESSION['default_object']);
-		print "<p><strong>Confirm the mappings below:</strong></p>";
+		print "<p class='instructions'>Confirm the mappings below:</p>";
 		field_mapping_show($field_map, $ext_id, true);
 	}
 
@@ -611,7 +611,7 @@ function putSyncIdOnly($api_call,$field_map,$csv_array,$show_results){
 function putSync($api_call,$ext_id,$field_map,$csv_array,$show_results){
 	$orig_csv_array = $csv_array;//backing up for results
 	if (!($field_map && $csv_array && $_SESSION['default_object'])){
-		show_error("CSV file and field mapping not initialized. Upload a new file and map fields.");
+		show_error("CSV file and field mapping not initialized. Upload a new file and map fields.",true,true);
 	} else {
 		$csv_header = array_shift($csv_array);
 		$results = array();
@@ -703,7 +703,7 @@ function putAsync($api_call,$ext_id,$field_map,$csv_array){
 			$job->setOpertion($api_call);
 			$job->setContentType("CSV");
 			$job->setConcurrencyMode($_SESSION['config']['asyncConcurrencyMode']);
-			if($_SESSION['config']['assignmentRuleHeader_assignmentRuleId'] != "") $job->setAssignmentRuleId($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']);
+			if(isset($_SESSION['config']['assignmentRuleHeader_assignmentRuleId'])) $job->setAssignmentRuleId($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']);
 			if($api_call == "upsert" && isset($ext_id)) $job->setExternalIdFieldName($ext_id);
 			
 			$asyncConnection = getAsyncApiConnection();

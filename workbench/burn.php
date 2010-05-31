@@ -96,8 +96,6 @@ function ajaxBurn(){
 <?php 
 if(isset($infos)) show_info($infos);
 if(isset($errors)) show_error($errors); 
-
-print "<h2>" . getMyTitle() . "</h2>";
 ?>
 
 <form name='afterburner'>

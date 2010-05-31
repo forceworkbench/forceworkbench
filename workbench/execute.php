@@ -26,7 +26,7 @@ if(isset($_POST['execute'])){
 <form id="executeForm" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 	<table border="0">
 	  <tr>
-	    <td><strong>Enter Apex code to be executed as an anonymous block:</strong><p/></td>
+	    <td><p class='instructions'>Enter Apex code to be executed as an anonymous block:<p/></td>
 	  </tr>
 	  <tr>
 	    <td align="right">

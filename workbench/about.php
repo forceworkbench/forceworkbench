@@ -4,9 +4,6 @@ require_once ('shared.php');
 require_once ('header.php');
 ?>
 
-<h1>About</h1>
-
-
 <p>
 Workbench is a community-contributed, web-based application that gives administrators 
 and developers on-demand access to useful tools to manage salesforce.com organizations. 

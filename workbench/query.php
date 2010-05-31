@@ -398,7 +398,7 @@ QUERY_BUILDER_SCRIPT;
 	}
 	print "<input type='hidden' name='justUpdate' value='0' />";
 	print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
-	print "<p><strong>Choose the object, fields, and critera to build a SOQL query below:</strong></p>\n";
+	print "<p class='instructions'>Choose the object, fields, and critera to build a SOQL query below:</p>\n";
 	print "<table border='0' width=1>\n";
 	print "<tr><td valign='top' width='1'>Object:";
 

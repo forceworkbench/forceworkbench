@@ -35,7 +35,7 @@ way to fit your requirements.
 #nav li ul.sub li a.fly
 {background:#fff url(arrow.gif) 150px 6px no-repeat;}
 #nav li:hover ul.sub li a:hover 
-{background:#fff; color:#fff; border-color:#fff; color:#0046ad;}
+{background:#fff; color:#fff; border-color:#fff; color:#2C75BE;}
 #nav li:hover ul.sub li a.fly:hover
 {background:#fff url(arrow_over.gif) 150px 6px no-repeat; color:#000;}
 

@@ -247,10 +247,12 @@ function checkCaps( pwcapsDivId, e ) {
 	login for other login options. Go to Settings for more login configurations.</p>-->
 </div>
 
+<!--
 <div id='logo_block'>
-	<!--<img id='apexLogo' src='images/appex_x_rgb.png' width='200' height='171' border='0' alt='Apex X Logo' />-->
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<img id='apexLogo' src='images/blueCube-128x128.png' border='0' />
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </div>
+-->
 
 <div id='login_block'>
 	<form id='login_form' action='$_SERVER[PHP_SELF]' method='post'>
@@ -283,7 +285,7 @@ print <<<LOGIN_FORM_PART_2
 		<div id='login_adv' style='display: none;'>
 			<p><strong>Username: </strong><input type='text' name='usernameAdv' id='usernameAdv' size='65' value='$user' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();' /></p>
 			<p><strong>Password: </strong><input type='password' name='passwordAdv' id='passwordAdv' size='65' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();'  onkeypress="checkCaps('pwcapsAdv',event);"/></p>
-			<p>-OR-<span id='pwcapsAdv' style='visibility: hidden; color: red; font-weight: bold; margin-left: 75px;'>Caps lock is on!</span></p>
+			<p><em>- OR -</em><span id='pwcapsAdv' style='visibility: hidden; color: red; font-weight: bold; margin-left: 75px;'>Caps lock is on!</span></p>
 			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='65' onkeyup='toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();' onchange="toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();"/></p>
 			<p>&nbsp;</p>
 			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='65' value='$defaultServerUrl' /></p>
@@ -297,7 +299,7 @@ foreach($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain =>
 	$instanceNames[$subdomain] = $instInfo[0];
 }			
 printSelectOptions($instanceNames,$_SESSION['config']['defaultInstance']);
-print "</select>";
+print "</select>&nbsp;";
 
 //endpoint
 print "<select name='endp' id='endp' onChange='build_location();' onkeyup='build_location();'>";

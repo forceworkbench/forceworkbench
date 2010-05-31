@@ -4,8 +4,7 @@ require_once ('shared.php');
 require_once ('header.php');
 require_once ('restclient/BulkApiClient.php');
 
-print "<h2>" . getMyTitle() . "</h2>";
-
+print "<p/>";
 if(!isset($_GET['jobId']) || $_GET['jobId'] == ""){
 	show_error("Parameter 'jobId' must be specified.",false,false);
 	print 	"<p/>" . 
@@ -27,7 +26,7 @@ try {
 	show_error($e->getMessage(), false, true);
 }
 
-print "<p>Records have been uploaded to Salesforce via the Bulk API and are processed asynchronously as resources are available. " . 
+print "<p class='instructions'>Records have been uploaded to Salesforce via the Bulk API and are processed asynchronously as resources are available. " . 
 	  "Bookmark and periodically view this page to view the latest status. Results can be downloaded when batches are complete.</p><p/>";
 
 print "<table width='100%'>";
