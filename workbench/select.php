@@ -49,8 +49,10 @@ function show_select_form(){
 	print "<p><strong>Jump to: </strong>" . 
 		  "<select name='actionJump' id='actionJump' style='width: 20em;' onChange='toggleObjectSelectDisabled();'>" . 	
 		  "<option value='select.php'></option>";
-	foreach($GLOBALS["PAGES"] as $filename => $page){
-		if($page->onMenuSelect) print "<option value='" . $filename . "'>" . $page->title . "</option>";
+	foreach($GLOBALS["MENUS"] as $menu => $pages) {
+		foreach($pages as $href => $page) {
+			if($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
+		}
 	}
 	print "</select></p>";
 

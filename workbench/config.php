@@ -576,41 +576,59 @@ $GLOBALS["WORKBENCH_VERSION"] = "trunk";
 class Page {
 	public $title;
 	public $desc;
-    public $onMenuMain;
-	public $onMenuSetup;
+	public $requiresSfdcSession;
+    public $onNavBar;
 	public $onMenuSelect;
-	public $onMenuUtilities;
 	
-	public function __construct($title, $desc, $onMenuMain=false, $onMenuSetup=false, $onMenuSelect=false, $onMenuUtilities=false){
+	//TODO: change method signature
+	public function __construct($title, $desc, $requiresSfdcSession=true, $onNavBar=false, $onMenuSelect=false){
 		$this->title = $title;
 		$this->desc = $desc;
-	    $this->onMenuMain = $onMenuMain;
-		$this->onMenuSetup = $onMenuSetup;
+		$this->requiresSfdcSession = $requiresSfdcSession;
+	    $this->onNavBar = $onNavBar;
 		$this->onMenuSelect = $onMenuSelect;	
-		$this->onMenuUtilities = $onMenuUtilities;	
 	}
 }
 
-$GLOBALS["PAGES"] = array(
-		'login.php' => new Page('Login','Logs into your Salesforce organization',false,true,false),
-		'logout.php' => new Page('Logout','Logs out of your Salesforce organization',false,true,false),
-		'select.php' => new Page('Select','Select action to which to jump',false,false,false),
-		'describe.php' => new Page('Describe','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,false,true),
-		'insert.php' => new Page('Insert','Creates new records from a CSV file',true,false,true),
-		'upsert.php' => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,false,true),
-		'update.php' => new Page('Update','Updates existing records from a CSV file',true,false,true),
-		'delete.php' => new Page('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted',true,false,true),
-		'undelete.php' => new Page('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.',true,false,true),
-		'purge.php'  => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,false,true),
-		'query.php' => new Page('Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,false,true),
-		'search.php' => new Page('Search','Search the data in your organization across multiple objects',true,false,true),
-		'execute.php' => new Page('Execute','Execute Apex code as an anonymous block',true,false,true),
-		'settings.php' => new Page('Settings','Configure Workbench',false,true,true),
-	    'help.php' => new Page('Help','Get help about using Workbench',false,true,false),
-	    'about.php' => new Page('About','Learn about Workbench',false,true,false),
-        'utilities.php' => new Page('Utilities','Random, experimental utilities'),
-		'asyncStatus.php' => new Page('Bulk API Job Status & Results','Asynchronous Data Load Status and Results',false,false,false,true),
-		'pwdMgmt.php' => new Page('Password Management','Set and Reset Passwords',false,false,false,true),
-		'burn.php' => new Page('API Call Afterburner','',false,false,false,true)
-	);
+$GLOBALS["MENUS"] = array(
+	'&nbsp;<img src=\'images/workbench-3-cubed-white-small.png\'/>' => array(
+		'login.php'     => new Page('Login','Logs into your Salesforce organization',false,true,false),
+		'logout.php'    => new Page('Logout','Logs out of your Salesforce organization',false,true,false),
+		'select.php'    => new Page('Select','Select action to which to jump',true,false,false),
+		'settings.php'  => new Page('Settings','Configure Workbench',false,true,false),
+	    'help.php'      => new Page('Help','Get help about using Workbench',false,true,false),
+	    'about.php'     => new Page('About','Learn about Workbench',false,true,false)
+	),
+	
+	'Describe' => array(
+		'describe.php'          => new Page('Describe Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true),
+		//'describeMetadata.php'  => new Page('Describe Metadata','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true)
+	),
+	
+	'Manage' => array(
+		'insert.php'    => new Page('Insert','Creates new records from a CSV file',true,true,true),
+		'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,true,true),
+		'update.php'    => new Page('Update','Updates existing records from a CSV file',true,true,true),
+		'delete.php'    => new Page('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted',true,true,true),
+		'undelete.php'  => new Page('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.',true,true,true),
+		'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,true,true)
+	),
+	
+	'View' => array(
+		'query.php'     => new Page('Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true),
+		'search.php'    => new Page('Search','Search the data in your organization across multiple objects',true,true)
+	),
+	
+	'Migration' => array(
+//		'retrieve.php'  => new Page('Retrieve','Creates new records from a CSV file',true,true,true),
+//		'deploy.php'    => new Page('Deploy','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,true,true),
+	),
+	
+	'Utilities' => array(
+		'execute.php'     => new Page('Execute','Execute Apex code as an anonymous block',true,true,true),
+		'asyncStatus.php' => new Page('Bulk API Job Status & Results','Asynchronous Data Load Status and Results',true,true,false),
+		'pwdMgmt.php'     => new Page('Password Management','Set and Reset Passwords',true,true,false),
+		'burn.php'        => new Page('API Call Afterburner','',true,true,false)
+	)
+); 
 ?>

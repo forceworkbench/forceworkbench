@@ -269,8 +269,10 @@ print "<p><strong>Jump to: </strong>" .
 	  "<select name='actionJumpStd' style='width: 14em;'>" . 	
 		  "<option value='select.php'></option>";
 		  
-foreach($GLOBALS["PAGES"] as $filename => $page){
-	if($page->onMenuSelect) print "<option value='" . $filename . "'>" . $page->title . "</option>";
+foreach($GLOBALS["MENUS"] as $menu => $pages) {
+	foreach($pages as $href => $page) {
+		if($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
+	}
 }
 print "</select></p>";
 
@@ -306,8 +308,10 @@ print "</select></p>";
 print "<p><strong>Jump to: </strong>" . 
 	  "<select name='actionJumpAdv' style='width: 14em;'>" . 	
 	  "<option value='select.php'></option>";
-foreach($GLOBALS["PAGES"] as $filename => $page){
-	if($page->onMenuSelect) print "<option value='" . $filename . "'>" . $page->title . "</option>\n";
+foreach($GLOBALS["MENUS"] as $menu => $pages) {
+	foreach($pages as $href => $page) {
+		if($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
+	}
 }
 print "</select></p></div>";
 
@@ -385,17 +389,21 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	    //set call options header for login before a session exists
 		if(isset($_GET['clientId'])){
 			$mySforceConnection->setCallOptions(new CallOptions($_GET['clientId'], $_SESSION['config']['callOptions_defaultNamespace']));
-			
-		} else if($_SESSION['config']['callOptions_client'] || $_SESSION['config']['callOptions_defaultNamespace']){
-			$mySforceConnection->setCallOptions(new CallOptions($_SESSION['config']['callOptions_client'], $_SESSION['config']['callOptions_defaultNamespace']));
+
+		} else if(isset($_SESSION['config']['callOptions_client']) || isset($_SESSION['config']['callOptions_defaultNamespace'])){
+			$clientId = isset($_SESSION['config']['callOptions_client']) ? $_SESSION['config']['callOptions_client'] : null;
+			$defaultNamespace = isset($_SESSION['config']['callOptions_defaultNamespace']) ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
+			$mySforceConnection->setCallOptions(new CallOptions($clientId, $defaultNamespace));
 		}
 
 		//set login scope header for login before a session exists
 		if(isset($_GET['orgId']) || isset($_GET['portalId'])){
 			$mySforceConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));	
 				
-		} else if($_SESSION['config']['loginScopeHeader_organizationId'] || $_SESSION['config']['loginScopeHeader_portalId']){
-			$mySforceConnection->setLoginScopeHeader(new LoginScopeHeader($_SESSION['config']['loginScopeHeader_organizationId'], $_SESSION['config']['loginScopeHeader_portalId']));
+		} else if(isset($_SESSION['config']['loginScopeHeader_organizationId']) || isset($_SESSION['config']['loginScopeHeader_portalId'])){
+			$loginScopeHeader_organizationId = isset($_SESSION['config']['loginScopeHeader_organizationId']) ? $_SESSION['config']['loginScopeHeader_organizationId'] : null;
+			$loginScopeHeader_portalId = isset($_SESSION['config']['loginScopeHeader_portalId']) ? $_SESSION['config']['loginScopeHeader_portalId'] : null;
+			$mySforceConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeader_organizationId, $loginScopeHeader_portalId));
 		}		
 
 	    if($username && $password && !$sessionId){

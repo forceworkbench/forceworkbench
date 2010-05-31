@@ -1,7 +1,17 @@
 <?php
 
+function isLoggedIn() {
+	return isset($_SESSION['getUserInfo']);
+}
+
 function getMyTitle(){
-	return $GLOBALS["PAGES"][basename($_SERVER['PHP_SELF'])]->title;
+	foreach($GLOBALS["MENUS"] as $pages) {
+		foreach($pages as $href => $page) {
+			if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
+				return $page->title;
+			}
+		}
+	}
 }
 
 function getTableClass($defaultClass = 'data_table'){

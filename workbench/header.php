@@ -4,15 +4,17 @@
 <meta http-equiv="Content-Language" content="UTF-8" />
 <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 <link rel="stylesheet" href="style/master.css" type="text/css" />
-<link rel="Shortcut Icon" href="images/blueBox.bmp" />
+<link rel="stylesheet" href="style/pro_dropdown.css" type="text/css" />
+<link rel="Shortcut Icon" href="images/bluecube-16x16.png" />
 </head>
 
 <?php
-print "<title>Workbench - " . $GLOBALS["PAGES"][basename($_SERVER['PHP_SELF'])]->title  . "</title>"
+print "<title>Workbench - " . getMyTitle()  . "</title>"
 ?>
 
 <body>
 <script type="text/javascript" src="script/wz_tooltip.js"></script>
+<script type="text/javascript" src="script/pro_dropdown.js"></script>
 <?php
 if($_SESSION['config']['areTablesSortable'] && (basename($_SERVER['PHP_SELF'])=="query.php" || basename($_SERVER['PHP_SELF'])=="search.php")){
 	print "<script type='text/javascript' src='script/sortable.js'></script>";	
@@ -70,48 +72,35 @@ if(!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basenam
 	
 	    
 	}
-
-	foreach($GLOBALS["PAGES"] as $href => $page){
-		if(!$page->onMenuSetup) continue;
-		
-		if($href == "login.php" && isset($_SESSION['sessionId']) && basename($_SERVER['PHP_SELF']) != 'logout.php'){
-			continue; //don't print Login
-		} 
-		
-		if($href == "logout.php" && (!isset($_SESSION['sessionId']) || basename($_SERVER['PHP_SELF']) == 'logout.php')) {
-			continue; //don't print Logout
-		}
-		
-		print "<a href='$href'";
-		if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
-			print " style='color: #0046ad;'";
-		}
-		print " onmouseover=\"Tip('$page->desc')\">$page->title</a>&nbsp;&nbsp;";
-	}
 	?>
 	
 </div>
 
-<div style="clear: both; text-align: center"><p>
-	<img src="images/workbench-2-squared.png" width="257" height="50" alt="Workbench 2 Logo" border="0" /></p>
-</div>
-
-<div id='navmenu' style="clear: both;">| 
+<div id='navmenu' style="clear: both;">
+<span class="preload1"></span>
+<span class="preload2"></span>
+<ul id="nav">
 	<?php
-	foreach($GLOBALS["PAGES"] as $href => $page){
-		if(!$page->onMenuMain) continue;
-		print "<a href='$href'";
-		if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
-			print " style='color: #0046ad;' ";
+	foreach($GLOBALS["MENUS"] as $menu => $pages) {
+		print "<li class='top'><a class='top_link'><span class='down'>" . strtolower($menu) ."</span></a>\n" . 
+		      "<ul class='sub'>";
+		foreach($pages as $href => $page) {
+			if(!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || 
+			  (isLoggedIn() && $page->title == 'Login') || (!isLoggedIn() && $page->title == 'Logout')){
+				continue;
+			}
+			print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\">$page->title</a></li>\n";
 		}
-		print " onmouseover=\"Tip('$page->desc')\">$page->title</a> | \n";
+		print "</li></ul>";
+		
+		if(!isLoggedIn()) break;
 	}
 	?>
+</ul>
 </div>
-<p/>
 
 <?php
-if(isset($_SESSION['getUserInfo'])){ 
+if(isLoggedIn()){ 
 	print "<p id='myuserinfo'>Logged in as " . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . " on API " . getApiVersion() . "</p>\n";
 }
 

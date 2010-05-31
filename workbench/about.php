@@ -113,6 +113,12 @@ framework from <a href="http://www.walterzorn.com/">Walter Zorn</a>
 JavaScript built on a framework from <a href="http://www.kryogenix.org">Stuart Langridge</a>
 </p>
 
+<hr/>
+<p>
+Drop-down menus built with 
+<a href="http://www.stunicholls.com/menu/pro_drop_2.html">Professional Dropdown #2</a>
+from Stu Nicholls
+</p>
 </div>
 
 <?php
