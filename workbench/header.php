@@ -9,7 +9,9 @@
 </head>
 
 <?php
-print "<title>Workbench: " . getMyTitle()  . "</title>"
+$myPage = getMyPage();
+$title = $myPage->showTitle ? ": " . $myPage->title : "";
+print "<title>Workbench$title</title>"
 ?>
 
 <body>
@@ -75,7 +77,6 @@ if(!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basenam
 
 <?php
 print "<table width='100%' border='0'><tr>";
-$myPage = getMyPage();
 if($myPage->showTitle) {
 	print "<td id='pagetitle'>" . $myPage->title . "</td>";
 }

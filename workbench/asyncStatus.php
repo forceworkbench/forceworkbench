@@ -22,8 +22,13 @@ try {
 	$asyncConnection = getAsyncApiConnection();
 	$jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);	
 	$batchInfos = $asyncConnection->getBatchInfos($_GET['jobId']);	
-} catch (Exception $e) {
-	show_error($e->getMessage(), false, true);
+} catch (Exception $e) {	
+	show_error($e->getMessage(), false, false);
+	if(stripos($e->getMessage(), 'InvalidVersion') > -1){
+		print "<p/><em>Quick Fix: <a href='sessionInfo.php' target='_blank'>Change API Version</a></em>";
+		include_once ('footer.php');
+		exit;
+	}
 }
 
 print "<p class='instructions'>Records have been uploaded to Salesforce via the Bulk API and are processed asynchronously as resources are available. " . 
@@ -105,8 +110,6 @@ if(count($batchInfos) > 0){
 	}
 	print "</table>";
 }
-
-
 
 include_once ('footer.php');
 
