@@ -14,14 +14,21 @@ require_once ('header.php');
 <?php
 
 $sessionInfo = array();
-foreach($_SESSION['getUserInfo'] as $uiKey => $uiValue) {
+global $mySforceConnection;
+$sessionInfo['Connection'] = array(
+	'API Version' => getApiVersion(),
+	'Client Id' => isset($_SESSION['tempClientId']) ? $_SESSION['tempClientId'] : $_SESSION['config']['callOptions_client'], 
+	'Endpoint' => $mySforceConnection->getLocation(),
+	'Session Id' => $mySforceConnection->getSessionId(), 
+);
+
+foreach($mySforceConnection->getUserInfo() as $uiKey => $uiValue) {
 	if(stripos($uiKey,'org') !== 0) {
-		$sessionInfo['User Info'][$uiKey] = $uiValue;
+		$sessionInfo['User'][$uiKey] = $uiValue;
 	} else {
-		$sessionInfo['Organization Info'][$uiKey] = $uiValue;		
+		$sessionInfo['Organization'][$uiKey] = $uiValue;		
 	}
 }
-
 
 print "<p/>" .
       "<a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'collapse')\">Collapse All</a>\n" .
@@ -34,6 +41,9 @@ function printNode($node) {
 			printNode($nodeValue);
 			print "</ul></li>\n";
 		} else {
+			if(is_bool($nodeValue)) {
+				$nodeValue = $nodeValue == 1 ? "true" : "false";
+			}
 			print "<li>$nodeKey: <span style='font-weight:bold;'>" . addLinksToUiForIds($nodeValue) . "</span></li>\n";
 		}
 	}
