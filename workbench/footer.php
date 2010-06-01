@@ -32,7 +32,7 @@ include_once('shared.php');
 		printf ("Requested in %01.3f sec<BR/>", $requestTimeElapsed);
 	}
 		
-	print "Workbench<a href='utilities.php' style='text-decoration:none'> </a>" . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKBENCH_VERSION"] : "") . "<br/>\n";
+	print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKBENCH_VERSION"] : "") . "<br/>\n";
 
 	
 //	if(stristr($GLOBALS["WORKBENCH_VERSION"],'beta') || stristr($GLOBALS["WORKBENCH_VERSION"],'alpha')){
