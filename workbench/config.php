@@ -594,8 +594,8 @@ $GLOBALS["MENUS"] = array(
 	),
 	
 	'Describe' => array(
-		'describe.php'          => new Page('Describe Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,true),
-		//'describeMetadata.php'  => new Page('Describe Metadata','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,true)
+		'describe.php'          => new Page('Object Descriptions','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,true),
+		'#describeMetadata.php'  => new Page('Metadata Descriptions','Describes the metadata of this organization.',true,true,false,true),
 		'sessionInfo.php'          => new Page('Session Information','Information about the current session.',true,true,false,true),
 	
 	),
@@ -615,15 +615,15 @@ $GLOBALS["MENUS"] = array(
 	),
 	
 	'Migration' => array(
-//		'retrieve.php'  => new Page('Retrieve','Creates new records from a CSV file',true,true,true,true),
-//		'deploy.php'    => new Page('Deploy','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,true,true,true),
+		'#retrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,false,true),
+		'#deploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,true,false,true),
 	),
 	
 	'Utilities' => array(
-		'execute.php'     => new Page('Execute','Execute Apex code as an anonymous block',true,true,true,true),
+		'execute.php'     => new Page('Apex Execute','Execute Apex code as an anonymous block',true,true,true,true),
 		'asyncStatus.php' => new Page('Bulk API Job Status & Results','Asynchronous Data Load Status and Results',true,true,false,true),
 		'pwdMgmt.php'     => new Page('Password Management','Set and Reset Passwords',true,true,false,true),
-		'burn.php'        => new Page('API Call Afterburner','',true,true,false,true)
+		'burn.php'        => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,true)
 	)
 ); 
 ?>

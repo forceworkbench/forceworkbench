@@ -39,7 +39,7 @@ a{
 }
 
 * a:hover, #navmenu a:hover, #setupMenu a:hover, #myuserinfo a:hover{
-	color: #2C75BE;
+	color: rgb(66,158,231);
 	text-decoration: underline;
 }
 
@@ -60,12 +60,12 @@ a{
 	
 
 h1{
-	color: #2C75BE;
+	color: rgb(66,158,231);
 	font-size: large;
 }
 
 h2{
-	color: #2C75BE;
+	color: rgb(66,158,231);
 	font-size: medium;
 }
 
@@ -78,7 +78,7 @@ h2{
 	
 #pagetitle{
 	text-align: left;
-	color: #2C75BE;
+	color: rgb(66,158,231);
 	font-weight: bold;
 	font-size: medium;
 }
@@ -196,11 +196,11 @@ table.field_mapping TD, table.field_mapping TH{
  }
 
 .show_info{
- 	color: #2C75BE;
+ 	color: rgb(66,158,231);
 	text-align: center;
 	font-size: 12px;
  	padding: 10px;
- 	border: #2C75BE solid thin;
+ 	border: rgb(66,158,231) solid thin;
  	-moz-border-radius: 10px;
  	clear: both;
  }
