@@ -41,13 +41,7 @@ if(isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])){
 	 	//special case for default clientId so that it doesnt persist after upgrading if not customized
 	 	if(isset($_POST['callOptions_client']) && $_POST['callOptions_client'] == getWorkbenchUserAgent()){
 	 		setcookie('callOptions_client',NULL,time()-3600);	
-	 	}
-	 	
-		if(isset($_POST['currentApiVersion']) && $_POST['currentApiVersion'] !== getApiVersion()){
-			clearSessionCache();
-			$_SESSION['location'] = preg_replace("/\d\d?\.\d/",$_POST['currentApiVersion'],$_SESSION['location']);
-			$_SESSION['wsdl'] = 'soapclient/sforce.' . str_replace('.', '', $_POST['currentApiVersion']) . '.partner.wsdl';
-	 	}	 	
+	 	}	
 	 	
 	 	header("Location: $_SERVER[PHP_SELF]");
 	}

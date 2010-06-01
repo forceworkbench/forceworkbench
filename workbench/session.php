@@ -61,8 +61,6 @@ if(isLoggedIn()){
 		$mySforceConnection->setEndpoint($location);
 		$mySforceConnection->setSessionHeader($sessionId);
 			
-		$_SESSION['config']['currentApiVersion'] = getApiVersion();
-			
 		//setting default object to remove notices through functions
 		if(!isset($_SESSION['default_object'])){
 			$_SESSION['default_object'] = null;

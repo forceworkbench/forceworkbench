@@ -148,7 +148,7 @@ $config["header_LoginOptions"] = array(
 		)
 	);
 	
-	$apiVersions = array(
+	$_GLOBALS['apiVersions'] = array(
 			"19.0" => "19.0",
 		    "18.0" => "18.0",
 			"17.0" => "17.0",
@@ -170,17 +170,8 @@ $config["header_LoginOptions"] = array(
 		"default" => "19.0",
 		"overrideable" => true,
 		"dataType" => "picklist",
-		"valuesToLabels" => $apiVersions
+		"valuesToLabels" => $_GLOBALS['apiVersions']
 	);
-
-	$config["currentApiVersion"]  = array(
-		"label" => "Current API Version",
-		"description" => "Current API version used during this session only.",
-		"overrideable" => true,
-		"dataType" => "picklist",
-		"valuesToLabels" => $apiVersions
-	);
-	
 	
 	$config["useHTTPS"] = array(
 		"label" => "Connect to Salesforce over HTTPS",

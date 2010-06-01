@@ -9,7 +9,7 @@
 </head>
 
 <?php
-print "<title>Workbench - " . getMyTitle()  . "</title>"
+print "<title>Workbench: " . getMyTitle()  . "</title>"
 ?>
 
 <body>
