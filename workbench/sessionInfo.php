@@ -38,19 +38,20 @@ require_once ('header.php');
 <link rel="stylesheet" type="text/css" href="style/simpletree.css" />
 
 <p/>
-<form name="changeApiVersionForm" action="<?php $_SERVER['PHP_SELF'] ?>">
-	Change API Version: 
-	<?php
-	print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
-	foreach($_GLOBALS['apiVersions'] as $v) {
-		print "<option value='$v'";
-		if (getApiVersion() == $v) print " selected=\"selected\"";
-		print ">" . $v . "</option>";
-	}
-	print "</select>";
-	?>
-</form>
-<p/>
+<div style='float:right;'>
+	<form name="changeApiVersionForm" action="<?php $_SERVER['PHP_SELF'] ?>">
+		Change API Version: 
+		<?php
+		print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
+		foreach($_GLOBALS['apiVersions'] as $v) {
+			print "<option value='$v'";
+			if (getApiVersion() == $v) print " selected=\"selected\"";
+			print ">" . $v . "</option>";
+		}
+		print "</select>";
+		?>
+	</form>
+</div>
 
 <?php
 
