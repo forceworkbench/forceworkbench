@@ -13,19 +13,38 @@ require_once ('header.php');
 <link rel="stylesheet" type="text/css" href="style/simpletree.css" />
 <?php
 
+$sessionInfo = array();
+foreach($_SESSION['getUserInfo'] as $uiKey => $uiValue) {
+	if(stripos($uiKey,'org') !== 0) {
+		$sessionInfo['User Info'][$uiKey] = $uiValue;
+	} else {
+		$sessionInfo['Organization Info'][$uiKey] = $uiValue;		
+	}
+}
+
+
 print "<p/>" .
       "<a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'collapse')\">Collapse All</a>\n" .
-      "<ul id='sessionInfoTree' class='treeview'>";
+      "<ul id='sessionInfoTree' class='treeview'>\n";
 
-print "<li>User Info<ul>\n";
-foreach($_SESSION['getUserInfo'] as $uiKey => $uiValue) {
-	print "<li>$uiKey: <span style='font-weight:bold;'>$uiValue</span></li>\n";
+function printNode($node) {
+	foreach($node as $nodeKey => $nodeValue) {
+		if(is_array($nodeValue)){
+			print "<li>$nodeKey<ul>\n";
+			printNode($nodeValue);
+			print "</ul></li>\n";
+		} else {
+			print "<li>$nodeKey: <span style='font-weight:bold;'>" . addLinksToUiForIds($nodeValue) . "</span></li>\n";
+		}
+	}
+	
 }
-print "</ul></li>\n"; 
+
+printNode($sessionInfo);
 
 require_once ('footer.php');
 ?>
 <script type="text/javascript">
 ddtreemenu.createTree("sessionInfoTree", true);
-ddtreemenu.flatten('sessionInfoTree', 'expand');
+//ddtreemenu.flatten('sessionInfoTree', 'expand');
 </script>
