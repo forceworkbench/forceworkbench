@@ -54,9 +54,10 @@ require_once ('header.php');
 </div>
 
 <?php
-
+print "<div style='margin-top: 3em;'>";
 if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
 	show_error("Selected API version is not supported by this Salesforce organization. Automatically reverted to prior version.",false,false);
+	print "<p/>";
 }
 
 $sessionInfo = array();
@@ -75,8 +76,7 @@ foreach($mySforceConnection->getUserInfo() as $uiKey => $uiValue) {
 	}
 }
 
-print "<p/>" .
-      "<a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'collapse')\">Collapse All</a>\n" .
+print "<a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'collapse')\">Collapse All</a>\n" .
       "<ul id='sessionInfoTree' class='treeview'>\n";
 
 function printNode($node) {
@@ -96,7 +96,7 @@ function printNode($node) {
 }
 
 printNode($sessionInfo);
-
+print "</div>";
 require_once ('footer.php');
 ?>
 <script type="text/javascript">

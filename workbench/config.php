@@ -600,12 +600,12 @@ $GLOBALS["MENUS"] = array(
 	
 	),
 	
-	'View' => array(
-		'query.php'     => new Page('Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,true),
-		'search.php'    => new Page('Search','Search the data in your organization across multiple objects',true,true,true,true)
+	'Query' => array(
+		'query.php'     => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,true),
+		'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,true)
 	),
 		
-	'Manage' => array(
+	'Edit' => array(
 		'insert.php'    => new Page('Insert','Creates new records from a CSV file',true,true,true,true),
 		'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,true,true,true),
 		'update.php'    => new Page('Update','Updates existing records from a CSV file',true,true,true,true),
