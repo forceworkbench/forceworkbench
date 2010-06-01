@@ -97,7 +97,7 @@ function ajaxBurn(){
 if(isset($infos)) show_info($infos);
 if(isset($errors)) show_error($errors); 
 ?>
-
+<p/>
 <form name='afterburner'>
 <table border='0'>
 	
