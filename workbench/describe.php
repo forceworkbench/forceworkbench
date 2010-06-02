@@ -67,7 +67,7 @@ function show_describeSObject_result(){
 			      "</div>";
 		}
 
-		print "<a href=\"javascript:ddtreemenu.flatten('describeTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('describeTree', 'collapse')\">Collapse All</a>\n";
+		print "<br/><a href=\"javascript:ddtreemenu.flatten('describeTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('describeTree', 'collapse')\">Collapse All</a>\n";
 		print "<ul id='describeTree' class='treeview'>\n";
 
 
