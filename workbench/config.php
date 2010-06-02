@@ -605,7 +605,7 @@ $GLOBALS["MENUS"] = array(
 		'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,true)
 	),
 		
-	'Edit' => array(
+	'Data' => array(
 		'insert.php'    => new Page('Insert','Creates new records from a CSV file',true,true,true,true),
 		'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,true,true,true),
 		'update.php'    => new Page('Update','Updates existing records from a CSV file',true,true,true,true),
@@ -614,7 +614,7 @@ $GLOBALS["MENUS"] = array(
 		'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,true,true,true)
 	),
 	
-	'Migrate' => array(
+	'Migration' => array(
 		'#retrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,false,true),
 		'#deploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,true,false,true),
 	),
