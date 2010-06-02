@@ -3,11 +3,11 @@ require_once 'JobInfo.php';
 require_once 'BatchInfo.php';
 
 /**
- * PHP BULK API CLIENT 18.0
+ * PHP BULK API CLIENT 19.0
  * @author Ryan Brainard
  * 
  * BulkApiClient.php
- * Main client for interacting with the REST-based Force.com Bulk API 18.0
+ * Main client for interacting with the REST-based Force.com Bulk API 19.0
  * to asynchronously insert, update, and upsert data to Salesforce.
  * Requires PHP cURL library to be installed. 
  * 
@@ -38,7 +38,7 @@ require_once 'BatchInfo.php';
 class BulkApiClient {
 	private $endpoint;
 	private $sessionId;
-	private $userAgent = "PHP-BulkApiClient/18.0";
+	private $userAgent = "PHP-BulkApiClient/19.0";
 	private $compressionEnabled = true;
 	private $logs;
 	private $loggingEnabled = false;
@@ -99,6 +99,10 @@ class BulkApiClient {
 	private function validateJob(JobInfo $job){
 		if($job->getOpertion() == "delete" && !$this->apiVersionIsAtLeast($this->endpoint, 18.0)){
 			throw new Exception("Bulk API 'Delete' operation only supported in API 18.0 and higher.");
+		}
+		
+		if($job->getOpertion() == "hardDelete" && !$this->apiVersionIsAtLeast($this->endpoint, 19.0)){
+			throw new Exception("Bulk API 'Hard Delete' operation only supported in API 19.0 and higher.");
 		}
 	}
 

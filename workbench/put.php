@@ -9,10 +9,20 @@
  * @param unknown_type $action
  */
 function put($action){
+	
 	$confirm_action = 'Confirm ' . ucwords($action);
 	
 	if(isset($_POST['action']) && $_POST['action'] == $confirm_action){
-		if ($action == 'upsert' && isset($_SESSION['_ext_id'])) $ext_id = $_SESSION['_ext_id']; else $ext_id = NULL;
+		if ($action == 'upsert' && isset($_SESSION['_ext_id'])) {
+			$ext_id = $_SESSION['_ext_id'];
+		} else {
+			$ext_id = NULL;
+		}
+		
+		if($action == 'delete' && isset($_POST['doHardDelete']) && $_POST['doHardDelete']) {
+			$action = 'hardDelete';
+		}
+		
 		if(isset($_POST['doAsync'])){
 			putAsync(
 				$action,
@@ -496,16 +506,28 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 	}
 
 	print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
-	
-	if(apiVersionIsAtLeast(17.0)){
-		if(($action == 'Confirm Insert') || ($action == 'Confirm Update') || ($action == 'Confirm Upsert') || ($action == 'Confirm Delete' && apiVersionIsAtLeast(18.0))){
-			print "<p><label><input type='checkbox' name='doAsync'/> Process records asynchronously via Bulk API</label>" .
-			  "&nbsp;<img onmouseover=\"Tip('Processing records asynchronously is recommended for large data loads. The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" align='absmiddle' src='images/help16.png'/>" . 
-			  "</p><p>&nbsp;</p>";
+
+	//Hard Delete option
+	if(apiVersionIsAtLeast(19.0) && $action == 'Confirm Delete') {
+		print "<p><label><input type='checkbox' name='doHardDelete' onChange=\"if(this.checked) document.getElementById('doAsync').checked=true; document.getElementById('asyncDeleteObjectSelection').style.display='inline';\"/> Permanently hard delete records</label>" .
+		  "&nbsp;<img onmouseover=\"Tip('When specified, the deleted records are not stored in the Recycle Bin. Instead, the records become immediately eligible for deletion, don\'t count toward the storage space used by your organization, and may improve performance. The Administrative permission for this operation, \'Bulk API Hard Delete\', is disabled by default and must be enabled by an administrator. A Salesforce user license is required for hard delete. Hard Delete is only available via Bulk API.')\" align='absmiddle' src='images/help16.png'/>" . 
+		  "</p>";
+	}
+
+	//Async Options
+	if(apiVersionIsAtLeast(17.0) && ($action == 'Confirm Insert') || ($action == 'Confirm Update') || ($action == 'Confirm Upsert') || ($action == 'Confirm Delete' && apiVersionIsAtLeast(18.0))) {
+		print "<p><label><input  id='doAsync' name='doAsync' type='checkbox' onChange=\"if(this.checked) document.getElementById('asyncDeleteObjectSelection').style.display='inline'; else document.getElementById('asyncDeleteObjectSelection').style.display='none'; \"/> Process records asynchronously via Bulk API</label>" .
+		  "&nbsp;<img onmouseover=\"Tip('Processing records asynchronously is recommended for large data loads. The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" align='absmiddle' src='images/help16.png'/>" . 
+		  "</p>";
+		
+		if($action == 'Confirm Delete') {
+			print "<div id='asyncDeleteObjectSelection' style='display: none; margin-left: 3em;'>Object Type: ";
+			myGlobalSelect($_SESSION['default_object']);
+			print "</div>";
 		}
 	}
 	
-	print "<p><input type='submit' name='action' value='$action' /></p>\n";
+	print "<p>&nbsp;</p><p><input type='submit' name='action' value='$action' /></p>\n";
 	print "</form>\n";
 	}
 }
@@ -694,7 +716,7 @@ function putSync($api_call,$ext_id,$field_map,$csv_array,$show_results){
  */
 function putAsync($api_call,$ext_id,$field_map,$csv_array){
 	if (!($field_map && $csv_array && $_SESSION['default_object'])){  
-		show_error("CSV file and field mapping not initialized. Upload a new file and map fields.");
+		show_error("CSV file and field mapping not initialized or object not selected. Upload a new file and map fields.",true,true);
 	} else {
 		require_once ('restclient/BulkApiClient.php');
 		try{
