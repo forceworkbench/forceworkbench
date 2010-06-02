@@ -614,7 +614,7 @@ $GLOBALS["MENUS"] = array(
 		'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,true,true,true)
 	),
 	
-	'Migration' => array(
+	'Migrate' => array(
 		'#retrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,false,true),
 		'#deploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,true,false,true),
 	),
