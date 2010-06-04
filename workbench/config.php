@@ -571,15 +571,16 @@ class Page {
     public $onNavBar;
 	public $onMenuSelect;
 	public $showTitle;
+	public $window;
 	
-	//TODO: change method signature
-	public function __construct($title, $desc, $requiresSfdcSession=true, $onNavBar=false, $onMenuSelect=false, $showTitle=true){
+	public function __construct($title, $desc, $requiresSfdcSession=true, $onNavBar=false, $onMenuSelect=false, $showTitle=true, $window=''){
 		$this->title = $title;
 		$this->desc = $desc;
 		$this->requiresSfdcSession = $requiresSfdcSession;
 	    $this->onNavBar = $onNavBar;
 		$this->onMenuSelect = $onMenuSelect;	
 		$this->showTitle = $showTitle;	
+		$this->window = $window;
 	}
 }
 
@@ -620,10 +621,11 @@ $GLOBALS["MENUS"] = array(
 	),
 	
 	'Utilities' => array(
-		'execute.php'     => new Page('Apex Execute','Execute Apex code as an anonymous block',true,true,true,true),
-		'asyncStatus.php' => new Page('Bulk API Job Status & Results','Asynchronous Data Load Status and Results',true,true,false,true),
-		'pwdMgmt.php'     => new Page('Password Management','Set and Reset Passwords',true,true,false,true),
-		'burn.php'        => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,true)
+		'execute.php'          => new Page('Apex Execute','Execute Apex code as an anonymous block',true,true,true,true),
+		'runAllApexTests.php'  => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,false,true,'runAllApexTests'),
+		'asyncStatus.php'      => new Page('Bulk API Job Status & Results','Asynchronous Data Load Status and Results',true,true,false,true),
+		'pwdMgmt.php'          => new Page('Password Management','Set and Reset Passwords',true,true,false,true),
+		'burn.php'             => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,true)
 	)
 ); 
 ?>

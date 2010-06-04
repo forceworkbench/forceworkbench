@@ -96,7 +96,7 @@ require_once ('header.php');
 
 //Displays errors if there are any
 if (isset($errors)) {
-	show_error($errors);
+	show_error($errors, false, true);
 }
 
 $isRemembered = "";

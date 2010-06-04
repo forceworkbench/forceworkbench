@@ -259,6 +259,11 @@ function addLinksToUiForIds($inputStr){
 	}
 }
 
+function addLinksToUi($startUrl){
+	preg_match("@(https?://.*)/services@", $_SESSION['location'], $instUIDomain);
+	return "$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$startUrl";					
+}
+
 
 function arr_to_csv_line($arr) {
 	$line = array();

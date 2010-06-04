@@ -65,7 +65,7 @@ if(!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basenam
 			if(!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || (isLoggedIn() && $page->title == 'Login')){
 				continue;
 			}
-			print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\">$page->title</a></li>\n";
+			print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\" target=" . $page->window . ">$page->title</a></li>\n";
 		}
 		print "</li></ul>";
 		
