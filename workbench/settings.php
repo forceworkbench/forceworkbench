@@ -43,17 +43,20 @@ if(isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])){
 	 		setcookie('callOptions_client',NULL,time()-3600);	
 	 	}	
 	 	
-	 	header("Location: $_SERVER[PHP_SELF]");
+	 	header("Location: $_SERVER[PHP_SELF]?saved=" . (isset($_POST['restoreDefaults']) ? "D" : "S"));
 	}
 }
 
 
 require_once('header.php');
+
 	if(isset($errors)){
 		show_error($errors);
+	} else if(isset($_GET['saved'])) {
+		show_info(($_GET['saved'] == "D" ? "Defaults restored" : "Settings saved") . " successfully.");
 	}
 
-	print "<p/><form method='post' action='$_SERVER[PHP_SELF]'>\n";
+	print "<p/><form id='settings_form' method='post' action='$_SERVER[PHP_SELF]'>\n";
 
 	print "<table border='0' cellspacing='5' style='border-width-top: 1'>\n";
 	
@@ -113,3 +116,24 @@ require_once('header.php');
 require_once('footer.php');
 
 ?>
+<script>
+var isDirty = false;
+window.onbeforeunload = function() {
+  if (isDirty) {
+    return 'You have unsaved changes. Click \'Apply Settings\' before navigating away from this page.';
+  }
+}
+
+var editor_form = document.getElementById("settings_form");
+for (var i = 0; i < editor_form.length; i++) {
+	if(editor_form[i].type == 'submit') {
+		editor_form[i].onclick = function() {
+			isDirty = false;
+		}		
+	} else {
+		editor_form[i].onchange = function() {
+			isDirty = true;
+		}
+	}
+}
+</script>
