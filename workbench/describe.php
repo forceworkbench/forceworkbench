@@ -28,11 +28,10 @@ function show_describeSObject_form(){
 	<link rel="stylesheet" type="text/css" href="style/simpletree.css" />
 	<?php
 	
-	print "<form name='describeForm' method='post' action='$_SERVER[PHP_SELF]' onChange='document.describeForm.submit();'>" .
+	print "<form name='describeForm' method='post' action='$_SERVER[PHP_SELF]'>" .
 		  "<p class='instructions'>Choose an object to describe:</p>\n";
-	myGlobalSelect($_SESSION['default_object'], 'default_object', 30);
-	print "<input type='submit' name='action' value='Describe' />" .
-		  "</form>";
+	myGlobalSelect($_SESSION['default_object'], 'default_object', 30, "onChange='document.describeForm.submit();'");
+	print  "</form>";
 }
 
 
