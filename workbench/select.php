@@ -24,8 +24,6 @@ if (isset($_POST['actionJump']) && $_POST['actionJump'] != ""){
 
 function show_select_form(){
 	?>
-	<body onLoad='toggleObjectSelectDisabled();'/>
-	
 	<script>
 	
 	function toggleObjectSelectDisabled(){
@@ -68,6 +66,8 @@ function show_select_form(){
 	} catch (Exception $e) {
 		show_error($e->getMessage(),false,true);
 	}
+	
+	print "<script>toggleObjectSelectDisabled();</script>";
 }
 
 ?>

@@ -103,13 +103,13 @@ $isRemembered = "";
 if (isset($_COOKIE['user'])){
 	$user = $_COOKIE['user'];
 	$isRemembered = "checked='checked'";
-	print "<body onLoad='givePassFocus();' />";
+	$jsFocus = 'password';
 } elseif (isset($_POST['user'])){
 	$user = $_POST['user'];
-	print "<body onLoad='giveUserFocus();' />";
+	$jsFocus = 'user';
 } else {
-	print "<body onLoad='giveUserFocus();' />";
 	$user = null;
+	$jsFocus = 'user';
 }
 
 
@@ -335,6 +335,14 @@ if((isset($_GET['adv']) && $_GET['adv'] != 0) ||
 			</script>";
 	
 }
+
+print "<script>";
+if ($jsFocus == 'password') {
+	print "givePassFocus();";
+} else if ($jsFocus == 'user') {
+	print "giveUserFocus();";
+}
+print "</script>";
 
 include_once ('footer.php');
 

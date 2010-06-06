@@ -6,13 +6,13 @@
 <link rel="stylesheet" href="style/master.css" type="text/css" />
 <link rel="stylesheet" href="style/pro_dropdown.css" type="text/css" />
 <link rel="Shortcut Icon" href="images/bluecube-16x16.png" />
-</head>
-
 <?php
 $myPage = getMyPage();
 $title = $myPage->showTitle ? ": " . $myPage->title : "";
 print "<title>Workbench$title</title>"
 ?>
+
+</head>
 
 <body>
 <script type="text/javascript" src="script/wz_tooltip.js"></script>

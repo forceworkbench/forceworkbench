@@ -64,7 +64,6 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 // just display the blank form. When the user selects the SCREEN or CSV options, the
 //query is processed by the correct function
 if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
-	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
 	$queryRequest->setExportTo('screen');
 	show_query_form($queryRequest);
@@ -75,7 +74,6 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 	show_query_result($records,$queryTimeElapsed);
 	include_once('footer.php');
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'screen') {
-	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
 	$queryRequest->setExportTo('screen');
 	show_query_form($queryRequest);
@@ -90,7 +88,6 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 		$records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction(),null,true);
 		export_query_csv($records,$queryRequest->getExportTo());
 	} else {
-		print "<body onLoad='toggleFieldDisabled();'>";
 		require_once ('header.php');
 		$queryRequest->setExportTo('csv');
 		show_query_form($queryRequest);
@@ -100,7 +97,6 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 		include_once('footer.php');
 	}
 } else {
-	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
 	$queryRequest->setExportTo('screen');
 	$queryRequest->setQueryAction('Query');
@@ -415,7 +411,7 @@ QUERY_BUILDER_SCRIPT;
 		}
 		print ">count()</option>\n";
 
-		print ">$field->name</option>\n";
+		//print ">$field->name</option>\n";
 		foreach($describeSObject_result->fields as $fields => $field){
 			print   " <option value='$field->name'";
 			if($queryRequest->getFields() != null){ //check to make sure something is selected; otherwise warnings will display
@@ -542,6 +538,8 @@ QUERY_BUILDER_SCRIPT;
 	      "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
 	
 	print "</td></tr></table><p/>\n";
+	
+	print "<script>toggleFieldDisabled();</script>";
 }
 
 

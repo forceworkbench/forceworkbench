@@ -56,7 +56,6 @@ if(isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST[
 //show the search results with default object selected on a previous page, otherwise
 // just display the blank form. 
 if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
-	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
 	show_search_form($searchRequest);
 	$searchTimeStart = microtime(true);
@@ -66,7 +65,6 @@ if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
 	show_search_result($records,$searchTimeElapsed);
 	include_once('footer.php');
 } else {
-	print "<body onLoad='toggleFieldDisabled();'>";
 	require_once ('header.php');
 	show_search_form($searchRequest);
 	include_once('footer.php');
@@ -295,6 +293,8 @@ SEARCH_BUILDER_SCRIPT;
 		"\"" . $ro->getFields()  . "\"" .
 		");</script>";
 	}
+	
+	print "<script>toggleFieldDisabled();<script>";
 }
 
 

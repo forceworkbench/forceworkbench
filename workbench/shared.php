@@ -143,7 +143,7 @@ function myGlobalSelect($default_object=null, $nameId='default_object', $width=2
 		if ($default_object == $type){
 			print " selected='true'";
 		}
-		print " />$type</option> \n";
+		print ">$type</option> \n";
 	}
 	print "</select>\n";
 }
