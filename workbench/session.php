@@ -117,7 +117,7 @@ if(isLoggedIn()){
 			$_SESSION['getUserInfo'] = $mySforceConnection->getUserInfo();
 		}
 		
-	} catch (exception $e){
+	} catch (exception $e) {
 		session_unset();
 		session_destroy();
 		header('Location: login.php');

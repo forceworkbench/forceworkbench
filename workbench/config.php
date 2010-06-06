@@ -587,9 +587,9 @@ class Page {
 $GLOBALS["MENUS"] = array(
 	'&nbsp;<img src=\'images/workbench-3-cubed-white-small.png\'/>' => array(
 		'login.php'     => new Page('Login','Logs into your Salesforce organization',false,true,false,false),
-		'logout.php'    => new Page('Logout','Logs out of your Salesforce organization',true,true,false,false),
 		'select.php'    => new Page('Select','Select action to which to jump',true,false,false,false),
 		'settings.php'  => new Page('Settings','Configure Workbench',false,true,false,true),
+        'logout.php'    => new Page('Logout','Logs out of your Salesforce organization',true,true,false,false),
 	    'help.php'      => new Page('Help','Get help about using Workbench',false,true,false,true),
 	    'about.php'     => new Page('About','Learn about Workbench',false,true,false,true)
 	),
