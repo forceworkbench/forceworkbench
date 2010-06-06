@@ -120,7 +120,10 @@ if(isLoggedIn()){
 	} catch (exception $e) {
 		session_unset();
 		session_destroy();
-		header('Location: login.php');
+		try { include_once('header.php'); } catch (exception $e) {}
+		show_error("Fatal error connecting to Salesforce. Please login again.\n\nERROR: " . $e->getMessage(), false, false);
+		print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\",3000);</script>";
+		include_once('footer.php');
 		exit;
 	}
 }

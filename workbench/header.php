@@ -18,7 +18,7 @@ print "<title>Workbench$title</title>"
 <script type="text/javascript" src="script/wz_tooltip.js"></script>
 <script type="text/javascript" src="script/pro_dropdown.js"></script>
 <?php
-if($_SESSION['config']['areTablesSortable'] && (basename($_SERVER['PHP_SELF'])=="query.php" || basename($_SERVER['PHP_SELF'])=="search.php")){
+if(isset($_SESSION['config']['areTablesSortable']) && $_SESSION['config']['areTablesSortable'] && (basename($_SERVER['PHP_SELF'])=="query.php" || basename($_SERVER['PHP_SELF'])=="search.php")){
 	print "<script type='text/javascript' src='script/sortable.js'></script>";	
 } 
 
