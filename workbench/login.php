@@ -393,43 +393,43 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 			display_login("Could not find WSDL for this API version. Please try logging in again.");
 		}
 		
-		$mySforceConnection = new SforcePartnerClient();
-	    $mySforceConnection->createConnection($wsdl);
+		$partnerConnection = new SforcePartnerClient();
+	    $partnerConnection->createConnection($wsdl);
 	    
 	    //set call options header for login before a session exists
 		if(isset($_GET['clientId'])){
-			$mySforceConnection->setCallOptions(new CallOptions($_GET['clientId'], $_SESSION['config']['callOptions_defaultNamespace']));
+			$partnerConnection->setCallOptions(new CallOptions($_GET['clientId'], $_SESSION['config']['callOptions_defaultNamespace']));
 
 		} else if(isset($_SESSION['config']['callOptions_client']) || isset($_SESSION['config']['callOptions_defaultNamespace'])){
 			$clientId = isset($_SESSION['config']['callOptions_client']) ? $_SESSION['config']['callOptions_client'] : null;
 			$defaultNamespace = isset($_SESSION['config']['callOptions_defaultNamespace']) ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
-			$mySforceConnection->setCallOptions(new CallOptions($clientId, $defaultNamespace));
+			$partnerConnection->setCallOptions(new CallOptions($clientId, $defaultNamespace));
 		}
 
 		//set login scope header for login before a session exists
 		if(isset($_GET['orgId']) || isset($_GET['portalId'])){
-			$mySforceConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));	
+			$partnerConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));	
 				
 		} else if(isset($_SESSION['config']['loginScopeHeader_organizationId']) || isset($_SESSION['config']['loginScopeHeader_portalId'])){
 			$loginScopeHeader_organizationId = isset($_SESSION['config']['loginScopeHeader_organizationId']) ? $_SESSION['config']['loginScopeHeader_organizationId'] : null;
 			$loginScopeHeader_portalId = isset($_SESSION['config']['loginScopeHeader_portalId']) ? $_SESSION['config']['loginScopeHeader_portalId'] : null;
-			$mySforceConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeader_organizationId, $loginScopeHeader_portalId));
+			$partnerConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeader_organizationId, $loginScopeHeader_portalId));
 		}		
 
 	    if($username && $password && !$sessionId){
-	    	$mySforceConnection->setEndpoint($serverUrl);
-			$mySforceConnection->login($username, $password);
+	    	$partnerConnection->setEndpoint($serverUrl);
+			$partnerConnection->login($username, $password);
 		} elseif ($sessionId && $serverUrl && !($username && $password)){
 			if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
 				display_login('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. Choose your specific Salesforce instance on the QuickSelect menu when using a session id; otherwise, provide a username and password and choose the appropriate a login server.');
 				exit;
 			}
 			
-			$mySforceConnection->setEndpoint($serverUrl);
-	    	$mySforceConnection->setSessionHeader($sessionId);
+			$partnerConnection->setEndpoint($serverUrl);
+	    	$partnerConnection->setSessionHeader($sessionId);
 		}
 	
-		if(stripos($mySforceConnection->getLocation(),'localhost')) {
+		if(stripos($partnerConnection->getLocation(),'localhost')) {
 			if(isset($GLOBALS['internal']['localhostLoginRedirectError'])){
 				display_login($GLOBALS['internal']['localhostLoginRedirectError'],false,true);
 			} else {
@@ -439,14 +439,14 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		}
 
 		//replace HTTPS w/ HTTP if useHTTP config is false
-		$location = $_SESSION['config']['useHTTPS'] ? $mySforceConnection->getLocation() : str_replace("https","http",$mySforceConnection->getLocation());
+		$location = $_SESSION['config']['useHTTPS'] ? $partnerConnection->getLocation() : str_replace("https","http",$partnerConnection->getLocation());
 		
 		session_unset();
 		session_destroy(); 
 		session_start();
 			
 	    $_SESSION['location'] = $location;
-	    $_SESSION['sessionId'] = $mySforceConnection->getSessionId();
+	    $_SESSION['sessionId'] = $partnerConnection->getSessionId();
 	    $_SESSION['wsdl'] = $wsdl;
 		if(isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'on'){
 			 setcookie('user',$username,time()+60*60*24*7,'','','',TRUE);

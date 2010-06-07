@@ -98,8 +98,8 @@ function describeGlobal($filter1=null, $filter2=null){
 	
 	if (!isset($_SESSION['myGlobal']) || !$_SESSION['config']['cacheDescribeGlobal']){
 		try{
-			global $mySforceConnection;
-			$describeGlobalResponse = $mySforceConnection->describeGlobal();
+			global $partnerConnection;
+			$describeGlobalResponse = $partnerConnection->describeGlobal();
 			
 			//Change to pre-17.0 format
 			if(isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)){
@@ -175,8 +175,8 @@ function describeSObject($objectTypes){
 	// retreive uncached object descriptions from the API and return as an array. 
 	if (count($objectTypesToRetreive) >= 1 && count($objectTypesToRetreive) <= 100){
 		try{
-			global $mySforceConnection;
-			$describeSObjects_results = $mySforceConnection->describeSObjects($objectTypesToRetreive);
+			global $partnerConnection;
+			$describeSObjects_results = $partnerConnection->describeSObjects($objectTypesToRetreive);
 		} catch (Exception $e) {
 			show_error($e->getMessage(),false,true);
 		}
@@ -416,26 +416,26 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 		}
 
 
-		global $mySforceConnection;
-		if($showSoap && isset($mySforceConnection) && $mySforceConnection->getLastRequestHeaders()){
+		global $partnerConnection;
+		if($showSoap && isset($partnerConnection) && $partnerConnection->getLastRequestHeaders()){
 			try{
 				print "<h1 onclick=\"toggleDebugSection(this,'partner_soap_container')\" class=\"debugHeader\">+ PARTNER SOAP MESSAGES</h1>\n";
 				print "<div id='partner_soap_container'  class='debugContainer'>";
 
 					print "<strong>LAST REQUEST HEADER</strong>\n";
-					print htmlspecialchars($mySforceConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+					print htmlspecialchars($partnerConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
 					print "<hr/>";
 	
 					print "<strong>LAST REQUEST</strong>\n";
-					print htmlspecialchars(xml_pretty_printer($mySforceConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
+					print htmlspecialchars(xml_pretty_printer($partnerConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
 					print "<hr/>";
 	
 					print "<strong>LAST RESPONSE HEADER</strong>\n";
-					print htmlspecialchars($mySforceConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+					print htmlspecialchars($partnerConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
 					print "<hr/>";
 	
 					print "<strong>LAST RESPONSE</strong>\n";
-					print htmlspecialchars(xml_pretty_printer($mySforceConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
+					print htmlspecialchars(xml_pretty_printer($partnerConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
 					print "<hr/>";
 				
 				print "</div>";

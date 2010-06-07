@@ -602,9 +602,9 @@ function putSyncIdOnly($api_call,$field_map,$csv_array,$show_results){
 	while($id_array){
 		$id_arrayBatch = array_splice($id_array,0,$_SESSION['config']['batchSize']);
 		try{
-			global $mySforceConnection;
+			global $partnerConnection;
 			if($api_call == 'purge') $api_call = 'emptyRecycleBin';
-			$results_more = $mySforceConnection->$api_call($id_arrayBatch);
+			$results_more = $partnerConnection->$api_call($id_arrayBatch);
 
 		    if(!$results){
 		    	$results = $results_more;
@@ -680,11 +680,11 @@ function putSync($api_call,$ext_id,$field_map,$csv_array,$show_results){
 
 
 			try{
-				global $mySforceConnection;
+				global $partnerConnection;
 				if ($api_call == 'upsert'){
-					$results_more = $mySforceConnection->$api_call($ext_id,$sObjects);					
+					$results_more = $partnerConnection->$api_call($ext_id,$sObjects);					
 				} else {
-					$results_more = $mySforceConnection->$api_call($sObjects);
+					$results_more = $partnerConnection->$api_call($sObjects);
 				}
 				unset($sObjects);
 			} catch (Exception $e) {

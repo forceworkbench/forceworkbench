@@ -56,10 +56,10 @@ if(isLoggedIn()){
 		$location = $_SESSION['location'];
 		$sessionId = $_SESSION['sessionId'];
 		$wsdl = $_SESSION['wsdl'];
-		$mySforceConnection = new SforcePartnerClient();
-		$sforceSoapClient = $mySforceConnection->createConnection($wsdl);
-		$mySforceConnection->setEndpoint($location);
-		$mySforceConnection->setSessionHeader($sessionId);
+		$partnerConnection = new SforcePartnerClient();
+		$sforceSoapClient = $partnerConnection->createConnection($wsdl);
+		$partnerConnection->setEndpoint($location);
+		$partnerConnection->setSessionHeader($sessionId);
 			
 		//setting default object to remove notices through functions
 		if(!isset($_SESSION['default_object'])){
@@ -76,45 +76,45 @@ if(isLoggedIn()){
 		$defaultNamespace = isset($_SESSION['config']['callOptions_defaultNamespace']) ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
 		if(isset($_SESSION['tempClientId'])){
 			$header = new CallOptions($_SESSION['tempClientId'], $defaultNamespace);
-			$mySforceConnection->setCallOptions($header);
+			$partnerConnection->setCallOptions($header);
 		} else if($_SESSION['config']['callOptions_client'] || $defaultNamespace){
 			$header = new CallOptions($_SESSION['config']['callOptions_client'], $defaultNamespace);
-			$mySforceConnection->setCallOptions($header);
+			$partnerConnection->setCallOptions($header);
 		}
 
 		$assignmentRuleId = isset($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']) ? $_SESSION['config']['assignmentRuleHeader_assignmentRuleId'] : null;
 		if($assignmentRuleId || $_SESSION['config']['assignmentRuleHeader_useDefaultRule']){
 			$header = new AssignmentRuleHeader($assignmentRuleId, $_SESSION['config']['assignmentRuleHeader_useDefaultRule']);
-			$mySforceConnection->setAssignmentRuleHeader($header);
+			$partnerConnection->setAssignmentRuleHeader($header);
 		}
 
 		if($_SESSION['config']['mruHeader_updateMru']){
 			$header = new MruHeader($_SESSION['config']['mruHeader_updateMru']);
-			$mySforceConnection->setMruHeader($header);
+			$partnerConnection->setMruHeader($header);
 		}
 
 		if($_SESSION['config']['queryOptions_batchSize']){
 			$header = new QueryOptions($_SESSION['config']['queryOptions_batchSize']);
-			$mySforceConnection->setQueryOptions($header);
+			$partnerConnection->setQueryOptions($header);
 		}
 
 		if($_SESSION['config']['emailHeader_triggerAutoResponseEmail'] || $_SESSION['config']['emailHeader_triggerOtherEmail'] || $_SESSION['config']['emailHeader_triggertriggerUserEmail']){
 			$header = new EmailHeader($_SESSION['config']['emailHeader_triggerAutoResponseEmail'], $_SESSION['config']['emailHeader_triggerOtherEmail'], $_SESSION['config']['emailHeader_triggertriggerUserEmail']);
-			$mySforceConnection->setEmailHeader($header);
+			$partnerConnection->setEmailHeader($header);
 		}
 
 		if(isset($_SESSION['config']['UserTerritoryDeleteHeader_transferToUserId'])){
 			$header = new UserTerritoryDeleteHeader($_SESSION['config']['UserTerritoryDeleteHeader_transferToUserId']);
-			$mySforceConnection->setUserTerritoryDeleteHeader($header);
+			$partnerConnection->setUserTerritoryDeleteHeader($header);
 		}
 
 		if($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation']){
 			$header = new AllowFieldTruncationHeader($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation']);
-			$mySforceConnection->setAllowFieldTruncationHeader($header);
+			$partnerConnection->setAllowFieldTruncationHeader($header);
 		}
 
 		if(!isset($_SESSION['getUserInfo']) || !$_SESSION['config']['cacheGetUserInfo']){
-			$_SESSION['getUserInfo'] = $mySforceConnection->getUserInfo();
+			$_SESSION['getUserInfo'] = $partnerConnection->getUserInfo();
 		}
 		
 	} catch (exception $e) {

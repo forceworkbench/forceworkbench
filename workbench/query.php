@@ -546,10 +546,10 @@ QUERY_BUILDER_SCRIPT;
 function query($soql_query,$query_action,$query_locator = null,$suppressScreenOutput=false){
 	try{
 
-		global $mySforceConnection;
-		if ($query_action == 'Query') $query_response = $mySforceConnection->query($soql_query);
-		if ($query_action == 'QueryAll') $query_response = $mySforceConnection->queryAll($soql_query);
-		if ($query_action == 'QueryMore' && isset($query_locator)) $query_response = $mySforceConnection->queryMore($query_locator);
+		global $partnerConnection;
+		if ($query_action == 'Query') $query_response = $partnerConnection->query($soql_query);
+		if ($query_action == 'QueryAll') $query_response = $partnerConnection->queryAll($soql_query);
+		if ($query_action == 'QueryMore' && isset($query_locator)) $query_response = $partnerConnection->queryMore($query_locator);
 
 		if (substr_count($soql_query,"count()") && $suppressScreenOutput == false){
 			$countString = "Query would return " . $query_response->size . " record";
@@ -580,7 +580,7 @@ function query($soql_query,$query_action,$query_locator = null,$suppressScreenOu
     	}
 		
 		while(($suppressScreenOutput || $_SESSION['config']['autoRunQueryMore']) && !$query_response->done){
-			$query_response = $mySforceConnection->queryMore($query_response->queryLocator);
+			$query_response = $partnerConnection->queryMore($query_response->queryLocator);
 			
 			if(!is_array($query_response->records)){
 				$query_response->records = array($query_response->records);

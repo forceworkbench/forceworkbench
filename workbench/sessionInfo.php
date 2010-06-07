@@ -9,10 +9,10 @@ if(isset($_REQUEST['switchApiVersionTo'])){
 	header("Location: $_SERVER[PHP_SELF]?previousVersion=" . $previousVersion);
 }
 
-global $mySforceConnection;
+global $partnerConnection;
 if(isset($_REQUEST['previousVersion'])){
 	try {
-		$mySforceConnection->getServerTimestamp();
+		$partnerConnection->getServerTimestamp();
 	} catch (Exception $e) {
 		if(stripos($e->getMessage(),'UNSUPPORTED_API_VERSION') > -1) {
 			clearSessionCache();
@@ -64,11 +64,11 @@ $sessionInfo = array();
 $sessionInfo['Connection'] = array(
 	'API Version' => getApiVersion(),
 	'Client Id' => isset($_SESSION['tempClientId']) ? $_SESSION['tempClientId'] : $_SESSION['config']['callOptions_client'], 
-	'Endpoint' => $mySforceConnection->getLocation(),
-	'Session Id' => $mySforceConnection->getSessionId(), 
+	'Endpoint' => $partnerConnection->getLocation(),
+	'Session Id' => $partnerConnection->getSessionId(), 
 );
 
-foreach($mySforceConnection->getUserInfo() as $uiKey => $uiValue) {
+foreach($partnerConnection->getUserInfo() as $uiKey => $uiValue) {
 	if(stripos($uiKey,'org') !== 0) {
 		$sessionInfo['User'][$uiKey] = $uiValue;
 	} else {

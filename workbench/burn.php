@@ -8,11 +8,11 @@ if(isset($_GET['ajaxBurn'])){
 	$burnt = 0;
 	$burnErrors = array();
 	
-	global $mySforceConnection;
+	global $partnerConnection;
 	
 	for($b = 0; $b < $numToBurn; $b++){
 		try{
-			$mySforceConnection->getServerTimestamp();
+			$partnerConnection->getServerTimestamp();
 			$burnt++;
 		} catch (Exception $ex){
 			$burnErrors[] = $ex->getMessage();

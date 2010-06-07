@@ -301,8 +301,8 @@ SEARCH_BUILDER_SCRIPT;
 function search($searchRequest){
 	try{
 
-		global $mySforceConnection;
-		$search_response = $mySforceConnection->search($searchRequest->getSoslSearch());
+		global $partnerConnection;
+		$search_response = $partnerConnection->search($searchRequest->getSoslSearch());
 	
 		if(isset($search_response->searchRecords)){
 			$records = $search_response->searchRecords;

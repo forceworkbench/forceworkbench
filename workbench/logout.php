@@ -6,7 +6,7 @@ require_once('shared.php');
 		require_once('header.php');
 		if($_SESSION['config']['invalidateSessionOnLogout']){
 			try{
-				$mySforceConnection->logout();
+				$partnerConnection->logout();
 				$sessionInvatidated = true;
 			} catch(Exception $e){
 				$sessionInvatidated = false;
