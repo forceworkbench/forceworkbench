@@ -148,7 +148,7 @@ $config["header_LoginOptions"] = array(
 		)
 	);
 	
-	$_GLOBALS['apiVersions'] = array(
+	$GLOBALS['API_VERSIONS'] = array(
 			"19.0" => "19.0",
 		    "18.0" => "18.0",
 			"17.0" => "17.0",
@@ -170,7 +170,7 @@ $config["header_LoginOptions"] = array(
 		"default" => "19.0",
 		"overrideable" => true,
 		"dataType" => "picklist",
-		"valuesToLabels" => $_GLOBALS['apiVersions']
+		"valuesToLabels" => $GLOBALS['API_VERSIONS']
 	);
 	
 	$config["useHTTPS"] = array(

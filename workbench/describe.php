@@ -31,7 +31,7 @@ function show_describeSObject_form(){
 	print "<form name='describeForm' method='post' action='$_SERVER[PHP_SELF]'>" .
 		  "<p class='instructions'>Choose an object to describe:</p>\n";
 	printObjectSelection($_SESSION['default_object'], 'default_object', 30, "onChange='document.describeForm.submit();'");
-	print  "</form>";
+	print  "</form><br/>";
 }
 
 
@@ -42,6 +42,7 @@ function show_describeSObject_result(){
 			//Ping Apex API
 			$describeSObject_result = describeSObject($_SESSION['default_object']);
 		} catch (Exception $e) {
+			
 			show_error($e->getMessage(), false, true);
     	}
 		
@@ -66,7 +67,7 @@ function show_describeSObject_result(){
 			      "</div>";
 		}
 
-		print "<br/><a href=\"javascript:ddtreemenu.flatten('describeTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('describeTree', 'collapse')\">Collapse All</a>\n";
+		print "<a href=\"javascript:ddtreemenu.flatten('describeTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('describeTree', 'collapse')\">Collapse All</a>\n";
 		print "<ul id='describeTree' class='treeview'>\n";
 
 

@@ -43,7 +43,7 @@ require_once ('header.php');
 		Change API Version: 
 		<?php
 		print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
-		foreach($_GLOBALS['apiVersions'] as $v) {
+		foreach($GLOBALS['API_VERSIONS'] as $v) {
 			print "<option value='$v'";
 			if (getApiVersion() == $v) print " selected=\"selected\"";
 			print ">" . $v . "</option>";

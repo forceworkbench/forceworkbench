@@ -13,12 +13,9 @@ if(isset($_POST['execute'])){
 	$_SESSION['scriptInput'] = $_POST['scriptInput'];
 	$_SESSION['LogCategory'] = $_POST['LogCategory'];
 	$_SESSION['LogCategoryLevel'] = $_POST['LogCategoryLevel'];
-	$_SESSION['apiVersion'] = $_POST['apiVersion'];
 } else if(!isset($_SESSION['LogCategory']) && !isset($_SESSION['LogCategoryLevel'])){
 	$_SESSION['LogCategory'] = $_SESSION['config']['defaultLogCategory'];
 	$_SESSION['LogCategoryLevel'] = $_SESSION['config']['defaultLogCategoryLevel'];
-	preg_match("/(\d\d?\.\d)/",$_SESSION['location'],$apiVersionCurrent);
-	$_SESSION['apiVersion'] = $apiVersionCurrent[1];
 }
 
 
@@ -45,16 +42,6 @@ if(isset($_POST['execute'])){
 				printSelectOptions($config['defaultLogCategoryLevel']['valuesToLabels'],$_SESSION['LogCategoryLevel']);
 				?>
 			</select>
-	
-			&nbsp;
-			
-			Apex API Version: 
-			<select id="apiVersion" name="apiVersion">
-				<?php
-					$apiVersionMatched = printSelectOptions($config['defaultApiVersion']['valuesToLabels'],$_SESSION['apiVersion']);	
-				?>
-			</select>
-			&nbsp;<img onmouseover="Tip('Apex API Version defaults to the logged in API version, but can be set independently and specifies against which version the Apex script will be compiled.')" align='absmiddle' src='images/help16.png'/>
 		</td>
 	  </tr>
 	  <tr>
@@ -76,21 +63,10 @@ if(isset($_POST['execute'])){
 
 
 <?php
-if(!$apiVersionMatched){
-	show_info("API version used for login is not supported for Apex execution. Execute will use default Apex API version unless otherwise specified.");
-}
-
-
 if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != ""){
 	print "<h2>Results</h2>";
 	
-	$apexServerUrl = str_replace("/u/","/s/",$_SESSION['location']);
-	$apexServerUrl = preg_replace("/\d\d?\.\d/",$_POST['apiVersion'],$apexServerUrl);
-
-	//use the highest version's WSDL
-	$wsdl = "soapclient/sforce." . str_replace(".","",max($config['defaultApiVersion']['valuesToLabels'])) . ".apex.wsdl";
-
-	$apexBinding = new SforceApexClient($wsdl,$apexServerUrl,$_POST['LogCategory'],$_POST['LogCategoryLevel']);
+	$apexBinding = new SforceApexClient($_POST['LogCategory'],$_POST['LogCategoryLevel']);
 	
 	try {
 		$executeAnonymousResultWithDebugLog = $apexBinding->executeAnonymous($_POST['scriptInput']);
