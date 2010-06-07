@@ -2,6 +2,12 @@
 require_once ('session.php');
 require_once ('shared.php');
 require_once('header.php');
+print "<p/>";
+if(!apiVersionIsAtLeast(10.0)) {
+	show_error("Metadata API not supported prior to version 10.0", false, true);
+	exit;
+}
+
 require_once ('soapclient/SforceMetadataClient.php');
 ?>
 <script type="text/javascript" src="script/simpletreemenu.js">
@@ -15,7 +21,13 @@ require_once ('soapclient/SforceMetadataClient.php');
 <?php
 
 global $metadataConnection;
-foreach($metadataConnection->describeMetadata() as $resultsKey => $resultsValue) {
+try {
+	$describeMetadataResult = $metadataConnection->describeMetadata();
+} catch (Exception $e) {
+	show_errors($e->getMessage(), false, true);
+}
+
+foreach($describeMetadataResult as $resultsKey => $resultsValue) {
 	if($resultsKey == 'metadataObjects'){
 		foreach($resultsValue as $metadataResultsKey => $metadataResultsValue) {
 			$processedMetadataDescribe[$metadataResultsValue->xmlName] = $metadataResultsValue;

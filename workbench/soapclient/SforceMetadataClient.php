@@ -24,4 +24,3 @@ class SforceMetadataClient extends SoapBaseClient {
 	
 }
 ?>
-

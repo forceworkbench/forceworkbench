@@ -68,7 +68,13 @@ $sessionInfo['Connection'] = array(
 	'Session Id' => $partnerConnection->getSessionId(), 
 );
 
-foreach($partnerConnection->getUserInfo() as $uiKey => $uiValue) {
+try {
+	$freshGetUserInfoResult = $partnerConnection->getUserInfo();
+} catch (Exception $e) {
+	show_errors($e->getMessage(), false, true);
+}
+
+foreach($freshGetUserInfoResult as $uiKey => $uiValue) {
 	if(stripos($uiKey,'org') !== 0) {
 		$sessionInfo['User'][$uiKey] = $uiValue;
 	} else {
@@ -76,10 +82,18 @@ foreach($partnerConnection->getUserInfo() as $uiKey => $uiValue) {
 	}
 }
 
-global $metadataConnection;
-foreach($metadataConnection->describeMetadata() as $resultsKey => $resultsValue) {
-	if($resultsKey != 'metadataObjects' && !is_array($resultsValue)){
-		$sessionInfo['Metadata'][$resultsKey] = $resultsValue;
+if(apiVersionIsAtLeast(10.0)) {
+	global $metadataConnection;
+	try {
+		$describeMetadataResult = $metadataConnection->describeMetadata();
+	} catch (Exception $e) {
+		show_errors($e->getMessage(), false, true);
+	}
+	
+	foreach($describeMetadataResult as $resultsKey => $resultsValue) {
+		if($resultsKey != 'metadataObjects' && !is_array($resultsValue)){
+			$sessionInfo['Metadata'][$resultsKey] = $resultsValue;
+		}
 	}
 }
 
