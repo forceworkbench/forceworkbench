@@ -76,24 +76,16 @@ foreach($partnerConnection->getUserInfo() as $uiKey => $uiValue) {
 	}
 }
 
+global $metadataConnection;
+foreach($metadataConnection->describeMetadata() as $resultsKey => $resultsValue) {
+	if($resultsKey != 'metadataObjects' && !is_array($resultsValue)){
+		$sessionInfo['Metadata'][$resultsKey] = $resultsValue;
+	}
+}
+
 print "<a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'collapse')\">Collapse All</a>\n" .
       "<ul id='sessionInfoTree' class='treeview'>\n";
 
-function printNode($node) {
-	foreach($node as $nodeKey => $nodeValue) {
-		if(is_array($nodeValue)){
-			print "<li>$nodeKey<ul>\n";
-			printNode($nodeValue);
-			print "</ul></li>\n";
-		} else {
-			if(is_bool($nodeValue)) {
-				$nodeValue = $nodeValue == 1 ? "true" : "false";
-			}
-			print "<li>$nodeKey: <span style='font-weight:bold;'>" . addLinksToUiForIds($nodeValue) . "</span></li>\n";
-		}
-	}
-	
-}
 
 printNode($sessionInfo);
 print "</div>";

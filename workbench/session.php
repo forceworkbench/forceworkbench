@@ -53,6 +53,8 @@ if(isLoggedIn()){
 		//setup SOAP client
 		require_once ('soapclient/SforcePartnerClient.php');
 		require_once ('soapclient/SforceHeaderOptions.php');
+		require_once ('soapclient/SforceMetadataClient.php');
+		
 		$location = $_SESSION['location'];
 		$sessionId = $_SESSION['sessionId'];
 		$wsdl = $_SESSION['wsdl'];
@@ -60,6 +62,8 @@ if(isLoggedIn()){
 		$sforceSoapClient = $partnerConnection->createConnection($wsdl);
 		$partnerConnection->setEndpoint($location);
 		$partnerConnection->setSessionHeader($sessionId);
+		
+		$metadataConnection = new SforceMetadataClient();
 			
 		//setting default object to remove notices through functions
 		if(!isset($_SESSION['default_object'])){

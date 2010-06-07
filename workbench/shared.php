@@ -224,6 +224,21 @@ function describeSObject($objectTypes){
 	}
 }
 
+function printNode($node) {
+	foreach($node as $nodeKey => $nodeValue) {
+		if(is_array($nodeValue) || is_object($nodeValue)){
+			print "<li>$nodeKey<ul>\n";
+			printNode($nodeValue);
+			print "</ul></li>\n";
+		} else {
+			if(is_bool($nodeValue)) {
+				$nodeValue = $nodeValue == 1 ? "true" : "false";
+			}
+			print "<li>". (!is_numeric($nodeKey) ? $nodeKey . ": " : "") . "<span style='font-weight:bold;'>" . addLinksToUiForIds($nodeValue) . "</span></li>\n";
+		}
+	}
+}
+
 function alphaOrderFields($describeSObject_result){
     //move field name out to key name and then ksort based on key for field abc order
     if(isset($describeSObject_result->fields)){
