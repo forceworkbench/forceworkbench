@@ -596,7 +596,7 @@ $GLOBALS["MENUS"] = array(
 	
 	'Info' => array(
 		'describe.php'          => new Page('Describe Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,true),
-		'describeMetadata.php'  => new Page('Describe Metadata','Describes the metadata of this organization.',true,true,false,true),
+		'describeMetadata.php'  => new Page('Describe Metadata','Describes the metadata of this organization.',true,true,true,true),
 		'sessionInfo.php'          => new Page('Session Information','Information about the current session.',true,true,false,true),
 	
 	),
