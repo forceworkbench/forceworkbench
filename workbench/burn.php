@@ -73,7 +73,7 @@ function ajaxBurn(){
 	var ajax = getHTTPObject();
 
 	if(ajax != null){
-		ajax.open("GET", "<?php $_SERVER[PHP_SELF] ?>?ajaxBurn=" + document.getElementById('burnNumOfCalls').value, true);
+		ajax.open("GET", "<?php $_SERVER['PHP_SELF'] ?>?ajaxBurn=" + document.getElementById('burnNumOfCalls').value, true);
 		ajax.send(null);
 		document.getElementById('burnResults').innerHTML = "";
 		document.getElementById('burnStatus').innerHTML = "<img src='images/wait16trans.gif'/>&nbsp; Burning...";
