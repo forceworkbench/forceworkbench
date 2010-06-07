@@ -594,14 +594,14 @@ $GLOBALS["MENUS"] = array(
 	    'about.php'     => new Page('About','Learn about Workbench',false,true,false,true)
 	),
 	
-	'Describe' => array(
-		'describe.php'          => new Page('Object Descriptions','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,true),
-		'describeMetadata.php'  => new Page('Metadata Descriptions','Describes the metadata of this organization.',true,true,false,true),
+	'Info' => array(
+		'describe.php'          => new Page('Describe Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,true),
+		'describeMetadata.php'  => new Page('Describe Metadata','Describes the metadata of this organization.',true,true,false,true),
 		'sessionInfo.php'          => new Page('Session Information','Information about the current session.',true,true,false,true),
 	
 	),
 	
-	'Query' => array(
+	'Queries' => array(
 		'query.php'     => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,true),
 		'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,true)
 	),
@@ -615,7 +615,7 @@ $GLOBALS["MENUS"] = array(
 		'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,true,true,true)
 	),
 	
-	'Migrate' => array(
+	'Migration' => array(
 		'#retrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,false,true),
 		'#deploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,true,false,true),
 	),

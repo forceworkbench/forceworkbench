@@ -54,10 +54,13 @@ require_once ('header.php');
 </div>
 
 <?php
-print "<div style='margin-top: 3em;'>";
+
 if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
+	print "<div style='margin-top: 3em;'>";
 	show_error("Selected API version is not supported by this Salesforce organization. Automatically reverted to prior version.",false,false);
 	print "<p/>";
+} else {
+	print "<div>";
 }
 
 $sessionInfo = array();
