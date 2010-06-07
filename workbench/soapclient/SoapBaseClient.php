@@ -4,7 +4,7 @@ abstract class SoapBaseClient {
 	protected $sessionId;
 	protected $location;
 
-	public function __construct($LogCategory, $LogCategoryLevel) {
+	public function __construct($LogCategory = null, $LogCategoryLevel = null) {
 
 		$_SERVER['HTTP_USER_AGENT'] = 'Salesforce/PHPToolkit/1.0';
 
@@ -39,19 +39,21 @@ abstract class SoapBaseClient {
 		$header_array[] = new SoapHeader($this->getNamespace(), 'SessionHeader', $headerBody, false);
 
 		//set debugging header
-		$logInfoComp = array(
-				'category' => new SoapVar($LogCategory, XSD_STRING),
-				'level' => new SoapVar($LogCategoryLevel, XSD_STRING)
-		);
-
-		$logInfoVar = array(
-				'categories' => new SoapVar($logInfoComp, SOAP_ENC_OBJECT)
-		);
-
-		$debugBody = new SoapVar($logInfoVar, SOAP_ENC_OBJECT);
-
-		$header_array[] = new SoapHeader($this->getNamespace(), 'DebuggingHeader', $debugBody, false);
-
+		if(isset($LogCategory) && isset($LogCategoryLevel)) {
+			$logInfoComp = array(
+					'category' => new SoapVar($LogCategory, XSD_STRING),
+					'level' => new SoapVar($LogCategoryLevel, XSD_STRING)
+			);
+	
+			$logInfoVar = array(
+					'categories' => new SoapVar($logInfoComp, SOAP_ENC_OBJECT)
+			);
+	
+			$debugBody = new SoapVar($logInfoVar, SOAP_ENC_OBJECT);
+	
+			$header_array[] = new SoapHeader($this->getNamespace(), 'DebuggingHeader', $debugBody, false);
+		}
+		
 		//set call options header    
 		if(isset($_SESSION['config']['callOptions_client'])){
 			$clientBody = array('client' => new SoapVar($_SESSION['config']['callOptions_client'], XSD_STRING));

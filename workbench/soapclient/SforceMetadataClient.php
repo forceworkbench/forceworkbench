@@ -15,6 +15,12 @@ class SforceMetadataClient extends SoapBaseClient {
 		return "soapclient/sforce." . str_replace(".","",max($GLOBALS['API_VERSIONS'])) . ".metadata.wsdl";
 	}
 	
+	public function describeMetadata() {
+		$request = new stdClass;
+		preg_match('!/(\d{1,2}\.\d)!',$_SESSION['location'],$apiVersionMatches);
+		$request->asOfVersion = $apiVersionMatches[1];
+		return $this->sforce->__soapCall("describeMetadata",array($request))->result;
+	}
 	
 }
 ?>

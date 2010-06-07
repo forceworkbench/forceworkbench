@@ -66,10 +66,10 @@ if(isset($_POST['execute'])){
 if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != ""){
 	print "<h2>Results</h2>";
 	
-	$apexBinding = new SforceApexClient($_POST['LogCategory'],$_POST['LogCategoryLevel']);
+	$apexConnection = new SforceApexClient($_POST['LogCategory'],$_POST['LogCategoryLevel']);
 	
 	try {
-		$executeAnonymousResultWithDebugLog = $apexBinding->executeAnonymous($_POST['scriptInput']);
+		$executeAnonymousResultWithDebugLog = $apexConnection->executeAnonymous($_POST['scriptInput']);
 	} catch(Exception $e) {
 		show_error($e->getMessage(),false,true);
 	}
