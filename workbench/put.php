@@ -121,7 +121,7 @@ function form_upload_objectSelect_show($file_input_name, $action){
 		elseif($action == "update") $filter1 = "updateable";
 		elseif($action == "upsert") {$filter1 = "createable"; $filter2 = "updateable";}
 		
-		 myGlobalSelect($_SESSION['default_object'], 'default_object', "20", null, $filter1, $filter2);
+		 printObjectSelection($_SESSION['default_object'], 'default_object', "20", null, $filter1, $filter2);
 		 
 		 $submitLabel = 'Upload & Select Object';
 	} else {
@@ -522,7 +522,7 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 		
 		if($action == 'Confirm Delete') {
 			print "<div id='asyncDeleteObjectSelection' style='display: none; margin-left: 3em;'>Object Type: ";
-			myGlobalSelect($_SESSION['default_object']);
+			printObjectSelection($_SESSION['default_object']);
 			print "</div>";
 		}
 	}

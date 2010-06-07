@@ -398,7 +398,7 @@ QUERY_BUILDER_SCRIPT;
 	print "<table border='0' width=1>\n";
 	print "<tr><td valign='top' width='1'>Object:";
 
-	myGlobalSelect($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
+	printObjectSelection($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
 
 	print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='build_query();'>\n";
 	if(isset($describeSObject_result)){

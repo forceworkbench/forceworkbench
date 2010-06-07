@@ -130,7 +130,7 @@ function describeGlobal($filter1=null, $filter2=null){
 	return $processedDescribeGlobalResponse;
 }
 
-function myGlobalSelect($default_object=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null){
+function printObjectSelection($default_object=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null){
 	$_SESSION['default_object'] = $default_object;
 	
 	print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";	

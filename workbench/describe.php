@@ -30,7 +30,7 @@ function show_describeSObject_form(){
 	
 	print "<form name='describeForm' method='post' action='$_SERVER[PHP_SELF]'>" .
 		  "<p class='instructions'>Choose an object to describe:</p>\n";
-	myGlobalSelect($_SESSION['default_object'], 'default_object', 30, "onChange='document.describeForm.submit();'");
+	printObjectSelection($_SESSION['default_object'], 'default_object', 30, "onChange='document.describeForm.submit();'");
 	print  "</form>";
 }
 
