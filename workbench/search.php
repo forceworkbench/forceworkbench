@@ -294,7 +294,7 @@ SEARCH_BUILDER_SCRIPT;
 		");</script>";
 	}
 	
-	print "<script>toggleFieldDisabled();<script>";
+	print "<script>toggleFieldDisabled();</script>";
 }
 
 
@@ -338,7 +338,7 @@ function show_search_result($records, $searchTimeElapsed){
 
 
 	foreach($searchResultArray as $recordSetName=>$records){
-		echo "<h3 style='color: #0046ad;'>$recordSetName</h3>";
+		echo "<h3 style='color: rgb(66,150,231);'>$recordSetName</h3>";
 		
 	    print "<table id='" . $recordSetName . "_results' class='" . getTableClass() ."'>\n";
 		//Print the header row on screen
@@ -347,7 +347,7 @@ function show_search_result($records, $searchTimeElapsed){
 		//If the user queried for the Salesforce ID, this special method is nessisary
 		//to export it from the nested SOAP message. This will always be displayed
 		//in the first column regardless of search order
-		if ($record0->Id){
+		if (isset($record0->Id)){
 			print "<th>Id</th>";
 		}
 		if ($record0->fields){
