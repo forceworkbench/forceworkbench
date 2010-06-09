@@ -13,7 +13,7 @@ if (isset($_POST['actionJump']) && $_POST['actionJump'] != ""){
 	include_once('header.php');
 	show_error("Choose an object and an action to which to jump.");
 	show_select_form();
-	include_once('footer.php');;
+	include_once('footer.php');
 } 
 
  else {
@@ -27,12 +27,23 @@ function show_select_form(){
 	<script>
 	
 	function toggleObjectSelectDisabled(){
+		var usesObject = new Array();
+		<?php
+		foreach($GLOBALS["MENUS"] as $menu => $pages) {
+			foreach($pages as $href => $page) {
+				if($page->onMenuSelect == 'usesObject') {
+					print "usesObject['$href'] = '$href';\n";
+				}
+			}
+		}
+		?>
+	
 		var actionJumpVal = document.getElementById('actionJump').value;
-		
-		if(actionJumpVal == 'select.php' || actionJumpVal == 'execute.php'|| actionJumpVal == 'settings.php' || actionJumpVal == 'delete.php' || actionJumpVal == 'undelete.php' || actionJumpVal == 'purge.php' || actionJumpVal == 'search.php'){
-			document.getElementById('default_object').disabled = true;		
+				
+		if(usesObject[actionJumpVal] != undefined){
+			document.getElementById('default_object').disabled = false;		
 		} else {
-			document.getElementById('default_object').disabled = false;			
+			document.getElementById('default_object').disabled = true;			
 		}
 	}
 	</script>

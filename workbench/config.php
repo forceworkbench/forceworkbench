@@ -586,46 +586,46 @@ class Page {
 
 $GLOBALS["MENUS"] = array(
 	'&nbsp;<img src=\'images/workbench-3-cubed-white-small.png\'/>' => array(
-		'login.php'     => new Page('Login','Logs into your Salesforce organization',false,true,false,false),
-		'select.php'    => new Page('Select','Select action to which to jump',true,false,false,false),
-		'settings.php'  => new Page('Settings','Configure Workbench',false,true,false,true),
-        'logout.php'    => new Page('Logout','Logs out of your Salesforce organization',true,true,false,false),
-	    'help.php'      => new Page('Help','Get help about using Workbench',false,true,false,true),
-	    'about.php'     => new Page('About','Learn about Workbench',false,true,false,true)
+		'login.php'     => new Page('Login','Logs into your Salesforce organization',false,true,false,false,''),
+		'select.php'    => new Page('Select','Select action to which to jump',true,false,false,false,''),
+		'settings.php'  => new Page('Settings','Configure Workbench',false,true,false,true,''),
+        'logout.php'    => new Page('Logout','Logs out of your Salesforce organization',true,true,false,false,''),
+	    'help.php'      => new Page('Help','Get help about using Workbench',false,true,false,true,''),
+	    'about.php'     => new Page('About','Learn about Workbench',false,true,false,true,'')
 	),
 	
 	'Info' => array(
-		'describe.php'          => new Page('Describe Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,true),
-		'describeMetadata.php'  => new Page('Describe Metadata','Describes the metadata of this organization.',true,true,true,true),
-		'listMetadata.php'  => new Page('List Metadata','List the metadata of this organization.',true,true,true,true),
-		'sessionInfo.php'          => new Page('Session Information','Information about the current session.',true,true,false,true),
+		'describe.php'          => new Page('Describe Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,true,''),
+		'describeMetadata.php'  => new Page('Describe Metadata Types','Describes the metadata type in this organization.',true,true,true,true,''),
+		'listMetadata.php'      => new Page('List Metadata Components','Lists the metadata components in this organization.',true,true,true,true,''),
+		'sessionInfo.php'       => new Page('Session Information','Information about the current session.',true,true,false,true,''),
 	),
 	
 	'Queries' => array(
-		'query.php'     => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,true),
-		'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,true)
+		'query.php'     => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,'usesObject',true,''),
+		'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,'usesObject',true,'')
 	),
 		
 	'Data' => array(
-		'insert.php'    => new Page('Insert','Creates new records from a CSV file',true,true,true,true),
-		'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,true,true,true),
-		'update.php'    => new Page('Update','Updates existing records from a CSV file',true,true,true,true),
-		'delete.php'    => new Page('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted',true,true,true,true),
-		'undelete.php'  => new Page('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.',true,true,true,true),
-		'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,true,true,true)
+		'insert.php'    => new Page('Insert','Creates new records from a CSV file',true,true,'usesObject',true,''),
+		'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,true,'usesObject',true,''),
+		'update.php'    => new Page('Update','Updates existing records from a CSV file',true,true,'usesObject',true,''),
+		'delete.php'    => new Page('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted',true,true,true,true,''),
+		'undelete.php'  => new Page('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.',true,true,true,true,''),
+		'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,true,true,true,'')
 	),
 	
 	'Migration' => array(
-		'#retrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,false,true),
-		'#deploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,true,false,true),
+		'#retrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,false,true,''),
+		'#deploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,true,false,true,''),
 	),
 	
 	'Utilities' => array(
-		'execute.php'          => new Page('Apex Execute','Execute Apex code as an anonymous block',true,true,true,true),
+		'execute.php'          => new Page('Apex Execute','Execute Apex code as an anonymous block',true,true,true,true,''),
 		'runAllApexTests.php'  => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,false,true,'runAllApexTests'),
-		'asyncStatus.php'      => new Page('Bulk API Job Status & Results','Asynchronous Data Load Status and Results',true,true,false,true),
-		'pwdMgmt.php'          => new Page('Password Management','Set and Reset Passwords',true,true,false,true),
-		'burn.php'             => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,true)
+		'asyncStatus.php'      => new Page('Bulk API Job Status & Results','Asynchronous Data Load Status and Results',true,true,false,true,''),
+		'pwdMgmt.php'          => new Page('Password Management','Set and Reset Passwords',true,true,false,true,''),
+		'burn.php'             => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,true,'')
 	)
 ); 
 ?>

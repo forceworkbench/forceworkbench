@@ -17,7 +17,7 @@ require_once ('footer.php');
 
 //Print a form with the global object types to choose for description
 function show_describeSObject_form(){
-	print "<form name='describeForm' method='post' action='$_SERVER[PHP_SELF]'>" .
+	print "<form name='describeForm' method='GET' action='$_SERVER[PHP_SELF]'>" .
 		  "<p class='instructions'>Choose an object to describe:</p>\n";
 	printObjectSelection($_SESSION['default_object'], 'default_object', 30, "onChange='document.describeForm.submit();'");
 	print  "</form><br/>";

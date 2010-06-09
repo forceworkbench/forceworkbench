@@ -75,7 +75,14 @@ h2{
 	color: #888;
 	vertical-align: top;
 }
-	
+
+.miniLink {
+	font-size: xx-small;
+	color: #888;
+	text-decoration: none;
+	font-weight: normal;
+}
+
 #pagetitle{
 	text-align: left;
 	color: rgb(66,150,231);

@@ -28,6 +28,7 @@ if(isset($_REQUEST['previousVersion'])){
 require_once ('header.php');
 ?>
 <p/>
+<p class='instructions'>Below is information regarding the current user session:</p>
 <div style='float:right;'>
 	<form name="changeApiVersionForm" action="<?php $_SERVER['PHP_SELF'] ?>">
 		Change API Version: 
