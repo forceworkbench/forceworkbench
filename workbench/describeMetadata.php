@@ -9,20 +9,9 @@ if(!apiVersionIsAtLeast(10.0)) {
 }
 
 require_once ('soapclient/SforceMetadataClient.php');
-?>
-<script type="text/javascript" src="script/simpletreemenu.js">
-/***********************************************
-* Simple Tree Menu - Dynamic Drive DHTML code library (www.dynamicdrive.com)
-* This notice MUST stay intact for legal use
-* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
-***********************************************/
-</script>
-<link rel="stylesheet" type="text/css" href="style/simpletree.css" />
-<?php
-
 global $metadataConnection;
 try {
-	$describeMetadataResult = $metadataConnection->describeMetadata();
+	$describeMetadataResult = $metadataConnection->describeMetadata(getApiVersion());
 } catch (Exception $e) {
 	show_errors($e->getMessage(), false, true);
 }

@@ -17,17 +17,6 @@ require_once ('footer.php');
 
 //Print a form with the global object types to choose for description
 function show_describeSObject_form(){
-	?>	
-	<script type="text/javascript" src="script/simpletreemenu.js">
-	/***********************************************
-	* Simple Tree Menu - Dynamic Drive DHTML code library (www.dynamicdrive.com)
-	* This notice MUST stay intact for legal use
-	* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
-	***********************************************/
-	</script>
-	<link rel="stylesheet" type="text/css" href="style/simpletree.css" />
-	<?php
-	
 	print "<form name='describeForm' method='post' action='$_SERVER[PHP_SELF]'>" .
 		  "<p class='instructions'>Choose an object to describe:</p>\n";
 	printObjectSelection($_SESSION['default_object'], 'default_object', 30, "onChange='document.describeForm.submit();'");

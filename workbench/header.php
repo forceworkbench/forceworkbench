@@ -6,6 +6,14 @@
 <link rel="stylesheet" href="style/master.css" type="text/css" />
 <link rel="stylesheet" href="style/pro_dropdown.css" type="text/css" />
 <link rel="Shortcut Icon" href="images/bluecube-16x16.png" />
+<link rel="stylesheet" type="text/css" href="style/simpletree.css" />
+<script type="text/javascript" src="script/simpletreemenu.js">
+/***********************************************
+* Simple Tree Menu - Dynamic Drive DHTML code library (www.dynamicdrive.com)
+* This notice MUST stay intact for legal use
+* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
+***********************************************/
+</script>
 <?php
 $myPage = getMyPage();
 $title = $myPage->showTitle ? ": " . $myPage->title : "";
