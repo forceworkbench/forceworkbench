@@ -93,6 +93,12 @@ h2{
 	float: left;
 }
 
+#login_block_container{
+	width: 525px;
+	margin-left:auto;
+	margin-right: auto;
+}
+
 #login_block strong{
 	float: left;
 	width: 100px;

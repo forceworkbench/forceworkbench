@@ -169,7 +169,6 @@ function toggleUsernamePasswordSessionDisabled(){
 
 function form_become_adv() {
 	document.getElementById('login_std').style.display='none';
-	//document.getElementById('apexLogo').style.display='none';
 	document.getElementById('login_adv').style.display='inline';
 	
 	if(document.getElementById('usernameAdv').value == null || document.getElementById('usernameAdv').value == "") {
@@ -181,7 +180,6 @@ function form_become_adv() {
 
 function form_become_std() {
 	document.getElementById('login_std').style.display='inline';
-	//document.getElementById('apexLogo').style.display='inline'
 	document.getElementById('login_adv').style.display='none';
 	
 	if(document.getElementById('username').value == null || document.getElementById('username').value == "") {
@@ -247,13 +245,7 @@ function checkCaps( pwcapsDivId, e ) {
 	login for other login options. Go to Settings for more login configurations.</p>-->
 </div>
 
-<!--
-<div id='logo_block'>
-	<img id='apexLogo' src='images/blueCube-128x128.png' border='0' />
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</div>
--->
-
+<div id='login_block_container'>
 <div id='login_block'>
 	<form id='login_form' action='$_SERVER[PHP_SELF]' method='post'>
 		<div id='login_become_select' style='text-align: right;'>
@@ -279,16 +271,16 @@ foreach($GLOBALS["MENUS"] as $menu => $pages) {
 print "</select></p>";
 
 print <<<LOGIN_FORM_PART_2
-			<p  style='text-align: right;'><span id='pwcapsStd' style='visibility: hidden; color: red; font-weight: bold; margin-right: 30px;'>Caps lock is on!</span><label><input type='checkbox' name='rememberUser' $isRemembered />Remember username</label></p>
+			<p  style='text-align: right;'><span id='pwcapsStd' style='visibility: hidden; color: red; font-weight: bold; margin-right: 80px;'>Caps lock is on!</span><label><input type='checkbox' name='rememberUser' $isRemembered />Remember username</label></p>
 		</div>
 
 		<div id='login_adv' style='display: none;'>
-			<p><strong>Username: </strong><input type='text' name='usernameAdv' id='usernameAdv' size='65' value='$user' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();' /></p>
-			<p><strong>Password: </strong><input type='password' name='passwordAdv' id='passwordAdv' size='65' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();'  onkeypress="checkCaps('pwcapsAdv',event);"/></p>
-			<p><em>- OR -</em><span id='pwcapsAdv' style='visibility: hidden; color: red; font-weight: bold; margin-left: 75px;'>Caps lock is on!</span></p>
-			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='65' onkeyup='toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();' onchange="toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();"/></p>
+			<p><strong>Username: </strong><input type='text' name='usernameAdv' id='usernameAdv' size='45' value='$user' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();' /></p>
+			<p><strong>Password: </strong><input type='password' name='passwordAdv' id='passwordAdv' size='45' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();'  onkeypress="checkCaps('pwcapsAdv',event);"/></p>
+			<p><em>- OR -</em><span id='pwcapsAdv' style='visibility: hidden; color: red; font-weight: bold; margin-left: 65px;'>Caps lock is on!</span></p>
+			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='45' onkeyup='toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();' onchange="toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();"/></p>
 			<p>&nbsp;</p>
-			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='65' value='$defaultServerUrl' /></p>
+			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='45' value='$defaultServerUrl' /></p>
 			<p><strong>QuickSelect: </strong>
 LOGIN_FORM_PART_2;
 
@@ -323,7 +315,7 @@ print "<div id='login_submit' style='text-align: right;'>" .
 		"</div>" . 
 
 	"</form>" . 
-"</div>";
+"</div></div>";
 
 
 //if 'adv' is added to the login url and is not 0, default to advanced login
