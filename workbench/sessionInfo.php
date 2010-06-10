@@ -65,7 +65,7 @@ $sessionInfo['Connection'] = array(
 try {
 	$freshGetUserInfoResult = $partnerConnection->getUserInfo();
 } catch (Exception $e) {
-	show_errors($e->getMessage(), false, true);
+	show_error($e->getMessage(), false, true);
 }
 
 foreach($freshGetUserInfoResult as $uiKey => $uiValue) {
@@ -81,7 +81,7 @@ if(apiVersionIsAtLeast(10.0)) {
 	try {
 		$describeMetadataResult = $metadataConnection->describeMetadata(getApiVersion());
 	} catch (Exception $e) {
-		show_errors($e->getMessage(), false, true);
+		show_error($e->getMessage(), false, true);
 	}
 	
 	foreach($describeMetadataResult as $resultsKey => $resultsValue) {

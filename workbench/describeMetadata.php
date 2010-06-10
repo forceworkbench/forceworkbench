@@ -20,7 +20,7 @@ global $metadataConnection;
 try {
 	$describeMetadataResult = $metadataConnection->describeMetadata(getApiVersion());
 } catch (Exception $e) {
-	show_errors($e->getMessage(), false, true);
+	show_error($e->getMessage(), false, true);
 }
 
 foreach($describeMetadataResult as $resultsKey => $resultsValue) {

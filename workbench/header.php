@@ -75,7 +75,7 @@ if(!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basenam
 			}
 			print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\" target=\"" . $page->window . "\">$page->title</a></li>\n";
 		}
-		print "</li></ul>";
+		print "</ul></li>";
 		
 		if(!isLoggedIn()) break; //only show first "Workbench" menu if not logged in
 	}
