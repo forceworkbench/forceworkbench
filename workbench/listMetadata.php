@@ -130,8 +130,10 @@ function processListMetadataResult($response) {
 			continue;
 		}
 		
-		$fullName = ($responseValue != null) ? strrchr($responseValue->fullName, "/") ? substr(strrchr($responseValue->fullName, "/"), 1) : $responseValue->fullName : "";
-		if(strpos($responseValue->fullName, ".")) {
+		if (strrchr($responseValue->fullName, "/")) {
+			$simpleFullName = substr(strrchr($responseValue->fullName, "/"), 1);
+			$processedResponse[$simpleFullName] = $responseValue;
+		} else if(strpos($responseValue->fullName, ".")) {
 			$parentName = substr($responseValue->fullName, 0, strpos($responseValue->fullName, "."));
 			$childName = substr($responseValue->fullName, strpos($responseValue->fullName, ".") + 1);
 			$processedResponse[$parentName][$childName] = $responseValue;
