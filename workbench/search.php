@@ -338,7 +338,7 @@ function show_search_result($records, $searchTimeElapsed){
 
 
 	foreach($searchResultArray as $recordSetName=>$records){
-		echo "<h3 style='color: rgb(66,150,231);'>$recordSetName</h3>";
+		echo "<h3>$recordSetName</h3>";
 		
 	    print "<table id='" . $recordSetName . "_results' class='" . getTableClass() ."'>\n";
 		//Print the header row on screen

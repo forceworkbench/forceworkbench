@@ -91,15 +91,8 @@ if(apiVersionIsAtLeast(10.0)) {
 	}
 }
 
-print "<a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('sessionInfoTree', 'collapse')\">Collapse All</a>\n" .
-      "<ul id='sessionInfoTree' class='treeview'>\n";
+printTree("sessionInfoTree", $sessionInfo);
 
-
-printNode($sessionInfo);
 print "</div>";
 require_once ('footer.php');
 ?>
-<script type="text/javascript">
-ddtreemenu.createTree("sessionInfoTree", true);
-//ddtreemenu.flatten('sessionInfoTree', 'expand');
-</script>

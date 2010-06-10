@@ -9,16 +9,6 @@ if(!apiVersionIsAtLeast(10.0)) {
 }
 
 require_once ('soapclient/SforceMetadataClient.php');
-?>
-<script type="text/javascript" src="script/simpletreemenu.js">
-/***********************************************
-* Simple Tree Menu - Dynamic Drive DHTML code library (www.dynamicdrive.com)
-* This notice MUST stay intact for legal use
-* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
-***********************************************/
-</script>
-<link rel="stylesheet" type="text/css" href="style/simpletree.css" />
-<?php
 
 global $metadataConnection;
 try {
@@ -54,7 +44,10 @@ foreach($describeMetadataResult as $resultsKey => $resultsValue) {
 
 $metadataTypesSelectOptions = natcaseksort($metadataTypesSelectOptions);
 
-$typeString = isset($_REQUEST['type']) ? $_REQUEST['type'] : (isset($_SESSION['defaultMetadataType']) ? $_SESSION['defaultMetadataType'] : null);
+$currentTypeString = isset($_REQUEST['type']) ? $_REQUEST['type'] : null;
+$previousTypeString = isset($_SESSION['defaultMetadataType']) ? $_SESSION['defaultMetadataType'] : null;
+$typeString = $currentTypeString != null ? $currentTypeString : $previousTypeString;
+$typeStringChanged = $currentTypeString != null && $previousTypeString != $currentTypeString;
 
 ?>
 <p class='instructions'>Choose a metadata type to list its components:</p>
@@ -82,23 +75,13 @@ if(isset($typeString)) {
 		show_info("This metadata type contains no components.", false, true);
 		exit;
 	}
-
-	print "<a href=\"javascript:ddtreemenu.flatten('listMetadataTree', 'expand')\">Expand All</a> | " . 
-	      "<a href=\"javascript:ddtreemenu.flatten('listMetadataTree', 'collapse')\">Collapse All</a> | " .
-		  "<a href=\"describeMetadata.php?type=$type->xmlName\">Describe Type</a>\n" .
-	      "<ul id='listMetadataTree' class='treeview'>\n";
-	printNode($metadataComponents);
-	print "</ul>";
+	
+	printTree("listMetadataTree", $metadataComponents, $typeStringChanged, "| <a href=\"describeMetadata.php?type=$type->xmlName\">Describe Type</a>");
 }
 
 require_once('footer.php');
-?>
-<script type="text/javascript">
-ddtreemenu.createTree("listMetadataTree", true);
-ddtreemenu.flatten("listMetadataTree", 'collapse');
-</script>
 
-<?php
+
 function listMetadata($type) {
 	global $metadataConnection;
 	global $partnerConnection;

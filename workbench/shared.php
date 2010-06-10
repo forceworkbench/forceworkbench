@@ -1,5 +1,9 @@
 <?php
 
+function unCamelCase($camelCasedString) {
+    return ucfirst(preg_replace( '/([a-z0-9])([A-Z])/', "$1 $2", $camelCasedString));
+}
+
 function validateUploadedFile($file){
 	if($file['error'] != 0){
 		$upload_error_codes = array(
@@ -268,6 +272,25 @@ function describeSObject($objectTypes){
 	} else {
 		return $describeSObjects_results_ToReturn;
 	}
+}
+
+function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = null) {
+	print "<a href=\"javascript:ddtreemenu.flatten('$tableId', 'expand')\">Expand All</a> | " . 
+	      "<a href=\"javascript:ddtreemenu.flatten('$tableId', 'collapse')\">Collapse All</a>\n";
+	
+	if(isset($additionalMenus)) {
+		print $additionalMenus;
+	}
+	
+	print "<ul id='$tableId' class='treeview'>";
+	
+	printNode($nodes);
+	
+	print "</ul>\n" . 
+	      "<script type='text/javascript'>" . 
+	      "ddtreemenu.createTree('$tableId', true);" . 
+		  ($forceCollapse ? "ddtreemenu.flatten('$tableId', 'collapse');" : "") .
+	      "</script>";
 }
 
 function printNode($node) {

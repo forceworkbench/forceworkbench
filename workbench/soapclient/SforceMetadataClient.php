@@ -43,8 +43,41 @@ class SforceMetadataClient extends SoapBaseClient {
 		$request->ZipFile = $zipFile;
 		$request->DeployOptions = $deployOptions;
 
-		return $this->sforce->__soapCall("deploy",array($request));
+		$response = $this->sforce->__soapCall("deploy",array($request));
+		
+		if(isset($response->result)) {
+			return $response->result;
+		} else {
+			return null;
+		}
 	}
+
+	public function checkStatus($asyncProcessId) {
+		$request = new stdClass();
+		$request->asyncProcessId = array($asyncProcessId);
+		
+		$response = $this->sforce->__soapCall("checkStatus",array($request));
+
+		if(isset($response->result)) {
+			return $response->result;
+		} else {
+			return null;
+		}
+	}
+
+	public function checkDeployStatus($asyncProcessId) {
+		$request = new stdClass();
+		$request->asyncProcessId = $asyncProcessId;
+		
+		$response = $this->sforce->__soapCall("checkDeployStatus",array($request));
+
+		if(isset($response->result)) {
+			return $response->result;
+		} else {
+			return null;
+		}
+	}
+
 }
 
 class DeployOptions {

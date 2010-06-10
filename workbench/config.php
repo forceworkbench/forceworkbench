@@ -624,6 +624,7 @@ $GLOBALS["MENUS"] = array(
 		'execute.php'          => new Page('Apex Execute','Execute Apex code as an anonymous block',true,true,true,true,''),
 		'runAllApexTests.php'  => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,false,true,'runAllApexTests'),
 		'asyncStatus.php'      => new Page('Bulk API Job Status & Results','Asynchronous Data Load Status and Results',true,true,false,true,''),
+		'metadataStatus.php'   => new Page('Metadata Asynchronous Process Status','Metadata API Status and Results',true,true,false,true,''),
 		'pwdMgmt.php'          => new Page('Password Management','Set and Reset Passwords',true,true,false,true,''),
 		'burn.php'             => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,true,'')
 	)

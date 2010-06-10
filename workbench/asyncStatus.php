@@ -36,7 +36,7 @@ print "<p class='instructions'>Records have been uploaded to Salesforce via the 
 
 print "<table width='100%'>";
 print "<tr>" . 
-		"<td align='left'><h3 style='color: rgb(66,150,231)'>Job: " . addLinksToUiForIds($jobInfo->getId()) . "</h3></td>" .
+		"<td align='left'><h3>Job: " . addLinksToUiForIds($jobInfo->getId()) . "</h3></td>" .
 		"<td align='right'><input type='button' onclick='window.location.href=window.location.href;' value='Refresh'/></td>" .
        "</tr>";
 print "</table>";
@@ -76,7 +76,7 @@ print "</table>";
 print "<p>&nbsp;</p>";
 
 if(count($batchInfos) > 0){
-	print "<h3 style='color: rgb(66,150,231)'>Batches</h3>";
+	print "<h3>Batches</h3>";
 	
 	print "<table cellpadding='4' width='100%' class='lightlyBoxed'>";
 		print "<tr>" . 

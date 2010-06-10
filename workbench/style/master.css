@@ -69,6 +69,10 @@ h2{
 	font-size: medium;
 }
 
+h3{
+	color: rgb(66,150,231);
+}
+
 #pagetitle, #myuserinfo a {
 	font-size: 8pt;
 	text-align: left;
