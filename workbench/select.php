@@ -7,7 +7,6 @@ require_once('shared.php');
 //show the form to do so.
 
 if (isset($_POST['actionJump']) && $_POST['actionJump'] != ""){
-	$_SESSION['default_object'] = $_POST['default_object'];
 	header("Location: $_POST[actionJump]");
 } elseif (isset($_POST['select'])){
 	include_once('header.php');

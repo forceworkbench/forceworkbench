@@ -138,40 +138,13 @@ function form_upload_objectSelect_show($file_input_name, $action){
  * @return error codes or 0 if ok
  */
 function csv_upload_valid_check($file){
-	if($file['error'] !== 0){
-		$upload_error_codes = array(
-		       0=>"There is no error, the file uploaded with success",
-		       1=>"The file uploaded is too large. Please try again. (Error 1)", //as per PHP config
-		       2=>"The file uploaded is too large. Please try again. (Error 2)", //as per form config
-		       3=>"The file uploaded was only partially uploaded.  Please try again. (Error 3)",
-		       4=>"No file was uploaded.  Please try again. (Error 4)",
-		       6=>"Missing a temporary folder.  Please try again. (Error 6)",
-		       7=>"Failed to write file to disk.  Please try again. (Error 7)",
-		       8=>"File upload stopped by extension.  Please try again. (Error 8)"
-			);
-			
-			if($_SESSION['config']['maxFileSize']['overrideable']){
-				$upload_error_codes[2] = "The file uploaded is too large. Please try again or adjust in Settings. (Error 2)";
-			}
-			
-		return($upload_error_codes[$file['error']]);
-	}
-
-	elseif(!is_uploaded_file($file['tmp_name'])){
-		return("The file was not uploaded from your computer. Please try again.");
-	}
-
-	elseif((!stristr($file['type'],'csv') || $file['type'] !== "application//vnd.ms-excel") && !stristr($file['name'],'.csv')){
+	$validationResult = validateUploadedFile($file);
+	
+	if((!stristr($file['type'],'csv') || $file['type'] !== "application//vnd.ms-excel") && !stristr($file['name'],'.csv')){
 		return("The file uploaded is not a valid CSV file. Please try again.");
 	}
-
-	elseif($file['size'] == 0){
-		return("The file uploaded contains no data. Please try again.");
-	}
-
-	else{
-		return(0);
-	}
+	
+	return $validationResult;
 }
 
 /**

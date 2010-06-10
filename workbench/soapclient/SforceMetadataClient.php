@@ -37,5 +37,26 @@ class SforceMetadataClient extends SoapBaseClient {
 			return null;
 		}
 	}
+
+	public function deploy($zipFile, DeployOptions $deployOptions) {
+		$request = new stdClass();
+		$request->ZipFile = $zipFile;
+		$request->DeployOptions = $deployOptions;
+
+		return $this->sforce->__soapCall("deploy",array($request));
+	}
 }
+
+class DeployOptions {
+     public $allowMissingFiles = false;
+     public $autoUpdatePackage = false;
+     public $checkOnly = false;
+     public $ignoreWarnings = false;
+     public $performRetrieve = false;
+     public $rollbackOnError = false;
+     public $singlePackage = false;
+     public $runAllTests = false;
+     public $runTest = array();
+}
+
 ?>

@@ -1,5 +1,37 @@
 <?php
 
+function validateUploadedFile($file){
+	if($file['error'] != 0){
+		$upload_error_codes = array(
+		       1=>"The file uploaded is too large. Please try again. (Error 1)", //as per PHP config
+		       2=>"The file uploaded is too large. Please try again. (Error 2)", //as per form config
+		       3=>"The file uploaded was only partially uploaded.  Please try again. (Error 3)",
+		       4=>"No file was uploaded.  Please try again. (Error 4)",
+		       6=>"Missing a temporary folder.  Please try again. (Error 6)",
+		       7=>"Failed to write file to disk.  Please try again. (Error 7)",
+		       8=>"File upload stopped by extension.  Please try again. (Error 8)"
+			);
+			
+			if($_SESSION['config']['maxFileSize']['overrideable']){
+				$upload_error_codes[2] = "The file uploaded is too large. Please try again or adjust in Settings. (Error 2)";
+			}
+			
+		return($upload_error_codes[$file['error']]);
+	}
+
+	elseif(!is_uploaded_file($file['tmp_name'])){
+		return("The file was not uploaded from your computer. Please try again.");
+	}
+
+	elseif($file['size'] == 0){
+		return("The file uploaded contains no data. Please try again.");
+	}
+
+	else{
+		return(0);
+	}
+}
+
 function isLoggedIn() {
 	return isset($_SESSION['sessionId']);
 }
@@ -60,6 +92,20 @@ function show_error($errors, $showHeader=false, $showFooter=false){
 		include_once("footer.php");
 		exit;
 	}
+}
+
+function show_warnings($warnings){
+	print "<div class='show_warnings'>\n";
+	print "<img src='images/warning24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
+	if(is_array($warnings)){
+		foreach($warnings as $warning){
+			$warningString .= "<p>" . htmlspecialchars($warning) . "</p>";
+		}
+		print $warningString;
+	} else {
+		print htmlspecialchars($warnings);
+	}
+	print "</div>\n";
 }
 
 function show_info($infos){
