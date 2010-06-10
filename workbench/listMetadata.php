@@ -134,15 +134,16 @@ function processListMetadataResult($response) {
 			continue;
 		}
 		
-		if (strrchr($responseValue->fullName, "/")) {
-			$simpleFullName = substr(strrchr($responseValue->fullName, "/"), 1);
-			$processedResponse[$simpleFullName] = $responseValue;
-		} else if(strpos($responseValue->fullName, ".")) {
-			$parentName = substr($responseValue->fullName, 0, strpos($responseValue->fullName, "."));
-			$childName = substr($responseValue->fullName, strpos($responseValue->fullName, ".") + 1);
+		$name = isset($responseValue->fullName) ? $responseValue->fullName : $responseValue->fileName;
+		if (strrchr($name, "/")) {
+			$simpleName = substr(strrchr($name, "/"), 1);
+			$processedResponse[$simpleName] = $responseValue;
+		} else if(strpos($name, ".")) {
+			$parentName = substr($name, 0, strpos($name, "."));
+			$childName = substr($name, strpos($name, ".") + 1);
 			$processedResponse[$parentName][$childName] = $responseValue;
 		} else {
-			$processedResponse[$responseValue->fullName] = $responseValue;
+			$processedResponse[$name] = $responseValue;
 		}
 	}
 	$processedResponse = natcaseksort($processedResponse);
