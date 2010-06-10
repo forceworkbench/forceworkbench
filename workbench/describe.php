@@ -60,7 +60,7 @@ function show_describeSObject_result(){
 		print "<ul id='describeTree' class='treeview'>\n";
 
 
-		print "<li>Attributes<ul>\n";
+		print "<li>Attributes<ul style='display:none;'>\n";
 		foreach($describeSObject_result as $key => $value){
 			//Change bool data to printed as TRUE and FALSE for visibility in table
 			if (is_bool($value)){
@@ -73,7 +73,7 @@ function show_describeSObject_result(){
 		}
 		print "</ul></li>\n"; ///end attributes node
 
-		print "<li>Fields (" . count($describeSObject_result->fields) . ")<ul>\n";
+		print "<li>Fields (" . count($describeSObject_result->fields) . ")<ul style='display:none;'>\n";
 		foreach($describeSObject_result->fields as $key => $value){
 			highlightSpecialField($value);
 			foreach($value as $subkey => $subvalue){
@@ -87,10 +87,10 @@ function show_describeSObject_result(){
 				//it requires more nested foreach loops
 				elseif ($subkey == 'picklistValues'){
 					if(!is_array($subvalue)) $subvalue = array($subvalue);
-					print "<li>$subkey (" . count($subvalue) . ")<ul>\n";
+					print "<li>$subkey (" . count($subvalue) . ")<ul style='display:none;'>\n";
 					foreach($subvalue as $subsubkey => $subsubvalue){
-						if($value->name == "Division") print "<li>$subsubvalue->label<ul>\n";
-						else print  "<li>$subsubvalue->value<ul>\n";
+						if($value->name == "Division") print "<li>$subsubvalue->label<ul style='display:none;'>\n";
+						else print  "<li>$subsubvalue->value<ul style='display:none;'>\n";
 						foreach($subsubvalue as $subsubsubkey => $subsubsubvalue){
 							if (is_bool($subsubsubvalue)){
 								print "<li>$subsubsubkey: ";
@@ -105,7 +105,7 @@ function show_describeSObject_result(){
 					print "</ul></li>\n"; //end picklist node
 				} elseif ($subkey == 'referenceTo'){ //do this for referenceTo arrays 
 					if(is_array($subvalue)) {
-						print "<li>$subkey<ul>\n";
+						print "<li>$subkey<ul style='display:none;'>\n";
 						foreach($subvalue as $subsubkey => $subsubvalue){
 							print  "<li><strong>$subsubvalue</strong></li>\n";
 						}
@@ -126,10 +126,10 @@ function show_describeSObject_result(){
 		//Print Record Types, if they exists
 		if (isset($describeSObject_result->recordTypeInfos)){
 			if(!is_array($describeSObject_result->recordTypeInfos)) $describeSObject_result->recordTypeInfos = array($describeSObject_result->recordTypeInfos);
-			print "<li>Record Types (" . count($describeSObject_result->recordTypeInfos) . ")<ul>\n";
+			print "<li>Record Types (" . count($describeSObject_result->recordTypeInfos) . ")<ul style='display:none;'>\n";
 			foreach($describeSObject_result->recordTypeInfos as $key => $value){
 				if(isset($value->name)){
-					print "<li>$value->name<ul>\n";
+					print "<li>$value->name<ul style='display:none;'>\n";
 					foreach($value as $subkey => $subvalue){
 						if (is_string($subvalue) || is_numeric($subvalue)){
 							stringDisplay( $subkey, $subvalue);
@@ -149,9 +149,9 @@ function show_describeSObject_result(){
 		//Print Child Relationships, if they exists
 		if (isset($describeSObject_result->childRelationships)){
 			if(!is_array($describeSObject_result->childRelationships)) $describeSObject_result->childRelationships = array($describeSObject_result->childRelationships);
-			print "<li>Child Relationships (" . count($describeSObject_result->childRelationships) . ")<ul>\n";
+			print "<li>Child Relationships (" . count($describeSObject_result->childRelationships) . ")<ul style='display:none;'>\n";
 			foreach($describeSObject_result->childRelationships as $key => $value){
-				print "<li>$value->childSObject<ul>\n";
+				print "<li>$value->childSObject<ul style='display:none;'>\n";
 				foreach($value as $subkey => $subvalue){
 					if (is_string($subvalue) || is_numeric($subvalue)){
 						stringDisplay( $subkey, $subvalue);
@@ -190,13 +190,13 @@ function highlightSpecialField( $value ) {
 	$systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp");
 	
 	if ($_SESSION['config']['highlightSystemFields'] && in_array($value->name,$systemFields)) {
-		print "<li><span class='highlightSystemField'>$value->name</span><ul>\n";
+		print "<li><span class='highlightSystemField'>$value->name</span><ul style='display:none;'>\n";
 	} 
 	elseif($_SESSION['config']['highlightCustomFields'] && $value->custom){
-		print "<li><span class='highlightCustomField'>$value->name</span><ul>\n";
+		print "<li><span class='highlightCustomField'>$value->name</span><ul style='display:none;'>\n";
 	} 
 	else {
-		print "<li>$value->name<ul>\n";
+		print "<li>$value->name<ul style='display:none;'>\n";
 	}		
 }
 
