@@ -22,7 +22,7 @@ if(!isset($_GET['asyncProcessId'])){
 $asyncProcessId = $_GET['asyncProcessId'];
 
 print "<p class='instructions'>A Metadata API operation has been performed, which requires asynchronous processing as resources are available. " . 
-	  "Bookmark and periodically view this page to view the latest status.</p><p/>";
+	  "Bookmark and periodically view this page to view the latest status. Results will be available once processing is complete.</p><p/>";
 
 print "<input type='button' onclick='window.location.href=window.location.href;' value='Refresh' style='float:right;'/>";
 
@@ -32,16 +32,25 @@ global $metadataConnection;
 try {
 	$asyncResults = $metadataConnection->checkStatus($asyncProcessId);
 	
-	print "<h3>Status</h3>";
-	print "<table class='lightlyBoxed' style='padding: 3em;' cellpadding='6'>\n";
+	$orderedAsyncResults = array("id"=>null,"done"=>null,"stateDetailLastModifiedDate"=>null,"state"=>null);
 	foreach($asyncResults as $resultName => $resultValue) {
-		print "<tr><td style='text-align: right; padding-right: 2em;'>" . unCamelCase($resultName) . "</td><td style='font-weight: bold;'>";
-		if(is_bool($resultValue)) {
-			print $resultValue ? "true" : "false";
+		$orderedAsyncResults[$resultName] = $resultValue;
+	}
+	
+	print "<h3>Status</h3>";
+	print "<table class='lightlyBoxed' cellpadding='5' width='100%'>\n";
+	$rowNum = 0;
+	foreach($orderedAsyncResults as $resultName => $resultValue) {
+		if(++$rowNum % 2) {
+			print "<tr>";
+			printStatusCell($resultName, $resultValue);
 		} else {
-			print $resultValue;
+			printStatusCell($resultName, $resultValue);
+			print "</td></tr>\n";
 		}
-		print "</td></tr>\n";
+	}
+	if($rowNum % 2) {
+		print "<td></td><td></td></tr>";
 	}
 	print "</table>\n";
 	
@@ -57,10 +66,23 @@ try {
 				}
 				
 				if($resultKey == "messages") {
+					if(!is_array($resultValue)) $resultValue = array($resultValue);
 					foreach($resultValue as $message) {
-						$processedResults["messages"][$message->fullName] = $message;
+						$processedResults[$resultKey][$message->fullName] = $message;
 					}
-				} else {
+				} 
+				else if($resultKey == "runTestResult" && is_array($resultValue)) {
+					foreach($resultValue as $runTestResultKey => $runTestResultValue) {
+						foreach($runTestResultValue as $runTestResultSubKey => $runTestResultSubValue) {
+							foreach($runTestResultSubValue as $runTestResultSubArrayKey => $runTestResultSubArrayValue) {
+								if(isset($runTestResultSubArrayValue->name)) {
+									$processedResults[$resultKey][$runTestResultSubKey][$runTestResultSubArrayValue->name] = $runTestResultSubArrayValue;	
+								}
+							}
+						}
+					}
+				} 
+				else {
 					$processedResults[$resultKey] = $resultValue;
 				}
 			}
@@ -74,4 +96,18 @@ try {
 
 include_once('footer.php');
 exit;
+
+function printStatusCell($resultName, $resultValue) {
+	print "<td style='text-align: right; padding-right: 2em;'>" . unCamelCase($resultName) . "</td><td style='font-weight: bold;'>";
+	if(is_bool($resultValue)) {
+		print $resultValue ? "true" : "false";
+	} else {
+		print $resultValue;
+	}
+	print "</td>";
+}
+
+function processResults($raw, $processed) {
+	
+}
 ?>

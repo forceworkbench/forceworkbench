@@ -55,7 +55,8 @@ a{
 }
 
 .instructions {
-	font-weight: bold;
+	font-style: italic;
+	font-size: small;
 }
 	
 

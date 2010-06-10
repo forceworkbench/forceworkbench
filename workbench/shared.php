@@ -301,7 +301,7 @@ function printNode($node) {
 			print "</ul></li>\n";
 		} else {
 			if(is_bool($nodeValue)) {
-				$nodeValue = $nodeValue == 1 ? "true" : "false";
+				$nodeValue = $nodeValue == 1 ? "<span class='trueColor'>true</span>" : "<span class='falseColor'>false</span>";
 			}
 			print "<li>". (!is_numeric($nodeKey) ? $nodeKey . ": " : "") . "<span style='font-weight:bold;'>" . addLinksToUiForIds($nodeValue) . "</span></li>\n";
 		}
