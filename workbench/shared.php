@@ -227,7 +227,7 @@ function describeSObject($objectTypes){
 function printNode($node) {
 	foreach($node as $nodeKey => $nodeValue) {
 		if(is_array($nodeValue) || is_object($nodeValue)){
-			print "<li>$nodeKey<ul>\n";
+			print "<li>$nodeKey<ul style='display:none;'>\n";
 			printNode($nodeValue);
 			print "</ul></li>\n";
 		} else {
