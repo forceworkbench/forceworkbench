@@ -254,13 +254,13 @@ function checkCaps( pwcapsDivId, e ) {
 		</div>
 
 		<div id='login_std'>
-			<p><strong>Username: </strong><input type='text' name='usernameStd' id='username' size='45' value='$user' /></p>
-			<p><strong>Password: </strong><input type='password' name='passwordStd'  id='password' size='45' onkeypress="checkCaps('pwcapsStd',event);" /></p>
+			<p><strong>Username: </strong><input type='text' name='usernameStd' id='username' size='55' value='$user' /></p>
+			<p><strong>Password: </strong><input type='password' name='passwordStd'  id='password' size='55' onkeypress="checkCaps('pwcapsStd',event);" /></p>
 LOGIN_FORM;
 
 //std jumpTo
 print "<p><strong>Jump to: </strong>" . 
-	  "<select name='actionJumpStd' style='width: 14em;'>" . 	
+	  "<select name='actionJumpStd' style='width: 18em;'>" . 	
 		  "<option value='select.php'></option>";
 		  
 foreach($GLOBALS["MENUS"] as $menu => $pages) {
@@ -275,12 +275,12 @@ print <<<LOGIN_FORM_PART_2
 		</div>
 
 		<div id='login_adv' style='display: none;'>
-			<p><strong>Username: </strong><input type='text' name='usernameAdv' id='usernameAdv' size='45' value='$user' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();' /></p>
-			<p><strong>Password: </strong><input type='password' name='passwordAdv' id='passwordAdv' size='45' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();'  onkeypress="checkCaps('pwcapsAdv',event);"/></p>
+			<p><strong>Username: </strong><input type='text' name='usernameAdv' id='usernameAdv' size='55' value='$user' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();' /></p>
+			<p><strong>Password: </strong><input type='password' name='passwordAdv' id='passwordAdv' size='55' onkeyup='toggleUsernamePasswordSessionDisabled();' onchange='toggleUsernamePasswordSessionDisabled();'  onkeypress="checkCaps('pwcapsAdv',event);"/></p>
 			<p><em>- OR -</em><span id='pwcapsAdv' style='visibility: hidden; color: red; font-weight: bold; margin-left: 65px;'>Caps lock is on!</span></p>
-			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='45' onkeyup='toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();' onchange="toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();"/></p>
+			<p><strong>Session ID: </strong><input type='text' name='sessionId' id='sessionId' size='55' onkeyup='toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();' onchange="toggleUsernamePasswordSessionDisabled(); fuzzyServerUrlSelect();"/></p>
 			<p>&nbsp;</p>
-			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='45' value='$defaultServerUrl' /></p>
+			<p><strong>Server URL: </strong><input type='text' name='serverUrl' id='serverUrl' size='55' value='$defaultServerUrl' /></p>
 			<p><strong>QuickSelect: </strong>
 LOGIN_FORM_PART_2;
 
@@ -300,7 +300,7 @@ print "</select></p>";
 
 //advanced jumpTo
 print "<p><strong>Jump to: </strong>" . 
-	  "<select name='actionJumpAdv' style='width: 14em;'>" . 	
+	  "<select name='actionJumpAdv' style='width: 18em;'>" . 	
 	  "<option value='select.php'></option>";
 foreach($GLOBALS["MENUS"] as $menu => $pages) {
 	foreach($pages as $href => $page) {
