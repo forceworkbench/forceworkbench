@@ -31,7 +31,7 @@ function show_select_form(){
 		<?php
 		foreach($GLOBALS["MENUS"] as $menu => $pages) {
 			foreach($pages as $href => $page) {
-				if($page->onMenuSelect == 'usesObject') {
+				if($page->onMenuSelect === 'usesObject') {
 					print "usesObject['$href'] = '$href';\n";
 				}
 			}
@@ -39,7 +39,7 @@ function show_select_form(){
 		?>
 	
 		var actionJumpVal = document.getElementById('actionJump').value;
-				
+
 		if(usesObject[actionJumpVal] != undefined){
 			document.getElementById('default_object').disabled = false;		
 		} else {

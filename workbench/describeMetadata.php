@@ -61,6 +61,6 @@ for (var i=0; i<ultags.length; i++){
 		ddtreemenu.expandSubTree(treeid, ultags[i]);
 	}
 }
-<? } ?>
+<?php } ?>
 
 </script>
