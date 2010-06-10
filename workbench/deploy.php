@@ -9,10 +9,16 @@ if(!apiVersionIsAtLeast(10.0)) {
 }
 
 if(isset($_POST['deploymentConfirmed'])) {
+  	if(!isset($_SESSION[$_POST["deployFileTmpName"]])) {
+  		show_error("No zip file currently staged for deployment. To re-deploy, create a new deploy request.", false, true);
+  		exit;
+  	}
+	
 	require_once ('soapclient/SforceMetadataClient.php');
 	global $metadataConnection;
 	try {
 		$deployAsyncResults = $metadataConnection->deploy($_SESSION[$_POST["deployFileTmpName"]], deserializeDeployOptions($_POST));
+		$_SESSION[$_POST["deployFileTmpName"]] = null;
 		show_info("Successfully uploaded file for deployment to Salesforce.");	
 //		print_r($deployAsyncResults);
 	} catch (Exception $e) {
@@ -109,6 +115,10 @@ function unCamelCase($camelCasedString) {
 
 function validateZipFile($file){
 	$validationResult = validateUploadedFile($file);
+
+	if(!isset($file["tmp_name"]) || $file["tmp_name"] == "") {
+		return("No file uploaded for deployment.");
+	}
 	
 	if(!stristr($file['type'],'zip') || !stristr($file['name'],'.zip')) {
 		return("The file uploaded is not a valid ZIP file. Please try again.");
