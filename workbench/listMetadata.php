@@ -54,32 +54,36 @@ foreach($describeMetadataResult as $resultsKey => $resultsValue) {
 
 $metadataTypesSelectOptions = natcaseksort($metadataTypesSelectOptions);
 
+$typeString = isset($_REQUEST['type']) ? $_REQUEST['type'] : (isset($_SESSION['defaultMetadataType']) ? $_SESSION['defaultMetadataType'] : null);
+
 ?>
 <p class='instructions'>Choose a metadata type to list its components:</p>
 <form id="metadataTypeSelectionForm" name="metadataTypeSelectionForm" method="GET" action="<?php print $_SERVER['PHP_SELF'] ?>">
 <select id="type" name="type" onChange="document.metadataTypeSelectionForm.submit();">
-<?php printSelectOptions($metadataTypesSelectOptions, isset($_REQUEST['type']) ? $_REQUEST['type'] : null); ?>
+<?php printSelectOptions($metadataTypesSelectOptions, $typeString); ?>
 </select>
 </form>
 <p/>
 
 <?php
-if(isset($_REQUEST['type'])) {
-	if(!isset($metadataTypeMap[$_REQUEST['type']])) {
-		show_error("Invalid metadata type type: " . $_REQUEST['type'], false, true);
+if(isset($typeString)) {	
+	if(!isset($metadataTypeMap[$typeString])) {
+		if(isset($_REQUEST['type']) && $_REQUEST['type']) {
+			show_error("Invalid metadata type type: $typeString", false, true);
+		}
 		exit;
 	}
-	$type = $metadataTypeMap[$_REQUEST['type']];
+	$type = $metadataTypeMap[$typeString];
+    $_SESSION['defaultMetadataType'] = $typeString;	
 	
-	$metadataComponents = listMetadata($type);
+    $metadataComponents = listMetadata($type);
 	
 	if(count($metadataComponents) == 0) {
 		show_info("This metadata type contains no components.", false, true);
 		exit;
 	}
 
-	print 
-	      "<a href=\"javascript:ddtreemenu.flatten('listMetadataTree', 'expand')\">Expand All</a> | " . 
+	print "<a href=\"javascript:ddtreemenu.flatten('listMetadataTree', 'expand')\">Expand All</a> | " . 
 	      "<a href=\"javascript:ddtreemenu.flatten('listMetadataTree', 'collapse')\">Collapse All</a> | " .
 		  "<a href=\"describeMetadata.php?type=$type->xmlName\">Describe Type</a>\n" .
 	      "<ul id='listMetadataTree' class='treeview'>\n";
