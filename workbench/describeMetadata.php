@@ -50,5 +50,17 @@ printNode($processedMetadataDescribe);
 require_once('footer.php');
 ?>
 <script type="text/javascript">
+var treeid = "describeMetadataTree";
 ddtreemenu.createTree("describeMetadataTree", true);
+
+<?php if(isset($_REQUEST['type'])) { ?>
+ddtreemenu.flatten(treeid, 'collapse');
+var ultags=document.getElementById(treeid).getElementsByTagName("ul");
+for (var i=0; i<ultags.length; i++){
+	if(ultags[i].parentNode.innerHTML.indexOf('<?php print $_REQUEST['type'] ?> ') > -1) {
+		ddtreemenu.expandSubTree(treeid, ultags[i]);
+	}
+}
+<? } ?>
+
 </script>

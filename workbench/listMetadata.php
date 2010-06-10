@@ -78,9 +78,13 @@ if(isset($_REQUEST['type'])) {
 		exit;
 	}
 
-	print "<a href=\"javascript:ddtreemenu.flatten('listMetadataTree', 'expand')\">Expand All</a> | <a href=\"javascript:ddtreemenu.flatten('listMetadataTree', 'collapse')\">Collapse All</a>\n" .
+	print 
+	      "<a href=\"javascript:ddtreemenu.flatten('listMetadataTree', 'expand')\">Expand All</a> | " . 
+	      "<a href=\"javascript:ddtreemenu.flatten('listMetadataTree', 'collapse')\">Collapse All</a> | " .
+		  "<a href=\"describeMetadata.php?type=$type->xmlName\">Describe Type</a>\n" .
 	      "<ul id='listMetadataTree' class='treeview'>\n";
 	printNode($metadataComponents);
+	print "</ul>";
 }
 
 require_once('footer.php');
@@ -138,7 +142,7 @@ function processListMetadataResult($response) {
 			$childName = substr($responseValue->fullName, strpos($responseValue->fullName, ".") + 1);
 			$processedResponse[$parentName][$childName] = $responseValue;
 		} else {
-			$processedResponse[$fullName] = $responseValue;
+			$processedResponse[$responseValue->fullName] = $responseValue;
 		}
 	}
 	$processedResponse = natcaseksort($processedResponse);
