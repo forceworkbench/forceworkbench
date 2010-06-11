@@ -18,7 +18,7 @@ if(!isset($_GET['asyncProcessId'])){
 	exit;
 } 
 
-$asyncProcessId = $_GET['asyncProcessId'];
+$asyncProcessId = htmlentities($_GET['asyncProcessId']);
 
 if(isset($_GET['downloadZip'])) {
 	if(!isset($_SESSION['retrievedZips'][$asyncProcessId])) {
@@ -71,9 +71,9 @@ try {
 		print "<p>&nbsp;</p><h3>Results</h3>";
 		
 		//if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
-		$operation = isset($_REQUEST['operation']) ? $_REQUEST['operation'] : (isset($asyncResults->checkOnly) ? "deploy" : "retrieve");
+		$operation = isset($_REQUEST['op']) ? htmlentities($_REQUEST['op']) : (isset($asyncResults->checkOnly) ? "D" : "R");
 		
-		$results = $operation == "deploy" ? $metadataConnection->checkDeployStatus($asyncProcessId, $debugInfo) : $metadataConnection->checkRetrieveStatus($asyncProcessId, $debugInfo);
+		$results = $operation == "D" ? $metadataConnection->checkDeployStatus($asyncProcessId, $debugInfo) : $metadataConnection->checkRetrieveStatus($asyncProcessId, $debugInfo);
 		
 		$zipLink = null;
 		if(isset($results->zipFile)) {

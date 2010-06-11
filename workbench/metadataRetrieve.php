@@ -7,23 +7,25 @@ if(!apiVersionIsAtLeast(10.0)) {
 	exit;
 }
 
-if(isset($_POST['retrievalConfirmed'])) {
-  	if(!isset($_SESSION[$_POST["retrieveRequestId"]])) {
+if(isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
+	$retrieveRequestId = htmlentities($_POST["retrieveRequestId"]);
+	
+  	if(!isset($_SESSION[$retrieveRequestId])) {
   		show_error("No retrieve request found. To re-retrieve, create a new retrieve request.", true, true);
   		exit;
   	}
   		
 	global $metadataConnection;
 	try {
-		$retrieveAsyncResults = $metadataConnection->retrieve($_SESSION[$_POST["retrieveRequestId"]]);
-		$_SESSION[$_POST["retrieveRequestId"]] = null;
+		$retrieveAsyncResults = $metadataConnection->retrieve($_SESSION[$retrieveRequestId]);
+		$_SESSION[$retrieveRequestId] = null;
 		
 		if(!isset($retrieveAsyncResults->id)){
 			show_error("Unknown retrieval error.\n" . isset($retrieveAsyncResults->message) ? $retrieveAsyncResults->message : "", true, true);
 			exit;
 		}
 
-		header("Location: metadataStatus.php?asyncProcessId=" . $retrieveAsyncResults->id . "&operation=retrieve");
+		header("Location: metadataStatus.php?asyncProcessId=" . $retrieveAsyncResults->id . "&op=R");
 	} catch (Exception $e) {
 		show_error($e->getMessage(), true, true);
 		exit;
@@ -42,17 +44,14 @@ else if(isset($_POST['stageForRetrieval'])) {
 		exit;
 	}  	
   	
-  	try {
-  		$packageXml = new SimpleXMLElement(file_get_contents( $_FILES["packageXmlFile"]["tmp_name"]));
-  	} catch (Exception $e) {
-		show_error("Error parsing manifest file:\n" . $e->getMessage(), true, true);
-		exit;
-	}
-  	
-  	if(!$packageXml) {
-  		show_error("Unknown error reading file contents.", true, true);
+	libxml_use_internal_errors(true);
+	$packageXml = simplexml_load_file($_FILES["packageXmlFile"]["tmp_name"]);
+  	if(!isset($packageXml) || !$packageXml) {
+  		show_error(libxml_get_errors(), true, true);
+  		libxml_clear_errors();
   		exit;
   	}
+  	libxml_use_internal_errors(false);
   	
   	$unpackaged = new Package();
   	$unpackaged->version = (string) $packageXml->version;
@@ -79,7 +78,7 @@ else if(isset($_POST['stageForRetrieval'])) {
   	$_SESSION[$retrieveRequestId] = $retrieveRequest;
   	
   	require_once('header.php');
-	show_info("Successfully parsed manifest file and staged retrieval.");
+	show_info("Successfully parsed manifest file and staged for retrieval.");
 	?>
 	<p class='instructions'>Confirm the following retrieve request:</p>
 	<?php printTree("retrieveRequestTree", processResults($_SESSION[$retrieveRequestId]), true); ?>
@@ -97,7 +96,7 @@ else {
 	<form id='retrieveForm' name='retrieveForm' method='POST' action='<?php print $_SERVER['PHP_SELF']; ?>' enctype='multipart/form-data'>
 		<input type='hidden' name='MAX_FILE_SIZE' value='<?php print $_SESSION['config']['maxFileSize']; ?>' />
 		<p><input type='file' name='packageXmlFile' size='44' /></p>
-		<input type='submit' name='stageForRetrieval' value='Stage for Retrieval' /> 
+		<input type='submit' name='stageForRetrieval' value='Upload' /> 
 	</form>
 	<?php
 }

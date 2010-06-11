@@ -48,7 +48,7 @@ foreach($describeMetadataResult as $resultsKey => $resultsValue) {
 
 $metadataTypesSelectOptions = natcaseksort($metadataTypesSelectOptions);
 
-$currentTypeString = isset($_REQUEST['type']) ? $_REQUEST['type'] : null;
+$currentTypeString = isset($_REQUEST['type']) ? htmlentities($_REQUEST['type']) : null;
 $previousTypeString = isset($_SESSION['defaultMetadataType']) ? $_SESSION['defaultMetadataType'] : null;
 $typeString = $currentTypeString != null ? $currentTypeString : $previousTypeString;
 $typeStringChanged = $currentTypeString != null && $previousTypeString != $currentTypeString;

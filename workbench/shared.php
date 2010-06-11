@@ -1,5 +1,10 @@
 <?php
 
+function handleAllExceptions($e) {
+	show_error("UNKNOWN ERROR: " . $e->getMessage(), true, true);
+	exit;
+}
+
 function processResults($raw) {
 	foreach(array(true, false) as $scalarProcessing){
 		foreach($raw as $rawKey => $rawValue) {
@@ -106,16 +111,18 @@ function show_error($errors, $showHeader=false, $showFooter=false){
 	}
 	print "<div class='show_errors'>\n";
 	print "<img src='images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
-	if(is_array($errors)){
-		$errorString = null;
-		foreach($errors as $error){
-			$errorString .= "<p>" . htmlspecialchars($error) . "</p>";
-			$errorString = str_replace("\n","<br/>",$errorString);
+	if(!is_array($errors)) $errors = array($errors);
+	
+	$errorString = null;
+	foreach($errors as $error){
+		if(is_a($error, 'LibXMLError')) {
+			$error = "$error->message [Line $error->line : Column: $error->column]";
 		}
-	} else {
-		$errorString = htmlspecialchars($errors);
+		
+		$errorString .= "<p>" . htmlspecialchars((string)$error) . "</p>";
 		$errorString = str_replace("\n","<br/>",$errorString);
 	}
+
 	print $errorString;
 	print "</div>\n";
 	if($showFooter) {

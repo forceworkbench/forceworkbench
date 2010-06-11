@@ -1,6 +1,8 @@
 <?php
 require_once('shared.php');
 
+set_exception_handler('handleAllExceptions');
+
 if(!isset($GLOBALS['requestTimeStart'])){
 	$GLOBALS['requestTimeStart'] = microtime(true);
 }
