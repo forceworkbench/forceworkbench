@@ -56,11 +56,16 @@ try {
 	
 	if($asyncResults->done) {
 		print "<p>&nbsp;</p><h3>Results</h3>";
-		$results = $metadataConnection->checkDeployStatus($asyncProcessId);
+		$results = $metadataConnection->checkDeployStatus($asyncProcessId, $debugInfo);
 		
 		$processedResults = processResults($results);
 		
 		printTree("metadataStatusResultsTree", $processedResults, true);
+		
+		if(isset($debugInfo["DebuggingInfo"]->debugLog)){
+			print "<p>&nbsp;</p><h3>Debug Logs</h3>";
+			print("<pre>" . addLinksToUiForIds(htmlspecialchars($debugInfo["DebuggingInfo"]->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
+		} 
 	}
 } catch (Exception $e) {
 	show_error($e->getMessage(), false, true);

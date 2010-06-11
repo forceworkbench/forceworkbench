@@ -65,11 +65,11 @@ class SforceMetadataClient extends SoapBaseClient {
 		}
 	}
 
-	public function checkDeployStatus($asyncProcessId) {
+	public function checkDeployStatus($asyncProcessId,&$outputHeaders) {
 		$request = new stdClass();
 		$request->asyncProcessId = $asyncProcessId;
 		
-		$response = $this->sforce->__soapCall("checkDeployStatus",array($request));
+		$response = $this->sforce->__soapCall("checkDeployStatus",array($request),null,null,$outputHeaders);
 
 		if(isset($response->result)) {
 			return $response->result;
@@ -89,7 +89,7 @@ class DeployOptions {
      public $rollbackOnError = false;
      public $singlePackage = false;
      public $runAllTests = false;
-     public $runTest = array();
+     public $runTests = array();
 }
 
 ?>
