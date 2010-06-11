@@ -37,7 +37,7 @@ else if(isset($_POST['stageForRetrieval'])) {
   		exit;
   	}
   	
-	if(!stristr($_FILES["packageXmlFile"]['type'],'xml') || !stristr($_FILES["packageXmlFile"]['name'],'.xml')) {
+	if((!stristr($_FILES["packageXmlFile"]['type'],'octet-stream') && !stristr($_FILES["packageXmlFile"]['type'],'xml')) || !stristr($_FILES["packageXmlFile"]['name'],'.xml')) {
 		show_error("The file uploaded is not a valid XML file. Please try again.", true, true);
 		exit;
 	}  	
