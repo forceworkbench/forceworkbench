@@ -58,35 +58,7 @@ try {
 		print "<p>&nbsp;</p><h3>Results</h3>";
 		$results = $metadataConnection->checkDeployStatus($asyncProcessId);
 		
-		$processedResults = array();
-		foreach(array(true, false) as $scalarProcessing){
-			foreach($results as $resultKey => $resultValue) {
-				if ($scalarProcessing && (is_array($resultValue) || is_object($resultValue))){
-					continue;
-				}
-				
-				if($resultKey == "messages") {
-					if(!is_array($resultValue)) $resultValue = array($resultValue);
-					foreach($resultValue as $message) {
-						$processedResults[$resultKey][$message->fullName] = $message;
-					}
-				} 
-				else if($resultKey == "runTestResult" && is_array($resultValue)) {
-					foreach($resultValue as $runTestResultKey => $runTestResultValue) {
-						foreach($runTestResultValue as $runTestResultSubKey => $runTestResultSubValue) {
-							foreach($runTestResultSubValue as $runTestResultSubArrayKey => $runTestResultSubArrayValue) {
-								if(isset($runTestResultSubArrayValue->name)) {
-									$processedResults[$resultKey][$runTestResultSubKey][$runTestResultSubArrayValue->name] = $runTestResultSubArrayValue;	
-								}
-							}
-						}
-					}
-				} 
-				else {
-					$processedResults[$resultKey] = $resultValue;
-				}
-			}
-		}
+		$processedResults = processResults($results);
 		
 		printTree("metadataStatusResultsTree", $processedResults, true);
 	}
@@ -107,7 +79,27 @@ function printStatusCell($resultName, $resultValue) {
 	print "</td>";
 }
 
-function processResults($raw, $processed) {
-	
+function processResults($raw) {
+	foreach(array(true, false) as $scalarProcessing){
+		foreach($raw as $rawKey => $rawValue) {
+			if(is_array($rawValue) || is_object($rawValue)) {
+				if($scalarProcessing) continue;
+				
+				if (isset($rawValue->name)) {
+					$processed[$rawValue->name] = processResults($rawValue);
+				} else if(isset($rawValue->fullName)) {
+					$processed[$rawValue->fullName] = processResults($rawValue);
+				} else if(isset($rawValue->column) && isset($rawValue->line)) {
+					$processed[$rawValue->column . ":" . $rawValue->line] = processResults($rawValue);
+					krsort($processed);
+				} else {
+					$processed[$rawKey] = processResults($rawValue);
+				}
+			} else {
+				$processed[$rawKey] = $rawValue;
+			}
+		}
+	}
+	return $processed;
 }
 ?>
