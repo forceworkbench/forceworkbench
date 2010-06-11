@@ -10,6 +10,8 @@ function processResults($raw) {
 					$processed[$rawValue->name] = processResults($rawValue);
 				} else if(isset($rawValue->fullName)) {
 					$processed[$rawValue->fullName] = processResults($rawValue);
+				} else if(isset($rawValue->fileName)) {
+					$processed[$rawValue->fileName] = processResults($rawValue);
 				} else if(isset($rawValue->column) && isset($rawValue->line)) {
 					$processed[$rawValue->column . ":" . $rawValue->line] = processResults($rawValue);
 					krsort($processed);
@@ -299,8 +301,8 @@ function describeSObject($objectTypes){
 }
 
 function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = null) {
-	print "<a href=\"javascript:ddtreemenu.flatten('$tableId', 'expand')\">Expand All</a> | " . 
-	      "<a href=\"javascript:ddtreemenu.flatten('$tableId', 'collapse')\">Collapse All</a>\n";
+	print "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'expand'); return false;\">Expand All</a> | " . 
+	      "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'collapse'); return false;\">Collapse All</a>\n";
 	
 	if(isset($additionalMenus)) {
 		print $additionalMenus;

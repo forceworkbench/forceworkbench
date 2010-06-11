@@ -23,7 +23,7 @@ if(isset($_POST['retrievalConfirmed'])) {
 			exit;
 		}
 
-		header("Location: metadataStatus.php?asyncProcessId=" . $retrieveAsyncResults->id);
+		header("Location: metadataStatus.php?asyncProcessId=" . $retrieveAsyncResults->id . "&operation=retrieve");
 	} catch (Exception $e) {
 		show_error($e->getMessage(), true, true);
 		exit;
@@ -82,7 +82,7 @@ else if(isset($_POST['stageForRetrieval'])) {
 	show_info("Successfully parsed manifest file and staged retrieval.");
 	?>
 	<p class='instructions'>Confirm the following retrieve request:</p>
-	<? printTree("retrieveRequestTree", processResults($_SESSION[$retrieveRequestId]), true); ?>
+	<?php printTree("retrieveRequestTree", processResults($_SESSION[$retrieveRequestId]), true); ?>
 	<form id='retrieveForm' name='retrieveForm' method='POST' action='<?php print $_SERVER['PHP_SELF']; ?>'>
 		<input type='hidden' name='retrieveRequestId' value='<?php print $retrieveRequestId; ?>' />
 		<input type='submit' name='retrievalConfirmed' value='Retrieve' /> 		

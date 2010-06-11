@@ -21,15 +21,15 @@ if(isset($_POST['deploymentConfirmed'])) {
 	global $metadataConnection;
 	try {
 		$deployAsyncResults = $metadataConnection->deploy($_SESSION[$_POST["deployFileTmpName"]], $_SESSION[$_POST["deployFileTmpName"] . "_OPTIONS"]);
-		$_SESSION[$_POST["deployFileTmpName"]] = null;
-		$_SESSION[$_POST["deployFileTmpName"] . "_OPTIONS"] = null;
+		unset($_SESSION[$_POST["deployFileTmpName"]]);
+		unset($_SESSION[$_POST["deployFileTmpName"] . "_OPTIONS"]);
 		
 		if(!isset($deployAsyncResults->id)){
 			show_error("Unknown deployment error.\n" . isset($deployAsyncResults->message) ? $deployAsyncResults->message : "", true, true);
 			exit;
 		}
 		
-		header("Location: metadataStatus.php?asyncProcessId=" . $deployAsyncResults->id);
+		header("Location: metadataStatus.php?asyncProcessId=" . $deployAsyncResults->id . "&operation=deploy");
 	} catch (Exception $e) {
 		show_error($e->getMessage(), true, true);
 		exit;
@@ -101,7 +101,7 @@ function deserializeDeployOptions($request) {
 		if(is_bool($optionValue)) {
 			$deployOptions->$optionName = isset($request[$optionName]);
 		} else if(is_array($optionValue)) {
-			$deployOptions->$optionName = isset($request[$optionName]) ? explode(",", $request[$optionName]) : array();
+			$deployOptions->$optionName = (isset($request[$optionName]) && $request[$optionName] != "") ? explode(",", $request[$optionName]) : array();
 		}
 	}	
 

@@ -81,6 +81,11 @@ h3{
 	vertical-align: top;
 }
 
+.pseudoLink {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
 .miniLink {
 	font-size: xx-small;
 	color: #888;

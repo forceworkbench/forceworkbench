@@ -70,8 +70,10 @@ try {
 	if($asyncResults->done) {
 		print "<p>&nbsp;</p><h3>Results</h3>";
 		
-		//hacky way of finding out if it is a deploy() or retrieve
-		$results = isset($asyncResults->checkOnly) ? $metadataConnection->checkDeployStatus($asyncProcessId, $debugInfo) : $metadataConnection->checkRetrieveStatus($asyncProcessId, $debugInfo);
+		//if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
+		$operation = isset($_REQUEST['operation']) ? $_REQUEST['operation'] : (isset($asyncResults->checkOnly) ? "deploy" : "retrieve");
+		
+		$results = $operation == "deploy" ? $metadataConnection->checkDeployStatus($asyncProcessId, $debugInfo) : $metadataConnection->checkRetrieveStatus($asyncProcessId, $debugInfo);
 		
 		$zipLink = null;
 		if(isset($results->zipFile)) {
