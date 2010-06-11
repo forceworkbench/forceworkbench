@@ -342,7 +342,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
 	
 	row += "</select>&nbsp;" +
 			"" +
-			"<select id='QB_filter_compOper_" + filterRowNum + "' name='QB_filter_compOper_" + filterRowNum + "' style='width: 10em;' onChange='build_query();' onkeyup='build_query();'>";
+			"<select id='QB_filter_compOper_" + filterRowNum + "' name='QB_filter_compOper_" + filterRowNum + "' style='width: 6em;' onChange='build_query();' onkeyup='build_query();'>";
 
 	for (var opKey in compOper_array) {
 		row += "<option value='" + opKey + "'";
@@ -395,7 +395,7 @@ QUERY_BUILDER_SCRIPT;
 	print "<input type='hidden' name='justUpdate' value='0' />";
 	print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
 	print "<p class='instructions'>Choose the object, fields, and critera to build a SOQL query below:</p>\n";
-	print "<table border='0' width=1>\n";
+	print "<table border='0' style='width: 100%;'>\n";
 	print "<tr><td valign='top' width='1'>Object:";
 
 	printObjectSelection($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
@@ -428,7 +428,7 @@ QUERY_BUILDER_SCRIPT;
 
 
 
-	print "<table id='QB_right_sub_table' border='0' align='right'>\n";
+	print "<table id='QB_right_sub_table' border='0' align='right' style='width:100%'>\n";
 	print "<tr><td valign='top' colspan=2>Export to:<br/>" .
 			"<label><input type='radio' name='export_action' value='screen' ";
 	if ($queryRequest->getExportTo() == 'screen') print "checked='true'";
@@ -468,7 +468,7 @@ QUERY_BUILDER_SCRIPT;
 		'DESC' => 'Z to A'
 	);
 	
-	print "<td><select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 10em;' onChange='build_query();' onkeyup='build_query();'>\n";
+	print "<td><select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='build_query();' onkeyup='build_query();'>\n";
 	foreach ($QB_orderby_sort_options as $op_key => $op){
 		print "<option value='$op_key'";
 		if (isset($_POST['QB_orderby_sort']) && $op_key == $_POST['QB_orderby_sort']) print " selected='selected' ";
@@ -507,7 +507,7 @@ QUERY_BUILDER_SCRIPT;
 
 
 	print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-		"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' cols='107' rows='" . $_SESSION['config']['textareaRows'] . "'  style='overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES,'UTF-8') . "</textarea>\n" .
+		"<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . $_SESSION['config']['textareaRows'] . "'  style='width: 100%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES,'UTF-8') . "</textarea>\n" .
 	  "</td></tr>\n";
 
 
