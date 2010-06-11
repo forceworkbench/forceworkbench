@@ -8,7 +8,9 @@ if(!apiVersionIsAtLeast(10.0)) {
 }
 
 if(!isset($_GET['asyncProcessId'])){
-	show_error("Async Process Id must be specified.",true,false);
+	require_once('header.php');
+	print "<p/>";
+	show_error("Parameter 'asyncProcessId' must be specified.",false,false);
 	print 	"<p/>" . 
 			"<form action='$_SERVER[PHP_SELF]' method='GET'>" . 
 			"Async Process Id: <input type='text' name='asyncProcessId'/> &nbsp;" .  
