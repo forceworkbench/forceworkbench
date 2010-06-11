@@ -42,6 +42,10 @@ require_once ('soapclient/SforceMetadataClient.php');
 global $metadataConnection;
 try {
 	$asyncResults = $metadataConnection->checkStatus($asyncProcessId);
+	
+	if(!isset($asyncResults)) {
+		show_error("No results returned for '$asyncProcessId'", false, true);	
+	}
 
 	if(!$asyncResults->done) {
 		print "<input type='button' onclick='window.location.href=window.location.href;' value='Refresh' style='float:right;'/>";
@@ -117,7 +121,7 @@ if(document.getElementById("zipLink") != null) {
 include_once('footer.php');
 
 function printStatusCell($resultName, $resultValue) {
-	print "<td style='text-align: right; padding-right: 2em;'>" . unCamelCase($resultName) . "</td><td style='font-weight: bold;'>";
+	print "<td style='text-align: right; padding-right: 2em; font-weight: bold;'>" . unCamelCase($resultName) . "</td><td>";
 	if(is_bool($resultValue)) {
 		print $resultValue ? "true" : "false";
 	} else {

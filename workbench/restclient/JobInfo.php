@@ -1,11 +1,11 @@
 <?php
 
 /**
- * PHP BULK API CLIENT 18.0
+ * PHP BULK API CLIENT 19.0
  * @author Ryan Brainard
  * 
  * JobInfo.php
- * Represents a Force.com Bulk API 18.0 JobInfo object. 
+ * Represents a Force.com Bulk API 19.0 JobInfo object. 
  * 
  * For reference, see:
  * http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_reference_jobinfo.htm
@@ -192,6 +192,24 @@ class JobInfo {
 	
 	public function getExceptionMessage(){
 		return $this->xml->exceptionMessage;
+	}
+		
+	//New in 19.0 Below:
+	
+	public function getTotalProcessingTime(){
+		return $this->xml->totalProcessingTime;
+	}
+	
+	public function getApexProcessingTime(){
+		return $this->xml->apexProcessingTime;
+	}
+	
+	public function getApiActiveProcessingTime(){
+		return $this->xml->apiActiveProcessingTime;
+	}
+
+	public function getNumberRecordsFailed(){
+		return $this->xml->numberRecordsFailed;
 	}
 }
 ?>

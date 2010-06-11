@@ -620,12 +620,13 @@ $GLOBALS["MENUS"] = array(
 	),
 	
 	'Utilities' => array(
-		'execute.php'          => new Page('Apex Execute','Execute Apex code as an anonymous block',true,true,true,true,''),
-		'runAllApexTests.php'  => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,false,true,'runAllApexTests'),
-		'pwdMgmt.php'          => new Page('Password Management','Set and Reset Passwords',true,true,false,true,''),
-		'asyncStatus.php'      => new Page('Bulk API Job Status','Asynchronous Data Load Status and Results',true,true,false,true,''),
-		'metadataStatus.php'   => new Page('Metadata API Process Status','Metadata API Status and Results',true,true,false,true,''),
-		'burn.php'             => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,false,false,true,'')
+		'execute.php'            => new Page('Apex Execute','Execute Apex code as an anonymous block',true,true,true,true,''),
+		'runAllApexTests.php'    => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,false,true,'runAllApexTests'),
+		'pwdMgmt.php'            => new Page('Password Management','Set and Reset Passwords',true,true,false,true,''),
+		'asyncStatus.php'        => new Page('Bulk API Job Status','Asynchronous Data Load Status and Results',true,true,false,true,''),
+		'metadataStatus.php'     => new Page('Metadata API Process Status','Metadata API Status and Results',true,true,false,true,''),
+		'burn.php'               => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,false,false,true,''),
+		'downloadAsyncBatch.php' => new Page('Download Bulk API Batch','Downlads Bulk API requests and results',true,false,false,true,'')
 	)
 ); 
 ?>

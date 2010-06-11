@@ -141,12 +141,20 @@ class BulkApiClient {
 		
 		return $batchInfos;
 	}
+
+	public function getBatchRequest($jobId, $batchId) {
+		if(!$this->apiVersionIsAtLeast($this->endpoint, 19.0)){
+			throw new Exception("Gettiing a batch request is only supported in API 19.0 and higher.");
+		}
+		
+		return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/request");
+	}
 	
-	public function getBatchResults($jobId, $batchId){
+	public function getBatchResults($jobId, $batchId) {
 		return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/result");
 	}
 	
-	private function http($isPost, $url, $contentType, $data){		
+	private function http($isPost, $url, $contentType, $data) {		
 		$this->log("INITIALIZING cURL \n" . print_r(curl_version(), true));
 		
 		$ch = curl_init();

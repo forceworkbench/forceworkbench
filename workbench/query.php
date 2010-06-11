@@ -781,13 +781,13 @@ function export_query_csv($records,$query_action){
 			
 		} catch (Exception $e) {
 			require_once("header.php");
-			show_query_form($_POST['soql_query'],'csv',$query_action);
+			show_query_form(new QueryRequest($_POST),'csv',$query_action);
 			print "<p />";
 			show_error($e->getMessage(),false,true);
 		}
 	} else {
 		require_once("header.php");
-		show_query_form($_POST['soql_query'],'csv',$query_action);
+		show_query_form(new QueryRequest($_POST),'csv',$query_action);
 		print "<p />";
 		show_error("No records returned for CSV output.",false,true);
 	}
