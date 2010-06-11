@@ -55,6 +55,7 @@ else if(isset($_POST['stageForDeployment'])) {
   	$_SESSION[$deployFileTmpName . "_OPTIONS"] = deserializeDeployOptions($_POST);
   	
   	require_once('header.php');
+  	print "<p/>";
 	show_info("Successfully staged " . ceil(($_FILES["deployFile"]["size"] / 1024)) . " KB zip file " . $_FILES["deployFile"]["name"] . " for deployment.", true, false);	
 	
 	?>

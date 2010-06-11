@@ -51,7 +51,7 @@ try {
 		print "<input type='button' onclick='window.location.href=window.location.href;' value='Refresh' style='float:right;'/>";
 	}
 	
-	$orderedAsyncResults = array("id"=>null,"done"=>null,"stateDetailLastModifiedDate"=>null,"state"=>null);
+	$orderedAsyncResults = array("id"=>null,"done"=>null,"state"=>null);
 	foreach($asyncResults as $resultName => $resultValue) {
 		$orderedAsyncResults[$resultName] = $resultValue;
 	}
@@ -69,7 +69,7 @@ try {
 		}
 	}
 	if($rowNum % 2) {
-		print "<td></td><td></td></tr>";
+		print "<td width='25%'>&nbsp;</td><td width='25%'>&nbsp;</td></tr>";
 	}
 	print "</table>\n";
 	

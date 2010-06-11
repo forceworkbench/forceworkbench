@@ -119,21 +119,9 @@ class DeployOptions {
 }
 
 
-class RetrieveRequest {
-    public $singlePackage;
- 	public $apiVersion;
-//    public $packageNames;
-//    public $specificFiles;
-    public $unpackaged;
-}
+class RetrieveRequest { /* purposely leaving blank as to not force values if user doesn't provide them */ }
 
-class Package {
-	public $types;
-	public $version;
-}
+class Package { /* purposely leaving blank as to not force values if user doesn't provide them */ }
 
-class PackageTypeMembers {
-	public $members;
-	public $name;
-}
+class PackageTypeMembers { /* purposely leaving blank as to not force values if user doesn't provide them */ }
 ?>

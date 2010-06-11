@@ -6,6 +6,8 @@ function handleAllExceptions($e) {
 }
 
 function processResults($raw) {
+	$processed = array();
+	
 	foreach(array(true, false) as $scalarProcessing){
 		foreach($raw as $rawKey => $rawValue) {
 			if(is_array($rawValue) || is_object($rawValue)) {
@@ -28,6 +30,7 @@ function processResults($raw) {
 			}
 		}
 	}
+	
 	return $processed;
 }
 
