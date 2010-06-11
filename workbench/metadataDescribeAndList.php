@@ -29,13 +29,17 @@ foreach($describeMetadataResult as $resultsKey => $resultsValue) {
 					$metadataResultsValue->childXmlNames = array($metadataResultsValue->childXmlNames);
 				}
 				
-				foreach ($metadataResultsValue->childXmlNames as $childName) {
+				foreach ($metadataResultsValue->childXmlNames as $childNameKey => $childName) {
 					$metadataTypesSelectOptions[$childName]= $childName;
 					
 					$childType = new stdClass();
-					$childType->xmlName = $childName;
-					$childType->inFolder = false;
+					$childType->parentXmlName = $metadataResultsValue->xmlName . 
+						" <a href='" . $_SERVER['PHP_SELF'] . "?type=$metadataResultsValue->xmlName' class='miniLink'>[DESCRIBE]</a>";
+					$childType->childXmlName = $childName;
 					$metadataTypeMap[$childName] = $childType;
+					
+					$metadataTypeMap[$metadataResultsValue->xmlName]->childXmlNames[$childNameKey] = $childName . 
+						" <a href='" . $_SERVER['PHP_SELF'] . "?type=$childName' class='miniLink'>[DESCRIBE]</a>";
 				}
 			}
 		}
@@ -50,8 +54,8 @@ $typeString = $currentTypeString != null ? $currentTypeString : $previousTypeStr
 $typeStringChanged = $currentTypeString != null && $previousTypeString != $currentTypeString;
 
 ?>
-<p class='instructions'>Choose a metadata type to list its components:</p>
-<form id="metadataTypeSelectionForm" name="metadataTypeSelectionForm" method="GET" action="<?php print $_SERVER['PHP_SELF'] ?>">
+<p class='instructions'>Choose a metadata type describe and list its components:</p>
+<form id="metadataTypeSelectionForm" name="metadataTypeSelectionForm" method="GET" action="<?php print $_SERVER['PHP_SELF']; ?>">
 <select id="type" name="type" onChange="document.metadataTypeSelectionForm.submit();">
 <?php printSelectOptions($metadataTypesSelectOptions, $typeString); ?>
 </select>
@@ -71,12 +75,7 @@ if(isset($typeString)) {
 	
     $metadataComponents = listMetadata($type);
 	
-	if(count($metadataComponents) == 0) {
-		show_info("This metadata type contains no components.", false, true);
-		exit;
-	}
-	
-	printTree("listMetadataTree", $metadataComponents, $typeStringChanged, "| <a href=\"describeMetadata.php?type=$type->xmlName\">Describe Type</a>");
+	printTree("listMetadataTree", array("Type Description"=>$type, "Components"=>$metadataComponents), $typeStringChanged);
 }
 
 require_once('footer.php');
@@ -87,6 +86,10 @@ function listMetadata($type) {
 	global $partnerConnection;
 	
 	try {
+		if(isset($type->childXmlName)) {
+			return processListMetadataResult($metadataConnection->listMetadata($type->childXmlName, null, getApiVersion()));
+		}
+		
 		if(!$type->inFolder) {
 			return processListMetadataResult($metadataConnection->listMetadata($type->xmlName, null, getApiVersion()));
 		}

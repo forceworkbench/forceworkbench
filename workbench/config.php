@@ -595,9 +595,8 @@ $GLOBALS["MENUS"] = array(
 	),
 	
 	'Info' => array(
-		'describe.php'          => new Page('Describe Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,'usesObject',true,''),
-		'describeMetadata.php'  => new Page('Describe Metadata Types','Describes the metadata type in this organization.',true,true,true,true,''),
-		'listMetadata.php'      => new Page('List Metadata Components','Lists the metadata components in this organization.',true,true,true,true,''),
+		'describe.php'          => new Page('Standard & Custom Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,'usesObject',true,''),
+		'metadataDescribeAndList.php'      => new Page('Metadata Types & Components','Describes and lists the metadata components in this organization.',true,true,true,true,''),
 		'sessionInfo.php'       => new Page('Session Information','Information about the current session.',true,true,false,true,''),
 	),
 	
@@ -616,8 +615,8 @@ $GLOBALS["MENUS"] = array(
 	),
 	
 	'Migration' => array(
-		'deploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,true,true,true,''),
-		'#retrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,false,true,''),
+		'metadataDeploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,true,true,true,''),
+//		'#metadataRetrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,false,true,''),
 	),
 	
 	'Utilities' => array(

@@ -274,13 +274,9 @@ function describeSObject($objectTypes){
 	}
 }
 
-function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = null) {
+function printTree($tableId, $nodes, $forceCollapse = false) {
 	print "<a href=\"javascript:ddtreemenu.flatten('$tableId', 'expand')\">Expand All</a> | " . 
 	      "<a href=\"javascript:ddtreemenu.flatten('$tableId', 'collapse')\">Collapse All</a>\n";
-	
-	if(isset($additionalMenus)) {
-		print $additionalMenus;
-	}
 	
 	print "<ul id='$tableId' class='treeview'>";
 	
