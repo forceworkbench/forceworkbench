@@ -616,7 +616,7 @@ $GLOBALS["MENUS"] = array(
 	
 	'Migration' => array(
 		'metadataDeploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,true,true,true,''),
-//		'#metadataRetrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,false,true,''),
+		'metadataRetrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,true,true,''),
 	),
 	
 	'Utilities' => array(

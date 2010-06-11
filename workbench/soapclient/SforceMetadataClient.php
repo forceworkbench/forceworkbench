@@ -52,6 +52,19 @@ class SforceMetadataClient extends SoapBaseClient {
 		}
 	}
 
+	public function retrieve(RetrieveRequest $retrieveRequest) {
+		$request = new stdClass();
+		$request->retrieveRequest = $retrieveRequest;
+
+		$response = $this->sforce->__soapCall("retrieve",array($request));
+		
+		if(isset($response->result)) {
+			return $response->result;
+		} else {
+			return null;
+		}
+	}	
+	
 	public function checkStatus($asyncProcessId) {
 		$request = new stdClass();
 		$request->asyncProcessId = array($asyncProcessId);
@@ -78,6 +91,19 @@ class SforceMetadataClient extends SoapBaseClient {
 		}
 	}
 
+	public function checkRetrieveStatus($asyncProcessId,&$outputHeaders) {
+		$request = new stdClass();
+		$request->asyncProcessId = $asyncProcessId;
+		
+		$response = $this->sforce->__soapCall("checkRetrieveStatus",array($request),null,null,$outputHeaders);
+
+		if(isset($response->result)) {
+			return $response->result;
+		} else {
+			return null;
+		}
+	}	
+	
 }
 
 class DeployOptions {
@@ -92,4 +118,22 @@ class DeployOptions {
      public $runTests = array();
 }
 
+
+class RetrieveRequest {
+    public $singlePackage;
+ 	public $apiVersion;
+//    public $packageNames;
+//    public $specificFiles;
+    public $unpackaged;
+}
+
+class Package {
+	public $types;
+	public $version;
+}
+
+class PackageTypeMembers {
+	public $members;
+	public $name;
+}
 ?>

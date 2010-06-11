@@ -7,9 +7,12 @@ if(!isset($GLOBALS['requestTimeStart'])){
 
 session_start();
 
-//clear ResultsWithData from session unless downloading them
+//clear ResultsWithData and retrievedZips from session unless downloading them
 if(isset($_SESSION['resultsWithData']) && basename($_SERVER['PHP_SELF']) != 'downloadResultsWithData.php'){
 	unset($_SESSION['resultsWithData']);
+}
+if(isset($_SESSION['retrievedZips']) && basename($_SERVER['PHP_SELF']) != 'metadataStatus.php'){
+	unset($_SESSION['retrievedZips']);
 }
 
 //load default config values and then any custom overrides.

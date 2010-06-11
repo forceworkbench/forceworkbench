@@ -1,5 +1,29 @@
 <?php
 
+function processResults($raw) {
+	foreach(array(true, false) as $scalarProcessing){
+		foreach($raw as $rawKey => $rawValue) {
+			if(is_array($rawValue) || is_object($rawValue)) {
+				if($scalarProcessing) continue;
+				
+				if (isset($rawValue->name)) {
+					$processed[$rawValue->name] = processResults($rawValue);
+				} else if(isset($rawValue->fullName)) {
+					$processed[$rawValue->fullName] = processResults($rawValue);
+				} else if(isset($rawValue->column) && isset($rawValue->line)) {
+					$processed[$rawValue->column . ":" . $rawValue->line] = processResults($rawValue);
+					krsort($processed);
+				} else {
+					$processed[$rawKey] = processResults($rawValue);
+				}
+			} else {
+				$processed[$rawKey] = $rawValue;
+			}
+		}
+	}
+	return $processed;
+}
+
 function unCamelCase($camelCasedString) {
     return ucfirst(preg_replace( '/([a-z0-9])([A-Z])/', "$1 $2", $camelCasedString));
 }
@@ -274,10 +298,14 @@ function describeSObject($objectTypes){
 	}
 }
 
-function printTree($tableId, $nodes, $forceCollapse = false) {
+function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = null) {
 	print "<a href=\"javascript:ddtreemenu.flatten('$tableId', 'expand')\">Expand All</a> | " . 
 	      "<a href=\"javascript:ddtreemenu.flatten('$tableId', 'collapse')\">Collapse All</a>\n";
 	
+	if(isset($additionalMenus)) {
+		print $additionalMenus;
+	}
+		
 	print "<ul id='$tableId' class='treeview'>";
 	
 	printNode($nodes);
