@@ -74,7 +74,7 @@ else if(isset($_POST['stageForRetrieval'])) {
   	$_SESSION[$retrieveRequestId] = $retrieveRequest;
   	
   	require_once('header.php');
-	show_info("Successfully parsed staged retrieve request.");
+	show_info("Successfully staged retrieve request.");
 	?>
 	<p class='instructions'>Confirm the following retrieve request:</p>
 	<?php printTree("retrieveRequestTree", processResults($_SESSION[$retrieveRequestId]), true); ?>
