@@ -156,10 +156,14 @@ function toggleRequestInputs(){
 	
 	if(packageXmlFile.value.length > 0){
 		packageNames.disabled = true;
+	} else {
+		packageNames.disabled = false;
 	}
 
 	if(packageNames.value.length > 0){
 		packageXmlFile.disabled = true;
+	} else {
+		packageXmlFile.disabled = false;
 	}
 }
 </script>
