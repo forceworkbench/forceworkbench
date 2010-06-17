@@ -14,7 +14,8 @@ For support from the open source community, please visit the recources below:
 			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#Login" target="help">Login</a></li>
 			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#Data_Management" target="help">Data Management</a></li>
 			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#Query_.26_Search" target="help">Query &amp; Search</a></li>
-			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#Execute" target="help">Execute</a></li>
+			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#Metadata" target="help">Metadata</a></li>
+			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#Utilities" target="help">Utilities</a></li>
 			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#Settings" target="help">Settings</a></li>
 		</ul>
 	</li>
