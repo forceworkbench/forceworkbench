@@ -56,9 +56,10 @@ $typeStringChanged = $currentTypeString != null && $previousTypeString != $curre
 ?>
 <p class='instructions'>Choose a metadata type describe and list its components:</p>
 <form id="metadataTypeSelectionForm" name="metadataTypeSelectionForm" method="GET" action="<?php print $_SERVER['PHP_SELF']; ?>">
-<select id="type" name="type" onChange="document.metadataTypeSelectionForm.submit();">
+<select id="type" name="type" onChange="document.getElementById('loadingMessage').style.visibility='visible'; document.metadataTypeSelectionForm.submit();">
 <?php printSelectOptions($metadataTypesSelectOptions, $typeString); ?>
 </select>
+<span id='loadingMessage' style='visibility:hidden; color:#888;'>&nbsp;&nbsp;<img src='images/wait16trans.gif' align='absmiddle'/> Loading...</span>
 </form>
 <p/>
 

@@ -19,8 +19,9 @@ require_once ('footer.php');
 function show_describeSObject_form(){
 	print "<form name='describeForm' method='POST' action='$_SERVER[PHP_SELF]'>" .
 		  "<p class='instructions'>Choose an object to describe:</p>\n";
-	printObjectSelection($_SESSION['default_object'], 'default_object', 30, "onChange='document.describeForm.submit();'");
-	print  "</form><br/>";
+	printObjectSelection($_SESSION['default_object'], 'default_object', 30, "onChange=\"document.getElementById('loadingMessage').style.visibility='visible'; document.describeForm.submit();\"");
+	print "<span id='loadingMessage' style='visibility:hidden; color:#888;'>&nbsp;&nbsp;<img src='images/wait16trans.gif' align='absmiddle'/> Loading...</span>\n";
+	print  "</form><br/>\n";
 }
 
 
@@ -43,8 +44,8 @@ function show_describeSObject_result(){
 		   	      "<strong>Legend:</strong>" . 
 			      "<ul style='margin:0; padding-left: 2em'>";
 			if($_SESSION['config']['highightBooleanValues']){
-				print "<li class=\"trueColor\">True</span>\n";
-				print "<li class=\"falseColor\">False</span>\n";
+				print "<li class=\"trueColor\">True</li>\n";
+				print "<li class=\"falseColor\">False</li>\n";
 			} 
 			if($_SESSION['config']['highlightCustomFields']){
 				print "<li class=\"highlightCustomField\">Custom Field</li>\n";
