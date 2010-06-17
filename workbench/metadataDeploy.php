@@ -134,7 +134,7 @@ function validateZipFile($file){
 		return("No file uploaded for deployment.");
 	}
 	
-	if(!stristr($file['type'],'zip') || !stristr($file['name'],'.zip')) {
+	if((!stristr($file['type'],'zip') && !stristr($file['type'],'octet-stream')) || !stristr($file['name'],'.zip')) {
 		return("The file uploaded is not a valid ZIP file. Please try again.");
 	}
 	
