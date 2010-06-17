@@ -105,7 +105,7 @@ function deserializeDeployOptions($request) {
 		if(is_bool($optionValue)) {
 			$deployOptions->$optionName = isset($request[$optionName]);
 		} else if(is_array($optionValue)) {
-			$deployOptions->$optionName = explodeCommaSeparated( htmlentities($request[$optionName]));
+			$deployOptions->$optionName = (isset($request[$optionName]) && $request[$optionName] != "") ? explodeCommaSeparated(htmlentities($request[$optionName])) : null;
 		}
 	}	
 
