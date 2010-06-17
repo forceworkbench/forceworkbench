@@ -32,7 +32,7 @@ try {
 }
 
 print "<p class='instructions'>Records have been uploaded to Salesforce via the Bulk API and are processed asynchronously as resources are available. " . 
-	  "Bookmark and periodically view this page to view the latest status. Results can be downloaded when batches are complete.</p><p/>";
+	  "Refresh this page periodically to view the latest status. Results can be downloaded when batches are complete.</p><p/>";
 
 print "<table width='100%'>";
 print "<tr>" . 
