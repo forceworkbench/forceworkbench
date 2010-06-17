@@ -63,7 +63,7 @@ else if(isset($_POST['stageForDeployment'])) {
 	<form id='deployForm' name='deployForm' method='POST' action='<?php print $_SERVER['PHP_SELF']; ?>'>
 		<input type='hidden' name='deployFileTmpName' value='<?php print $deployFileTmpName; ?>' />
 		<p/>
-		<?php printDeployOptions($_SESSION[$deployFileTmpName . "_OPTIONS"], false); ?>
+		<?php printTree("deployOptionsTree", $_SESSION[$deployFileTmpName . "_OPTIONS"], true); ?>
 		<p/>
 		<?php
 		if(!isset($_POST['checkOnly'])) {
