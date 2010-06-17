@@ -93,13 +93,13 @@ else {
 		<input type='hidden' name='MAX_FILE_SIZE' value='<?php print $_SESSION['config']['maxFileSize']; ?>' />
 		<table>
 		<tr>
-			<td class='dataLabel'>Unpackaged Manifest:</td>
+			<td style='padding-right: 20px;'><strong>Unpackaged Manifest:</strong></td>
 			<td><input id='packageXmlFile' type='file' name='packageXmlFile' size='44' onchange="toggleRequestInputs();" /></td>
 			<td><img onmouseover="Tip('XML file defining types (name and members) and version to be retreived. See Salesforce.com Metadata API Developers guide for an example of a package.xml file.')" align='absmiddle' src='images/help16.png'/></td>
 		</tr>
-		<tr><td style='text-align:center;'><em>-OR-</em></td><td colspan='2'></td></tr>
+		<tr><td><em>- OR -</em></td><td colspan='2'></td></tr>
 		<tr>
-			<td class='dataLabel'>Package Names:</td>
+			<td><strong>Package Names:</strong></td>
 			<td><input id='packageNames' type='text' name='packageNames' size='44' onkeypress='toggleRequestInputs();'/></td>
 			<td><img onmouseover="Tip('Comma separated list of package names to be retrieved.')" align='absmiddle' src='images/help16.png'/></td>
 		</tr>
