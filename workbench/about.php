@@ -9,8 +9,8 @@ Workbench is a powerful, web-based  suite of tools designed for adminstrators an
 Workbench includes robust support for the Force.com Partner, Bulk, Metadata, and Apex APIs that allows users to describe, query, manipulate, and migrate both data and metadata 
   in Salesforce.com organizations directly in their web browser with a simple and intuitive user interface. 
 Workbench also provides many advanced features for testing and troubleshooting the Force.com APIs, such as customizable SOAP headers, 
-  debug logs for API traffic, and backward compatibility testing with previous API versions.  
-Not only can Workbench be used as a standalone application in your browser, but can also be integrated within Salesforce as a single-sign-on web tab for more convenient access.
+  debug logs for API traffic, backward compatibility testing with previous API versions, and single sign-on integration within 
+  the Salesforce appication. 
 </p>
 
 <p>
