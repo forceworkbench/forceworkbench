@@ -5,15 +5,12 @@ require_once ('header.php');
 ?>
 
 <p>
-Workbench is a community-contributed, web-based application that gives administrators 
-and developers on-demand access to useful tools to manage salesforce.com organizations. 
-Starting with a combination of the features of the Apex Data Loader, Force.com Explorer, 
-and System Log, Workbench can insert, upsert, update, query, search, delete, undelete, 
-and purge data as well as describe any object or execute Apex scripts directly in your web 
-browser. These functions build on the strengths of these existing products to create an even 
-more powerful and easier-to-use on-demand application. Not only can Workbench be used as 
-a standalone application in your browser, but it can also be integrated within Salesforce as 
-a single-sign-on web tab for more convenient access.
+Workbench is a powerful, web-based  suite of tools designed for adminstrators and developers to interact with Salesforce.com organizations via the Force.com APIs. 
+Workbench includes robust support for the Force.com Partner, Bulk, Metadata, and Apex APIs that allows users to describe, query, manipulate, and migrate both data and metadata 
+  in Salesforce.com organizations directly in their web browser with a simple and intuitive user interface. 
+Workbench also provides many advanced features for testing and troubleshooting the Force.com APIs, such as customizable SOAP headers, 
+  debug logs for API traffic, and backward compatibility testing with previous API versions.  
+Not only can Workbench be used as a standalone application in your browser, but can also be integrated within Salesforce as a single-sign-on web tab for more convenient access.
 </p>
 
 <p>
@@ -22,17 +19,11 @@ Workbench <?php echo $GLOBALS['WORKBENCH_VERSION']; ?><br/>
 </strong>
 Distributed under the Open Source BSD License.<br/>
 Developed by Ryan Brainard<br/>
-
 </p>
-
 <p>
-<img src='images/open_source_logo.png' width='119' height='96' alt='Open Source Logo' align='center' />&nbsp;&nbsp;
-<img src='images/php-med-trans-light.gif' width='95' height='51' alt='PHP Logo' align='center' />
+Workbench is NOT a product of or supported by salesforce.com, inc.
+For support from the open source community, please visit the recources below:
 </p>
-
-<p>
-<strong>Workbench is NOT a product of or supported by salesforce.com, inc.
-For support from the Open Source community, please visit the recources below:</strong>
 <ul>
   	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench" target="_blank">Main Page</a></li>
 	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#FAQ" target="_blank">FAQ</a></li>
@@ -42,23 +33,23 @@ For support from the Open Source community, please visit the recources below:</s
 	<li><a href="http://code.google.com/p/forceworkbench/source/browse" target="_blank">Source Code</a></li>
 	<li><a href="http://code.google.com/p/forceworkbench/downloads/list" target="_blank">Download</a></li>
 </ul>
-</p>
 
-<strong>
+
 <p>
+<strong>
 THIS APPLICATION IS STILL IN ACTIVE DEVELOPMENT AND HAS NOT UNDERGONE COMPLETE QUALITY ASSURANCE TESTING.
 DO NOT USE WITH PRODUCTION DATA.
 THIS APPLICATION IS PROVIDED 'AS IS' AND THE USER ASSUMES ALL RISKS ASSOCIATED WITH ITS USE.
 
 MAY CONTAIN PEANUTS, SOY, OR WHEAT PRODUCTS.
-</p>
 </strong>
+</p>
 
 <hr/>
 
-<p>This application is based on the salesforce.com PHP Toolkit and calls against the
-Force.com Web Services API, but is not itself a product of salesforce.com, inc. and not supported by
-salesforce.com, inc or its contributors. Below is the copyright and license for the PHP Toolkit:</p>
+<p>Partner API support in Workbench is based on the Salesforce.com PHP Toolkit, but Workbench itself 
+is not a product of salesforce.com, inc. and is not supported by salesforce.com, inc or its contributors. 
+Below is the copyright and license for the PHP Toolkit:</p>
 
 <p>
   Copyright (c) 2008, salesforce.com, inc.<br/>
@@ -67,6 +58,7 @@ salesforce.com, inc or its contributors. Below is the copyright and license for 
 <p>
   Redistribution and use in source and binary forms, with or without modification, are permitted provided
   that the following conditions are met:
+</p>
 <ul>
      <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the
      following disclaimer.</li>
@@ -77,7 +69,6 @@ salesforce.com, inc or its contributors. Below is the copyright and license for 
      <li>Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
      promote products derived from this software without specific prior written permission.</li>
 </ul>
-</p>
 <p>
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
   WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -116,7 +107,6 @@ Drop-down menus built with
 <a href="http://www.stunicholls.com/menu/pro_drop_2.html">Professional Dropdown #2</a>
 from Stu Nicholls
 </p>
-</div>
 
 <?php
 include_once ('footer.php');

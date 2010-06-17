@@ -5,10 +5,10 @@ require_once ('header.php');
 ?>
 <p>
 Workbench is not a product of or supported by salesforce.com, inc.
-For support from the Open Source community, please visit the recources below:
+For support from the open source community, please visit the recources below:
 
 <ul>
-	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#FAQ" target="help">FAQs</a></li>
+	<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#FAQ" target="help">FAQs</a>
 		<ul>
 			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#General" target="help">General</a></li>
 			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#Login" target="help">Login</a></li>
@@ -17,12 +17,10 @@ For support from the Open Source community, please visit the recources below:
 			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#Execute" target="help">Execute</a></li>
 			<li><a href="http://wiki.apexdevnet.com/index.php/Workbench#Settings" target="help">Settings</a></li>
 		</ul>
+	</li>
 	<li><a href="http://groups.google.com/group/forceworkbench" target="help">Feedback &amp; Discussion</a></li>
 	<li><a href="http://code.google.com/p/forceworkbench/issues/list"  target="help">Report an Issue</a></li>
 </ul>
-
-</div>
-
 <?php
 include_once ('footer.php');
 ?>
