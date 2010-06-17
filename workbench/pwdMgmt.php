@@ -36,17 +36,6 @@ function changePassword($passwordChangeType){
 
 function displayForm($infos=null, $errors=null){
 ?>
-
-<style>
-<!--
-
-	td label{
-		font-weight: bold;
-	}
-	
--->
-</style>
-
 <script type="text/javascript">
 <!--
  
@@ -125,7 +114,7 @@ function displayForm($infos=null, $errors=null){
 	<form name='passwordChange' method='post' action='<?php $_SERVER['PHP_SELF'] ?>'>
 	<table border='0'>
 		
-		<tr><td colspan='2' align='right'>
+		<tr><td align='right' colspan='2'>
 			<p>
 			<label><input type='radio' name='passwordChangeType' value='set' onclick="togglePasswordFields('set');" checked='checked' /> Set</label>
 			&nbsp;
@@ -134,16 +123,16 @@ function displayForm($infos=null, $errors=null){
 		</td></tr>
 		
 		<tr>
-			<td align='right'><label for='userId'>User Id: &nbsp;</label></td>
+			<td><label for='userId'>User Id: &nbsp;</label></td>
 			<td><input type='text' id='userId' name='userId' size='45'/></td>
 		</tr>
 		
 		<tr>	
-			<td align='right'><label for='passwordOne'>Password: &nbsp;</label></td>
+			<td><label for='passwordOne'>Password: &nbsp;</label></td>
 			<td><input type='password' id='passwordOne' name='passwordOne' size='45' onkeyup="doPasswordsMatch(false);"/></td>
 		</tr>
 		<tr>
-			<td align='right'><label for='passwordConfirm'>Confirm Password: &nbsp;</label></td>
+			<td><label for='passwordConfirm'>Confirm Password: &nbsp;</label></td>
 			<td><input type='password' id='passwordConfirm' name='passwordConfirm' size='45' onkeyup="doPasswordsMatch(false);"/></td>
 		</tr>
 		

@@ -1,5 +1,14 @@
 <?php
 
+function explodeCommaSeparated($css) {
+	$exploded = explode(",", $css);
+	foreach($exploded as $explodedKey => $explodedValue) {
+		$exploded[$explodedKey] = trim($explodedValue);
+	}
+	return $exploded;	
+}
+
+
 function handleAllExceptions($e) {
 	show_error("UNKNOWN ERROR: " . $e->getMessage(), true, true);
 	exit;

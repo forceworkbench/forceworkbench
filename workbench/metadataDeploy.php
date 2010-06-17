@@ -80,14 +80,14 @@ else if(isset($_POST['stageForDeployment'])) {
 else {
 	require_once('header.php');
 	?>
-	<p class='instructions'>Choose a file to deploy and select options:</p>
+	<p class='instructions'>Choose a file to deploy and any applicable options:</p>
 	<form id='deployForm' name='deployForm' method='POST' action='<?php print $_SERVER['PHP_SELF']; ?>' enctype='multipart/form-data'>
 		<input type='file' name='deployFile' size='44' />
 		<input type='hidden' name='MAX_FILE_SIZE' value='<?php print $_SESSION['config']['maxFileSize']; ?>' />
 		<p/>
 		<?php printDeployOptions(new DeployOptions(), true); ?>
 		<p/>
-		<input type='submit' name='stageForDeployment' value='Upload' /> 
+		<input type='submit' name='stageForDeployment' value='Next' /> 
 	</form>
 	<?php
 }
@@ -105,11 +105,7 @@ function deserializeDeployOptions($request) {
 		if(is_bool($optionValue)) {
 			$deployOptions->$optionName = isset($request[$optionName]);
 		} else if(is_array($optionValue)) {
-			$explodedSubValues = (isset($request[$optionName]) && $request[$optionName] != "") ? explode(",", htmlentities($request[$optionName])) : array();
-			foreach($explodedSubValues as $k => $subvalue) {
-				$explodedSubValues[$k] = trim($subvalue);
-			}
-			$deployOptions->$optionName = $explodedSubValues;
+			$deployOptions->$optionName = explodeCommaSeparated( htmlentities($request[$optionName]));
 		}
 	}	
 

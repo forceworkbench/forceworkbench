@@ -33,14 +33,14 @@ if(isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
 } 
 
 else if(isset($_POST['stageForRetrieval'])) {
-	
-	if(isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] != "" && isset($_POST['packageNames']) && $_POST['packageNames'] != "") {
-		show_error("Only specify an unpackaged manifest OR a package name, not both.", true, true);
+	if(isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] == "" && isset($_POST['packageNames']) && $_POST['packageNames'] == "") {
+		show_error("Must specify at least an unpackaged manifest file or a package name.", true, true);
 		exit;		
 	}
 	
 	$retrieveRequest = new RetrieveRequest();
-	$retrieveRequest->apiVersion = getApiVersion(); 
+	$retrieveRequest->apiVersion = getApiVersion();
+	$retrieveRequest->singlePackage = isset($_POST['singlePackage']);
 	
 	if(isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] != "") {	
 		$validationErrors = validateUploadedFile($_FILES["packageXmlFile"]);
@@ -55,19 +55,10 @@ else if(isset($_POST['stageForRetrieval'])) {
 		}
 	
 		$retrieveRequest->unpackaged = parseUnpackagedManifest($_FILES["packageXmlFile"]["tmp_name"]);
-		$retrieveRequest->singlePackage = true;
-		
-	} else if(isset($_POST['packageNames']) && $_POST['packageNames'] != "") {
-		$explodedPackageNames = explode(",", htmlentities($_POST['packageNames']));
-		foreach($explodedPackageNames as $packageKey => $packageValue) {
-			$explodedPackageNames[$packageKey] = trim($packageValue);
-		}
-		$retrieveRequest->packageNames = $explodedPackageNames;
-		
-		$retrieveRequest->singlePackage = count($retrieveRequest->packageNames) <= 1;
-	} else {
-		show_error("Unknown error building retrieve request.", true, true);
-		exit;		
+	} 
+	
+	if(isset($_POST['packageNames']) && $_POST['packageNames'] != "") {
+		$retrieveRequest->packageNames = explodeCommaSeparated(htmlentities($_POST['packageNames']));
 	}
   	
   	$retrieveRequestId = "RR-" . time();
@@ -88,25 +79,29 @@ else if(isset($_POST['stageForRetrieval'])) {
 else {
 	require_once('header.php');
 	?>
-	<p class='instructions'>Choose either an unpackaged manifest file (i.e. 'package.xml') or comma-separated list of package names to define a retrieve request:</p>
+	<p class='instructions'>Choose an unpackaged manifest file (i.e. 'package.xml'), provide a comma-separated list of package names, or both to define a retrieve request along with any applicable options:</p>
 	<form id='retrieveForm' name='retrieveForm' method='POST' action='<?php print $_SERVER['PHP_SELF']; ?>' enctype='multipart/form-data'>
 		<input type='hidden' name='MAX_FILE_SIZE' value='<?php print $_SESSION['config']['maxFileSize']; ?>' />
 		<table>
 		<tr>
-			<td style='padding-right: 20px;'><strong>Unpackaged Manifest:</strong></td>
-			<td><input id='packageXmlFile' type='file' name='packageXmlFile' size='44' onchange="toggleRequestInputs();" /></td>
+			<td style='padding-right: 20px;'>Unpackaged Manifest:</td>
+			<td><input id='packageXmlFile' type='file' name='packageXmlFile' size='44'/></td>
 			<td><img onmouseover="Tip('XML file defining types (name and members) and version to be retreived. See Salesforce.com Metadata API Developers guide for an example of a package.xml file.')" align='absmiddle' src='images/help16.png'/></td>
 		</tr>
-		<tr><td><em>- OR -</em></td><td colspan='2'></td></tr>
 		<tr>
-			<td><strong>Package Names:</strong></td>
-			<td><input id='packageNames' type='text' name='packageNames' size='44' onkeypress='toggleRequestInputs();'/></td>
+			<td>Package Names:</td>
+			<td><input id='packageNames' type='text' name='packageNames' size='44'/></td>
 			<td><img onmouseover="Tip('Comma separated list of package names to be retrieved.')" align='absmiddle' src='images/help16.png'/></td>
 		</tr>
-		<tr><td colspan='2'></td></tr>
+		<tr>
+			<td>Single Package:</td>
+			<td><input id='singlePackage' type='checkbox' name='singlePackage'/></td>
+			<td><img onmouseover="Tip('Specifies whether only a single package is being retrieved. If false, then more than one package is being retrieved.')" align='absmiddle' src='images/help16.png'/></td>
+		</tr>		
+		<tr><td colspan='2'></td></tr>	
 		<tr>
 			<td></td>
-			<td colspan='2'><input type='submit' name='stageForRetrieval' value='Upload' /></td>
+			<td colspan='2'><input type='submit' name='stageForRetrieval' value='Next' /></td>
 		</tr>
 		</table>
 	</form>
@@ -149,21 +144,3 @@ function parseUnpackagedManifest($xmlFile) {
   	return $unpackaged; 	
 }
 ?>
-<script>
-function toggleRequestInputs(){
-	var packageXmlFile = document.getElementById('packageXmlFile');
-	var packageNames = document.getElementById('packageNames');
-	
-	if(packageXmlFile.value.length > 0){
-		packageNames.disabled = true;
-	} else {
-		packageNames.disabled = false;
-	}
-
-	if(packageNames.value.length > 0){
-		packageXmlFile.disabled = true;
-	} else {
-		packageXmlFile.disabled = false;
-	}
-}
-</script>

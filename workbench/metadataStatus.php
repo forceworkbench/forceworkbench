@@ -36,7 +36,7 @@ if(isset($_GET['downloadZip'])) {
 
 require_once('header.php');
 print "<p class='instructions'>A Metadata API operation has been performed, which requires asynchronous processing as resources are available. " . 
-	  "Bookmark and periodically view this page to view the latest status. Results will be available once processing is complete.</p><p/>";
+	  "Refresh this page periodically to view the latest status. Results will be available once processing is complete.</p><p/>";
 
 require_once ('soapclient/SforceMetadataClient.php');
 global $metadataConnection;
