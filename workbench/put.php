@@ -488,7 +488,8 @@ function field_mapping_confirm($action,$field_map,$csv_array,$ext_id){
 	}
 
 	//Async Options
-	if(apiVersionIsAtLeast(17.0) && ($action == 'Confirm Insert') || ($action == 'Confirm Update') || ($action == 'Confirm Upsert') || ($action == 'Confirm Delete' && apiVersionIsAtLeast(18.0))) {
+	if((apiVersionIsAtLeast(17.0) && in_array($action, array('Confirm Insert', 'Confirm Update', 'Confirm Upsert'))) 
+	   || (apiVersionIsAtLeast(18.0) && $action == 'Confirm Delete')) {
 		print "<p><label><input  id='doAsync' name='doAsync' type='checkbox' onChange=\"if(this.checked) document.getElementById('asyncDeleteObjectSelection').style.display='inline'; else document.getElementById('asyncDeleteObjectSelection').style.display='none'; \"/> Process records asynchronously via Bulk API</label>" .
 		  "&nbsp;<img onmouseover=\"Tip('Processing records asynchronously is recommended for large data loads. The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" align='absmiddle' src='images/help16.png'/>" . 
 		  "</p>";
