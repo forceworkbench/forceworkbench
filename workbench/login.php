@@ -361,6 +361,9 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 
 
 	try{
+		if (getConfig('mockClients')) {
+			require_once ('soapclient/SforceMockPartnerClient.php');	
+		}
 		require_once ('soapclient/SforcePartnerClient.php');
 		require_once ('soapclient/SforceHeaderOptions.php');
 		
@@ -385,7 +388,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 			display_login("Could not find WSDL for this API version. Please try logging in again.");
 		}
 		
-		$partnerConnection = new SforcePartnerClient();
+		$partnerConnection = (getConfig('mockClients') ? new SforceMockPartnerClient() : new SforcePartnerClient());
 	    $partnerConnection->createConnection($wsdl);
 	    
 	    //set call options header for login before a session exists

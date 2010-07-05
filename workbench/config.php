@@ -553,6 +553,19 @@ $config["header_proxyOptions"] = array(
 		"dataType" => "password"
 	);
 
+$config["header_internal"] = array(
+	"label" => "Internal Only",
+	"display" => false,
+	"isHeader" => true
+);
+
+	$config["mockClients"] = array(
+		"label" => "Connect with Mocked API Client",
+		"description" => "Only used during internal development. Do not expose in production environments.",
+		"default" => false,
+		"overrideable" => false,
+		"dataType" => "boolean"
+	);
 	
 ///////////////////////////////////////////////////////////////////////////////////////////
 //  

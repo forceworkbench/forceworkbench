@@ -56,6 +56,9 @@ if (!isLoggedIn() && $myPage->requiresSfdcSession) {
 if(isLoggedIn()){
 	try{
 		//setup SOAP client
+		if (getConfig('mockClients')) {
+			require_once ('soapclient/SforceMockPartnerClient.php');	
+		}
 		require_once ('soapclient/SforcePartnerClient.php');
 		require_once ('soapclient/SforceHeaderOptions.php');
 		require_once ('soapclient/SforceMetadataClient.php');
@@ -63,7 +66,7 @@ if(isLoggedIn()){
 		$location = $_SESSION['location'];
 		$sessionId = $_SESSION['sessionId'];
 		$wsdl = $_SESSION['wsdl'];
-		$partnerConnection = new SforcePartnerClient();
+		$partnerConnection = (getConfig('mockClients') ? new SforceMockPartnerClient() : new SforcePartnerClient());
 		$sforceSoapClient = $partnerConnection->createConnection($wsdl);
 		$partnerConnection->setEndpoint($location);
 		$partnerConnection->setSessionHeader($sessionId);

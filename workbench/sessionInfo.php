@@ -57,38 +57,42 @@ if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
 $sessionInfo = array();
 $sessionInfo['Connection'] = array(
 	'API Version' => getApiVersion(),
-	'Client Id' => isset($_SESSION['tempClientId']) ? $_SESSION['tempClientId'] : $_SESSION['config']['callOptions_client'], 
+	'Client Id' => isset($_SESSION['tempClientId']) ? $_SESSION['tempClientId'] : getConfig('callOptions_client'), 
 	'Endpoint' => $partnerConnection->getLocation(),
 	'Session Id' => $partnerConnection->getSessionId(), 
 );
 
-try {
-	$freshGetUserInfoResult = $partnerConnection->getUserInfo();
-} catch (Exception $e) {
-	show_error($e->getMessage(), false, true);
-}
+$errors = array();
 
-foreach($freshGetUserInfoResult as $uiKey => $uiValue) {
-	if(stripos($uiKey,'org') !== 0) {
-		$sessionInfo['User'][$uiKey] = $uiValue;
-	} else {
-		$sessionInfo['Organization'][$uiKey] = $uiValue;		
+try {
+	foreach($partnerConnection->getUserInfo() as $uiKey => $uiValue) {
+		if(stripos($uiKey,'org') !== 0) {
+			$sessionInfo['User'][$uiKey] = $uiValue;
+		} else {
+			$sessionInfo['Organization'][$uiKey] = $uiValue;		
+		}
 	}
+} catch (Exception $e) {
+	$errors[] = "Partner API Error: " . $e->getMessage();
 }
 
 if(apiVersionIsAtLeast(10.0)) {
 	global $metadataConnection;
 	try {
-		$describeMetadataResult = $metadataConnection->describeMetadata(getApiVersion());
-	} catch (Exception $e) {
-		show_error($e->getMessage(), false, true);
-	}
-	
-	foreach($describeMetadataResult as $resultsKey => $resultsValue) {
-		if($resultsKey != 'metadataObjects' && !is_array($resultsValue)){
-			$sessionInfo['Metadata'][$resultsKey] = $resultsValue;
+		foreach($metadataConnection->describeMetadata(getApiVersion()) as $resultsKey => $resultsValue) {
+			if($resultsKey != 'metadataObjects' && !is_array($resultsValue)){
+				$sessionInfo['Metadata'][$resultsKey] = $resultsValue;
+			}
 		}
+	} catch (Exception $e) {
+		$sessionInfo['Metadata']['Error'] = $e->getMessage();
 	}
+}
+
+if(count($errors) > 0) {
+	print "<p>&nbsp;</p>";
+	show_error($errors);
+	print "</p>";
 }
 
 printTree("sessionInfoTree", $sessionInfo);

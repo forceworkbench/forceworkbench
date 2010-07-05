@@ -1,5 +1,18 @@
 <?php
 
+function getConfig($configKey) {
+	if (!isset($_SESSION["config"][$configKey])) {
+		global $config;
+		if($config[$configKey]->dataType == "boolean") {
+			return false;	
+		} else {
+			return null;
+		}
+	}
+	return $_SESSION["config"][$configKey];
+}
+
+
 function explodeCommaSeparated($css) {
 	$exploded = explode(",", $css);
 	foreach($exploded as $explodedKey => $explodedValue) {
