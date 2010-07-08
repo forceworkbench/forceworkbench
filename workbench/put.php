@@ -370,7 +370,8 @@ function printRefField($field, $describeRefObjResult){
 			if(count($extFields) > 0){
 				foreach($extFields as $extFieldKey => $extFieldVal){
 					if ($extFieldVal->name != 'Id'){
-						print  " <option value='$field->name.$field->relationshipName.$objectType.$extFieldVal->name'>$objectType.$extFieldVal->name</option>\n";
+						$isPolymorphic = is_array($field->referenceTo) ? "1" : "0";
+						print  " <option value='$field->name.$field->relationshipName.$isPolymorphic.$objectType.$extFieldVal->name'>$objectType.$extFieldVal->name</option>\n";
 					}
 				}
 			}
@@ -398,7 +399,8 @@ function printRefField($field, $describeRefObjResult){
 			print  " <option value='Id' selected='true'></option>\n";
 			foreach($extFields as $extFieldKey => $extFieldVal){
 				if ($extFieldVal->name != 'Id'){
-					print  " <option value='$field->name.$field->relationshipName.$describeRefObjResult->name.$extFieldVal->name'>$describeRefObjResult->name.$extFieldVal->name</option>\n";
+					$isPolymorphic = is_array($field->referenceTo) ? "1" : "0";
+					print  " <option value='$field->name.$field->relationshipName.$isPolymorphic.$describeRefObjResult->name.$extFieldVal->name'>$describeRefObjResult->name.$extFieldVal->name</option>\n";
 				}
 			}
 			print "</select></td>\n";
@@ -420,10 +422,11 @@ function field_map_to_array($field_map){
 
 	foreach($field_map as $fieldMapKey=>$fieldMapValue){
 		if(preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)){
-			if(preg_match('/^(\w+).(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches)){
+			if(preg_match('/^(\w+).(\w+).(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches)){
 				$field_map_array[$valueMatches[1]]["relationshipName"] = $valueMatches[2];
-				$field_map_array[$valueMatches[1]]["relatedObjectName"] = $valueMatches[3];
-				$field_map_array[$valueMatches[1]]["relatedFieldName"] = $valueMatches[4];
+				$field_map_array[$valueMatches[1]]["isPolymorphic"] = $valueMatches[3];
+				$field_map_array[$valueMatches[1]]["relatedObjectName"] = $valueMatches[4];
+				$field_map_array[$valueMatches[1]]["relatedFieldName"] = $valueMatches[5];
 			}
 		} else if ($fieldMapValue){
 			$field_map_array[$fieldMapKey]["csvField"] = $fieldMapValue;
@@ -725,7 +728,9 @@ function putAsync($api_call,$ext_id,$field_map,$csv_array){
 			foreach($field_map as $salesforce_field=>$fieldMapArray){
 				if(isset($fieldMapArray['csvField'])){
 					if(isset($fieldMapArray['relationshipName']) && isset($fieldMapArray['relatedFieldName'])){
-						$asyncCsvHeaderRow[] = $fieldMapArray['relationshipName'] . "." . $fieldMapArray['relatedFieldName'];
+						$asyncCsvHeaderRow[] = ($fieldMapArray['isPolymorphic'] ? ($fieldMapArray['relatedObjectName'] . ":") : "") .
+						                        $fieldMapArray['relationshipName'] . "." .
+						                        $fieldMapArray['relatedFieldName'];
 					} elseif(isset($salesforce_field)) {
 						$asyncCsvHeaderRow[] = $salesforce_field;
 					}
