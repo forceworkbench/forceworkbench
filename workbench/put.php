@@ -221,6 +221,10 @@ function field_mapping_set($action,$csv_array){
 	}
 	}
 
+	print "<div id='field_mapping_setter_block_loading' style='display:block; color:#888;'><img src='images/wait16trans.gif' align='absmiddle'/> Loading...</div>";
+	
+	print "<div id='field_mapping_setter_block' style='display:none;'>";
+	
 	print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
 
 	if ($action == 'upsert'){
@@ -284,7 +288,9 @@ function field_mapping_set($action,$csv_array){
 	print "</table>\n";
 	print "<p><input type='submit' name='action' value='Map Fields' />\n";
 	print "<input type='button' value='Preview CSV' onClick='window.open(" . '"csv_preview.php"' . ")'></p>\n";
-	print "</form>\n";
+	print "</form>\n</div>\n";
+	print "<script>document.getElementById('field_mapping_setter_block_loading').style.display = 'none';</script>";
+	print "<script>document.getElementById('field_mapping_setter_block').style.display = 'block';</script>";
 }
 
 function printPutFieldForMappingId($csv_array, $showRefCol){
