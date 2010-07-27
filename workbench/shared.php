@@ -35,13 +35,13 @@ function processResults($raw) {
 			if(is_array($rawValue) || is_object($rawValue)) {
 				if($scalarProcessing) continue;
 				
-				if (isset($rawValue->name)) {
+				if (isset($rawValue->name) && $rawValue->name != "") {
 					$processed[$rawValue->name] = processResults($rawValue);
-				} else if(isset($rawValue->fullName)) {
+				} else if (isset($rawValue->fullName) && $rawValue->fullName != "") {
 					$processed[$rawValue->fullName] = processResults($rawValue);
-				} else if(isset($rawValue->fileName)) {
+				} else if (isset($rawValue->fileName) && $rawValue->fileName != "") {
 					$processed[$rawValue->fileName] = processResults($rawValue);
-				} else if(isset($rawValue->column) && isset($rawValue->line)) {
+				} else if (isset($rawValue->column) && isset($rawValue->line)) {
 					$processed[$rawValue->column . ":" . $rawValue->line] = processResults($rawValue);
 					krsort($processed);
 				} else {
