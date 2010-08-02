@@ -1,4 +1,19 @@
 <?php
+function getConfig($configKey) {
+	if (!isset($_SESSION["config"][$configKey])) {
+		global $config;
+		if($config[$configKey]->dataType == "boolean") {
+			return false;	
+		} else {
+			return null;
+		}
+	}
+	return $_SESSION["config"][$configKey];
+}
+
+function isReadOnlyMode() {
+	return getConfig("readOnlyMode");
+}
 
 function printAsyncRefreshBlock() {
 	if (getConfig("asyncAutoRefresh")) {
@@ -14,18 +29,6 @@ function printAsyncRefreshBlock() {
 	} else {
 		print "<input type='button' onclick='window.location.href=window.location.href;' value='Refresh' style='float:right;'/>";
 	}	
-}
-
-function getConfig($configKey) {
-	if (!isset($_SESSION["config"][$configKey])) {
-		global $config;
-		if($config[$configKey]->dataType == "boolean") {
-			return false;	
-		} else {
-			return null;
-		}
-	}
-	return $_SESSION["config"][$configKey];
 }
 
 

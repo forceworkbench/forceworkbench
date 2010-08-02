@@ -67,10 +67,13 @@ if(!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basenam
 <ul id="nav">
 	<?php
 	foreach($GLOBALS["MENUS"] as $menu => $pages) {
+		if(isReadOnlyMode() && $menu == "Data") { //special-case for Data menu, since all read-only
+			continue;
+		}
 		print "<li class='top'><a class='top_link'><span class='down'>" . strtolower($menu) ."</span></a>\n" . 
 		      "<ul class='sub'>";
 		foreach($pages as $href => $page) {
-			if(!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || (isLoggedIn() && $page->title == 'Login')){
+			if(!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || (isLoggedIn() && $page->title == 'Login') || (!$page->isReadOnly && isReadOnlyMode())){
 				continue;
 			}
 			print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\" target=\"" . $page->window . "\">$page->title</a></li>\n";
