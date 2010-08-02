@@ -44,6 +44,14 @@ $config["header_General"] = array(
 		"overrideable" => true,
 		"dataType" => "boolean"
 	);
+
+	$config["asyncAutoRefresh"] = array(
+		"label" => "Auto Update Asynchronous Operations",
+		"description" => "Automatically updates status pages for asynchronous operations.",
+		"default" => true,
+		"overrideable" => true,
+		"dataType" => "boolean"
+	);
 	
 	$config["invalidateSessionOnLogout"] = array(
 		"label" => "Invalidate Session on Logout",

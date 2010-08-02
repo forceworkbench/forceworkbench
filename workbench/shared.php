@@ -1,5 +1,21 @@
 <?php
 
+function printAsyncRefreshBlock() {
+	if (getConfig("asyncAutoRefresh")) {
+		$lastRefreshNum = (isset($_GET['rn']) && is_numeric($_GET['rn']) && $_GET['rn'] > 0) ? $_GET['rn'] : 1;
+		$nextRefreshNum = $lastRefreshNum + 1;
+		$newUrl = isset($_GET['rn']) ? str_replace("rn=$lastRefreshNum", "rn=$nextRefreshNum", $_SERVER["REQUEST_URI"]) : ($_SERVER["REQUEST_URI"] . "&rn=1");
+		$refreshInterval = ceil(pow($nextRefreshNum, 0.75));
+		print "<div style='float:right; color: #888;'>Auto Refreshing " .
+			 	"<span id='refreshSpinner' style='display:none;'>&nbsp;<img src='images/wait16trans.gif' align='absmiddle'/></span>" . 
+			 	"<span id='refreshInTimer' style='display:inline;'>in $refreshInterval seconds" .
+			 	"</span></div>";
+		print "<script>setTimeout('document.getElementById(\'refreshInTimer\').style.display=\'none\'; document.getElementById(\'refreshSpinner\').style.display=\'inline\'; window.location.href=\'$newUrl\'', $refreshInterval * 1000);</script>";
+	} else {
+		print "<input type='button' onclick='window.location.href=window.location.href;' value='Refresh' style='float:right;'/>";
+	}	
+}
+
 function getConfig($configKey) {
 	if (!isset($_SESSION["config"][$configKey])) {
 		global $config;

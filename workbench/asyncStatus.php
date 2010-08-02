@@ -34,12 +34,14 @@ try {
 print "<p class='instructions'>Records have been uploaded to Salesforce via the Bulk API and are processed asynchronously as resources are available. " . 
 	  "Refresh this page periodically to view the latest status. Results can be downloaded when batches are complete.</p><p/>";
 
-print "<table width='100%'>";
-print "<tr>" . 
-		"<td align='left'><h3>Job: " . addLinksToUiForIds($jobInfo->getId()) . "</h3></td>" .
-		"<td align='right'><input type='button' onclick='window.location.href=window.location.href;' value='Refresh'/></td>" .
-       "</tr>";
-print "</table>";
+foreach($batchInfos as $batchInfo){ 		
+	if ($batchInfo->getState() == "Queued" || $batchInfo->getState() == "InProgress") {
+		printAsyncRefreshBlock();
+		break;
+	}
+}
+		
+print "<h3>Job: " . addLinksToUiForIds($jobInfo->getId()) . "</h3>";
 
 if($jobInfo->getStateMessage() != ""){
 	show_info($jobInfo->getStateMessage());

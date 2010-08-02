@@ -47,8 +47,8 @@ try {
 		show_error("No results returned for '$asyncProcessId'", false, true);	
 	}
 
-	if(!$asyncResults->done) {
-		print "<input type='button' onclick='window.location.href=window.location.href;' value='Refresh' style='float:right;'/>";
+	if (!$asyncResults->done) {
+		printAsyncRefreshBlock();
 	}
 	
 	$orderedAsyncResults = array("id"=>null,"done"=>null,"state"=>null);
