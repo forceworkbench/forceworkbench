@@ -15,6 +15,9 @@ class QueryRequest {
 	
 	private $limit			= null;
 	
+	private $matrixRows      = null;
+	private $matrixCols      = null;
+	
 	private $filters		= array();
 	private $numFilters		= null;
 		
@@ -30,6 +33,8 @@ class QueryRequest {
 		if(isset($source['QB_nulls'])) 			$this->orderByNulls  = $source['QB_nulls'];
 		if(isset($source['QB_limit_txt'])) 		$this->limit		 = $source['QB_limit_txt'];
 		if(isset($source['QB_orderby_field'])) 	$this->orderByField  = $source['QB_orderby_field'];
+		if(isset($source['matrix_rows'])) 	    $this->matrixRows    = $source['matrix_rows'];
+		if(isset($source['matrix_cols'])) 	    $this->matrixCols    = $source['matrix_cols'];
 		if(isset($source['numFilters'])) 		$this->numFilters    = $source['numFilters'];
 		
 		for($f = 0; $f < $this->numFilters; $f++){				
@@ -88,6 +93,14 @@ class QueryRequest {
 	public function getLimit(){
 		return $this->limit;
 	}	
+
+	public function getMatrixRows(){
+		return $this->matrixRows;
+	}
+
+	public function getMatrixCols(){
+		return $this->matrixCols;
+	}
 	
 	public function getFilters(){
 		return $this->filters;

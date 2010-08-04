@@ -73,15 +73,14 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 	$queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
 	show_query_result($records,$queryTimeElapsed);
 	include_once('footer.php');
-} else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'screen') {
+} else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && ($queryRequest->getExportTo() == 'screen' || $queryRequest->getExportTo() == 'matrix')) {
 	require_once ('header.php');
-	$queryRequest->setExportTo('screen');
 	show_query_form($queryRequest);
 	$queryTimeStart = microtime(true);
 	$records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction());
 	$queryTimeEnd = microtime(true);
 	$queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
-	show_query_result($records,$queryTimeElapsed);
+	show_query_result($records,$queryTimeElapsed,$queryRequest);
 	include_once('footer.php');
 } elseif (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
 	if (!substr_count($_POST['soql_query'],"count()")){
@@ -89,7 +88,6 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 		export_query_csv($records,$queryRequest->getExportTo());
 	} else {
 		require_once ('header.php');
-		$queryRequest->setExportTo('csv');
 		show_query_form($queryRequest);
 		print "</form>"; //could include inside because if IE page loading bug
 		print "<p>&nbsp;</p>";
@@ -98,7 +96,7 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 	}
 } else {
 	require_once ('header.php');
-	$queryRequest->setExportTo('screen');
+	if ($queryRequest->getExportTo() == null) $queryRequest->setExportTo('screen');
 	$queryRequest->setQueryAction('Query');
 	show_query_form($queryRequest);
 	print "</form>"; //could include inside because if IE page loading bug
@@ -113,6 +111,11 @@ function show_query_form($queryRequest){
 
 	if ($queryRequest->getObject()){
 		$describeSObject_result = describeSObject($queryRequest->getObject(), true);
+		
+		$fieldValuesToLabels = array();
+		foreach ($describeSObject_result->fields as $field) {
+			$fieldValuesToLabels[$field->name] = $field->name;
+		}
 	} else {
 		show_info('First choose an object to use the SOQL builder wizard.');
 	}
@@ -237,6 +240,16 @@ function updateObject(){
   document.query_form.submit();
 }
 
+function exportActionIs(type) {
+	var exportActions = document.getElementById('query_form')['export_action'];
+	for(node in exportActions) {
+		if(exportActions[node].checked && exportActions[node].value == type) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function build_query(){
 	toggleFieldDisabled();
 	var QB_object_sel = document.getElementById('QB_object_sel').value;
@@ -246,6 +259,14 @@ function build_query(){
 		if (QB_field_sel.options[i].selected){
 			QB_fields_selected.push(QB_field_sel.options[i].value);
 		}
+	}
+	
+	if (exportActionIs('matrix')) {
+		var matrix_cols = document.getElementById('matrix_cols');
+		var matrix_rows = document.getElementById('matrix_rows');
+		
+		if (matrix_cols.value != '') QB_fields_selected.push(matrix_cols.value);
+		if (matrix_rows.value != '') QB_fields_selected.push(matrix_rows.value);
 	}
 
 	var soql_select = '';
@@ -383,14 +404,40 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
 	document.getElementById('QB_field_sel').size += 2;
 }
 
+function toggleMatrixSortSelectors() {
+	if (exportActionIs('matrix')) {
+		document.getElementById('matrix_selection_headers').style.display = 'table-row';
+		document.getElementById('matrix_selection_row').style.display = 'table-row';
+		document.getElementById('QB_field_sel').size += 4;
+		
+		document.getElementById('QB_orderby_field').disabled = true;
+		document.getElementById('QB_orderby_sort').disabled = true;
+		document.getElementById('QB_nulls').disabled = true;
+		
+		build_query();
+	} else if (document.getElementById('matrix_selection_headers').style.display == 'table-row') {
+		document.getElementById('matrix_selection_headers').style.display = 'none';
+		document.getElementById('matrix_selection_row').style.display = 'none';
+		document.getElementById('QB_field_sel').size -= 4;
+		
+		document.getElementById('QB_orderby_field').disabled = false;
+		document.getElementById('QB_orderby_sort').disabled = false;
+		document.getElementById('QB_nulls').disabled = false;
+		
+		build_query();
+	}
+	
+	//don't do anything if moving from screen to csv
+}
+
 </script>
 QUERY_BUILDER_SCRIPT;
 	
 
 	if($_SESSION['config']['autoJumpToResults']){
-		print "<form method='POST' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
+		print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
 	} else {
-		print "<form method='POST' name='query_form' action='$_SERVER[PHP_SELF]'>\n";
+		print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]'>\n";
 	}
 	print "<input type='hidden' name='justUpdate' value='0' />";
 	print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
@@ -428,16 +475,20 @@ QUERY_BUILDER_SCRIPT;
 
 
 
-	print "<table id='QB_right_sub_table' border='0' align='right' style='width:100%'>\n";
+	print "<table border='0' align='right' style='width:100%'>\n";
 	print "<tr><td valign='top' colspan=2>Export to:<br/>" .
-			"<label><input type='radio' name='export_action' value='screen' ";
+			"<label><input type='radio' id='export_action_screen' name='export_action' value='screen' ";
 	if ($queryRequest->getExportTo() == 'screen') print "checked='true'";
-	print " >Browser</label>&nbsp;";
+	print " onChange='toggleMatrixSortSelectors();'>Browser</label>&nbsp;";
 
 	print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
 	if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
-	print " >CSV File</label>";
+	print " onChange='toggleMatrixSortSelectors();'>CSV File</label>&nbsp;";
 
+	print "<label><input type='radio' id='export_action_matrix' name='export_action' value='matrix' ";
+	if ($queryRequest->getExportTo() == 'matrix') print "checked='true'";
+	print " onChange='toggleMatrixSortSelectors();'>Matrix</label>";
+	
 	print "<td valign='top' colspan=2>Deleted and archived records:<br/>" .
 			"<label><input type='radio' name='query_action' value='Query' ";
 	if ($queryRequest->getQueryAction() == 'Query') print "checked='true'";
@@ -445,14 +496,21 @@ QUERY_BUILDER_SCRIPT;
 
 	print "<label><input type='radio' name='query_action' value='QueryAll' ";
 	if ($queryRequest->getQueryAction() == 'QueryAll') print "checked='true'";
-	print " >Include</label></td></tr>\n";
-
-
-
-
-	print "<tr><td><br/>Sort results by:</td> <td><br/>&nbsp;</td> <td><br/>&nbsp;</td> <td><br/>Max Records:</td></tr>\n";
-	print "<tr>";
-	print "<td><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='build_query();'>\n";
+	print " >Include</label></td></tr></table>\n";
+	
+	
+	print "<table id='QB_right_sub_table' border='0' align='right' style='width:100%'>\n";
+	
+	print "<tr id='matrix_selection_headers' style='display: none;'><td><br/>Columns:</td> <td><br/>Rows:</td> <td>&nbsp;</td></tr>\n";
+	print "<tr id='matrix_selection_row' style='display: none;'><td><select id='matrix_cols' name='matrix_cols' style='width: 16em;' onChange='build_query();' onkeyup='build_query();'>";
+	if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixCols());
+	print "</select></td> <td><select id='matrix_rows' name='matrix_rows' style='width: 16em;' onChange='build_query();' onkeyup='build_query();'>";
+	if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixRows());
+	print "</select></td> <td></td></tr>\n";
+	
+	print "<tr id='sort_selection_headers'><td colspan='2'><br/>Sort results by:</td> <td><br/>Max Records:</td></tr>\n";
+	print "<tr id='sort_selection_row'>";
+	print "<td colspan='2'><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='build_query();'>\n";
 	print "<option value=''></option>\n";
 	if(isset($describeSObject_result)){
 		foreach($describeSObject_result->fields as $fields => $field){
@@ -461,26 +519,26 @@ QUERY_BUILDER_SCRIPT;
 			print ">$field->name</option>\n";
 		}
 	}
-	print "</select></td>\n";
+	print "</select>\n";
 
 	$QB_orderby_sort_options = array(
 		'ASC' => 'A to Z',
 		'DESC' => 'Z to A'
 	);
 	
-	print "<td><select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='build_query();' onkeyup='build_query();'>\n";
+	print "<select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='build_query();' onkeyup='build_query();'>\n";
 	foreach ($QB_orderby_sort_options as $op_key => $op){
 		print "<option value='$op_key'";
 		if (isset($_POST['QB_orderby_sort']) && $op_key == $_POST['QB_orderby_sort']) print " selected='selected' ";
 		print ">$op</option>\n";
 	}
-	print "</select></td>\n";
+	print "</select>\n";
 
 	$QB_nulls_options = array(
 	'FIRST' => 'Nulls First',
 	'LAST' => 'Nulls Last'
 	);
-	print "<td><select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='build_query();' onkeyup='build_query();'>\n";
+	print "<select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='build_query();' onkeyup='build_query();'>\n";
 	foreach ($QB_nulls_options as $op_key => $op){
 		print "<option value='$op_key'";
 		if ($queryRequest->getOrderByNulls() != null && $op_key == $queryRequest->getOrderByNulls()) print " selected='selected' ";
@@ -539,7 +597,7 @@ QUERY_BUILDER_SCRIPT;
 	
 	print "</td></tr></table><p/>\n";
 	
-	print "<script>toggleFieldDisabled();</script>";
+	print "<script>toggleFieldDisabled();toggleMatrixSortSelectors();</script>";
 }
 
 
@@ -659,6 +717,80 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true){
 	return $rowBuffer;
 }
 
+function createQueryResultsMatrix($records, $matrix_cols, $matrix_rows) {
+	$matrix;
+	$allColNames;
+	$allRowNames;
+	
+	foreach ($records as $rawRecord) {
+		$record = new SObject($rawRecord);
+
+		$data = "";			
+		if(isset($record->Id) && "Id" != $matrix_cols && "Id" != $matrix_rows){
+			$data .= "Id: " . $record->Id;
+		}
+		
+		foreach ($record->fields as $fieldName => $fieldValue) {
+			if ($fieldName == $matrix_cols || $fieldName == $matrix_rows) {
+				continue;
+			}
+			
+			if ($data != "") $data .= "<br/>";
+			
+			$data .= $fieldName . ": " . $fieldValue;
+		}
+
+		foreach ($record->fields as $rowName => $rowValue) {
+			if ($rowName != $matrix_rows) continue;
+			foreach ($record->fields as $colName => $colValue) {
+				if($colName != $matrix_cols) continue;
+				$allColNames["$colValue"] = $colValue;
+				$allRowNames["$rowValue"] = $rowValue;
+				$matrix["$rowValue"]["$colValue"][] = $data;
+			}
+		}
+		
+	}
+	
+//	print_r($matrix);
+	
+	$table =  "<table id='query_results_matrix' border='1' class='" . getTableClass() . "'>";
+			
+	$hw = false;
+	foreach ($allRowNames as $rowName) {
+		if(!$hw) {
+			$table .= "<tr><td></td>";
+			foreach($allColNames as $colName) {
+				$table .= "<th>$colName</th>";		
+			}
+			$table .= "</tr>";
+			$hw = true;
+		}
+		
+		$table .= "<tr>";
+		$table .= "<th>$rowName</th>";
+		
+		foreach($allColNames as $colName) {
+			
+			$table .= "<td>";
+
+			if(isset($matrix["$rowName"]["$colName"])) {
+				$table .= "<ul>";
+				foreach($matrix["$rowName"]["$colName"] as $data) {
+					$table .= "<li>$data</li>";		
+				}
+				$table .= "</ul>";
+			}
+			 
+			$table .= "</td>";		
+		}
+		$table .= "</tr>";
+	}
+	
+	$table .= "</table>";
+	
+	return $table;
+}
 
 function createQueryResultTable($records){
 	$table = "<table id='query_results' class='" . getTableClass() . "'>\n";
@@ -712,7 +844,7 @@ function createQueryResultTable($records){
 
 
 //If the user selects to display the form on screen, they are routed to this function
-function show_query_result($records, $queryTimeElapsed){
+function show_query_result($records, $queryTimeElapsed, QueryRequest $queryRequest){
 	
 	//Check if records were returned
 	if ($records) {
@@ -741,7 +873,9 @@ function show_query_result($records, $queryTimeElapsed){
 			 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
 			}
 			
-			print addLinksToUiForIds(createQueryResultTable($records));
+			print addLinksToUiForIds($queryRequest->getExportTo() == 'matrix' ? 
+									createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) : 
+									createQueryResultTable($records));
 
 			if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
 				print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
