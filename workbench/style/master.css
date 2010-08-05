@@ -208,34 +208,37 @@ table.field_mapping TD, table.field_mapping TH{
 	text-align: left;
 }
 
-.show_errors{
- 	color: red;
+.matrix_item {
+	border: solid thin rgb(66,150,231); 
+	-moz-border-radius: 5px; 
+	border-radius: 5px; 
+	margin: 5px; 
+	padding: 5px;
+}
+
+.show_errors, .show_warnings, .show_info {
 	text-align: center;
 	font-size: 12px;
  	padding: 10px;
- 	border: red solid thin;
+ 	border: solid thin;
  	border-radius: 10px;
+ 	-moz-border-radius: 10px;
  	clear: both;
+}
+
+.show_errors{
+ 	color: red;
+ 	border-color: red;
 }
 
 .show_warnings{
  	color: orange;
-	text-align: center;
-	font-size: 12px;
- 	padding: 10px;
- 	border: orange solid thin;
- 	border-radius: 10px;
- 	clear: both;
+ 	border-color: orange;
 }
  
 .show_info{
  	color: rgb(66,150,231);
-	text-align: center;
-	font-size: 12px;
- 	padding: 10px;
- 	border: rgb(66,150,231) solid thin;
- 	border-radius: 10px;
- 	clear: both;
+ 	border-color: rgb(66,150,231);
 }
 
 #disclaimer, #disclaimer a{
