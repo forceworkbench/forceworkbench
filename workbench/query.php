@@ -707,7 +707,7 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true){
 
 	if (isset($sobject->fields)){
 		foreach($sobject->fields as $datum){
-			$rowBuffer[] = $escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES,'UTF-8') : $datum;
+			$rowBuffer[] = convertDateTimezone($escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES,'UTF-8') : $datum);
 		}
 	}
 
