@@ -110,7 +110,23 @@ $config["header_General"] = array(
 		"minValue" => 1,
 		"maxValue" => 100
 	);
-
+        
+        $GLOBALS['TIMEZONES'] = array(''=>'-None-');
+        foreach(timezone_identifiers_list() as $timezone) {
+            $tz = explode('/',$timezone);
+            if(isset($tz[1])) {
+                $GLOBALS['TIMEZONES'][$timezone] = $tz[0].'/'.str_replace('_',' ',$tz[1]);
+            }
+        }
+        $GLOBALS['TIMEZONES'] = array_unique($GLOBALS['TIMEZONES']);
+        $config["convertTimezone"] = array(
+                "label" => "Convert DateTime Fields to Chosen Timezone",
+                "description" => "Modifies returned data from UTC to selected timezone",
+                "default" => "",
+                "overrideable" => true,
+                "dataType" => "picklist",
+                "valuesToLabels" => $GLOBALS['TIMEZONES']
+         );
 
 $config["header_LoginOptions"] = array(
 	"label" => "Login Options",
