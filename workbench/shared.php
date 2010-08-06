@@ -207,6 +207,28 @@ function getWorkbenchUserAgent(){
 	return "Workbench/" . str_replace(" ", "_", trim($GLOBALS["WORKBENCH_VERSION"]));
 }
 
+/**
+ * Converts standard Salesforce UTC/GMT time into a configurable timezone
+ *
+ * @param string $sfdcDate  The Salesforce date/timestamp to convert
+ * @param string $timezone  The PHP timezone setting, ie: America/Chicago
+ * @param string $format  The format to use when converting the date/time
+ * @return string Converted date/time in selected format, or normal field
+ */
+ function convertDateTimezone($inputStr, $format = 'Y-m-d\\TH:i:s.000P') {
+    if(getConfig("convertTimezone") != '' && preg_match('|\d\d\d\d\-\d\d\-\d\dT\d\d\:\d\d:\d\d\.\d\d\dZ|', $inputStr)){
+        $timezone = getConfig("convertTimezone");
+
+        $utcDate = new DateTime($inputStr);
+        $utcDate->setTimezone(new DateTimeZone($timezone));
+
+        return $utcDate->format($format);
+    } else {
+        return $inputStr;
+    }
+
+ }
+
 function printSelectOptions($valuesToLabelsArray,$defaultValue){
 	$valueAndLabelMatched = false;
 	foreach($valuesToLabelsArray as $value => $label){
