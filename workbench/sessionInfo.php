@@ -1,6 +1,6 @@
 <?php
-require_once ('session.php');
-require_once ('shared.php');
+require_once 'session.php';
+require_once 'shared.php';
 if(isset($_REQUEST['switchApiVersionTo'])){
 	$previousVersion = getApiVersion();
 	clearSessionCache();
@@ -25,7 +25,7 @@ if(isset($_REQUEST['previousVersion'])){
 	}	
 }
 
-require_once ('header.php');
+require_once 'header.php';
 ?>
 <p/>
 <p class='instructions'>Below is information regarding the current user session:</p>
@@ -98,5 +98,5 @@ if(count($errors) > 0) {
 printTree("sessionInfoTree", $sessionInfo);
 
 print "</div>";
-require_once ('footer.php');
+require_once 'footer.php';
 ?>

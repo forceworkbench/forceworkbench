@@ -1,5 +1,5 @@
 <?php
-require_once('shared.php');
+require_once 'shared.php';
 
 set_exception_handler('handleAllExceptions');
 
@@ -18,8 +18,8 @@ if(isset($_SESSION['retrievedZips']) && basename($_SERVER['PHP_SELF']) != 'metad
 }
 
 //load default config values and then any custom overrides.
-require_once('config.php');
-if(is_file('configOverrides.php')) require_once('configOverrides.php');
+require_once 'config.php';
+if(is_file('configOverrides.php')) require_once 'configOverrides.php';
 
 foreach($config as $configKey => $configValue){
 	//only process non-headers
@@ -60,11 +60,11 @@ if(isLoggedIn()){
 	try{
 		//setup SOAP client
 		if (getConfig('mockClients')) {
-			require_once ('soapclient/SforceMockPartnerClient.php');	
+			require_once 'soapclient/SforceMockPartnerClient.php';	
 		}
-		require_once ('soapclient/SforcePartnerClient.php');
-		require_once ('soapclient/SforceHeaderOptions.php');
-		require_once ('soapclient/SforceMetadataClient.php');
+		require_once 'soapclient/SforcePartnerClient.php';
+		require_once 'soapclient/SforceHeaderOptions.php';
+		require_once 'soapclient/SforceMetadataClient.php';
 		
 		$location = $_SESSION['location'];
 		$sessionId = $_SESSION['sessionId'];
@@ -135,10 +135,10 @@ if(isLoggedIn()){
 	} catch (exception $e) {
 		session_unset();
 		session_destroy();
-		try { include_once('header.php'); } catch (exception $e) {}
+		try { include_once 'header.php'; } catch (exception $e) {}
 		show_error("Fatal error connecting to Salesforce. Please login again.\n\nERROR: " . $e->getMessage(), false, false);
 		print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\",3000);</script>";
-		include_once('footer.php');
+		include_once 'footer.php';
 		exit;
 	}
 }

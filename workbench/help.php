@@ -1,7 +1,7 @@
 <?php
-require_once ('session.php');
-require_once ('shared.php');
-require_once ('header.php');
+require_once 'session.php';
+require_once 'shared.php';
+require_once 'header.php';
 ?>
 <p>
 Workbench is not a product of or supported by salesforce.com, inc.
@@ -23,5 +23,5 @@ For support from the open source community, please visit the recources below:
 	<li><a href="http://code.google.com/p/forceworkbench/issues/list"  target="help">Report an Issue</a></li>
 </ul>
 <?php
-include_once ('footer.php');
+include_once 'footer.php';
 ?>

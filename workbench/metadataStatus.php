@@ -1,6 +1,6 @@
 <?php
-require_once ('session.php');
-require_once ('shared.php');
+require_once 'session.php';
+require_once 'shared.php';
 
 if(!apiVersionIsAtLeast(10.0)) {
 	show_error("Metadata API not supported prior to version 10.0", true, true);
@@ -8,7 +8,7 @@ if(!apiVersionIsAtLeast(10.0)) {
 }
 
 if(!isset($_GET['asyncProcessId'])){
-	require_once('header.php');
+	require_once 'header.php';
 	print "<p/>";
 	show_error("Parameter 'asyncProcessId' must be specified.",false,false);
 	print 	"<p/>" . 
@@ -16,7 +16,7 @@ if(!isset($_GET['asyncProcessId'])){
 			"Async Process Id: <input type='text' name='asyncProcessId'/> &nbsp;" .  
 			"<input type='submit' value='Get Status'".
 			"</form>";
-	include_once('footer.php');
+	include_once 'footer.php';
 	exit;
 } 
 
@@ -34,11 +34,11 @@ if(isset($_GET['downloadZip'])) {
 	exit;
 }
 
-require_once('header.php');
+require_once 'header.php';
 print "<p class='instructions'>A Metadata API operation has been performed, which requires asynchronous processing as resources are available. " . 
 	  "Refresh this page periodically to view the latest status. Results will be available once processing is complete.</p><p/>";
 
-require_once ('soapclient/SforceMetadataClient.php');
+require_once 'soapclient/SforceMetadataClient.php';
 global $metadataConnection;
 try {
 	$asyncResults = $metadataConnection->checkStatus($asyncProcessId);
@@ -118,7 +118,7 @@ if(document.getElementById("zipLink") != null) {
 </script>
 <?php
 
-include_once('footer.php');
+include_once 'footer.php';
 
 function printStatusCell($resultName, $resultValue) {
 	print "<td style='text-align: right; padding-right: 2em; font-weight: bold;'>" . unCamelCase($resultName) . "</td><td>";

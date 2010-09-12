@@ -1,14 +1,14 @@
 <?php
-require_once ('session.php');
-require_once ('shared.php');
-require_once('header.php');
+require_once 'session.php';
+require_once 'shared.php';
+require_once 'header.php';
 print "<p/>";
 if(!apiVersionIsAtLeast(10.0)) {
 	show_error("Metadata API not supported prior to version 10.0", false, true);
 	exit;
 }
 
-require_once ('soapclient/SforceMetadataClient.php');
+require_once 'soapclient/SforceMetadataClient.php';
 
 global $metadataConnection;
 try {
@@ -79,7 +79,7 @@ if(isset($typeString)) {
 	printTree("listMetadataTree", array("Type Description"=>$type, "Components"=>$metadataComponents), $typeStringChanged);
 }
 
-require_once('footer.php');
+require_once 'footer.php';
 
 
 function listMetadata($type) {

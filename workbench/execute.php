@@ -1,8 +1,8 @@
 <?php
-require_once ('session.php');
-require_once ('shared.php');
-require_once('header.php');
-require_once ('soapclient/SforceApexClient.php');
+require_once 'session.php';
+require_once 'shared.php';
+require_once 'header.php';
+require_once 'soapclient/SforceApexClient.php';
 
 //correction for dynamic magic quotes
 if(isset($_POST['scriptInput']) && get_magic_quotes_gpc()){
@@ -118,5 +118,5 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 }
 
 
-require_once('footer.php');
+require_once 'footer.php';
 ?>

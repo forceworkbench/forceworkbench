@@ -1,7 +1,7 @@
 <?php
-require_once ('session.php');
-require_once ('shared.php');
-require_once ('header.php');
+require_once 'session.php';
+require_once 'shared.php';
+require_once 'header.php';
 ?>
 
 <p>
@@ -109,5 +109,5 @@ from Stu Nicholls
 </p>
 
 <?php
-include_once ('footer.php');
+include_once 'footer.php';
 ?>

@@ -1,5 +1,5 @@
 <?php
-require_once('SforceFieldTypes.php');
+require_once 'SforceFieldTypes.php';
 
 class SforceCustomObject {
   public function setDeploymentStatus($deploymentStatus) {

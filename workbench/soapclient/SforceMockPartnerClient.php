@@ -1,7 +1,7 @@
 <?php
 
-require_once ('SforcePartnerClient.php');
-require_once ('SforceEmail.php');
+require_once 'SforcePartnerClient.php';
+require_once 'SforceEmail.php';
 
 
 /**

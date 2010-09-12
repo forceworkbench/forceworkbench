@@ -1,5 +1,5 @@
 <?php
-include_once('shared.php');
+include_once 'shared.php';
 ?>
 </div>
 

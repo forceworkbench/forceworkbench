@@ -1,5 +1,5 @@
 <?php
-require_once('SoapBaseClient.php');
+require_once 'SoapBaseClient.php';
 
 class SforceMetadataClient extends SoapBaseClient {
 	

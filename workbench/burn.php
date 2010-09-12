@@ -1,6 +1,6 @@
 <?php
-require_once ('session.php');
-require_once ('shared.php');
+require_once 'session.php';
+require_once 'shared.php';
 
 
 if(isset($_GET['ajaxBurn'])){
@@ -34,7 +34,7 @@ if(isset($_GET['ajaxBurn'])){
 	exit;
 }
 
-require_once ('header.php');
+require_once 'header.php';
 ?>
 
 
@@ -129,5 +129,5 @@ if(isset($errors)) show_error($errors);
 
 	
 <?php
-require_once ('footer.php');
+require_once 'footer.php';
 ?>

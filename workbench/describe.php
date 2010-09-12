@@ -1,7 +1,7 @@
 <?php
-require_once('session.php');
-require_once('shared.php');
-require_once ('header.php');
+require_once 'session.php';
+require_once 'shared.php';
+require_once 'header.php';
 
 //Main Form Logic: If there is a default object in the session,
 //describe it when the page loads; else, prompt to choose one.
@@ -12,7 +12,7 @@ show_describeSObject_form();
 if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']){
 	show_describeSObject_result();
 }
-require_once ('footer.php');
+require_once 'footer.php';
 
 
 //Print a form with the global object types to choose for description

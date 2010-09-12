@@ -1,8 +1,8 @@
 <?php
 
-require_once ('soxl/QueryObjects.php');
-require_once ('session.php');
-require_once ('shared.php');
+require_once 'soxl/QueryObjects.php';
+require_once 'session.php';
+require_once 'shared.php';
 
 $defaultSettings['numFilters'] = 1;
 //clear the form if the user changes the object
@@ -64,7 +64,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 // just display the blank form. When the user selects the SCREEN or CSV options, the
 //query is processed by the correct function
 if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
-	require_once ('header.php');
+	require_once 'header.php';
 //	$queryRequest->setExportTo('screen');
 	show_query_form($queryRequest);
 	$queryTimeStart = microtime(true);
@@ -72,9 +72,9 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 	$queryTimeEnd = microtime(true);
 	$queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
 	show_query_result($records,$queryTimeElapsed,$queryRequest);
-	include_once('footer.php');
+	include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && ($queryRequest->getExportTo() == 'screen' || $queryRequest->getExportTo() == 'matrix')) {
-	require_once ('header.php');
+	require_once 'header.php';
 	show_query_form($queryRequest);
 	if ($queryRequest->getExportTo() == 'matrix' && ($queryRequest->getMatrixCols() == "" || $queryRequest->getMatrixRows() == "")) {
 		show_warnings("Both column and row must be specified for Matrix view.", false, true);
@@ -85,26 +85,26 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 	$queryTimeEnd = microtime(true);
 	$queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
 	show_query_result($records,$queryTimeElapsed,$queryRequest);
-	include_once('footer.php');
+	include_once 'footer.php';
 } elseif (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
 	if (!substr_count($_POST['soql_query'],"count()")){
 		$records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction(),null,true);
 		export_query_csv($records,$queryRequest->getExportTo());
 	} else {
-		require_once ('header.php');
+		require_once 'header.php';
 		show_query_form($queryRequest);
 		print "</form>"; //could include inside because if IE page loading bug
 		print "<p>&nbsp;</p>";
 		show_error("count() is not supported for CSV file export. Change export to Browser or choose fields and try again.");
-		include_once('footer.php');
+		include_once 'footer.php';
 	}
 } else {
-	require_once ('header.php');
+	require_once 'header.php';
 	if ($queryRequest->getExportTo() == null) $queryRequest->setExportTo('screen');
 	$queryRequest->setQueryAction('Query');
 	show_query_form($queryRequest);
 	print "</form>"; //could include inside because if IE page loading bug
-	include_once('footer.php');
+	include_once 'footer.php';
 }
 
 
@@ -622,7 +622,7 @@ function query($soql_query,$query_action,$query_locator = null,$suppressScreenOu
 			$countString .= ($query_response->size == 1) ? "." : "s.";
 			show_info($countString);
 			$records = $query_response->size;
-			include_once('footer.php');
+			include_once 'footer.php';
 			exit;
 		}
 
@@ -893,7 +893,7 @@ function show_query_result($records, $queryTimeElapsed, QueryRequest $queryReque
 		print "<p><a name='qr'>&nbsp;</a></p>";
 		show_warnings("Sorry, no records returned.");
 	}
-	include_once('footer.php');
+	include_once 'footer.php';
 }
 
 

@@ -30,7 +30,7 @@ function put($action){
 				isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null, 
 				isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] :  null);
 		} else {
-			require_once('header.php');
+			require_once 'header.php';
 			print "<h1>" . ucwords($action) . " Results</h1>";
 			if ($action == 'insert') $api_call = 'create'; else $api_call = $action;
 			if ($action == "insert" || $action == "update" || $action == "upsert"){
@@ -43,13 +43,13 @@ function put($action){
 			} else {
 				putSyncIdOnly($action,$_SESSION['field_map'],$_SESSION['csv_array'],true);
 			}
-			include_once('footer.php');
+			include_once 'footer.php';
 		}
 		unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name']);
 	}
 
 	elseif(isset($_POST['action']) && $_POST['action'] == 'Map Fields'){
-		require_once('header.php');
+		require_once 'header.php';
 		array_pop($_POST); //remove header row
 		if (isset($_POST['_ext_id'])){
 			$_SESSION['_ext_id'] = $_POST['_ext_id'];
@@ -62,11 +62,11 @@ function put($action){
 			isset($_SESSION['csv_array'])?$_SESSION['csv_array']:null, 
 			isset($_SESSION['_ext_id'])?$_SESSION['_ext_id']:null
 		);
-		include_once('footer.php');
+		include_once 'footer.php';
 	}
 
 	elseif (isset($_FILES['file'])){
-		require_once('header.php');
+		require_once 'header.php';
 		if (csv_upload_valid_check($_FILES['file'])){
 			form_upload_objectSelect_show('file',TRUE);
 			show_error(csv_upload_valid_check($_FILES['file']));
@@ -89,14 +89,14 @@ function put($action){
 			print "<br/>";
 			field_mapping_set($action,$_SESSION['csv_array']);
 		}
-		include_once('footer.php');
+		include_once 'footer.php';
 	}
 
 	else {
-		require_once ('header.php');
+		require_once 'header.php';
 		print "<p class='instructions'>Select an object and upload a CSV file to $action:</p>\n";
 		form_upload_objectSelect_show('file', $action);
-		include_once('footer.php');
+		include_once 'footer.php';
 	}
 }
 
@@ -701,7 +701,7 @@ function putAsync($api_call,$ext_id,$field_map,$csv_array){
 	if (!($field_map && $csv_array && $_SESSION['default_object'])){  
 		show_error("CSV file and field mapping not initialized or object not selected. Upload a new file and map fields.",true,true);
 	} else {
-		require_once ('restclient/BulkApiClient.php');
+		require_once 'restclient/BulkApiClient.php';
 		try{
 			$job = new JobInfo();
 			$job->setObject($_SESSION['default_object']);

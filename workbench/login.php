@@ -1,6 +1,6 @@
 <?php
-require_once ('session.php');
-require_once('shared.php');
+require_once 'session.php';
+require_once 'shared.php';
 
 //general functions
 function getDefaultServerUrl(){
@@ -92,7 +92,7 @@ if(isset($_POST['login_type'])){
 }
 
 function display_login($errors){
-require_once ('header.php');
+require_once 'header.php';
 
 //Displays errors if there are any
 if (isset($errors)) {
@@ -336,7 +336,7 @@ if ($jsFocus == 'password') {
 }
 print "</script>";
 
-include_once ('footer.php');
+include_once 'footer.php';
 
 
 
@@ -362,10 +362,10 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 
 	try{
 		if (getConfig('mockClients')) {
-			require_once ('soapclient/SforceMockPartnerClient.php');	
+			require_once 'soapclient/SforceMockPartnerClient.php';	
 		}
-		require_once ('soapclient/SforcePartnerClient.php');
-		require_once ('soapclient/SforceHeaderOptions.php');
+		require_once 'soapclient/SforcePartnerClient.php';
+		require_once 'soapclient/SforceHeaderOptions.php';
 		
 		//build server URL if not already; moved from logic below
 		if(!isset($serverUrl) || $serverUrl == ''){

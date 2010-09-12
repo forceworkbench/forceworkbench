@@ -1,7 +1,7 @@
 <?php
-require_once ('soxl/SearchObjects.php');
-require_once ('session.php');
-require_once ('shared.php');
+require_once 'soxl/SearchObjects.php';
+require_once 'session.php';
+require_once 'shared.php';
 
 $lastSr = new SearchRequest($_REQUEST);
 
@@ -56,18 +56,18 @@ if(isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST[
 //show the search results with default object selected on a previous page, otherwise
 // just display the blank form. 
 if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
-	require_once ('header.php');
+	require_once 'header.php';
 	show_search_form($searchRequest);
 	$searchTimeStart = microtime(true);
 	$records = search($searchRequest);
 	$searchTimeEnd = microtime(true);
 	$searchTimeElapsed = $searchTimeEnd - $searchTimeStart;
 	show_search_result($records,$searchTimeElapsed);
-	include_once('footer.php');
+	include_once 'footer.php';
 } else {
-	require_once ('header.php');
+	require_once 'header.php';
 	show_search_form($searchRequest);
-	include_once('footer.php');
+	include_once 'footer.php';
 }
 
 
@@ -399,7 +399,7 @@ function show_search_result($records, $searchTimeElapsed){
   	print "<p><a name='sr'>&nbsp;</a></p>";
   	show_error("Sorry, no records returned.");
   }
-  include_once('footer.php');
+  include_once 'footer.php';
 }
 
 ?>

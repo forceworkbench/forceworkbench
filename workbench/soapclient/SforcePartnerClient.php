@@ -24,8 +24,8 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-require_once ('SforceBaseClient.php');
-require_once ('SforceEmail.php');
+require_once 'SforceBaseClient.php';
+require_once 'SforceEmail.php';
 
 
 /**

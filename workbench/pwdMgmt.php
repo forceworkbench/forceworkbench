@@ -1,7 +1,7 @@
 <?php
-require_once ('session.php');
-require_once ('shared.php');
-require_once ('header.php');
+require_once 'session.php';
+require_once 'shared.php';
+require_once 'header.php';
 
 if(isset($_POST['passwordChangeType'])){
 	changePassword($_POST['passwordChangeType']);
@@ -149,5 +149,5 @@ function displayForm($infos=null, $errors=null){
 	
 <?php
 }
-require_once ('footer.php');
+require_once 'footer.php';
 ?>

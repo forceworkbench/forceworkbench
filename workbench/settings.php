@@ -1,6 +1,6 @@
 <?php
-require_once('session.php');
-require_once('shared.php');
+require_once 'session.php';
+require_once 'shared.php';
 
 $errors = null;
 
@@ -48,7 +48,7 @@ if(isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])){
 }
 
 
-require_once('header.php');
+require_once 'header.php';
 
 	if(isset($errors)){
 		show_error($errors);
@@ -113,7 +113,7 @@ require_once('header.php');
 
   print "</form>\n";
 
-require_once('footer.php');
+require_once 'footer.php';
 
 ?>
 <script>

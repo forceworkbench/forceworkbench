@@ -1,9 +1,9 @@
 <?php
-require_once('session.php');
-require_once('shared.php');
+require_once 'session.php';
+require_once 'shared.php';
 	
 	if($_SESSION){
-		require_once('header.php');
+		require_once 'header.php';
 		if($_SESSION['config']['invalidateSessionOnLogout']){
 			try{
 				$partnerConnection->logout();
@@ -26,7 +26,7 @@ require_once('shared.php');
 		
 		print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\",2000);</script>";
 		
-		include_once('footer.php');
+		include_once 'footer.php';
 	} else {
 		session_unset();
 		session_destroy();

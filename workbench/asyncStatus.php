@@ -1,8 +1,8 @@
 <?php
-require_once ('session.php');
-require_once ('shared.php');
-require_once ('header.php');
-require_once ('restclient/BulkApiClient.php');
+require_once 'session.php';
+require_once 'shared.php';
+require_once 'header.php';
+require_once 'restclient/BulkApiClient.php';
 
 print "<p/>";
 if(!isset($_GET['jobId']) || $_GET['jobId'] == ""){
@@ -12,7 +12,7 @@ if(!isset($_GET['jobId']) || $_GET['jobId'] == ""){
 			"Job Id: <input type='text' name='jobId'/> &nbsp;" .  
 			"<input type='submit' value='Get Status'".
 			"</form>";
-	include_once('footer.php');
+	include_once 'footer.php';
 	exit;
 } 
 
@@ -26,7 +26,7 @@ try {
 	show_error($e->getMessage(), false, false);
 	if(stripos($e->getMessage(), 'InvalidVersion') > -1){
 		print "<p/><em>Quick Fix: <a href='sessionInfo.php' target='_blank'>Change API Version</a></em>";
-		include_once ('footer.php');
+		include_once 'footer.php';
 		exit;
 	}
 }
@@ -134,6 +134,6 @@ if(count($batchInfos) > 0){
 	print "</table>";
 }
 
-include_once ('footer.php');
+include_once 'footer.php';
 
 ?>

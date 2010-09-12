@@ -1,7 +1,7 @@
 <?php
-require_once ('session.php');
-require_once ('shared.php');
-require_once ('put.php');
+require_once 'session.php';
+require_once 'shared.php';
+require_once 'put.php';
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -23,5 +23,5 @@ if(isset($_SESSION['csv_array'])){
 	show_error("No CSV has been uploaded, or it is no longer active");
 }
 
-include_once ('footer.php');
+include_once 'footer.php';
 ?>

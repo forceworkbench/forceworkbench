@@ -1,6 +1,6 @@
 <?php
-require_once('session.php');
-require_once('shared.php');
+require_once 'session.php';
+require_once 'shared.php';
 
 //Has the user selected a default object and clicked one
 //of the action buttons. If so, proceed to that page; otherwise,
@@ -9,16 +9,16 @@ require_once('shared.php');
 if (isset($_POST['actionJump']) && $_POST['actionJump'] != ""){
 	header("Location: $_POST[actionJump]");
 } elseif (isset($_POST['select'])){
-	include_once('header.php');
+	include_once 'header.php';
 	show_error("Choose an object and an action to which to jump.");
 	show_select_form();
-	include_once('footer.php');
+	include_once 'footer.php';
 } 
 
  else {
-	include_once('header.php');
+	include_once 'header.php';
 	show_select_form();
-	include_once('footer.php');
+	include_once 'footer.php';
 }
 
 function show_select_form(){

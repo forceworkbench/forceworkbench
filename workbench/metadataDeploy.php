@@ -1,7 +1,7 @@
 <?php
-require_once ('soapclient/SforceMetadataClient.php');
-require_once ('session.php');
-require_once ('shared.php');
+require_once 'soapclient/SforceMetadataClient.php';
+require_once 'session.php';
+require_once 'shared.php';
 if(!apiVersionIsAtLeast(10.0)) {
 	show_error("Metadata API not supported prior to version 10.0", true, true);
 	exit;
@@ -54,7 +54,7 @@ else if(isset($_POST['stageForDeployment'])) {
   	$_SESSION[$deployFileTmpName] = $deployFileContents;
   	$_SESSION[$deployFileTmpName . "_OPTIONS"] = deserializeDeployOptions($_POST);
   	
-  	require_once('header.php');
+  	require_once 'header.php';
   	print "<p/>";
 	show_info("Successfully staged " . ceil(($_FILES["deployFile"]["size"] / 1024)) . " KB zip file " . $_FILES["deployFile"]["name"] . " for deployment.", true, false);	
 	
@@ -78,7 +78,7 @@ else if(isset($_POST['stageForDeployment'])) {
 } 
 
 else {
-	require_once('header.php');
+	require_once 'header.php';
 	?>
 	<p class='instructions'>Choose a file to deploy and any applicable options:</p>
 	<form id='deployForm' name='deployForm' method='POST' action='<?php print $_SERVER['PHP_SELF']; ?>' enctype='multipart/form-data'>
@@ -92,7 +92,7 @@ else {
 	<?php
 }
 
-include_once('footer.php');
+include_once 'footer.php';
 exit;
 
 

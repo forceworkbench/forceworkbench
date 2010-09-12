@@ -1,7 +1,7 @@
 <?php
-require_once ('soapclient/SforceMetadataClient.php');
-require_once ('session.php');
-require_once ('shared.php');
+require_once 'soapclient/SforceMetadataClient.php';
+require_once 'session.php';
+require_once 'shared.php';
 if(!apiVersionIsAtLeast(10.0)) {
 	show_error("Metadata API not supported prior to version 10.0", true, true);
 	exit;
@@ -64,7 +64,7 @@ else if(isset($_POST['stageForRetrieval'])) {
   	$retrieveRequestId = "RR-" . time();
   	$_SESSION[$retrieveRequestId] = $retrieveRequest;
   	
-  	require_once('header.php');
+  	require_once 'header.php';
 	show_info("Successfully staged retrieve request.");
 	?>
 	<p class='instructions'>Confirm the following retrieve request:</p>
@@ -77,7 +77,7 @@ else if(isset($_POST['stageForRetrieval'])) {
 } 
 
 else {
-	require_once('header.php');
+	require_once 'header.php';
 	?>
 	<p class='instructions'>Choose an unpackaged manifest file (i.e. 'package.xml'), provide a comma-separated list of package names, or both to define a retrieve request along with any applicable options:</p>
 	<form id='retrieveForm' name='retrieveForm' method='POST' action='<?php print $_SERVER['PHP_SELF']; ?>' enctype='multipart/form-data'>
@@ -108,7 +108,7 @@ else {
 	<?php
 }
 
-include_once('footer.php');
+include_once 'footer.php';
 
 function parseUnpackagedManifest($xmlFile) {
 	libxml_use_internal_errors(true);
