@@ -42,7 +42,7 @@ class SforceBaseClient {
     protected $sforce;
     protected $sessionId;
     protected $location;
-    
+
     protected $namespace;
 
     // Header Options
@@ -105,13 +105,13 @@ class SforceBaseClient {
         }
 
         if ($_SESSION['config']['proxyEnabled'] == true) {
-              $proxySettings = array();
-               $proxySettings['proxy_host'] = $_SESSION['config']['proxyHost'];
+            $proxySettings = array();
+            $proxySettings['proxy_host'] = $_SESSION['config']['proxyHost'];
             $proxySettings['proxy_port'] = (int)$_SESSION['config']['proxyPort']; // Use an integer, not a string
-              $proxySettings['proxy_login'] = $_SESSION['config']['proxyUsername'];
+            $proxySettings['proxy_login'] = $_SESSION['config']['proxyUsername'];
             $proxySettings['proxy_password'] = $_SESSION['config']['proxyPassword'];
 
-              $soapClientArray = array_merge($soapClientArray, $proxySettings);
+            $soapClientArray = array_merge($soapClientArray, $proxySettings);
         }
 
         $this->sforce = new SoapClient($wsdl, $soapClientArray);
@@ -172,7 +172,7 @@ class SforceBaseClient {
     private function setHeaders($call=NULL) {
         $this->sforce->__setSoapHeaders(NULL);
         $headerArray = array();
-        
+
         if (isset($this->sessionHeader)) {
             array_push($headerArray, $this->sessionHeader);
         }
@@ -183,9 +183,9 @@ class SforceBaseClient {
         }
 
         if ($call == "create" ||
-            $call == "merge" ||
-            $call == "update" ||
-            $call == "upsert"
+        $call == "merge" ||
+        $call == "update" ||
+        $call == "upsert"
         ) {
             $header = $this->assignmentRuleHeader;
             if ($header != NULL) {
@@ -201,9 +201,9 @@ class SforceBaseClient {
         }
 
         if ($call == "create" ||
-            $call == "resetPassword" ||
-            $call == "update" ||
-            $call == "upsert"
+        $call == "resetPassword" ||
+        $call == "update" ||
+        $call == "upsert"
         ) {
             $header = $this->emailHeader;
             if ($header != NULL) {
@@ -212,11 +212,11 @@ class SforceBaseClient {
         }
 
         if ($call == "create" ||
-            $call == "merge" ||
-            $call == "query" ||
-            $call == "retrieve" ||
-            $call == "update" ||
-            $call == "upsert"
+        $call == "merge" ||
+        $call == "query" ||
+        $call == "retrieve" ||
+        $call == "update" ||
+        $call == "upsert"
         ) {
             $header = $this->mruHeader;
             if ($header != NULL) {
@@ -225,19 +225,19 @@ class SforceBaseClient {
         }
 
         if ($call == "create" ||
-            $call == "update" ||
-            $call == "upsert" ||
-            $call == "undelete" ||
-            $call == "createLead" ||
-            $call == "merge" ||
-            $call == "process"
+        $call == "update" ||
+        $call == "upsert" ||
+        $call == "undelete" ||
+        $call == "createLead" ||
+        $call == "merge" ||
+        $call == "process"
         ) {
             $header = $this->allowFieldTruncationHeader;
             if ($header != NULL) {
                 array_push($headerArray, $header);
             }
         }
-        
+
         if ($call == "delete") {
             $header = $this->userTerritoryDeleteHeader;
             if ($header != NULL) {
@@ -246,8 +246,8 @@ class SforceBaseClient {
         }
 
         if ($call == "query" ||
-            $call == "queryMore" ||
-            $call == "retrieve") {
+        $call == "queryMore" ||
+        $call == "retrieve") {
             $header = $this->queryHeader;
             if ($header != NULL) {
                 array_push($headerArray, $header);
@@ -332,7 +332,7 @@ class SforceBaseClient {
             $this->queryHeader = NULL;
         }
     }
-    
+
     public function setAllowFieldTruncationHeader($header) {
         if ($header != NULL) {
             $this->allowFieldTruncationHeader = new SoapHeader($this->namespace, 'AllowFieldTruncationHeader', array (
@@ -380,23 +380,23 @@ class SforceBaseClient {
     }
 
     protected function _convertToAny($fields) {
-    $anyString = '';
-    foreach ($fields as $key => $value) {
-        if ($value instanceOf SObject) { //additional processing for nested sObject in field value for use with external ids
-            if (isset ($value->fields)) {
-              $nestedAnyString = $this->_convertToAny($value->fields);
-              $anyString = $anyString . '<' . $key . '>';
-              if (isset($value->type)) { //check if partner wsdl (should always be, but just in case)
-                  $anyString = $anyString . '<type>' . $value->type . '</type>';
-              }
-              $anyString = $anyString . $nestedAnyString . '</' . $key . '>';
+        $anyString = '';
+        foreach ($fields as $key => $value) {
+            if ($value instanceOf SObject) { //additional processing for nested sObject in field value for use with external ids
+                if (isset ($value->fields)) {
+                    $nestedAnyString = $this->_convertToAny($value->fields);
+                    $anyString = $anyString . '<' . $key . '>';
+                    if (isset($value->type)) { //check if partner wsdl (should always be, but just in case)
+                        $anyString = $anyString . '<type>' . $value->type . '</type>';
+                    }
+                    $anyString = $anyString . $nestedAnyString . '</' . $key . '>';
+                }
+            } else {
+                $anyString = $anyString . '<' . $key . '>' . $value . '</' . $key . '>';
             }
-        } else {
-            $anyString = $anyString . '<' . $key . '>' . $value . '</' . $key . '>';
         }
+        return $anyString;
     }
-    return $anyString;
-   }
 
     protected function _create($arg) {
         $this->setHeaders("create");
@@ -423,37 +423,37 @@ class SforceBaseClient {
         return $this->sforce->upsert($arg)->result;
     }
 
-  public function sendSingleEmail($request) {
-    if (is_array($request)) {
-      $messages = array();
-      foreach ($request as $r) {
-        $email = new SoapVar($r, SOAP_ENC_OBJECT, 'SingleEmailMessage', $this->namespace);
-        array_push($messages, $email);
-      }
-      $arg = new stdClass;
-      $arg->messages = $messages;
-      return $this->_sendEmail($arg);
-    } else {
-      $backtrace = debug_backtrace();
-      die('Please pass in array to this function:  '.$backtrace[0]['function']);
+    public function sendSingleEmail($request) {
+        if (is_array($request)) {
+            $messages = array();
+            foreach ($request as $r) {
+                $email = new SoapVar($r, SOAP_ENC_OBJECT, 'SingleEmailMessage', $this->namespace);
+                array_push($messages, $email);
+            }
+            $arg = new stdClass;
+            $arg->messages = $messages;
+            return $this->_sendEmail($arg);
+        } else {
+            $backtrace = debug_backtrace();
+            die('Please pass in array to this function:  '.$backtrace[0]['function']);
+        }
     }
-  }
 
-  public function sendMassEmail($request) {
-    if (is_array($request)) {
-      $messages = array();
-      foreach ($request as $r) {
-        $email = new SoapVar($r, SOAP_ENC_OBJECT, 'MassEmailMessage', $this->namespace);
-        array_push($messages, $email);
-      }
-      $arg = new stdClass;
-      $arg->messages = $messages;
-      return $this->_sendEmail($arg);
-    } else {
-      $backtrace = debug_backtrace();
-      die('Please pass in array to this function:  '.$backtrace[0]['function']);
+    public function sendMassEmail($request) {
+        if (is_array($request)) {
+            $messages = array();
+            foreach ($request as $r) {
+                $email = new SoapVar($r, SOAP_ENC_OBJECT, 'MassEmailMessage', $this->namespace);
+                array_push($messages, $email);
+            }
+            $arg = new stdClass;
+            $arg->messages = $messages;
+            return $this->_sendEmail($arg);
+        } else {
+            $backtrace = debug_backtrace();
+            die('Please pass in array to this function:  '.$backtrace[0]['function']);
+        }
     }
-  }
 
     protected function _sendEmail($arg) {
         $this->setHeaders();
@@ -513,9 +513,9 @@ class SforceBaseClient {
         return $this->sforce->emptyRecycleBin($arg)->result;
     }
 
-//    public function purge($ids) {
-//        return $this->emptyRecycleBin($ids);
-//    }
+    //    public function purge($ids) {
+    //        return $this->emptyRecycleBin($ids);
+    //    }
 
     /**
      * Process Submit Request for Approval
@@ -749,7 +749,7 @@ class SforceBaseClient {
         $this->setHeaders("search");
         $arg = new stdClass;
         $arg->searchString = new SoapVar($searchString, XSD_STRING, 'string', 'http://www.w3.org/2001/XMLSchema');
-        $SearchResult = $this->sforce->search($arg)->result;        
+        $SearchResult = $this->sforce->search($arg)->result;
         if (isset($SearchResult->searchRecords) && !is_array($SearchResult->searchRecords)) {
             $SearchResult->searchRecords = array($SearchResult->searchRecords);
         }
@@ -797,7 +797,7 @@ class SforceBaseClient {
         $arg->userId = new SoapVar($userId, XSD_STRING, 'string', 'http://www.w3.org/2001/XMLSchema');
         return $this->sforce->resetPassword($arg)->result;
     }
-    
+
     /**
      * Logs out the current user
      */

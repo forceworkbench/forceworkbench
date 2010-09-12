@@ -22,26 +22,25 @@ if (isset($_REQUEST['previousVersion'])) {
         }
         show_error($e->getMessage(),true,true);
         exit;
-    }    
+    }
 }
 
 require_once 'header.php';
 ?>
-<p/>
-<p class='instructions'>Below is information regarding the current user session:</p>
-<div style='float:right;'>
-    <form name="changeApiVersionForm" action="<?php $_SERVER['PHP_SELF'] ?>">
-        Change API Version: 
-        <?php
-        print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
-        foreach ($GLOBALS['API_VERSIONS'] as $v) {
-            print "<option value='$v'";
-            if (getApiVersion() == $v) print " selected=\"selected\"";
-            print ">" . $v . "</option>";
-        }
-        print "</select>";
-        ?>
-    </form>
+<p />
+<p class='instructions'>Below is information regarding the current user
+session:</p>
+<div style='float: right;'>
+<form name="changeApiVersionForm" action="<?php $_SERVER['PHP_SELF'] ?>">
+Change API Version: <?php
+print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
+foreach ($GLOBALS['API_VERSIONS'] as $v) {
+    print "<option value='$v'";
+    if (getApiVersion() == $v) print " selected=\"selected\"";
+    print ">" . $v . "</option>";
+}
+print "</select>";
+?></form>
 </div>
 
 <?php
@@ -69,7 +68,7 @@ try {
         if (stripos($uiKey,'org') !== 0) {
             $sessionInfo['User'][$uiKey] = $uiValue;
         } else {
-            $sessionInfo['Organization'][$uiKey] = $uiValue;        
+            $sessionInfo['Organization'][$uiKey] = $uiValue;
         }
     }
 } catch (Exception $e) {

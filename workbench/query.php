@@ -11,13 +11,13 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     $queryRequest->setObject($_POST['QB_object_sel']);
 } else {
     //create a new QueryRequest object to save named and/or last query
-    $lastQr = new QueryRequest($_REQUEST);    
-        
+    $lastQr = new QueryRequest($_REQUEST);
+
     //save last query. always do this even if named.
     if ((isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query') || (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' )) {
         $_SESSION['lastQueryRequest'] = $lastQr;
-    } 
-    
+    }
+
     $persistedSavedQueryRequestsKey = "PSQR@";
     if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'USER') {
         $persistedSavedQueryRequestsKey .= $_SESSION['getUserInfo']->userId . "@" . $_SESSION['getUserInfo']->organizationId;
@@ -26,7 +26,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     } else if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'ALL') {
         $persistedSavedQueryRequestsKey .= "ALL";
     }
-    
+
     //populate queryRequest for this page view. first see if user wants to retreive a saved query,
     //then see if there was a last query, else just show a null query with default object.
     if (isset($_REQUEST['getQr']) && $_REQUEST['getQr'] != "" && isset($_SESSION['savedQueryRequests'][$_REQUEST['getQr']])) {
@@ -48,15 +48,15 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
         if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE') {
             setcookie($persistedSavedQueryRequestsKey,null,time()-3600);
         }
-    } 
-    
+    }
+
     //save as named query
     if (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' && isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0) {
         $_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES,'UTF-8')] = $lastQr;
         if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE') {
             setcookie($persistedSavedQueryRequestsKey,serialize($_SESSION['savedQueryRequests']),time()+60*60*24*7);
         }
-    } 
+    }
 }
 
 //Main form logic: When the user first enters the page, display form defaulted to
@@ -65,7 +65,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
 //query is processed by the correct function
 if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
     require_once 'header.php';
-//    $queryRequest->setExportTo('screen');
+    //    $queryRequest->setExportTo('screen');
     show_query_form($queryRequest);
     $queryTimeStart = microtime(true);
     $records = query(null,'QueryMore',$_SESSION['queryLocator']);
@@ -115,7 +115,7 @@ function show_query_form($queryRequest){
 
     if ($queryRequest->getObject()) {
         $describeSObjectResult = describeSObject($queryRequest->getObject(), true);
-        
+
         $fieldValuesToLabels = array();
         foreach ($describeSObjectResult->fields as $field) {
             $fieldValuesToLabels[$field->name] = $field->name;
@@ -125,14 +125,14 @@ function show_query_form($queryRequest){
     }
 
     print "<script>\n";
-    
+
     print "var field_type_array = new Array();\n";
     if (isset($describeSObjectResult)) {
         foreach ($describeSObjectResult->fields as $fields => $field) {
             print " field_type_array[\"$field->name\"]=[\"$field->type\"];\n";
         }
     }
-    
+
     $ops = array(
         '=' => '=',
         '!=' => '&ne;',
@@ -147,15 +147,15 @@ function show_query_form($queryRequest){
         'NOT IN' => 'not in',
         'INCLUDES' => 'includes',
         'EXCLUDES' => 'excludes'
-    );
+        );
 
-    
-    print "var compOper_array = new Array();\n";
-    foreach ($ops as $opValue => $opLabel) {
-        print " compOper_array[\"$opValue\"]=[\"$opLabel\"];\n";
-    }
-    
-    print <<<QUERY_BUILDER_SCRIPT
+
+        print "var compOper_array = new Array();\n";
+        foreach ($ops as $opValue => $opLabel) {
+            print " compOper_array[\"$opValue\"]=[\"$opLabel\"];\n";
+        }
+
+        print <<<QUERY_BUILDER_SCRIPT
 
 function parentChildRelationshipQueryBlocker(){
     var soql = document.getElementById('soql_query_textarea').value.toUpperCase();
@@ -440,109 +440,109 @@ function toggleMatrixSortSelectors(hasChanged) {
 
 </script>
 QUERY_BUILDER_SCRIPT;
-    
 
-    if ($_SESSION['config']['autoJumpToResults']) {
-        print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
-    } else {
-        print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]'>\n";
-    }
-    print "<input type='hidden' name='justUpdate' value='0' />";
-    print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
-    print "<p class='instructions'>Choose the object, fields, and critera to build a SOQL query below:</p>\n";
-    print "<table border='0' style='width: 100%;'>\n";
-    print "<tr><td valign='top' width='1'>Object:";
 
-    printObjectSelection($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
-
-    print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='build_query();'>\n";
-    if (isset($describeSObjectResult)) {
-
-        print   " <option value='count()'";
-        if ($queryRequest->getFields() != null) { //check to make sure something is selected; otherwise warnings will display
-            foreach ($queryRequest->getFields() as $selectedField) {
-                if ('count()' == $selectedField) print " selected='selected' ";
-            }
+        if ($_SESSION['config']['autoJumpToResults']) {
+            print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
+        } else {
+            print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]'>\n";
         }
-        print ">count()</option>\n";
+        print "<input type='hidden' name='justUpdate' value='0' />";
+        print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
+        print "<p class='instructions'>Choose the object, fields, and critera to build a SOQL query below:</p>\n";
+        print "<table border='0' style='width: 100%;'>\n";
+        print "<tr><td valign='top' width='1'>Object:";
 
-        //print ">$field->name</option>\n";
-        foreach ($describeSObjectResult->fields as $fields => $field) {
-            print   " <option value='$field->name'";
+        printObjectSelection($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
+
+        print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='build_query();'>\n";
+        if (isset($describeSObjectResult)) {
+
+            print   " <option value='count()'";
             if ($queryRequest->getFields() != null) { //check to make sure something is selected; otherwise warnings will display
                 foreach ($queryRequest->getFields() as $selectedField) {
-                    if ($field->name == $selectedField) print " selected='selected' ";
+                    if ('count()' == $selectedField) print " selected='selected' ";
                 }
             }
-            print ">$field->name</option>\n";
+            print ">count()</option>\n";
+
+            //print ">$field->name</option>\n";
+            foreach ($describeSObjectResult->fields as $fields => $field) {
+                print   " <option value='$field->name'";
+                if ($queryRequest->getFields() != null) { //check to make sure something is selected; otherwise warnings will display
+                    foreach ($queryRequest->getFields() as $selectedField) {
+                        if ($field->name == $selectedField) print " selected='selected' ";
+                    }
+                }
+                print ">$field->name</option>\n";
+            }
         }
-    }
-    print "</select></td>\n";
-    print "<td valign='top'>";
+        print "</select></td>\n";
+        print "<td valign='top'>";
 
 
 
 
-    print "<table border='0' align='right' style='width:100%'>\n";
-    print "<tr><td valign='top' colspan=2>View as:<br/>" .
+        print "<table border='0' align='right' style='width:100%'>\n";
+        print "<tr><td valign='top' colspan=2>View as:<br/>" .
             "<label><input type='radio' id='export_action_screen' name='export_action' value='screen' ";
-    if ($queryRequest->getExportTo() == 'screen') print "checked='true'";
-    print " onChange='toggleMatrixSortSelectors(true);'>List</label>&nbsp;";
+        if ($queryRequest->getExportTo() == 'screen') print "checked='true'";
+        print " onChange='toggleMatrixSortSelectors(true);'>List</label>&nbsp;";
 
-    print "<label><input type='radio' id='export_action_matrix' name='export_action' value='matrix' ";
-    if ($queryRequest->getExportTo() == 'matrix') print "checked='true'";
-    print " onChange='toggleMatrixSortSelectors(true);'>Matrix</label>";
-    
-    print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
-    if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
-    print " onChange='toggleMatrixSortSelectors(true);'>CSV File</label>&nbsp;";
-    
-    print "<td valign='top' colspan=2>Deleted and archived records:<br/>" .
+        print "<label><input type='radio' id='export_action_matrix' name='export_action' value='matrix' ";
+        if ($queryRequest->getExportTo() == 'matrix') print "checked='true'";
+        print " onChange='toggleMatrixSortSelectors(true);'>Matrix</label>";
+
+        print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
+        if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
+        print " onChange='toggleMatrixSortSelectors(true);'>CSV File</label>&nbsp;";
+
+        print "<td valign='top' colspan=2>Deleted and archived records:<br/>" .
             "<label><input type='radio' name='query_action' value='Query' ";
-    if ($queryRequest->getQueryAction() == 'Query') print "checked='true'";
-    print " >Exclude</label>&nbsp;";
+        if ($queryRequest->getQueryAction() == 'Query') print "checked='true'";
+        print " >Exclude</label>&nbsp;";
 
-    print "<label><input type='radio' name='query_action' value='QueryAll' ";
-    if ($queryRequest->getQueryAction() == 'QueryAll') print "checked='true'";
-    print " >Include</label></td></tr></table>\n";
-    
-    
-    print "<table id='QB_right_sub_table' border='0' align='right' style='width:100%'>\n";
-    
-    print "<tr id='matrix_selection_headers' style='display: none;'><td><br/>Columns:</td> <td><br/>Rows:</td> <td>&nbsp;</td></tr>\n";
-    print "<tr id='matrix_selection_row' style='display: none;'><td><select id='matrix_cols' name='matrix_cols' style='width: 15em;' onChange='toggleFieldDisabled();build_query();' onkeyup='toggleFieldDisabled();build_query();'>";
-    if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixCols());
-    print "</select></td> <td><select id='matrix_rows' name='matrix_rows' style='width: 15em;' onChange='toggleFieldDisabled();build_query();' onkeyup='toggleFieldDisabled();build_query();'>";
-    if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixRows());
-    print "</select></td> <td><img onmouseover=\"Tip('Matrix view groups records into columns and rows of common field values.')\" align='absmiddle' src='images/help16.png'/></td></tr>\n";
-    
-    print "<tr id='sort_selection_headers'><td colspan='2'><br/>Sort results by:</td> <td><br/>Max Records:</td></tr>\n";
-    print "<tr id='sort_selection_row'>";
-    print "<td colspan='2'><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='build_query();'>\n";
-    print "<option value=''></option>\n";
-    if (isset($describeSObjectResult)) {
-        foreach ($describeSObjectResult->fields as $fields => $field) {
-            print   " <option value='$field->name'";
-            if ($queryRequest->getOrderByField() != null && $field->name == $queryRequest->getOrderByField()) print " selected='selected' ";
-            print ">$field->name</option>\n";
+        print "<label><input type='radio' name='query_action' value='QueryAll' ";
+        if ($queryRequest->getQueryAction() == 'QueryAll') print "checked='true'";
+        print " >Include</label></td></tr></table>\n";
+
+
+        print "<table id='QB_right_sub_table' border='0' align='right' style='width:100%'>\n";
+
+        print "<tr id='matrix_selection_headers' style='display: none;'><td><br/>Columns:</td> <td><br/>Rows:</td> <td>&nbsp;</td></tr>\n";
+        print "<tr id='matrix_selection_row' style='display: none;'><td><select id='matrix_cols' name='matrix_cols' style='width: 15em;' onChange='toggleFieldDisabled();build_query();' onkeyup='toggleFieldDisabled();build_query();'>";
+        if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixCols());
+        print "</select></td> <td><select id='matrix_rows' name='matrix_rows' style='width: 15em;' onChange='toggleFieldDisabled();build_query();' onkeyup='toggleFieldDisabled();build_query();'>";
+        if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixRows());
+        print "</select></td> <td><img onmouseover=\"Tip('Matrix view groups records into columns and rows of common field values.')\" align='absmiddle' src='images/help16.png'/></td></tr>\n";
+
+        print "<tr id='sort_selection_headers'><td colspan='2'><br/>Sort results by:</td> <td><br/>Max Records:</td></tr>\n";
+        print "<tr id='sort_selection_row'>";
+        print "<td colspan='2'><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='build_query();'>\n";
+        print "<option value=''></option>\n";
+        if (isset($describeSObjectResult)) {
+            foreach ($describeSObjectResult->fields as $fields => $field) {
+                print   " <option value='$field->name'";
+                if ($queryRequest->getOrderByField() != null && $field->name == $queryRequest->getOrderByField()) print " selected='selected' ";
+                print ">$field->name</option>\n";
+            }
         }
-    }
-    print "</select>\n";
+        print "</select>\n";
 
-    $qBOrderbySortOptions = array(
+        $qBOrderbySortOptions = array(
         'ASC' => 'A to Z',
         'DESC' => 'Z to A'
-    );
-    
-    print "<select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='build_query();' onkeyup='build_query();'>\n";
-    foreach ($qBOrderbySortOptions as $opKey => $op) {
-        print "<option value='$opKey'";
-        if (isset($_POST['QB_orderby_sort']) && $opKey == $_POST['QB_orderby_sort']) print " selected='selected' ";
-        print ">$op</option>\n";
-    }
-    print "</select>\n";
+        );
 
-    $qBNullsOptions = array(
+        print "<select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='build_query();' onkeyup='build_query();'>\n";
+        foreach ($qBOrderbySortOptions as $opKey => $op) {
+            print "<option value='$opKey'";
+            if (isset($_POST['QB_orderby_sort']) && $opKey == $_POST['QB_orderby_sort']) print " selected='selected' ";
+            print ">$op</option>\n";
+        }
+        print "</select>\n";
+
+        $qBNullsOptions = array(
     'FIRST' => 'Nulls First',
     'LAST' => 'Nulls Last'
     );
@@ -557,14 +557,14 @@ QUERY_BUILDER_SCRIPT;
     print "<td><input type='text' id='QB_limit_txt' size='10' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() != null ? $queryRequest->getLimit() : null,ENT_QUOTES,'UTF-8') . "' onkeyup='build_query();' /></td>\n";
 
     print "</tr>\n";
-    
+
     print "</table>\n";
     print "</td></tr>\n";
-    
+
     $filterRowNum = 0;
-    foreach ($queryRequest->getFilters() as $filter) {        
-        print "<script>addFilterRow(" . 
-        $filterRowNum++ . ", " . 
+    foreach ($queryRequest->getFilters() as $filter) {
+        print "<script>addFilterRow(" .
+        $filterRowNum++ . ", " .
         "\"" . $filter->getField()     . "\", " . 
         "\"" . $filter->getCompOper()  . "\", " . 
         "\"" . $filter->getValue()     . "\"" .
@@ -580,7 +580,7 @@ QUERY_BUILDER_SCRIPT;
     print "<tr><td colspan=1><input type='submit' name='querySubmit' value='Query' onclick='return parentChildRelationshipQueryBlocker();' />\n" .
           "<input type='reset' value='Reset' />\n" .
           "</td>";
-    
+
     //save and retrieve named queries
     print "<td colspan=4 align='right'>";
 
@@ -593,18 +593,18 @@ QUERY_BUILDER_SCRIPT;
         }
     }
     print "</select>";
-    
-    
+
+
     print "&nbsp;&nbsp;Save as: <input type='text' id='saveQr' name='saveQr' value='" . htmlspecialchars($queryRequest->getName(),ENT_QUOTES,'UTF-8') . "' style='width: 10em;'/>\n";
-    
+
     print "<input type='submit' name='doSaveQr' value='Save' onclick='return doesQueryHaveName();' />\n";
-    print "<input type='submit' name='clearAllQr' value='Clear All'/>\n";    
-    
-    print "&nbsp;&nbsp;" . 
+    print "<input type='submit' name='clearAllQr' value='Clear All'/>\n";
+
+    print "&nbsp;&nbsp;" .
           "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
-    
+
     print "</td></tr></table><p/>\n";
-    
+
     print "<script>toggleFieldDisabled();toggleMatrixSortSelectors(false);</script>";
 }
 
@@ -639,22 +639,22 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
         } else {
             $_SESSION['queryLocator'] = null;
         }
-        
+
         //correction for documents and attachments with body. issue #176
         if ($queryResponse->size > 0 && !is_array($records)) {
             $records = array($records);
         }
-        
+
         while(($suppressScreenOutput || $_SESSION['config']['autoRunQueryMore']) && !$queryResponse->done){
             $queryResponse = $partnerConnection->queryMore($queryResponse->queryLocator);
-            
+
             if (!is_array($queryResponse->records)) {
                 $queryResponse->records = array($queryResponse->records);
             }
-            
+
             $records = array_merge($records,$queryResponse->records);
         }
-        
+
         return $records;
 
     } catch (Exception $e){
@@ -663,7 +663,7 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
     }
 }
 
-function getQueryResultHeaders($sobject, $tail=""){    
+function getQueryResultHeaders($sobject, $tail=""){
     if (!isset($headerBufferArray)) {
         $headerBufferArray = array();
     }
@@ -688,9 +688,9 @@ function getQueryResultHeaders($sobject, $tail=""){
     if (isset($sobject->queryResult)) {
         if(!is_array($sobject->queryResult)) $sobject->queryResult = array($sobject->queryResult);
         foreach ($sobject->queryResult as $qr) {
-            $headerBufferArray[] = $qr->records[0]->type;            
+            $headerBufferArray[] = $qr->records[0]->type;
         }
-    }    
+    }
 
     return $headerBufferArray;
 }
@@ -716,11 +716,11 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true){
             $rowBuffer = array_merge($rowBuffer, getQueryResultRow($sobjects,$escapeHtmlChars));
         }
     }
-    
+
     if (isset($sobject->queryResult)) {
         $rowBuffer[] = $sobject->queryResult;
     }
-    
+
     return $rowBuffer;
 }
 
@@ -728,21 +728,21 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
     $matrix;
     $allColNames = array();
     $allRowNames = array();
-    
+
     foreach ($records as $rawRecord) {
         $record = new SObject($rawRecord);
 
-        $data = "";            
+        $data = "";
         if (isset($record->Id)) $record->fields->Id = $record->Id;
-        
+
         foreach ($record->fields as $fieldName => $fieldValue) {
             if ($fieldName == $matrixCols || $fieldName == $matrixRows) {
                 continue;
             }
-            
+
             $data .= "<em>$fieldName:</em>  " . htmlentities($fieldValue,ENT_QUOTES,'UTF-8') . "<br/>";
         }
-            
+
         foreach ($record->fields as $rowName => $rowValue) {
             if ($rowName != $matrixRows) continue;
             foreach ($record->fields as $colName => $colValue) {
@@ -753,30 +753,30 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
             }
         }
     }
-    
+
     if (count($allColNames) == 0 || count($allRowNames) == 0) {
         show_warnings("No records match matrix column and row selections.", false, true);
         return;
     }
-    
+
     $table =  "<table id='query_results_matrix' border='1' class='" . getTableClass() . "'>";
-            
+
     $hw = false;
     foreach ($allRowNames as $rowName) {
         if (!$hw) {
             $table .= "<tr><td></td>";
             foreach ($allColNames as $colName) {
-                $table .= "<th>$colName</th>";        
+                $table .= "<th>$colName</th>";
             }
             $table .= "</tr>";
             $hw = true;
         }
-        
+
         $table .= "<tr>";
         $table .= "<th>$rowName</th>";
-        
+
         foreach ($allColNames as $colName) {
-            
+
             $table .= "<td>";
 
             if (isset($matrix["$rowName"]["$colName"])) {
@@ -785,61 +785,61 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
                 }
             }
              
-            $table .= "</td>";        
+            $table .= "</td>";
         }
         $table .= "</tr>";
     }
-    
+
     $table .= "</table>";
-    
+
     return $table;
 }
 
 function createQueryResultTable($records){
     $table = "<table id='query_results' class='" . getTableClass() . "'>\n";
-    
+
     //call shared recusive function above for header printing
     $table .= "<tr><th></th><th>";
     if ($records[0] instanceof SObject) {
         $table .= implode("</th><th>", getQueryResultHeaders($records[0]));
     } else{
         $table .= implode("</th><th>", getQueryResultHeaders(new SObject($records[0])));
-    }    
+    }
     $table .= "</th></tr>\n";
-        
-    
+
+
     $rowNum = 1;
     //Print the remaining rows in the body
     foreach ($records as $record) {
         //call shared recusive function above for row printing
         $table .= "<tr><td>" . $rowNum++ . "</td><td>";
-        
+
         if ($record instanceof SObject) {
-            $row = getQueryResultRow($record); 
+            $row = getQueryResultRow($record);
         } else{
-            $row = getQueryResultRow(new SObject($record)); 
+            $row = getQueryResultRow(new SObject($record));
         }
 
-        
-        for ($i = 0; $i < count($row); $i++) {                
-            if($row[$i] instanceof QueryResult && !is_array($row[$i])) $row[$i] = array($row[$i]);        
+
+        for ($i = 0; $i < count($row); $i++) {
+            if($row[$i] instanceof QueryResult && !is_array($row[$i])) $row[$i] = array($row[$i]);
             if (isset($row[$i][0]) && $row[$i][0] instanceof QueryResult) {
                 foreach ($row[$i] as $qr) {
-                    $table .= createQueryResultTable($qr->records);    
+                    $table .= createQueryResultTable($qr->records);
                     if($qr != end($row[$i])) $table .= "</td><td>";
                 }
             } else {
                 $table .= $row[$i];
             }
-                    
+
             if ($i+1 != count($row)) {
                 $table .= "</td><td>";
             }
         }
-        
+
         $table .= "</td></tr>\n";
     }
-    
+
     $table .= "</table>";
 
     return $table;
@@ -848,7 +848,7 @@ function createQueryResultTable($records){
 
 //If the user selects to display the form on screen, they are routed to this function
 function show_query_result($records, $queryTimeElapsed, QueryRequest $queryRequest){
-    
+
     //Check if records were returned
     if ($records) {
         try {
@@ -873,12 +873,12 @@ function show_query_result($records, $queryTimeElapsed, QueryRequest $queryReque
             print " seconds:</p>\n";
 
             if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']) {
-             print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
+                print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
             }
-            
-            print addLinksToUiForIds($queryRequest->getExportTo() == 'matrix' ? 
-                                    createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) : 
-                                    createQueryResultTable($records));
+
+            print addLinksToUiForIds($queryRequest->getExportTo() == 'matrix' ?
+            createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
+            createQueryResultTable($records));
 
             if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']) {
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
@@ -913,9 +913,9 @@ function export_query_csv($records,$queryAction){
             foreach ($records as $record) {
                 fputcsv($csvFile, getQueryResultRow(new SObject($record),false));
             }
-            
+
             fclose($csvFile) or die("Error closing php://output");
-            
+
         } catch (Exception $e) {
             require_once("header.php");
             show_query_form(new QueryRequest($_POST),'csv',$queryAction);

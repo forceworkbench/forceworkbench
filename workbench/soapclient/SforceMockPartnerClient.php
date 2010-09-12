@@ -21,7 +21,7 @@ class SforceMockPartnerClient extends SforcePartnerClient  {
         $this->_setLoginHeader($loginResult);
         return $loginResult;
     }
-    
+
     public function getUserInfo() {
         $result = new stdClass();
         $result->userFullName = "Mocked Admin";

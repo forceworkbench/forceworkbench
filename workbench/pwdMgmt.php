@@ -10,9 +10,9 @@ if (isset($_POST['passwordChangeType'])) {
 }
 
 
-function changePassword($passwordChangeType){    
+function changePassword($passwordChangeType){
     global $partnerConnection;
-    
+
     try {
         if ($passwordChangeType == 'set' && isset($_POST['userId']) && isset($_POST['passwordOne'])) {
             if ($_POST['passwordOne'] == $_POST['passwordConfirm']) {
@@ -28,14 +28,14 @@ function changePassword($passwordChangeType){
     } catch(Exception $e){
         $errors[] = $e->getMessage();
     }
-    
+
     displayForm($infos, $errors);
-    
+
 }
 
 
 function displayForm($infos=null, $errors=null){
-?>
+    ?>
 <script type="text/javascript">
 <!--
  
@@ -106,48 +106,55 @@ function displayForm($infos=null, $errors=null){
 //-->
 </script>
 
-    <?php 
+    <?php
     if(isset($infos)) show_info($infos);
-    if(isset($errors)) show_error($errors); 
+    if(isset($errors)) show_error($errors);
     ?>
 
-    <form name='passwordChange' method='post' action='<?php $_SERVER['PHP_SELF'] ?>'>
-    <table border='0'>
-        
-        <tr><td align='right' colspan='2'>
-            <p>
-            <label><input type='radio' name='passwordChangeType' value='set' onclick="togglePasswordFields('set');" checked='checked' /> Set</label>
-            &nbsp;
-            <label><input type='radio' name='passwordChangeType' value='reset' onclick="togglePasswordFields('reset');"/> Reset</label>
-            </p>
-        </td></tr>
-        
-        <tr>
-            <td><label for='userId'>User Id: &nbsp;</label></td>
-            <td><input type='text' id='userId' name='userId' size='45'/></td>
-        </tr>
-        
-        <tr>    
-            <td><label for='passwordOne'>Password: &nbsp;</label></td>
-            <td><input type='password' id='passwordOne' name='passwordOne' size='45' onkeyup="doPasswordsMatch(false);"/></td>
-        </tr>
-        <tr>
-            <td><label for='passwordConfirm'>Confirm Password: &nbsp;</label></td>
-            <td><input type='password' id='passwordConfirm' name='passwordConfirm' size='45' onkeyup="doPasswordsMatch(false);"/></td>
-        </tr>
-        
-        <tr><td colspan='2' align='right'>
-            <p>
-            <input type='submit' id='changePasswordAction' name='changePasswordAction' value='Change Password' onclick="return doPasswordsMatch(true);"/>
-            <input type='button' value='Clear Form' onclick="clearForm();"/>
-            
-            </p>
-        </td></tr>
-        
-    </table>
-    </form>
-    
-<?php
+<form name='passwordChange' method='post'
+    action='<?php $_SERVER['PHP_SELF'] ?>'>
+<table border='0'>
+
+    <tr>
+        <td align='right' colspan='2'>
+        <p><label><input type='radio' name='passwordChangeType'
+            value='set' onclick="togglePasswordFields('set');"
+            checked='checked' /> Set</label> &nbsp; <label><input
+            type='radio' name='passwordChangeType' value='reset'
+            onclick="togglePasswordFields('reset');" /> Reset</label></p>
+        </td>
+    </tr>
+
+    <tr>
+        <td><label for='userId'>User Id: &nbsp;</label></td>
+        <td><input type='text' id='userId' name='userId' size='45' /></td>
+    </tr>
+
+    <tr>
+        <td><label for='passwordOne'>Password: &nbsp;</label></td>
+        <td><input type='password' id='passwordOne' name='passwordOne'
+            size='45' onkeyup="doPasswordsMatch(false);" /></td>
+    </tr>
+    <tr>
+        <td><label for='passwordConfirm'>Confirm Password: &nbsp;</label></td>
+        <td><input type='password' id='passwordConfirm'
+            name='passwordConfirm' size='45'
+            onkeyup="doPasswordsMatch(false);" /></td>
+    </tr>
+
+    <tr>
+        <td colspan='2' align='right'>
+        <p><input type='submit' id='changePasswordAction'
+            name='changePasswordAction' value='Change Password'
+            onclick="return doPasswordsMatch(true);" /> <input
+            type='button' value='Clear Form' onclick="clearForm();" /></p>
+        </td>
+    </tr>
+
+</table>
+</form>
+
+    <?php
 }
 require_once 'footer.php';
 ?>

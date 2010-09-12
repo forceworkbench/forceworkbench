@@ -220,7 +220,7 @@ class SObject {
             if (isset($response->Id)) $this->Id = $response->Id[0];
             if (isset($response->type)) $this->type = $response->type;
             if (isset($response->fieldsToNull)) $this->fieldsToNull = $response->fieldsToNull;
-            if (isset($response->any)) {            
+            if (isset($response->any)) {
                 // If ANY is an object, it is either a nested sObject or a nested QueryResult
                 if ($response->any instanceof stdClass) {
                     //Nested sObjects (child to parent relationships)
@@ -229,17 +229,17 @@ class SObject {
                         $sobject = new SObject($response->any);
                         array_push($parentSObjects, $sobject);
                         $this->sobjects = $parentSObjects;
-                    //Nested QueryResult (parent to child relationships)
+                        //Nested QueryResult (parent to child relationships)
                     } else {
                         $this->queryResult = new QueryResult($response->any);
                     }
-                //Otherwise ANY must be just a field
+                    //Otherwise ANY must be just a field
                 } else {
                     //if ANY is not an array, make it one.
                     if (!is_array($response->any)) {
                         $response->any = array($response->any);
                     }
-                    
+
                     $anArray = array();
                     $fieldsToConvert = "";
                     $unknownFieldNum = 1;
@@ -267,7 +267,7 @@ class SObject {
                     if (isset($fieldsToConvert)) {
                         $convertedFields = preg_replace('/sf:/', '', $fieldsToConvert);
                         $convertedFields = '<Object xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'.$convertedFields.'</Object>';
-                        $this->fields = simplexml_load_string($convertedFields);                        
+                        $this->fields = simplexml_load_string($convertedFields);
                     }
                     if (sizeof($anArray) > 0) {
                         $this->sobjects = $anArray;

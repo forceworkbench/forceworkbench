@@ -27,8 +27,8 @@ print "<title>Workbench$title</title>"
 <script type="text/javascript" src="script/pro_dropdown.js"></script>
 <?php
 if (isset($_SESSION['config']['areTablesSortable']) && $_SESSION['config']['areTablesSortable'] && (basename($_SERVER['PHP_SELF'])=="query.php" || basename($_SERVER['PHP_SELF'])=="search.php")) {
-    print "<script type='text/javascript' src='script/sortable.js'></script>";    
-} 
+    print "<script type='text/javascript' src='script/sortable.js'></script>";
+}
 
 //check for latest version
 if (!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))) {
@@ -61,28 +61,27 @@ if (!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basena
 
 <div id='main_block'>
 
-<div id='navmenu' style="clear: both;">
-<span class="preload1"></span>
-<span class="preload2"></span>
+<div id='navmenu' style="clear: both;"><span class="preload1"></span> <span
+    class="preload2"></span>
 <ul id="nav">
-    <?php
-    foreach ($GLOBALS["MENUS"] as $menu => $pages) {
-        if (isReadOnlyMode() && $menu == "Data") { //special-case for Data menu, since all read-only
+<?php
+foreach ($GLOBALS["MENUS"] as $menu => $pages) {
+    if (isReadOnlyMode() && $menu == "Data") { //special-case for Data menu, since all read-only
+        continue;
+    }
+    print "<li class='top'><a class='top_link'><span class='down'>" . strtolower($menu) ."</span></a>\n" .
+              "<ul class='sub'>";
+    foreach ($pages as $href => $page) {
+        if (!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || (isLoggedIn() && $page->title == 'Login') || (!$page->isReadOnly && isReadOnlyMode())) {
             continue;
         }
-        print "<li class='top'><a class='top_link'><span class='down'>" . strtolower($menu) ."</span></a>\n" . 
-              "<ul class='sub'>";
-        foreach ($pages as $href => $page) {
-            if (!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || (isLoggedIn() && $page->title == 'Login') || (!$page->isReadOnly && isReadOnlyMode())) {
-                continue;
-            }
-            print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\" target=\"" . $page->window . "\">$page->title</a></li>\n";
-        }
-        print "</ul></li>";
-        
-        if(!isLoggedIn()) break; //only show first "Workbench" menu if not logged in
+        print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\" target=\"" . $page->window . "\">$page->title</a></li>\n";
     }
-    ?>
+    print "</ul></li>";
+
+    if(!isLoggedIn()) break; //only show first "Workbench" menu if not logged in
+}
+?>
 </ul>
 </div>
 

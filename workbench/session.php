@@ -60,12 +60,12 @@ if (isLoggedIn()) {
     try {
         //setup SOAP client
         if (getConfig('mockClients')) {
-            require_once 'soapclient/SforceMockPartnerClient.php';    
+            require_once 'soapclient/SforceMockPartnerClient.php';
         }
         require_once 'soapclient/SforcePartnerClient.php';
         require_once 'soapclient/SforceHeaderOptions.php';
         require_once 'soapclient/SforceMetadataClient.php';
-        
+
         $location = $_SESSION['location'];
         $sessionId = $_SESSION['sessionId'];
         $wsdl = $_SESSION['wsdl'];
@@ -73,21 +73,21 @@ if (isLoggedIn()) {
         $sforceSoapClient = $partnerConnection->createConnection($wsdl);
         $partnerConnection->setEndpoint($location);
         $partnerConnection->setSessionHeader($sessionId);
-        
+
         $metadataConnection = new SforceMetadataClient();
-            
+
         //setting default object to remove notices through functions
         if (!isset($_SESSION['default_object'])) {
             $_SESSION['default_object'] = null;
         }
-            
+
         //Has the user selected a default object on? If so,
         //pass them to the session
         if (isset($_REQUEST['default_object'])) {
             $_REQUEST['default_object_changed'] = $_SESSION['default_object'] != $_REQUEST['default_object'];
             $_SESSION['default_object'] = $_REQUEST['default_object'];
         }
-            
+
         $defaultNamespace = isset($_SESSION['config']['callOptions_defaultNamespace']) ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
         if (isset($_SESSION['tempClientId'])) {
             $header = new CallOptions($_SESSION['tempClientId'], $defaultNamespace);
@@ -131,7 +131,7 @@ if (isLoggedIn()) {
         if (!isset($_SESSION['getUserInfo']) || !$_SESSION['config']['cacheGetUserInfo']) {
             $_SESSION['getUserInfo'] = $partnerConnection->getUserInfo();
         }
-        
+
     } catch (exception $e) {
         session_unset();
         session_destroy();

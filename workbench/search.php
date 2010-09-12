@@ -41,7 +41,7 @@ if (isset($_POST['clearAllSr']) && $_POST['clearAllSr'] == 'Clear All') {
     if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE') {
         setcookie($persistedSavedSearchRequestsKey,null,time()-3600);
     }
-} 
+}
 
 //save as named search
 if (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST['saveSr']) && strlen($_REQUEST['saveSr']) > 0) {
@@ -54,7 +54,7 @@ if (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST
 
 //Main form logic: When the user first enters the page, display form defaulted to
 //show the search results with default object selected on a previous page, otherwise
-// just display the blank form. 
+// just display the blank form.
 if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
     require_once 'header.php';
     show_search_form($searchRequest);
@@ -77,14 +77,14 @@ if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
 function show_search_form($searchRequest){
 
 
-print "<script>\n";
-    
-print "var searchable_objects = new Array();\n";
-foreach (describeGlobal("searchable") as $obj) {
-    print "searchable_objects[\"$obj\"]=\"$obj\";\n";
-}
+    print "<script>\n";
 
-print <<<SEARCH_BUILDER_SCRIPT
+    print "var searchable_objects = new Array();\n";
+    foreach (describeGlobal("searchable") as $obj) {
+        print "searchable_objects[\"$obj\"]=\"$obj\";\n";
+    }
+
+    print <<<SEARCH_BUILDER_SCRIPT
 
 function doesSearchHaveName(){
     var saveSr = document.getElementById('saveSr');
@@ -230,71 +230,71 @@ SEARCH_BUILDER_SCRIPT;
     } else {
         print "<form method='POST' name='search_form' action='$_SERVER[PHP_SELF]#sr'>\n";
     }
-    
+
     print "<input type='hidden' id='numReturningObjects' name='numReturningObjects' value='" . count($searchRequest->getReturningObjects()) ."' />";
-    
+
     print "<p class='instructions'>Enter a search string and optionally select the objects and fields to return to build a SOSL search below:</p>\n";
     print "<table id='search_form_table' border='0' width='1'>\n<tr>\n";
-    
+
     print "<td NOWRAP>Search for </td><td NOWRAP colspan='2'><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . htmlspecialchars($searchRequest->getSearchString(),ENT_QUOTES,'UTF-8') . "\" size='37' onKeyUp='build_search();' /> in ";
-    
+
     $fieldTypeSelectOptions = array(
         'ALL FIELDS' => 'All Fields',
         'NAME FIELDS' => 'Name Fields',
         'PHONE FIELDS' => 'Phone Fields',
         'EMAIL FIELDS' => 'Email Fields'            
-    );
-    print "<select id='SB_fieldTypeSelect' name='SB_fieldTypeSelect' onChange='build_search();' onkeyup='build_search();'>\n";
-    foreach ($fieldTypeSelectOptions as $opKey => $op) {
-        print "<option value='$opKey'";
-        if ($opKey == $searchRequest->getFieldType()) print " selected='selected' ";
-        print ">$op</option>";
-    }
-    print "</select>";
+        );
+        print "<select id='SB_fieldTypeSelect' name='SB_fieldTypeSelect' onChange='build_search();' onkeyup='build_search();'>\n";
+        foreach ($fieldTypeSelectOptions as $opKey => $op) {
+            print "<option value='$opKey'";
+            if ($opKey == $searchRequest->getFieldType()) print " selected='selected' ";
+            print ">$op</option>";
+        }
+        print "</select>";
 
-    print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . htmlspecialchars($searchRequest->getLimit(),ENT_QUOTES,'UTF-8') . "' size='5' onKeyUp='build_search();' /> maximum records</td></tr>\n";
+        print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . htmlspecialchars($searchRequest->getLimit(),ENT_QUOTES,'UTF-8') . "' size='5' onKeyUp='build_search();' /> maximum records</td></tr>\n";
 
-    print "<tr id='sosl_search_textarea_row'><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
+        print "<tr id='sosl_search_textarea_row'><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
         "<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='100' rows='" . $_SESSION['config']['textareaRows'] . "' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($searchRequest->getSoslSearch(),ENT_QUOTES,'UTF-8') . "</textarea>" .
       "</td></tr>";
-    
-    print "<tr><td><input type='submit' name='searchSubmit' value='Search' />";
-    //print "<input type='reset' value='Reset' />";
-    
-    //save and retrieve named searches
-    print "<td align='right' colspan='2'>";
 
-    print "&nbsp;Run: " .
+        print "<tr><td><input type='submit' name='searchSubmit' value='Search' />";
+        //print "<input type='reset' value='Reset' />";
+
+        //save and retrieve named searches
+        print "<td align='right' colspan='2'>";
+
+        print "&nbsp;Run: " .
           "<select name='getSr' style='width: 10em;' onChange='document.search_form.submit();'>" . 
           "<option value='' selected='selected'></option>";
-    if (isset($_SESSION['savedSearchRequests'])) {
-        foreach ($_SESSION['savedSearchRequests'] as $srName => $sr) {
-            if($srName != null) print "<option value='$srName'>$srName</option>";
+        if (isset($_SESSION['savedSearchRequests'])) {
+            foreach ($_SESSION['savedSearchRequests'] as $srName => $sr) {
+                if($srName != null) print "<option value='$srName'>$srName</option>";
+            }
         }
-    }
-    print "</select>";
-    
-    print "&nbsp;&nbsp;Save as: <input type='text' id='saveSr' name='saveSr' value='" . htmlspecialchars($searchRequest->getName(),ENT_QUOTES,'UTF-8') . "' style='width: 10em;'/>\n";
-    
-    print "<input type='submit' name='doSaveSr' value='Save' onclick='return doesSearchHaveName();' />\n";
-    print "<input type='submit' name='clearAllSr' value='Clear All'/>\n";    
-    
-    print "&nbsp;&nbsp;" . 
+        print "</select>";
+
+        print "&nbsp;&nbsp;Save as: <input type='text' id='saveSr' name='saveSr' value='" . htmlspecialchars($searchRequest->getName(),ENT_QUOTES,'UTF-8') . "' style='width: 10em;'/>\n";
+
+        print "<input type='submit' name='doSaveSr' value='Save' onclick='return doesSearchHaveName();' />\n";
+        print "<input type='submit' name='clearAllSr' value='Clear All'/>\n";
+
+        print "&nbsp;&nbsp;" .
           "<img onmouseover=\"Tip('Save a search with a name and run it at a later time during your session. Note, if a search is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
 
-    
-    print "</td></tr></table><p/></form>\n";
-    
-    $rowNum = 0;
-    foreach ($searchRequest->getReturningObjects() as $ro) {        
-        print "<script>addReturningObjectRow(" . 
-        $rowNum++ . ", " . 
+
+        print "</td></tr></table><p/></form>\n";
+
+        $rowNum = 0;
+        foreach ($searchRequest->getReturningObjects() as $ro) {
+            print "<script>addReturningObjectRow(" .
+            $rowNum++ . ", " .
         "\"" . $ro->getObject()     . "\", " . 
         "\"" . $ro->getFields()  . "\"" .
         ");</script>";
-    }
-    
-    print "<script>toggleFieldDisabled();</script>";
+        }
+
+        print "<script>toggleFieldDisabled();</script>";
 }
 
 
@@ -303,13 +303,13 @@ function search($searchRequest){
 
         global $partnerConnection;
         $searchResponse = $partnerConnection->search($searchRequest->getSoslSearch());
-    
+
         if (isset($searchResponse->searchRecords)) {
             $records = $searchResponse->searchRecords;
         } else {
             $records = null;
         }
-    
+
         return $records;
 
     } catch (Exception $e){
@@ -322,84 +322,84 @@ function search($searchRequest){
 function show_search_result($records, $searchTimeElapsed){
     //Check if records were returned
     if ($records) {
-    try {       
-    print "<a name='sr'></a><div style='clear: both;'><br/><h2>Search Results</h2>\n";
-    print "<p>Returned " . count($records) . " total record";
-    if (count($records) !== 1) print 's';
-    print " in ";
-    printf ("%01.3f", $searchTimeElapsed);
-    print " seconds:</p>";
-    
-    $searchResultArray = array();
-    foreach ($records as $record) {
-        $recordObject = new Sobject($record->record);
-        $searchResultArray[$recordObject->type][] = $recordObject;
-    }
+        try {
+            print "<a name='sr'></a><div style='clear: both;'><br/><h2>Search Results</h2>\n";
+            print "<p>Returned " . count($records) . " total record";
+            if (count($records) !== 1) print 's';
+            print " in ";
+            printf ("%01.3f", $searchTimeElapsed);
+            print " seconds:</p>";
+
+            $searchResultArray = array();
+            foreach ($records as $record) {
+                $recordObject = new Sobject($record->record);
+                $searchResultArray[$recordObject->type][] = $recordObject;
+            }
 
 
-    foreach ($searchResultArray as $recordSetName=>$records) {
-        echo "<h3>$recordSetName</h3>";
-        
-        print "<table id='" . $recordSetName . "_results' class='" . getTableClass() ."'>\n";
-        //Print the header row on screen
-        $record0 = $records[0];
-        print "<tr><th></th>";
-        //If the user queried for the Salesforce ID, this special method is nessisary
-        //to export it from the nested SOAP message. This will always be displayed
-        //in the first column regardless of search order
-        if (isset($record0->Id)) {
-            print "<th>Id</th>";
-        }
-        if ($record0->fields) {
-            foreach ($record0->fields->children() as $field) {
-                     print "<th>";
-                    print htmlspecialchars($field->getName(),ENT_QUOTES,'UTF-8');
-                    print "</th>";
+            foreach ($searchResultArray as $recordSetName=>$records) {
+                echo "<h3>$recordSetName</h3>";
+
+                print "<table id='" . $recordSetName . "_results' class='" . getTableClass() ."'>\n";
+                //Print the header row on screen
+                $record0 = $records[0];
+                print "<tr><th></th>";
+                //If the user queried for the Salesforce ID, this special method is nessisary
+                //to export it from the nested SOAP message. This will always be displayed
+                //in the first column regardless of search order
+                if (isset($record0->Id)) {
+                    print "<th>Id</th>";
                 }
-        }else {
-            print "</td></tr>";
-        }
-        print "</tr>\n";
-    
-            //Print the remaining rows in the body
-            $rowNum = 1;
-          foreach ($records as $record) {    
-            print "<tr><td>$rowNum</td>";
-            $rowNum++;
-            //Another check if there are ID columns in the body
-            if (isset($record->Id)) {
-                print "<td>" . addLinksToUiForIds($record->Id) . "</td>";
-            }
-            //Print the non-ID fields
-            if (isset($record->fields)) {
-            foreach ($record->fields as $datum) {
-                print "<td>";
-                if ($datum) {
-                print convertDateTimezone(addLinksToUiForIds(htmlspecialchars($datum,ENT_QUOTES,'UTF-8')));
-                } else {
-                    print "&nbsp;";
+                if ($record0->fields) {
+                    foreach ($record0->fields->children() as $field) {
+                        print "<th>";
+                        print htmlspecialchars($field->getName(),ENT_QUOTES,'UTF-8');
+                        print "</th>";
+                    }
+                }else {
+                    print "</td></tr>";
                 }
-                print "</td>";
+                print "</tr>\n";
+
+                //Print the remaining rows in the body
+                $rowNum = 1;
+                foreach ($records as $record) {
+                    print "<tr><td>$rowNum</td>";
+                    $rowNum++;
+                    //Another check if there are ID columns in the body
+                    if (isset($record->Id)) {
+                        print "<td>" . addLinksToUiForIds($record->Id) . "</td>";
+                    }
+                    //Print the non-ID fields
+                    if (isset($record->fields)) {
+                        foreach ($record->fields as $datum) {
+                            print "<td>";
+                            if ($datum) {
+                                print convertDateTimezone(addLinksToUiForIds(htmlspecialchars($datum,ENT_QUOTES,'UTF-8')));
+                            } else {
+                                print "&nbsp;";
+                            }
+                            print "</td>";
+                        }
+                        print "</tr>\n";
+                    } else{
+                        print "</td></tr>\n";
+                    }
+                }
+                print "</table>&nbsp;<p/>";
             }
-            print "</tr>\n";
-            } else{
-                print "</td></tr>\n";
-            }
-          }
-          print "</table>&nbsp;<p/>";
+            print    "</div>\n";
+        } catch (Exception $e) {
+            $errors = null;
+            $errors = $e->getMessage();
+            print "<p />";
+            show_error($errors,false,true);
+        }
+    } else {
+        print "<p><a name='sr'>&nbsp;</a></p>";
+        show_error("Sorry, no records returned.");
     }
-      print    "</div>\n";
-    } catch (Exception $e) {
-          $errors = null;
-        $errors = $e->getMessage();
-        print "<p />";
-        show_error($errors,false,true);
-    }
-  } else {
-      print "<p><a name='sr'>&nbsp;</a></p>";
-      show_error("Sorry, no records returned.");
-  }
-  include_once 'footer.php';
+    include_once 'footer.php';
 }
 
 ?>

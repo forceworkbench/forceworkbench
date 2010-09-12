@@ -91,14 +91,14 @@ class MruHeader {
  * @package SalesforceSoapClient
  */
 class LoginScopeHeader {
-  // boolean that Indicates whether to update the list of most recently used items (True) or not (False).
-  public $organizationId;
-  public $portalId;
+    // boolean that Indicates whether to update the list of most recently used items (True) or not (False).
+    public $organizationId;
+    public $portalId;
 
-  public function __construct($orgId = NULL, $portalId = NULL) {
-    $this->organizationId = $orgId;
-    $this->portalId = $portalId;
-  }
+    public function __construct($orgId = NULL, $portalId = NULL) {
+        $this->organizationId = $orgId;
+        $this->portalId = $portalId;
+    }
 }
 
 /**

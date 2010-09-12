@@ -7,9 +7,9 @@ if (isset($_GET['ajaxBurn'])) {
     $numToBurn = $_GET['ajaxBurn'];
     $burnt = 0;
     $burnErrors = array();
-    
+
     global $partnerConnection;
-    
+
     for ($b = 0; $b < $numToBurn; $b++) {
         try {
             $partnerConnection->getServerTimestamp();
@@ -18,7 +18,7 @@ if (isset($_GET['ajaxBurn'])) {
             $burnErrors[] = $ex->getMessage();
         }
     }
-    
+
     if ($burnt > 0) {
         $successMessage = "Burnt " . $burnt . " API call";
         $successMessage .= $burnt > 1 ? 's' : '';
@@ -26,11 +26,11 @@ if (isset($_GET['ajaxBurn'])) {
     } else {
         $burnErrors = array_merge(array("No API calls were burnt."),$burnErrors);
     }
-    
+
     if (is_array($burnErrors) && count($burnErrors)>0) {
         show_error($burnErrors);
-    }    
-        
+    }
+
     exit;
 }
 
@@ -93,27 +93,28 @@ function ajaxBurn(){
 //-->
 </script>
 
-<?php 
+<?php
 if(isset($infos)) show_info($infos);
-if(isset($errors)) show_error($errors); 
+if(isset($errors)) show_error($errors);
 ?>
-<p/>
+<p />
 <form name='afterburner'>
 <table border='0'>
-    
-    
+
+
     <tr>
-        <td align='right'><label for='burnNumOfCalls'>Number of Calls to Burn: &nbsp;</label></td>
-        <td colspan='2'><input type='text' id='burnNumOfCalls' name='burnNumOfCalls' size='45' onKeyPress='if (checkEnter(event)) {ajaxBurn(); return false;}'/></td>
+        <td align='right'><label for='burnNumOfCalls'>Number of Calls to
+        Burn: &nbsp;</label></td>
+        <td colspan='2'><input type='text' id='burnNumOfCalls'
+            name='burnNumOfCalls' size='45'
+            onKeyPress='if (checkEnter(event)) {ajaxBurn(); return false;}' /></td>
     </tr>
-    
+
     <tr>
         <td>&nbsp;</td>
         <td id='burnStatus'></td>
         <td align='right'>
-            <p>
-            <input type='button' value='Burn' onclick="ajaxBurn();"/>
-            </p>
+        <p><input type='button' value='Burn' onclick="ajaxBurn();" /></p>
         </td>
     </tr>
     <!--
@@ -121,13 +122,13 @@ if(isset($errors)) show_error($errors);
         <td>&nbsp;</td>
          <td id='burnResults' colspan='2' align='center'></td> 
     </tr>
-    -->            
+    -->
 </table>
-        <div id='burnResults'></div>
+<div id='burnResults'></div>
 
 </form>
 
-    
+
 <?php
 require_once 'footer.php';
 ?>

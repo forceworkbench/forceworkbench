@@ -18,11 +18,11 @@ try {
             show_error("Downloading batch requests only supported in API 19.0 and higher", true, true);
             exit;
         }
-        
+
         $batchData = $asyncConnection->getBatchRequest($_GET['jobId'], $_GET['batchId']);
     } else {
         show_error("Invalid operation specified", true, true);
-        exit;    
+        exit;
     }
 } catch (Exception $e){
     show_error($e->getMessage(), true, true);

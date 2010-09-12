@@ -9,7 +9,7 @@ class ProcessSubmitRequest extends ProcessRequest {
 }
 
 class ProcessWorkitemRequest extends ProcessRequest {
-  public $action;
-  public $workitemId;
+    public $action;
+    public $workitemId;
 }
 ?>

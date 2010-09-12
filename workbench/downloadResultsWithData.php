@@ -7,11 +7,11 @@ if (isset($_SESSION['resultsWithData'])) {
     $csvFilename = $_GET['action'] . "_results" . date('YmdHis') . ".csv";
     header("Content-Type: application/csv");
     header("Content-Disposition: attachment; filename=$csvFilename");
-    
+
     foreach ($_SESSION['resultsWithData'] as $row) {
         fputcsv($csvFile, $row);
     }
-    
+
     fclose($csvFile) or die("Error closing php://output");
 } else {
     show_error("No results found to download.\n\n".

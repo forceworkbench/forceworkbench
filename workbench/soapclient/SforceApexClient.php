@@ -2,11 +2,11 @@
 require_once 'SoapBaseClient.php';
 
 class SforceApexClient extends SoapBaseClient {
-    
+
     protected function getNamespace() {
         return 'http://soap.sforce.com/2006/08/apex';
     }
-    
+
     protected function getServerUrl() {
         return str_replace("/u/","/s/",$_SESSION['location']);
     }

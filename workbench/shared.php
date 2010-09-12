@@ -3,7 +3,7 @@ function getConfig($configKey) {
     if (!isset($_SESSION["config"][$configKey])) {
         global $config;
         if ($config[$configKey]->dataType == "boolean") {
-            return false;    
+            return false;
         } else {
             return null;
         }
@@ -28,7 +28,7 @@ function printAsyncRefreshBlock() {
         print "<script>setTimeout('document.getElementById(\'refreshInTimer\').style.display=\'none\'; document.getElementById(\'refreshSpinner\').style.display=\'inline\'; window.location.href=\'$newUrl\'', $refreshInterval * 1000);</script>";
     } else {
         print "<input type='button' onclick='window.location.href=window.location.href;' value='Refresh' style='float:right;'/>";
-    }    
+    }
 }
 
 
@@ -37,7 +37,7 @@ function explodeCommaSeparated($css) {
     foreach ($exploded as $explodedKey => $explodedValue) {
         $exploded[$explodedKey] = trim($explodedValue);
     }
-    return $exploded;    
+    return $exploded;
 }
 
 
@@ -48,12 +48,12 @@ function handleAllExceptions($e) {
 
 function processResults($raw) {
     $processed = array();
-    
+
     foreach (array(true, false) as $scalarProcessing) {
         foreach ($raw as $rawKey => $rawValue) {
             if (is_array($rawValue) || is_object($rawValue)) {
                 if($scalarProcessing) continue;
-                
+
                 if (isset($rawValue->name) && $rawValue->name != "") {
                     $processed[$rawValue->name] = processResults($rawValue);
                 } else if (isset($rawValue->fullName) && $rawValue->fullName != "") {
@@ -71,7 +71,7 @@ function processResults($raw) {
             }
         }
     }
-    
+
     return $processed;
 }
 
@@ -82,19 +82,19 @@ function unCamelCase($camelCasedString) {
 function validateUploadedFile($file){
     if ($file['error'] != 0) {
         $uploadErrorCodes = array(
-               1=>"The file uploaded is too large. Please try again. (Error 1)", //as per PHP config
-               2=>"The file uploaded is too large. Please try again. (Error 2)", //as per form config
-               3=>"The file uploaded was only partially uploaded.  Please try again. (Error 3)",
-               4=>"No file was uploaded.  Please try again. (Error 4)",
-               6=>"Missing a temporary folder.  Please try again. (Error 6)",
-               7=>"Failed to write file to disk.  Please try again. (Error 7)",
-               8=>"File upload stopped by extension.  Please try again. (Error 8)"
-            );
-            
-            if ($_SESSION['config']['maxFileSize']['overrideable']) {
-                $uploadErrorCodes[2] = "The file uploaded is too large. Please try again or adjust in Settings. (Error 2)";
-            }
-            
+        1=>"The file uploaded is too large. Please try again. (Error 1)", //as per PHP config
+        2=>"The file uploaded is too large. Please try again. (Error 2)", //as per form config
+        3=>"The file uploaded was only partially uploaded.  Please try again. (Error 3)",
+        4=>"No file was uploaded.  Please try again. (Error 4)",
+        6=>"Missing a temporary folder.  Please try again. (Error 6)",
+        7=>"Failed to write file to disk.  Please try again. (Error 7)",
+        8=>"File upload stopped by extension.  Please try again. (Error 8)"
+        );
+
+        if ($_SESSION['config']['maxFileSize']['overrideable']) {
+            $uploadErrorCodes[2] = "The file uploaded is too large. Please try again or adjust in Settings. (Error 2)";
+        }
+
         return($uploadErrorCodes[$file['error']]);
     } elseif (!is_uploaded_file($file['tmp_name'])) {
         return("The file was not uploaded from your computer. Please try again.");
@@ -150,13 +150,13 @@ function show_error($errors, $showHeader=false, $showFooter=false){
     print "<div class='show_errors'>\n";
     print "<img src='images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
     if(!is_array($errors)) $errors = array($errors);
-    
+
     $errorString = null;
     foreach ($errors as $error) {
         if (is_a($error, 'LibXMLError')) {
             $error = "$error->message [Line $error->line : Column: $error->column]";
         }
-        
+
         $errorString .= "<p>" . htmlspecialchars((string)$error) . "</p>";
         $errorString = str_replace("\n","<br/>",$errorString);
     }
@@ -209,7 +209,7 @@ function getWorkbenchUserAgent(){
  * @param string $format  The format to use when converting the date/time
  * @return string Converted date/time in selected format, or normal field
  */
- function convertDateTimezone($inputStr, $format = 'Y-m-d\\TH:i:s.000P') {
+function convertDateTimezone($inputStr, $format = 'Y-m-d\\TH:i:s.000P') {
     if (getConfig("convertTimezone") != '' && preg_match('|\d\d\d\d\-\d\d\-\d\dT\d\d\:\d\d:\d\d\.\d\d\dZ|', $inputStr)) {
         $timezone = getConfig("convertTimezone");
 
@@ -221,7 +221,7 @@ function getWorkbenchUserAgent(){
         return $inputStr;
     }
 
- }
+}
 
 function printSelectOptions($valuesToLabelsArray,$defaultValue){
     $valueAndLabelMatched = false;
@@ -240,12 +240,12 @@ function printSelectOptions($valuesToLabelsArray,$defaultValue){
 
 function describeGlobal($filter1=null, $filter2=null){
     $processedDescribeGlobalResponse = array();
-    
+
     if (!isset($_SESSION['myGlobal']) || !$_SESSION['config']['cacheDescribeGlobal']) {
         try {
             global $partnerConnection;
             $describeGlobalResponse = $partnerConnection->describeGlobal();
-            
+
             //Change to pre-17.0 format
             if (isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)) {
                 $describeGlobalResponse->types = array(); //create the array
@@ -254,8 +254,8 @@ function describeGlobal($filter1=null, $filter2=null){
                     $describeGlobalResponse->attributeMap["$sobject->name"] = $sobject; //recreate into a map for faster lookup later
                 }
                 unset($describeGlobalResponse->sobjects); //remove from array, since not needed
-            }    
-            
+            }
+
             $_SESSION['myGlobal'] = $describeGlobalResponse;
         } catch (Exception $e) {
             show_error($e->getMessage(),false,true);
@@ -264,22 +264,22 @@ function describeGlobal($filter1=null, $filter2=null){
 
     //Print the global object types in a dropdown select box, using the filter set and the API version supports it
     foreach ($_SESSION['myGlobal']->types as $type) {
-        if(!isset($_SESSION['myGlobal']->attributeMap) || 
-            (($filter1 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter1) && 
-            ($filter2 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter2))){    
-            
+        if(!isset($_SESSION['myGlobal']->attributeMap) ||
+        (($filter1 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter1) &&
+        ($filter2 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter2))){
+
             $processedDescribeGlobalResponse[] = $type;
-        }    
+        }
     }
-    
+
     return $processedDescribeGlobalResponse;
 }
 
 function printObjectSelection($defaultObject=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null){
     $_SESSION['default_object'] = $defaultObject;
-    
-    print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";    
-    
+
+    print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";
+
     print "<option value=''></option>";
 
     //Print the global object types in a dropdown select box, using the filter set and the API version supports it
@@ -317,7 +317,7 @@ function describeSObject($objectTypes){
     }
 
 
-    // retreive uncached object descriptions from the API and return as an array. 
+    // retreive uncached object descriptions from the API and return as an array.
     if (count($objectTypesToRetreive) >= 1 && count($objectTypesToRetreive) <= 100) {
         try {
             global $partnerConnection;
@@ -339,7 +339,7 @@ function describeSObject($objectTypes){
     }
 
     // move the describe results to the session cache and then copy all the requested object descriptions from the cache
-    // if caching is disaled, the results will just be returned directly 
+    // if caching is disaled, the results will just be returned directly
     if ($_SESSION['config']['cacheDescribeSObject']) {
         if (isset($describeSObjectsResultsArray)) {
             foreach ($describeSObjectsResultsArray as $describeSObjectResultKey => $describeSObjectResult) {
@@ -370,21 +370,21 @@ function describeSObject($objectTypes){
 }
 
 function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = null) {
-    print "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'expand'); return false;\">Expand All</a> | " . 
+    print "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'expand'); return false;\">Expand All</a> | " .
           "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'collapse'); return false;\">Collapse All</a>\n";
-    
+
     if (isset($additionalMenus)) {
         print $additionalMenus;
     }
-        
+
     print "<ul id='$tableId' class='treeview'>";
-    
+
     printNode($nodes);
-    
-    print "</ul>\n" . 
+
+    print "</ul>\n" .
           "<script type='text/javascript'>" . 
           "ddtreemenu.createTree('$tableId', true);" . 
-          ($forceCollapse ? "ddtreemenu.flatten('$tableId', 'collapse');" : "") .
+    ($forceCollapse ? "ddtreemenu.flatten('$tableId', 'collapse');" : "") .
           "</script>";
 }
 
@@ -410,7 +410,7 @@ function alphaOrderFields($describeSObjectResult){
         foreach ($describeSObjectResult->fields as $field) {
             $fieldNames[] = $field->name;
         }
-    
+
         $describeSObjectResult->fields = array_combine($fieldNames, $describeSObjectResult->fields);
         $describeSObjectResult->fields = natcaseksort($describeSObjectResult->fields);
     }
@@ -418,31 +418,31 @@ function alphaOrderFields($describeSObjectResult){
 }
 
 function natcaseksort($array) {
-  // Like ksort but uses natural sort instead
-  $keys = array_keys($array);
-  natcasesort($keys);
+    // Like ksort but uses natural sort instead
+    $keys = array_keys($array);
+    natcasesort($keys);
 
-  $newArray = array();
-  foreach ($keys as $k) {
-    $newArray[$k] = $array[$k];
-  }
+    $newArray = array();
+    foreach ($keys as $k) {
+        $newArray[$k] = $array[$k];
+    }
 
-  return $newArray;
+    return $newArray;
 }
 
 
 function addLinksToUiForIds($inputStr){
     if (isset($_SESSION['config']['linkIdToUi']) && $_SESSION['config']['linkIdToUi'] == true) {
         preg_match("@(https?://.*)/services@", $_SESSION['location'], $instUIDomain);
-        return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$1' target='sfdcUi'>$1</a>",$inputStr);                    
+        return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$1' target='sfdcUi'>$1</a>",$inputStr);
     } else {
-        return $inputStr;                    
+        return $inputStr;
     }
 }
 
 function addLinksToUi($startUrl){
     preg_match("@(https?://.*)/services@", $_SESSION['location'], $instUIDomain);
-    return "$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$startUrl";                    
+    return "$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$startUrl";
 }
 
 
@@ -473,18 +473,18 @@ function getAsyncApiConnection(){
     $asyncConnection->setUserAgent(getWorkbenchUserAgent());
     $asyncConnection->setExternalLogReference($_SESSION['restDebugLog']);
     $asyncConnection->setLoggingEnabled(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true);
-    
+
     return $asyncConnection;
 }
 
 
 /**
-* Takes xml as a string and returns it nicely indented
-*
-* @param string $xml The xml to beautify
-* @param boolean $htmlOutput If the xml should be formatted for display on an html page
-* @return string The beautified xml
-*/
+ * Takes xml as a string and returns it nicely indented
+ *
+ * @param string $xml The xml to beautify
+ * @param boolean $htmlOutput If the xml should be formatted for display on an html page
+ * @return string The beautified xml
+ */
 function xml_pretty_printer($xml, $htmlOutput=FALSE)
 {
     $xmlObj = new SimpleXMLElement($xml);
@@ -492,7 +492,7 @@ function xml_pretty_printer($xml, $htmlOutput=FALSE)
 ", str_replace("><", ">
 <", $xmlObj->asXML()));
     $indentLevel = 0;
-    
+
     $newXmlLines = array();
     foreach ($xmlLines as $xmlLine) {
         if (preg_match('#^(<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?>.*<s*/s*[^>]+>)|(<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?s*/s*>)#i', ltrim($xmlLine))) {
@@ -515,7 +515,7 @@ function xml_pretty_printer($xml, $htmlOutput=FALSE)
             $newXmlLines[] = $newLine;
         }
     }
-    
+
     $xml = join("
 ", $newXmlLines);
     return ($htmlOutput) ? '<pre>' . htmlentities($xml) . '</pre>' : $xml;
@@ -537,9 +537,9 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 }
             }
             </script>";
-     
+         
         print "<div style='text-align: left;'>";
-        
+
 
         if ($customValue) {
             if ($customName) {
@@ -548,50 +548,50 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<h1>CUSTOM</h1>\n";
             }
 
-             var_dump($customValue);
+            var_dump($customValue);
             print "<hr/>";
         }
 
         if ($showSuperVars) {
             print "<h1 onclick=\"toggleDebugSection(this,'container_globals')\" class=\"debugHeader\">+ SUPERGLOBAL VARIABLES</h1>\n";
             print "<div id='container_globals' class='debugContainer'>";
-            
-                
-                print "<strong onclick=\"toggleDebugSection(this,'container_globals_cookie')\" class=\"debugHeader\">+ COOKIE SUPERGLOBAL VARIABLE</strong>\n";
-                print "<div id='container_globals_cookie' class='debugContainer'>";
-                var_dump ($_COOKIE);
-                print "<hr/>";
-                print "</div>";
-                
-                print "<strong onclick=\"toggleDebugSection(this,'container_globals_session')\" class=\"debugHeader\">+ SESSION SUPERGLOBAL VARIABLE</strong>\n";
-                print "<div id='container_globals_session' class='debugContainer'>";
-                var_dump ($_SESSION);
-                print "<hr/>";
-                print "</div>";
 
-                print "<strong onclick=\"toggleDebugSection(this,'container_globals_post')\" class=\"debugHeader\">+ POST SUPERGLOBAL VARIABLE</strong>\n";
-                print "<div id='container_globals_post' class='debugContainer'>";
-                var_dump ($_POST);
-                print "<hr/>";
-                print "</div>";
-                
-                print "<strong onclick=\"toggleDebugSection(this,'container_globals_get')\" class=\"debugHeader\">+ GET SUPERGLOBAL VARIABLE</strong>\n";
-                print "<div id='container_globals_get' class='debugContainer'>";
-                var_dump ($_GET);
-                print "<hr/>";
-                print "</div>";
-                
-                print "<strong onclick=\"toggleDebugSection(this,'container_globals_files')\" class=\"debugHeader\">+ FILES SUPERGLOBAL VARIABLE</strong>\n";
-                print "<div id='container_globals_files' class='debugContainer'>";
-                var_dump ($_FILES);
-                print "<hr/>";
-                print "</div>";
-                
-                print "<strong onclick=\"toggleDebugSection(this,'container_globals_env')\" class=\"debugHeader\">+ ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
-                print "<div id='container_globals_env' class='debugContainer'>";
-                var_dump ($_ENV);
-                print "<hr/>";
-                print "</div>";
+
+            print "<strong onclick=\"toggleDebugSection(this,'container_globals_cookie')\" class=\"debugHeader\">+ COOKIE SUPERGLOBAL VARIABLE</strong>\n";
+            print "<div id='container_globals_cookie' class='debugContainer'>";
+            var_dump ($_COOKIE);
+            print "<hr/>";
+            print "</div>";
+
+            print "<strong onclick=\"toggleDebugSection(this,'container_globals_session')\" class=\"debugHeader\">+ SESSION SUPERGLOBAL VARIABLE</strong>\n";
+            print "<div id='container_globals_session' class='debugContainer'>";
+            var_dump ($_SESSION);
+            print "<hr/>";
+            print "</div>";
+
+            print "<strong onclick=\"toggleDebugSection(this,'container_globals_post')\" class=\"debugHeader\">+ POST SUPERGLOBAL VARIABLE</strong>\n";
+            print "<div id='container_globals_post' class='debugContainer'>";
+            var_dump ($_POST);
+            print "<hr/>";
+            print "</div>";
+
+            print "<strong onclick=\"toggleDebugSection(this,'container_globals_get')\" class=\"debugHeader\">+ GET SUPERGLOBAL VARIABLE</strong>\n";
+            print "<div id='container_globals_get' class='debugContainer'>";
+            var_dump ($_GET);
+            print "<hr/>";
+            print "</div>";
+
+            print "<strong onclick=\"toggleDebugSection(this,'container_globals_files')\" class=\"debugHeader\">+ FILES SUPERGLOBAL VARIABLE</strong>\n";
+            print "<div id='container_globals_files' class='debugContainer'>";
+            var_dump ($_FILES);
+            print "<hr/>";
+            print "</div>";
+
+            print "<strong onclick=\"toggleDebugSection(this,'container_globals_env')\" class=\"debugHeader\">+ ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
+            print "<div id='container_globals_env' class='debugContainer'>";
+            var_dump ($_ENV);
+            print "<hr/>";
+            print "</div>";
 
             print "</div>";
         }
@@ -603,22 +603,22 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<h1 onclick=\"toggleDebugSection(this,'partner_soap_container')\" class=\"debugHeader\">+ PARTNER SOAP MESSAGES</h1>\n";
                 print "<div id='partner_soap_container'  class='debugContainer'>";
 
-                    print "<strong>LAST REQUEST HEADER</strong>\n";
-                    print htmlspecialchars($partnerConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-    
-                    print "<strong>LAST REQUEST</strong>\n";
-                    print htmlspecialchars(xml_pretty_printer($partnerConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-    
-                    print "<strong>LAST RESPONSE HEADER</strong>\n";
-                    print htmlspecialchars($partnerConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-    
-                    print "<strong>LAST RESPONSE</strong>\n";
-                    print htmlspecialchars(xml_pretty_printer($partnerConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-                
+                print "<strong>LAST REQUEST HEADER</strong>\n";
+                print htmlspecialchars($partnerConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
+                print "<strong>LAST REQUEST</strong>\n";
+                print htmlspecialchars(xml_pretty_printer($partnerConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
+                print "<strong>LAST RESPONSE HEADER</strong>\n";
+                print htmlspecialchars($partnerConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
+                print "<strong>LAST RESPONSE</strong>\n";
+                print htmlspecialchars(xml_pretty_printer($partnerConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
                 print "</div>";
             }
             catch (Exception $e) {
@@ -633,22 +633,22 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<h1 onclick=\"toggleDebugSection(this,'metadata_soap_container')\" class=\"debugHeader\">+ METADATA SOAP MESSAGES</h1>\n";
                 print "<div id='metadata_soap_container' class='debugContainer'>";
 
-                    print "<strong>LAST REQUEST HEADER</strong>\n";
-                    print htmlspecialchars($metadataConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-    
-                    print "<strong>LAST REQUEST</strong>\n";
-                    print htmlspecialchars(xml_pretty_printer($metadataConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-    
-                    print "<strong>LAST RESPONSE HEADER</strong>\n";
-                    print htmlspecialchars($metadataConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-    
-                    print "<strong>LAST RESPONSE</strong>\n";
-                    print htmlspecialchars(xml_pretty_printer($metadataConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-                    
+                print "<strong>LAST REQUEST HEADER</strong>\n";
+                print htmlspecialchars($metadataConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
+                print "<strong>LAST REQUEST</strong>\n";
+                print htmlspecialchars(xml_pretty_printer($metadataConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
+                print "<strong>LAST RESPONSE HEADER</strong>\n";
+                print htmlspecialchars($metadataConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
+                print "<strong>LAST RESPONSE</strong>\n";
+                print htmlspecialchars(xml_pretty_printer($metadataConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
                 print "</div>";
             }
             catch (Exception $e) {
@@ -656,29 +656,29 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print_r ($e);
             }
         }
-        
+
         global $apexConnection;
         if ($showSoap && isset($apexConnection) && $apexConnection->getLastRequestHeaders()) {
             try {
                 print "<h1 onclick=\"toggleDebugSection(this,'apex_soap_container')\" class=\"debugHeader\">+ APEX SOAP MESSAGES</h1>\n";
                 print "<div id='apex_soap_container' class='debugContainer'>";
 
-                    print "<strong>LAST REQUEST HEADER</strong>\n";
-                    print htmlspecialchars($apexConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-    
-                    print "<strong>LAST REQUEST</strong>\n";
-                    print htmlspecialchars(xml_pretty_printer($apexConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-    
-                    print "<strong>LAST RESPONSE HEADER</strong>\n";
-                    print htmlspecialchars($apexConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-    
-                    print "<strong>LAST RESPONSE</strong>\n";
-                    print htmlspecialchars(xml_pretty_printer($apexConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
-                    print "<hr/>";
-                    
+                print "<strong>LAST REQUEST HEADER</strong>\n";
+                print htmlspecialchars($apexConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
+                print "<strong>LAST REQUEST</strong>\n";
+                print htmlspecialchars(xml_pretty_printer($apexConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
+                print "<strong>LAST RESPONSE HEADER</strong>\n";
+                print htmlspecialchars($apexConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
+                print "<strong>LAST RESPONSE</strong>\n";
+                print htmlspecialchars(xml_pretty_printer($apexConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print "<hr/>";
+
                 print "</div>";
             }
             catch (Exception $e) {
@@ -690,13 +690,13 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
         if (isset($_SESSION['restDebugLog']) && $_SESSION['restDebugLog'] != "") {
             print "<h1 onclick=\"toggleDebugSection(this,'rest_debug_container')\" class=\"debugHeader\">+ REST/BULK API LOGS</h1>\n";
             print "<div id='rest_debug_container' class='debugContainer'>";
-                print "<pre>" . addLinksToUiForIds($_SESSION['restDebugLog']) . "</pre>";
-                print "<hr/>";
+            print "<pre>" . addLinksToUiForIds($_SESSION['restDebugLog']) . "</pre>";
+            print "<hr/>";
             print "</div>";
-            
+
             $_SESSION['restDebugLog'] = null;
         }
-        
+
         print "</div>";
     }
 }
