@@ -6,16 +6,16 @@ require_once 'shared.php';
 function getDefaultServerUrl(){
 	$serverUrl = '';
 	
-	if(isset($_GET['serverUrlPrefix'])){
+	if (isset($_GET['serverUrlPrefix'])) {
 		$serverUrl .= $_GET['serverUrlPrefix'];
 	} else {
-		if($_SESSION['config']['useHTTPS'] && !stristr($_SESSION['config']['defaultInstance'],'localhost')){
+		if ($_SESSION['config']['useHTTPS'] && !stristr($_SESSION['config']['defaultInstance'],'localhost')) {
 			$serverUrl .= "https://";
 		} else {
 			$serverUrl .= "http://";
 		}
 		
-		if(isset($_GET['inst'])){
+		if (isset($_GET['inst'])) {
 			$serverUrl .= $_GET['inst'];
 		} else {
 			$serverUrl .= $_SESSION['config']['defaultInstance'];
@@ -23,14 +23,14 @@ function getDefaultServerUrl(){
 		
 		$serverUrl .= ".salesforce.com";
 			
-		if(isset($_GET['port'])){
+		if (isset($_GET['port'])) {
 			$serverUrl .= ":" . $_GET['port'];
 		}
 	}
 	
 	$serverUrl .= "/services/Soap/u/";
 	
-	if(isset($_GET['api'])){
+	if (isset($_GET['api'])) {
 		$serverUrl .= $_GET['api'];
 	} else {
 		$serverUrl .= $_SESSION['config']['defaultApiVersion'];
@@ -45,7 +45,7 @@ function getDefaultServerUrl(){
  * For auto-login by GET params, allow users to either provide un/pw or sid, and optionally serverUrl and/or api version.
  * If the serverUrl is provided, it will be used alone, but if either
  */
-if((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])){		
+if ((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])) {		
 		
 	$un       = isset($_GET['un'])       ? $_GET['un']       : null;
 	$pw       = isset($_GET['pw'])       ? $_GET['pw']       : null;
@@ -56,12 +56,12 @@ if((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])){
 	//as it applies to both ui and auto-login
 
 	//make sure the user isn't setting invalid combinations of query params
-	if(isset($_GET['serverUrl']) && isset($_GET['inst']) && isset($_GET['api'])){
+	if (isset($_GET['serverUrl']) && isset($_GET['inst']) && isset($_GET['api'])) {
 		
 		//display UI login page with error.
 		display_login("Invalid auto-login parameters. Must set either serverUrl OR inst and/or api.");
 		
-	} else if(isset($_GET['serverUrl']) && !(isset($_GET['inst'])  || isset($_GET['api'])) ) {
+	} else if (isset($_GET['serverUrl']) && !(isset($_GET['inst'])  || isset($_GET['api'])) ) {
 		
 		$serverUrl = $_GET['serverUrl'];
 		
@@ -75,10 +75,10 @@ if((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])){
 	process_Login($un, $pw, $serverUrl, $sid, $startUrl);	
 }
 
-if(isset($_POST['login_type'])){
-	if ($_POST['login_type']=='std'){
+if (isset($_POST['login_type'])) {
+	if ($_POST['login_type']=='std') {
 		process_login($_POST['usernameStd'], $_POST['passwordStd'], null, null, $_POST['actionJumpStd']);
-	} elseif ($_POST['login_type']=='adv'){
+	} elseif ($_POST['login_type']=='adv') {
 		process_login(
 			isset($_POST['usernameAdv']) ? $_POST['usernameAdv'] : null, 
 			isset($_POST['passwordAdv']) ? $_POST['passwordAdv'] : null, 
@@ -100,11 +100,11 @@ if (isset($errors)) {
 }
 
 $isRemembered = "";
-if (isset($_COOKIE['user'])){
+if (isset($_COOKIE['user'])) {
 	$user = $_COOKIE['user'];
 	$isRemembered = "checked='checked'";
 	$jsFocus = 'password';
-} elseif (isset($_POST['user'])){
+} elseif (isset($_POST['user'])) {
 	$user = $_POST['user'];
 	$jsFocus = 'user';
 } else {
@@ -124,9 +124,9 @@ $defaultServerUrl = getDefaultServerUrl();
 print "<script type='text/javascript' language='JavaScript'>\n";
 
 print "var instNumDomainMap = [];\n";
-if($_SESSION['config']['fuzzyServerUrlLookup']){
-	foreach($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo){
-		if(isset($instInfo[1]) && $instInfo[1] != ""){
+if ($_SESSION['config']['fuzzyServerUrlLookup']) {
+	foreach ($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo) {
+		if (isset($instInfo[1]) && $instInfo[1] != "") {
 			print "\t" . "instNumDomainMap['$instInfo[1]'] = '$subdomain';" . "\n";
 		}
 	}
@@ -139,10 +139,10 @@ function fuzzyServerUrlSelect(){
 	var sid = document.getElementById('sessionId').value
 	var sidIndex = sid.indexOf('00D');
 		
-	if(sidIndex > -1){
+	if (sidIndex > -1) {
 		var instNum = sid.substring(sidIndex + 3, sidIndex + 4);
 		var instVal = instNumDomainMap[instNum];
-		if(instVal != null){
+		if (instVal != null) {
 			document.getElementById('inst').value = instVal;
 			build_location();
 		}
@@ -150,7 +150,7 @@ function fuzzyServerUrlSelect(){
 }
 
 function toggleUsernamePasswordSessionDisabled(){
-	if(document.getElementById('sessionId').value){
+	if (document.getElementById('sessionId').value) {
 		document.getElementById('usernameAdv').disabled = true;
 		document.getElementById('passwordAdv').disabled = true;
 	} else {
@@ -158,7 +158,7 @@ function toggleUsernamePasswordSessionDisabled(){
 		document.getElementById('passwordAdv').disabled = false;
 	}
 
-	if(document.getElementById('usernameAdv').value || document.getElementById('passwordAdv').value){
+	if (document.getElementById('usernameAdv').value || document.getElementById('passwordAdv').value) {
 		document.getElementById('sessionId').disabled = true;
 	} else {
 		document.getElementById('sessionId').disabled = false;
@@ -171,7 +171,7 @@ function form_become_adv() {
 	document.getElementById('login_std').style.display='none';
 	document.getElementById('login_adv').style.display='inline';
 	
-	if(document.getElementById('usernameAdv').value == null || document.getElementById('usernameAdv').value == "") {
+	if (document.getElementById('usernameAdv').value == null || document.getElementById('usernameAdv').value == "") {
 		document.getElementById('usernameAdv').focus();
 	} else {
 		document.getElementById('passwordAdv').focus();
@@ -182,7 +182,7 @@ function form_become_std() {
 	document.getElementById('login_std').style.display='inline';
 	document.getElementById('login_adv').style.display='none';
 	
-	if(document.getElementById('username').value == null || document.getElementById('username').value == "") {
+	if (document.getElementById('username').value == null || document.getElementById('username').value == "") {
 		document.getElementById('username').focus();
 	} else {
 		document.getElementById('password').focus();
@@ -196,7 +196,7 @@ function build_location(){
 }
 
 function giveUserFocus(){
-	if (document.getElementById('login_become_adv').checked){
+	if (document.getElementById('login_become_adv').checked) {
 		document.getElementById('usernameAdv').focus();
 	} else {
 		document.getElementById('username').focus();
@@ -204,7 +204,7 @@ function giveUserFocus(){
 }
 
 function givePassFocus(){
-	if (document.getElementById('login_become_adv').checked){
+	if (document.getElementById('login_become_adv').checked) {
 		document.getElementById('passwordAdv').focus();
 	} else {
 		document.getElementById('password').focus();
@@ -263,9 +263,9 @@ print "<p><strong>Jump to: </strong>" .
 	  "<select name='actionJumpStd' style='width: 18em;'>" . 	
 		  "<option value='select.php'></option>";
 		  
-foreach($GLOBALS["MENUS"] as $menu => $pages) {
-	foreach($pages as $href => $page) {
-		if($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
+foreach ($GLOBALS["MENUS"] as $menu => $pages) {
+	foreach ($pages as $href => $page) {
+		if ($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
 	}
 }
 print "</select></p>";
@@ -287,7 +287,7 @@ LOGIN_FORM_PART_2;
 //instance
 print "<select name='inst' id='inst' onChange='build_location();' onkeyup='build_location();'>";
 $instanceNames = array();
-foreach($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo){
+foreach ($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo) {
 	$instanceNames[$subdomain] = $instInfo[0];
 }			
 printSelectOptions($instanceNames,$_SESSION['config']['defaultInstance']);
@@ -302,9 +302,9 @@ print "</select></p>";
 print "<p><strong>Jump to: </strong>" . 
 	  "<select name='actionJumpAdv' style='width: 18em;'>" . 	
 	  "<option value='select.php'></option>";
-foreach($GLOBALS["MENUS"] as $menu => $pages) {
-	foreach($pages as $href => $page) {
-		if($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
+foreach ($GLOBALS["MENUS"] as $menu => $pages) {
+	foreach ($pages as $href => $page) {
+		if ($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
 	}
 }
 print "</select></p></div>";
@@ -319,7 +319,7 @@ print "<div id='login_submit' style='text-align: right;'>" .
 
 
 //if 'adv' is added to the login url and is not 0, default to advanced login
-if((isset($_GET['adv']) && $_GET['adv'] != 0) || 
+if ((isset($_GET['adv']) && $_GET['adv'] != 0) || 
    (isset($_SESSION['config']['defaultLoginType']) && $_SESSION['config']['defaultLoginType']=='Advanced')){
 	print "<script>
 				document.getElementById('login_become_adv').checked=true; 
@@ -350,9 +350,9 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	$sessionId = htmlspecialchars(trim($sessionId));
 	$actionJump = htmlspecialchars(trim($actionJump));
 
-	if(isset($_POST['rememberUser']) && $_POST['rememberUser'] !== 'on') setcookie('user',NULL,time()-3600);
+	if (isset($_POST['rememberUser']) && $_POST['rememberUser'] !== 'on') setcookie('user',NULL,time()-3600);
 
-	if ($username && $password && $sessionId){
+	if ($username && $password && $sessionId) {
 		$errors = null;
 		$errors = 'Provide only username and password OR session id, but not all three.';
 		display_login($errors);
@@ -360,7 +360,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	}
 
 
-	try{
+	try {
 		if (getConfig('mockClients')) {
 			require_once 'soapclient/SforceMockPartnerClient.php';	
 		}
@@ -368,13 +368,13 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 		require_once 'soapclient/SforceHeaderOptions.php';
 		
 		//build server URL if not already; moved from logic below
-		if(!isset($serverUrl) || $serverUrl == ''){
+		if (!isset($serverUrl) || $serverUrl == '') {
 			$serverUrl = getDefaultServerUrl();
 		} 
 
 		//block connections to localhost
-		if(stripos($serverUrl,'localhost')) {
-			if(isset($GLOBALS['internal']['localhostLoginError'])){
+		if (stripos($serverUrl,'localhost')) {
+			if (isset($GLOBALS['internal']['localhostLoginError'])) {
 				display_login($GLOBALS['internal']['localhostLoginError'],false,true);
 			} else {
 				display_login("Must not connect to 'localhost'",false,true);
@@ -382,7 +382,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 			exit;
 		}
 		
-		if(preg_match('!/(\d{1,2})\.(\d)!',$serverUrl,$serverUrlMatches) && $serverUrlMatches[1] >= 8){
+		if (preg_match('!/(\d{1,2})\.(\d)!',$serverUrl,$serverUrlMatches) && $serverUrlMatches[1] >= 8) {
 			$wsdl = 'soapclient/sforce.' . $serverUrlMatches[1] . $serverUrlMatches[2] . '.partner.wsdl';
 		} else {
 			display_login("Could not find WSDL for this API version. Please try logging in again.");
@@ -392,29 +392,29 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	    $partnerConnection->createConnection($wsdl);
 	    
 	    //set call options header for login before a session exists
-		if(isset($_GET['clientId'])){
+		if (isset($_GET['clientId'])) {
 			$partnerConnection->setCallOptions(new CallOptions($_GET['clientId'], $_SESSION['config']['callOptions_defaultNamespace']));
 
-		} else if(isset($_SESSION['config']['callOptions_client']) || isset($_SESSION['config']['callOptions_defaultNamespace'])){
+		} else if (isset($_SESSION['config']['callOptions_client']) || isset($_SESSION['config']['callOptions_defaultNamespace'])) {
 			$clientId = isset($_SESSION['config']['callOptions_client']) ? $_SESSION['config']['callOptions_client'] : null;
 			$defaultNamespace = isset($_SESSION['config']['callOptions_defaultNamespace']) ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
 			$partnerConnection->setCallOptions(new CallOptions($clientId, $defaultNamespace));
 		}
 
 		//set login scope header for login before a session exists
-		if(isset($_GET['orgId']) || isset($_GET['portalId'])){
+		if (isset($_GET['orgId']) || isset($_GET['portalId'])) {
 			$partnerConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));	
 				
-		} else if(isset($_SESSION['config']['loginScopeHeader_organizationId']) || isset($_SESSION['config']['loginScopeHeader_portalId'])){
+		} else if (isset($_SESSION['config']['loginScopeHeader_organizationId']) || isset($_SESSION['config']['loginScopeHeader_portalId'])) {
 			$loginScopeHeaderOrganizationId = isset($_SESSION['config']['loginScopeHeader_organizationId']) ? $_SESSION['config']['loginScopeHeader_organizationId'] : null;
 			$loginScopeHeaderPortalId = isset($_SESSION['config']['loginScopeHeader_portalId']) ? $_SESSION['config']['loginScopeHeader_portalId'] : null;
 			$partnerConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeaderOrganizationId, $loginScopeHeaderPortalId));
 		}		
 
-	    if($username && $password && !$sessionId){
+	    if ($username && $password && !$sessionId) {
 	    	$partnerConnection->setEndpoint($serverUrl);
 			$partnerConnection->login($username, $password);
-		} elseif ($sessionId && $serverUrl && !($username && $password)){
+		} elseif ($sessionId && $serverUrl && !($username && $password)) {
 			if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
 				display_login('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. Choose your specific Salesforce instance on the QuickSelect menu when using a session id; otherwise, provide a username and password and choose the appropriate a login server.');
 				exit;
@@ -424,8 +424,8 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	    	$partnerConnection->setSessionHeader($sessionId);
 		}
 	
-		if(stripos($partnerConnection->getLocation(),'localhost')) {
-			if(isset($GLOBALS['internal']['localhostLoginRedirectError'])){
+		if (stripos($partnerConnection->getLocation(),'localhost')) {
+			if (isset($GLOBALS['internal']['localhostLoginRedirectError'])) {
 				display_login($GLOBALS['internal']['localhostLoginRedirectError'],false,true);
 			} else {
 				display_login("Must not connect to 'localhost'",false,true);			
@@ -443,16 +443,16 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 	    $_SESSION['location'] = $location;
 	    $_SESSION['sessionId'] = $partnerConnection->getSessionId();
 	    $_SESSION['wsdl'] = $wsdl;
-		if(isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'on'){
+		if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'on') {
 			 setcookie('user',$username,time()+60*60*24*7,'','','',TRUE);
 		} else {
 			setcookie('user',NULL,time()-3600);
 		}
 
-		if(isset($_REQUEST['autoLogin'])){
+		if (isset($_REQUEST['autoLogin'])) {
 			$actionJump .= "?autoLogin=1";
-			if(isset($_REQUEST['skipVC'])) $actionJump .= "&skipVC=1";
-			if(isset($_GET['clientId'])) $_SESSION['tempClientId'] = $_GET['clientId'];
+			if (isset($_REQUEST['skipVC'])) $actionJump .= "&skipVC=1";
+			if (isset($_GET['clientId'])) $_SESSION['tempClientId'] = $_GET['clientId'];
 		}
 
 		session_write_close();

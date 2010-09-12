@@ -37,16 +37,16 @@ class QueryRequest {
 		if(isset($source['matrix_cols'])) 	    $this->matrixCols    = $source['matrix_cols'];
 		if(isset($source['numFilters'])) 		$this->numFilters    = $source['numFilters'];
 		
-		for($f = 0; $f < $this->numFilters; $f++){				
-			if(isset($source["QB_filter_field_$f"]) && isset($source["QB_filter_compOper_$f"]) && isset($source["QB_filter_value_$f"])){
+		for ($f = 0; $f < $this->numFilters; $f++) {				
+			if (isset($source["QB_filter_field_$f"]) && isset($source["QB_filter_compOper_$f"]) && isset($source["QB_filter_value_$f"])) {
 				$this->filters[$f] = new QueryRequestFilter($source["QB_filter_field_$f"], $source["QB_filter_compOper_$f"], $source["QB_filter_value_$f"]);
 			} else {
 				$this->filters[$f] = new QueryRequestFilter(null, null, null);
 			}	
 		}
 				
-		if(isset($source['soql_query'])){
-			if(get_magic_quotes_gpc()){
+		if (isset($source['soql_query'])) {
+			if (get_magic_quotes_gpc()) {
 				$this->soqlQuery = stripslashes($source['soql_query']);
 			} else {
 				$this->soqlQuery = $source['soql_query'];

@@ -31,7 +31,7 @@ class SforceMetadataClient extends SoapBaseClient {
 		$request->asOfVersion = $asOfVersion;
 		
 		$response = $this->sforce->__soapCall("listMetadata",array($request));
-		if(isset($response->result)) {
+		if (isset($response->result)) {
 			return $response->result;
 		} else {
 			return null;
@@ -45,7 +45,7 @@ class SforceMetadataClient extends SoapBaseClient {
 
 		$response = $this->sforce->__soapCall("deploy",array($request));
 		
-		if(isset($response->result)) {
+		if (isset($response->result)) {
 			return $response->result;
 		} else {
 			return null;
@@ -58,7 +58,7 @@ class SforceMetadataClient extends SoapBaseClient {
 
 		$response = $this->sforce->__soapCall("retrieve",array($request));
 		
-		if(isset($response->result)) {
+		if (isset($response->result)) {
 			return $response->result;
 		} else {
 			return null;
@@ -71,7 +71,7 @@ class SforceMetadataClient extends SoapBaseClient {
 		
 		$response = $this->sforce->__soapCall("checkStatus",array($request));
 
-		if(isset($response->result)) {
+		if (isset($response->result)) {
 			return $response->result;
 		} else {
 			return null;
@@ -84,7 +84,7 @@ class SforceMetadataClient extends SoapBaseClient {
 		
 		$response = $this->sforce->__soapCall("checkDeployStatus",array($request),null,null,$outputHeaders);
 
-		if(isset($response->result)) {
+		if (isset($response->result)) {
 			return $response->result;
 		} else {
 			return null;
@@ -97,7 +97,7 @@ class SforceMetadataClient extends SoapBaseClient {
 		
 		$response = $this->sforce->__soapCall("checkRetrieveStatus",array($request),null,null,$outputHeaders);
 
-		if(isset($response->result)) {
+		if (isset($response->result)) {
 			return $response->result;
 		} else {
 			return null;

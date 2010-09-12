@@ -2,15 +2,15 @@
 require_once 'soapclient/SforceMetadataClient.php';
 require_once 'session.php';
 require_once 'shared.php';
-if(!apiVersionIsAtLeast(10.0)) {
+if (!apiVersionIsAtLeast(10.0)) {
 	show_error("Metadata API not supported prior to version 10.0", true, true);
 	exit;
 }
 
-if(isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
+if (isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
 	$retrieveRequestId = htmlentities($_POST["retrieveRequestId"]);
 	
-  	if(!isset($_SESSION[$retrieveRequestId])) {
+  	if (!isset($_SESSION[$retrieveRequestId])) {
   		show_error("No retrieve request found. To re-retrieve, create a new retrieve request.", true, true);
   		exit;
   	}
@@ -19,7 +19,7 @@ if(isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
 	try {
 		$retrieveAsyncResults = $metadataConnection->retrieve($_SESSION[$retrieveRequestId]);
 		
-		if(!isset($retrieveAsyncResults->id)){
+		if (!isset($retrieveAsyncResults->id)) {
 			show_error("Unknown retrieval error.\n" . isset($retrieveAsyncResults->message) ? $retrieveAsyncResults->message : "", true, true);
 			exit;
 		}
@@ -32,8 +32,8 @@ if(isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
 	}
 } 
 
-else if(isset($_POST['stageForRetrieval'])) {
-	if(isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] == "" && isset($_POST['packageNames']) && $_POST['packageNames'] == "") {
+else if (isset($_POST['stageForRetrieval'])) {
+	if (isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] == "" && isset($_POST['packageNames']) && $_POST['packageNames'] == "") {
 		show_error("Must specify at least an unpackaged manifest file or a package name.", true, true);
 		exit;		
 	}
@@ -42,14 +42,14 @@ else if(isset($_POST['stageForRetrieval'])) {
 	$retrieveRequest->apiVersion = getApiVersion();
 	$retrieveRequest->singlePackage = isset($_POST['singlePackage']);
 	
-	if(isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] != "") {	
+	if (isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] != "") {	
 		$validationErrors = validateUploadedFile($_FILES["packageXmlFile"]);
-	  	if($validationErrors) {
+	  	if ($validationErrors) {
 	  		show_error($validationErrors, true, true);
 	  		exit;
 	  	}
 	  	
-		if((!stristr($_FILES["packageXmlFile"]['type'],'octet-stream') && !stristr($_FILES["packageXmlFile"]['type'],'xml')) || !stristr($_FILES["packageXmlFile"]['name'],'.xml')) {
+		if ((!stristr($_FILES["packageXmlFile"]['type'],'octet-stream') && !stristr($_FILES["packageXmlFile"]['type'],'xml')) || !stristr($_FILES["packageXmlFile"]['name'],'.xml')) {
 			show_error("The file uploaded is not a valid XML file. Please try again.", true, true);
 			exit;
 		}
@@ -57,7 +57,7 @@ else if(isset($_POST['stageForRetrieval'])) {
 		$retrieveRequest->unpackaged = parseUnpackagedManifest($_FILES["packageXmlFile"]["tmp_name"]);
 	} 
 	
-	if(isset($_POST['packageNames']) && $_POST['packageNames'] != "") {
+	if (isset($_POST['packageNames']) && $_POST['packageNames'] != "") {
 		$retrieveRequest->packageNames = explodeCommaSeparated(htmlentities($_POST['packageNames']));
 	}
   	
@@ -113,7 +113,7 @@ include_once 'footer.php';
 function parseUnpackagedManifest($xmlFile) {
 	libxml_use_internal_errors(true);
 	$packageXml = simplexml_load_file($xmlFile);
-  	if(!isset($packageXml) || !$packageXml) {
+  	if (!isset($packageXml) || !$packageXml) {
   		show_error(libxml_get_errors(), true, true);
   		libxml_clear_errors();
   		exit;
@@ -124,14 +124,14 @@ function parseUnpackagedManifest($xmlFile) {
   	
   	if(isset($packageXml->version)) $unpackaged->version = (string) $packageXml->version;
   	
-  	if(isset($packageXml->types)) {
+  	if (isset($packageXml->types)) {
 	  	$unpackaged->types = array();
-	  	foreach($packageXml->types as $typeXml) {
+	  	foreach ($packageXml->types as $typeXml) {
 	  		$type = new PackageTypeMembers();
 	  		if(isset($typeXml->name)) $type->name = (string) $typeXml->name;
-	  		if(isset($typeXml->members)) {
+	  		if (isset($typeXml->members)) {
 	  			$type->members = array();
-	  			foreach($typeXml->members as $memberXml) {
+	  			foreach ($typeXml->members as $memberXml) {
 		  			$type->members[] = (string) $memberXml;
 		  		}
 		  		$unpackaged->types[] = $type;

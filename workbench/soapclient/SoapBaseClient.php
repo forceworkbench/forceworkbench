@@ -39,7 +39,7 @@ abstract class SoapBaseClient {
 		$headerArray[] = new SoapHeader($this->getNamespace(), 'SessionHeader', $headerBody, false);
 
 		//set debugging header
-		if(isset($LogCategory) && isset($LogCategoryLevel)) {
+		if (isset($LogCategory) && isset($LogCategoryLevel)) {
 			$logInfoComp = array(
 					'category' => new SoapVar($LogCategory, XSD_STRING),
 					'level' => new SoapVar($LogCategoryLevel, XSD_STRING)
@@ -55,14 +55,14 @@ abstract class SoapBaseClient {
 		}
 		
 		//set call options header    
-		if(isset($_SESSION['config']['callOptions_client'])){
+		if (isset($_SESSION['config']['callOptions_client'])) {
 			$clientBody = array('client' => new SoapVar($_SESSION['config']['callOptions_client'], XSD_STRING));
 			$callOptionsHeader = new SoapHeader($this->getNamespace(), 'CallOptions', $clientBody, false);
 			$headerArray[] = $callOptionsHeader;
 		} 
 
 		//set allowFieldTruncationHeader header    
-		if(isset($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation'])){
+		if (isset($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation'])) {
 			$allowFieldTruncationBody = array('allowFieldTruncation' => new SoapVar($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation'], XSD_BOOLEAN));
 			$allowFieldTruncationHeader = new SoapHeader($this->getNamespace(), 'AllowFieldTruncationHeader', $allowFieldTruncationBody, false);
 			$headerArray[] = $allowFieldTruncationHeader;

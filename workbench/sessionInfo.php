@@ -1,7 +1,7 @@
 <?php
 require_once 'session.php';
 require_once 'shared.php';
-if(isset($_REQUEST['switchApiVersionTo'])){
+if (isset($_REQUEST['switchApiVersionTo'])) {
 	$previousVersion = getApiVersion();
 	clearSessionCache();
 	$_SESSION['location'] = preg_replace("/\d\d?\.\d/",$_REQUEST['switchApiVersionTo'], $_SESSION['location']);
@@ -10,11 +10,11 @@ if(isset($_REQUEST['switchApiVersionTo'])){
 }
 
 global $partnerConnection;
-if(isset($_REQUEST['previousVersion'])){
+if (isset($_REQUEST['previousVersion'])) {
 	try {
 		$partnerConnection->getServerTimestamp();
 	} catch (Exception $e) {
-		if(stripos($e->getMessage(),'UNSUPPORTED_API_VERSION') > -1) {
+		if (stripos($e->getMessage(),'UNSUPPORTED_API_VERSION') > -1) {
 			clearSessionCache();
 			$_SESSION['location'] = preg_replace("/\d\d?\.\d/",$_REQUEST['previousVersion'], $_SESSION['location']);
 			$_SESSION['wsdl'] = 'soapclient/sforce.' . str_replace('.', '', $_REQUEST['previousVersion']) . '.partner.wsdl';
@@ -34,7 +34,7 @@ require_once 'header.php';
 		Change API Version: 
 		<?php
 		print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
-		foreach($GLOBALS['API_VERSIONS'] as $v) {
+		foreach ($GLOBALS['API_VERSIONS'] as $v) {
 			print "<option value='$v'";
 			if (getApiVersion() == $v) print " selected=\"selected\"";
 			print ">" . $v . "</option>";
@@ -65,8 +65,8 @@ $sessionInfo['Connection'] = array(
 $errors = array();
 
 try {
-	foreach($partnerConnection->getUserInfo() as $uiKey => $uiValue) {
-		if(stripos($uiKey,'org') !== 0) {
+	foreach ($partnerConnection->getUserInfo() as $uiKey => $uiValue) {
+		if (stripos($uiKey,'org') !== 0) {
 			$sessionInfo['User'][$uiKey] = $uiValue;
 		} else {
 			$sessionInfo['Organization'][$uiKey] = $uiValue;		
@@ -76,11 +76,11 @@ try {
 	$errors[] = "Partner API Error: " . $e->getMessage();
 }
 
-if(apiVersionIsAtLeast(10.0)) {
+if (apiVersionIsAtLeast(10.0)) {
 	global $metadataConnection;
 	try {
-		foreach($metadataConnection->describeMetadata(getApiVersion()) as $resultsKey => $resultsValue) {
-			if($resultsKey != 'metadataObjects' && !is_array($resultsValue)){
+		foreach ($metadataConnection->describeMetadata(getApiVersion()) as $resultsKey => $resultsValue) {
+			if ($resultsKey != 'metadataObjects' && !is_array($resultsValue)) {
 				$sessionInfo['Metadata'][$resultsKey] = $resultsValue;
 			}
 		}
@@ -89,7 +89,7 @@ if(apiVersionIsAtLeast(10.0)) {
 	}
 }
 
-if(count($errors) > 0) {
+if (count($errors) > 0) {
 	print "<p>&nbsp;</p>";
 	show_error($errors);
 	print "</p>";

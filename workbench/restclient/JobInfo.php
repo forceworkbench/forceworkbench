@@ -38,7 +38,7 @@ class JobInfo {
 	private $xml;
 	
 	public function __construct($xml = null){
-		if($xml != null) {
+		if ($xml != null) {
 			$this->xml = new SimpleXMLElement($xml);
 		} else {
 			$this->xml = new SimpleXMLElement("<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\"/>");
@@ -55,7 +55,7 @@ class JobInfo {
 			$this->xml->assignmentRuleId = "";
 		}
 		
-		if($this->getExceptionCode() != ""){
+		if ($this->getExceptionCode() != "") {
 			throw new Exception($this->getExceptionCode() . ": " . $this->getExceptionMessage());
 		}
 	}
@@ -64,12 +64,12 @@ class JobInfo {
 		//removing empty fields to allow API to parse correctly
 		//two loops are needed to not cause errors
 		$emptyFields = array();
-		foreach($this->xml as $field=>$value){
-			if($value == ""){
+		foreach ($this->xml as $field=>$value) {
+			if ($value == "") {
 				$emptyFields[] = $field;
 			}
 		}
-		foreach($emptyFields as $field){
+		foreach ($emptyFields as $field) {
 			unset($this->xml->$field);
 		}
 		

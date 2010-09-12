@@ -5,7 +5,7 @@ require_once 'header.php';
 require_once 'restclient/BulkApiClient.php';
 
 print "<p/>";
-if(!isset($_GET['jobId']) || $_GET['jobId'] == ""){
+if (!isset($_GET['jobId']) || $_GET['jobId'] == "") {
 	show_error("Parameter 'jobId' must be specified.",false,false);
 	print 	"<p/>" . 
 			"<form action='$_SERVER[PHP_SELF]' method='GET'>" . 
@@ -24,7 +24,7 @@ try {
 	$batchInfos = $asyncConnection->getBatchInfos($_GET['jobId']);	
 } catch (Exception $e) {	
 	show_error($e->getMessage(), false, false);
-	if(stripos($e->getMessage(), 'InvalidVersion') > -1){
+	if (stripos($e->getMessage(), 'InvalidVersion') > -1) {
 		print "<p/><em>Quick Fix: <a href='sessionInfo.php' target='_blank'>Change API Version</a></em>";
 		include_once 'footer.php';
 		exit;
@@ -34,7 +34,7 @@ try {
 print "<p class='instructions'>Records have been uploaded to Salesforce via the Bulk API and are processed asynchronously as resources are available. " . 
 	  "Refresh this page periodically to view the latest status. Results can be downloaded when batches are complete.</p><p/>";
 
-foreach($batchInfos as $batchInfo){ 		
+foreach ($batchInfos as $batchInfo) { 		
 	if ($batchInfo->getState() == "Queued" || $batchInfo->getState() == "InProgress") {
 		printAsyncRefreshBlock();
 		break;
@@ -43,7 +43,7 @@ foreach($batchInfos as $batchInfo){
 		
 print "<h3>Job: " . addLinksToUiForIds($jobInfo->getId()) . "</h3>";
 
-if($jobInfo->getStateMessage() != ""){
+if ($jobInfo->getStateMessage() != "") {
 	show_info($jobInfo->getStateMessage());
 	print "<p/>";
 }
@@ -72,7 +72,7 @@ print "<tr>" .
 		"<td class='dataLabel'>API Version</td><td class='dataValue'>" . $jobInfo->getApiVersion() . "</td>" .	
         "<td class='dataLabel'>Batches Failed</td><td class='dataValue'>" . $jobInfo->getNumberBatchesFailed() . "</td>" .
        "</tr>";
-if(apiVersionIsAtLeast(19.0)){
+if (apiVersionIsAtLeast(19.0)) {
 	print "<tr>" . 
 			"<td class='dataLabel'>API Processing</td><td class='dataValue'>" . $jobInfo->getApiActiveProcessingTime(). " ms</td>" .
 			"<td class='dataLabel'>Apex Processing</td><td class='dataValue'>" . $jobInfo->getApexProcessingTime() . " ms</td>" .	
@@ -87,7 +87,7 @@ print "<tr>" .
 print "</table>";
 print "<p>&nbsp;</p>";
 
-if(count($batchInfos) > 0){
+if (count($batchInfos) > 0) {
 	print "<h3>Batches</h3>";
 	
 	print "<table cellpadding='4' width='100%' class='lightlyBoxed'>";
@@ -100,9 +100,9 @@ if(count($batchInfos) > 0){
 				"<th>Created</th>" .
 				"<th>Last Modified</th>" .	
 		       "</tr>";
-	foreach($batchInfos as $batchInfo){		
+	foreach ($batchInfos as $batchInfo) {		
 		print "<tr><td class='dataValue'>";
-		if ($batchInfo->getState() == "Completed" || $batchInfo->getState() == "Failed"){
+		if ($batchInfo->getState() == "Completed" || $batchInfo->getState() == "Failed") {
 			print "<a href='downloadAsyncBatch.php?op=result&jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "'>" . 
 				  "<img src='images/downloadIcon" . $batchInfo->getState() . ".gif' border='0' onmouseover=\"Tip('Download " . $batchInfo->getState() . " Batch Results')\"/>" . 
 				  "</a>";

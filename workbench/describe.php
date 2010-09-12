@@ -9,7 +9,7 @@ require_once 'header.php';
 //in the session.php include
 
 show_describeSObject_form();
-if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']){
+if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']) {
 	show_describeSObject_result();
 }
 require_once 'footer.php';
@@ -28,7 +28,7 @@ function show_describeSObject_form(){
 
 //Print the description of selected/default object type in multiple tables
 function show_describeSObject_result(){
-		try{
+		try {
 			//Ping Apex API
 			$describeSObjectResult = describeSObject($_SESSION['default_object']);
 		} catch (Exception $e) {
@@ -43,11 +43,11 @@ function show_describeSObject_result(){
 			print "<div style='float: right; border:1px solid #bbb; padding:0.5em; margin-right:1em;'>" .
 		   	      "<strong>Legend:</strong>" . 
 			      "<ul style='margin:0; padding-left: 2em'>";
-			if($_SESSION['config']['highightBooleanValues']){
+			if ($_SESSION['config']['highightBooleanValues']) {
 				print "<li class=\"trueColor\">True</li>\n";
 				print "<li class=\"falseColor\">False</li>\n";
 			} 
-			if($_SESSION['config']['highlightCustomFields']){
+			if ($_SESSION['config']['highlightCustomFields']) {
 				print "<li class=\"highlightCustomField\">Custom Field</li>\n";
 			}
 			if ($_SESSION['config']['highlightSystemFields']) {
@@ -62,59 +62,58 @@ function show_describeSObject_result(){
 
 
 		print "<li>Attributes<ul style='display:none;'>\n";
-		foreach($describeSObjectResult as $key => $value){
+		foreach ($describeSObjectResult as $key => $value) {
 			//Change bool data to printed as TRUE and FALSE for visibility in table
-			if (is_bool($value)){
+			if (is_bool($value)) {
 				print "<li>$key: ";
 				booleanDisplay($value);
 				print "</li> \n";
-			} elseif(is_string($value) || is_numeric($value)) {
+			} elseif (is_string($value) || is_numeric($value)) {
 				stringDisplay($key, $value);
 			}
 		}
 		print "</ul></li>\n"; ///end attributes node
 
 		print "<li>Fields (" . count($describeSObjectResult->fields) . ")<ul style='display:none;'>\n";
-		foreach($describeSObjectResult->fields as $key => $value){
+		foreach ($describeSObjectResult->fields as $key => $value) {
 			highlightSpecialField($value);
-			foreach($value as $subkey => $subvalue){
+			foreach ($value as $subkey => $subvalue) {
 				//Change bool data to printed as TRUE and FALSE for visibility in table
-				if (is_bool($subvalue)){
+				if (is_bool($subvalue)) {
 					print "<li>$subkey: ";
 					booleanDisplay($subvalue);
 					print "</li> \n";
-				} 
-				//Because picklist are deeper in the SOAP message,
-				//it requires more nested foreach loops
-				elseif ($subkey == 'picklistValues'){
+				} elseif ($subkey == 'picklistValues') {
+					//Because picklist are deeper in the SOAP message,
+				    //it requires more nested foreach loops
 					if(!is_array($subvalue)) $subvalue = array($subvalue);
 					print "<li>$subkey (" . count($subvalue) . ")<ul style='display:none;'>\n";
-					foreach($subvalue as $subsubkey => $subsubvalue){
+					foreach ($subvalue as $subsubkey => $subsubvalue) {
 						if($value->name == "Division") print "<li>$subsubvalue->label<ul style='display:none;'>\n";
 						else print  "<li>$subsubvalue->value<ul style='display:none;'>\n";
-						foreach($subsubvalue as $subsubsubkey => $subsubsubvalue){
-							if (is_bool($subsubsubvalue)){
+						foreach ($subsubvalue as $subsubsubkey => $subsubsubvalue) {
+							if (is_bool($subsubsubvalue)) {
 								print "<li>$subsubsubkey: ";
 								booleanDisplay($subsubsubvalue);
 								print "</li> \n";
-							} elseif(is_string($subsubsubvalue) || is_numeric($subsubsubvalue)) {
+							} elseif (is_string($subsubsubvalue) || is_numeric($subsubsubvalue)) {
 								stringDisplay( $subsubsubkey, $subsubsubvalue);
 							}
 						}
 						print "</ul></li>\n"; //end one picklist node
 					}
 					print "</ul></li>\n"; //end picklist node
-				} elseif ($subkey == 'referenceTo'){ //do this for referenceTo arrays 
-					if(is_array($subvalue)) {
+				} elseif ($subkey == 'referenceTo') { //do this for referenceTo arrays 
+					if (is_array($subvalue)) {
 						print "<li>$subkey<ul style='display:none;'>\n";
-						foreach($subvalue as $subsubkey => $subsubvalue){
+						foreach ($subvalue as $subsubkey => $subsubvalue) {
 							print  "<li><strong>$subsubvalue</strong></li>\n";
 						}
 						print "</ul></li>\n"; //end referenceTo node
-					} elseif(is_string($subvalue) || is_numeric($subvalue)){
+					} elseif (is_string($subvalue) || is_numeric($subvalue)) {
 						stringDisplay($subkey, $subvalue);
 					}
-				} elseif(is_string($subvalue) || is_numeric($subvalue)){
+				} elseif (is_string($subvalue) || is_numeric($subvalue)) {
 					stringDisplay($subkey, $subvalue);
 				}
 			}
@@ -125,16 +124,16 @@ function show_describeSObject_result(){
 
 
 		//Print Record Types, if they exists
-		if (isset($describeSObjectResult->recordTypeInfos)){
+		if (isset($describeSObjectResult->recordTypeInfos)) {
 			if(!is_array($describeSObjectResult->recordTypeInfos)) $describeSObjectResult->recordTypeInfos = array($describeSObjectResult->recordTypeInfos);
 			print "<li>Record Types (" . count($describeSObjectResult->recordTypeInfos) . ")<ul style='display:none;'>\n";
-			foreach($describeSObjectResult->recordTypeInfos as $key => $value){
-				if(isset($value->name)){
+			foreach ($describeSObjectResult->recordTypeInfos as $key => $value) {
+				if (isset($value->name)) {
 					print "<li>$value->name<ul style='display:none;'>\n";
-					foreach($value as $subkey => $subvalue){
-						if (is_string($subvalue) || is_numeric($subvalue)){
+					foreach ($value as $subkey => $subvalue) {
+						if (is_string($subvalue) || is_numeric($subvalue)) {
 							stringDisplay( $subkey, $subvalue);
-						} elseif (is_bool($subvalue)){
+						} elseif (is_bool($subvalue)) {
 							print "<li>$subkey: ";
 							booleanDisplay($subvalue);
 							print "</li> \n";
@@ -148,15 +147,15 @@ function show_describeSObject_result(){
 
 
 		//Print Child Relationships, if they exists
-		if (isset($describeSObjectResult->childRelationships)){
+		if (isset($describeSObjectResult->childRelationships)) {
 			if(!is_array($describeSObjectResult->childRelationships)) $describeSObjectResult->childRelationships = array($describeSObjectResult->childRelationships);
 			print "<li>Child Relationships (" . count($describeSObjectResult->childRelationships) . ")<ul style='display:none;'>\n";
-			foreach($describeSObjectResult->childRelationships as $key => $value){
+			foreach ($describeSObjectResult->childRelationships as $key => $value) {
 				print "<li>$value->childSObject<ul style='display:none;'>\n";
-				foreach($value as $subkey => $subvalue){
-					if (is_string($subvalue) || is_numeric($subvalue)){
+				foreach ($value as $subkey => $subvalue) {
+					if (is_string($subvalue) || is_numeric($subvalue)) {
 						stringDisplay( $subkey, $subvalue);
-					} elseif (is_bool($subvalue)){
+					} elseif (is_bool($subvalue)) {
 						print "<li>$subkey: ";
 						booleanDisplay($subvalue);
 						print "</li> \n";
@@ -170,15 +169,15 @@ function show_describeSObject_result(){
 }
 
 function booleanDisplay($value) {
-	if($_SESSION['config']['highightBooleanValues']){
-		if ($value){
+	if ($_SESSION['config']['highightBooleanValues']) {
+		if ($value) {
 			print "<span class='describeValue trueColor'>True</span>";
 		} else {
 			print "<span class='describeValue falseColor'>False</span>";
 		}			
 	}
 	else {
-		if ($value){
+		if ($value) {
 			print "<span class='describeValue'>True</span>";
 		} else {
 			print "<span class='describeValue'>False</span>";
@@ -192,11 +191,9 @@ function highlightSpecialField( $value ) {
 	
 	if ($_SESSION['config']['highlightSystemFields'] && in_array($value->name,$systemFields)) {
 		print "<li><span class='highlightSystemField'>$value->name</span><ul style='display:none;'>\n";
-	} 
-	elseif($_SESSION['config']['highlightCustomFields'] && $value->custom){
+	} elseif ($_SESSION['config']['highlightCustomFields'] && $value->custom) {
 		print "<li><span class='highlightCustomField'>$value->name</span><ul style='display:none;'>\n";
-	} 
-	else {
+	} else {
 		print "<li>$value->name<ul style='display:none;'>\n";
 	}		
 }
@@ -210,7 +207,7 @@ function stringDisplay($key, $value) {
 ddtreemenu.createTree("describeTree", true);
 </script>
 <?php
-if(isset($_REQUEST['default_object_changed']) && $_REQUEST['default_object_changed']){
+if (isset($_REQUEST['default_object_changed']) && $_REQUEST['default_object_changed']) {
 	print "<script type='text/javascript'>ddtreemenu.flatten('describeTree', 'collapse');</script>";
 }
 ?>

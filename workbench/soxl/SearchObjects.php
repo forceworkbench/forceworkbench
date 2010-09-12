@@ -17,16 +17,16 @@ class SearchRequest {
 		if(isset($source['SB_limit'])) 					$this->limit		 		= $source['SB_limit'];
 		if(isset($source['numReturningObjects'])) 		$this->numReturningObjects  = $source['numReturningObjects'];
 		
-		for($ro = 0; $ro < $this->numReturningObjects; $ro++){				
-			if(isset($source["SB_objSelect_$ro"]) && isset($source["SB_objDetail_$ro"])){
+		for ($ro = 0; $ro < $this->numReturningObjects; $ro++) {				
+			if (isset($source["SB_objSelect_$ro"]) && isset($source["SB_objDetail_$ro"])) {
 				$this->returningObjects[$ro] = new ReturningObject($source["SB_objSelect_$ro"], $source["SB_objDetail_$ro"]);
 			} else {
 				$this->returningObjects[$ro] = new ReturningObject(null, null);
 			}	
 		}
 				
-		if(isset($source['sosl_search'])){
-			if(get_magic_quotes_gpc()){
+		if (isset($source['sosl_search'])) {
+			if (get_magic_quotes_gpc()) {
 				$this->soslSearch = stripslashes($source['sosl_search']);
 			} else {
 				$this->soslSearch = $source['sosl_search'];

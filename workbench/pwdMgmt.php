@@ -3,7 +3,7 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'header.php';
 
-if(isset($_POST['passwordChangeType'])){
+if (isset($_POST['passwordChangeType'])) {
 	changePassword($_POST['passwordChangeType']);
 } else {
 	displayForm();
@@ -13,15 +13,15 @@ if(isset($_POST['passwordChangeType'])){
 function changePassword($passwordChangeType){	
 	global $partnerConnection;
 	
-	try{
-		if($passwordChangeType == 'set' && isset($_POST['userId']) && isset($_POST['passwordOne'])){
-			if($_POST['passwordOne'] == $_POST['passwordConfirm']){
+	try {
+		if ($passwordChangeType == 'set' && isset($_POST['userId']) && isset($_POST['passwordOne'])) {
+			if ($_POST['passwordOne'] == $_POST['passwordConfirm']) {
 				$partnerConnection->setPassword($_POST['userId'],$_POST['passwordOne']);
 				$infos[] = "Successfully set password for " . $_POST['userId'];
 			} else {
 				$errors[] = "Passwords must match, and don't be sneaky and turn off JavaScript";
 			}
-		} else if($passwordChangeType == 'reset' && isset($_POST['userId'])){
+		} else if ($passwordChangeType == 'reset' && isset($_POST['userId'])) {
 			$changePasswordResult = $partnerConnection->resetPassword($_POST['userId']);
 			$infos[] = "Successfully reset password for " . $_POST['userId'];
 		}
@@ -41,12 +41,12 @@ function displayForm($infos=null, $errors=null){
  
  function togglePasswordFields(changeType){
  
- 	if(changeType == 'set'){
+ 	if (changeType == 'set') {
  		document.getElementById('passwordOne').disabled = false;
  		document.getElementById('passwordConfirm').disabled = false;
  		
  		//document.getElementById('changePasswordAction').value = 'Set Password';
-  	} else if(changeType == 'reset'){
+  	} else if (changeType == 'reset') {
  		document.getElementById('passwordOne').value = null;
  		document.getElementById('passwordConfirm').value = null;
  		
@@ -63,11 +63,11 @@ function displayForm($infos=null, $errors=null){
  
  
  function doPasswordsMatch(doAlert){
- 	 if(document.getElementById('passwordOne').value.length < document.getElementById('passwordConfirm').value.length){ 	
+ 	 if (document.getElementById('passwordOne').value.length < document.getElementById('passwordConfirm').value.length) { 	
  	 	document.getElementById('passwordConfirm').style.background = 'LightPink';
  	 }
  	 
- 	 if(doAlert && document.getElementById('passwordOne').value.length == 0 && document.getElementById('passwordOne').disabled == false){ 	
+ 	 if (doAlert && document.getElementById('passwordOne').value.length == 0 && document.getElementById('passwordOne').disabled == false) { 	
  	 	 document.getElementById('passwordOne').style.background = 'LightPink';
   	 	 alert('Must provide a password if setting password; otherwise, choose reset');
   	 	 document.getElementById('passwordOne').focus();
@@ -77,16 +77,16 @@ function displayForm($infos=null, $errors=null){
  	 }
  	 
  
- 	 if(document.getElementById('passwordOne').value == document.getElementById('passwordConfirm').value){
+ 	 if (document.getElementById('passwordOne').value == document.getElementById('passwordConfirm').value) {
  	 	document.getElementById('passwordConfirm').style.background = 'white';
 		return true;
  	 } else {
- 	 	 if(doAlert){
+ 	 	 if (doAlert) {
  	 	 	document.getElementById('passwordConfirm').style.background = 'LightPink';
  	 	 	alert('Passwords do not match');
  	 	 }
  	 	
- 	 	if(document.getElementById('passwordOne').value.length == document.getElementById('passwordConfirm').value.length){ 	
+ 	 	if (document.getElementById('passwordOne').value.length == document.getElementById('passwordConfirm').value.length) { 	
  	 		document.getElementById('passwordConfirm').style.background = 'LightPink';
  	 	}
  	 	 

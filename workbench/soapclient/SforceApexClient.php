@@ -22,7 +22,7 @@ class SforceApexClient extends SoapBaseClient {
 
 		$executeAnonymousResultWithDebugLog = new stdClass;
 		$executeAnonymousResultWithDebugLog->executeAnonymousResult = $executeAnonymousResult->result;
-		foreach($outputHeaders as $outputHeader){
+		foreach ($outputHeaders as $outputHeader) {
 			$executeAnonymousResultWithDebugLog->debugLog .= $outputHeader->debugLog;
 		}
 		return $executeAnonymousResultWithDebugLog;

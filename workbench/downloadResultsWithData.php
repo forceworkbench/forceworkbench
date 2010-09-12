@@ -2,7 +2,7 @@
 require_once 'session.php';
 require_once 'shared.php';
 
-if(isset($_SESSION['resultsWithData'])){
+if (isset($_SESSION['resultsWithData'])) {
 	$csvFile = fopen('php://output','w') or die("Error opening php://output");
 	$csvFilename = $_GET['action'] . "_results" . date('YmdHis') . ".csv";
 	header("Content-Type: application/csv");

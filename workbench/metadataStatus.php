@@ -2,12 +2,12 @@
 require_once 'session.php';
 require_once 'shared.php';
 
-if(!apiVersionIsAtLeast(10.0)) {
+if (!apiVersionIsAtLeast(10.0)) {
 	show_error("Metadata API not supported prior to version 10.0", true, true);
 	exit;
 }
 
-if(!isset($_GET['asyncProcessId'])){
+if (!isset($_GET['asyncProcessId'])) {
 	require_once 'header.php';
 	print "<p/>";
 	show_error("Parameter 'asyncProcessId' must be specified.",false,false);
@@ -22,8 +22,8 @@ if(!isset($_GET['asyncProcessId'])){
 
 $asyncProcessId = htmlentities($_GET['asyncProcessId']);
 
-if(isset($_GET['downloadZip'])) {
-	if(!isset($_SESSION['retrievedZips'][$asyncProcessId])) {
+if (isset($_GET['downloadZip'])) {
+	if (!isset($_SESSION['retrievedZips'][$asyncProcessId])) {
 		show_error("No zip file found for async process id '$asyncProcessId'. Note, retrieve results are deleted after first download or navigating away from this page.", true, true);
 	}
 	
@@ -43,7 +43,7 @@ global $metadataConnection;
 try {
 	$asyncResults = $metadataConnection->checkStatus($asyncProcessId);
 	
-	if(!isset($asyncResults)) {
+	if (!isset($asyncResults)) {
 		show_error("No results returned for '$asyncProcessId'", false, true);	
 	}
 
@@ -52,15 +52,15 @@ try {
 	}
 	
 	$orderedAsyncResults = array("id"=>null,"done"=>null,"state"=>null);
-	foreach($asyncResults as $resultName => $resultValue) {
+	foreach ($asyncResults as $resultName => $resultValue) {
 		$orderedAsyncResults[$resultName] = $resultValue;
 	}
 	
 	print "<h3>Status</h3>";
 	print "<table class='lightlyBoxed' cellpadding='5' width='100%'>\n";
 	$rowNum = 0;
-	foreach($orderedAsyncResults as $resultName => $resultValue) {
-		if(++$rowNum % 2) {
+	foreach ($orderedAsyncResults as $resultName => $resultValue) {
+		if (++$rowNum % 2) {
 			print "<tr>";
 			printStatusCell($resultName, $resultValue);
 		} else {
@@ -68,12 +68,12 @@ try {
 			print "</td></tr>\n";
 		}
 	}
-	if($rowNum % 2) {
+	if ($rowNum % 2) {
 		print "<td width='25%'>&nbsp;</td><td width='25%'>&nbsp;</td></tr>";
 	}
 	print "</table>\n";
 	
-	if($asyncResults->done) {
+	if ($asyncResults->done) {
 		print "<p>&nbsp;</p><h3>Results</h3>";
 		
 		//if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
@@ -82,7 +82,7 @@ try {
 		$results = $operation == "D" ? $metadataConnection->checkDeployStatus($asyncProcessId, $debugInfo) : $metadataConnection->checkRetrieveStatus($asyncProcessId, $debugInfo);
 		
 		$zipLink = null;
-		if(isset($results->zipFile)) {
+		if (isset($results->zipFile)) {
 			show_info("Retrieve result ZIP file is ready for download.");
 			print "<p/>";
 			
@@ -95,7 +95,7 @@ try {
 		
 		printTree("metadataStatusResultsTree", processResults($results), true, $zipLink);
 		
-		if(isset($debugInfo["DebuggingInfo"]->debugLog)){
+		if (isset($debugInfo["DebuggingInfo"]->debugLog)) {
 			print "<p>&nbsp;</p><h3>Debug Logs</h3>";
 			print("<pre>" . addLinksToUiForIds(htmlspecialchars($debugInfo["DebuggingInfo"]->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
 		} 
@@ -112,7 +112,7 @@ window.onbeforeunload = function() {
   }
 }
 
-if(document.getElementById("zipLink") != null) {
+if (document.getElementById("zipLink") != null) {
 	undownloadedZip = true;
 }
 </script>
@@ -122,7 +122,7 @@ include_once 'footer.php';
 
 function printStatusCell($resultName, $resultValue) {
 	print "<td style='text-align: right; padding-right: 2em; font-weight: bold;'>" . unCamelCase($resultName) . "</td><td>";
-	if(is_bool($resultValue)) {
+	if (is_bool($resultValue)) {
 		print $resultValue ? "true" : "false";
 	} else {
 		print $resultValue;

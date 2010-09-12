@@ -42,7 +42,7 @@
  *  
  */
 
-try{ 
+try { 
 // nornmally more granular exception handling would be recommened, but doing one big block here for readability
 	
 	// STEP 1: OBTAIN SESSION ID AND ENDPOINT FROM PARTNER API. REPLACE WITH YOUR ENDPOINT AND SESSION ID.

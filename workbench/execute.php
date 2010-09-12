@@ -5,15 +5,15 @@ require_once 'header.php';
 require_once 'soapclient/SforceApexClient.php';
 
 //correction for dynamic magic quotes
-if(isset($_POST['scriptInput']) && get_magic_quotes_gpc()){
+if (isset($_POST['scriptInput']) && get_magic_quotes_gpc()) {
 	$_POST['scriptInput'] = stripslashes($_POST['scriptInput']);
 }
 
-if(isset($_POST['execute'])){
+if (isset($_POST['execute'])) {
 	$_SESSION['scriptInput'] = $_POST['scriptInput'];
 	$_SESSION['LogCategory'] = $_POST['LogCategory'];
 	$_SESSION['LogCategoryLevel'] = $_POST['LogCategoryLevel'];
-} else if(!isset($_SESSION['LogCategory']) && !isset($_SESSION['LogCategoryLevel'])){
+} else if (!isset($_SESSION['LogCategory']) && !isset($_SESSION['LogCategoryLevel'])) {
 	$_SESSION['LogCategory'] = $_SESSION['config']['defaultLogCategory'];
 	$_SESSION['LogCategoryLevel'] = $_SESSION['config']['defaultLogCategoryLevel'];
 }
@@ -63,7 +63,7 @@ if(isset($_POST['execute'])){
 
 
 <?php
-if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != ""){
+if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != "") {
 	print "<h2>Results</h2>";
 	
 	$apexConnection = new SforceApexClient($_POST['LogCategory'],$_POST['LogCategoryLevel']);
@@ -74,8 +74,8 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 		show_error($e->getMessage(),false,true);
 	}
 	
-	if($executeAnonymousResultWithDebugLog->executeAnonymousResult->success){
-		if(isset($executeAnonymousResultWithDebugLog->debugLog) && $executeAnonymousResultWithDebugLog->debugLog != ""){
+	if ($executeAnonymousResultWithDebugLog->executeAnonymousResult->success) {
+		if (isset($executeAnonymousResultWithDebugLog->debugLog) && $executeAnonymousResultWithDebugLog->debugLog != "") {
 			print("<pre>" . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
 		} else {
 			show_info("Execution was successful, but returned no results. Confirm log category and level.");
@@ -84,24 +84,24 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 	} else {
 		$error = null;	
 		
-		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem)){
+		if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem)) {
 			$error .=  "COMPILE ERROR: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem;
 		}
 		
-		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage)){
+		if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage)) {
 			$error .= "\nEXCEPTION: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage;
 		}
 		
-		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace)){
+		if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace)) {
 			$error .= "\nSTACKTRACE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace;
 		}
 		
 			
-		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->line)){
+		if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->line)) {
 			$error .=  "\nLINE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->line;
 		}
 		
-		if(isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->column)){
+		if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->column)) {
 			$error .=  " COLUMN: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->column;
 		}
 		
@@ -113,7 +113,7 @@ if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInp
 //	print('<pre>');
 //	print_r($executeAnonymousResultWithDebugLog);
 //	print('</pre>');
-} else if(isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] == ""){
+} else if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] == "") {
 	show_info("Anonymous block must not be blank.");
 }
 

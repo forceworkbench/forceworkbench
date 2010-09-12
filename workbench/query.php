@@ -6,7 +6,7 @@ require_once 'shared.php';
 
 $defaultSettings['numFilters'] = 1;
 //clear the form if the user changes the object
-if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
+if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
 	$queryRequest = new QueryRequest($defaultSettings);
 	$queryRequest->setObject($_POST['QB_object_sel']);
 } else {
@@ -14,46 +14,46 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 	$lastQr = new QueryRequest($_REQUEST);	
 		
 	//save last query. always do this even if named.
-	if((isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query') || (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' )){
+	if ((isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query') || (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' )) {
 		$_SESSION['lastQueryRequest'] = $lastQr;
 	} 
 	
 	$persistedSavedQueryRequestsKey = "PSQR@";
-	if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'USER'){
+	if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'USER') {
 		$persistedSavedQueryRequestsKey .= $_SESSION['getUserInfo']->userId . "@" . $_SESSION['getUserInfo']->organizationId;
-	} else if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == "ORG"){
+	} else if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == "ORG") {
 		$persistedSavedQueryRequestsKey .= $_SESSION['getUserInfo']->organizationId;
-	} else if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'ALL'){
+	} else if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'ALL') {
 		$persistedSavedQueryRequestsKey .= "ALL";
 	}
 	
 	//populate queryRequest for this page view. first see if user wants to retreive a saved query,
 	//then see if there was a last query, else just show a null query with default object.
-	if(isset($_REQUEST['getQr']) && $_REQUEST['getQr'] != "" && isset($_SESSION['savedQueryRequests'][$_REQUEST['getQr']])){
+	if (isset($_REQUEST['getQr']) && $_REQUEST['getQr'] != "" && isset($_SESSION['savedQueryRequests'][$_REQUEST['getQr']])) {
 		$queryRequest = $_SESSION['savedQueryRequests'][$_REQUEST['getQr']];
 		$_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
-	} else if(isset($_SESSION['lastQueryRequest'])){
+	} else if (isset($_SESSION['lastQueryRequest'])) {
 		$queryRequest = $_SESSION['lastQueryRequest'];
 	} else {
 		$queryRequest = new QueryRequest($defaultSettings);
 		$queryRequest->setObject($_SESSION['default_object']);
-		if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE' && !isset($_SESSION['savedQueryRequests']) && isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
+		if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE' && !isset($_SESSION['savedQueryRequests']) && isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
 			$_SESSION['savedQueryRequests'] = unserialize($_COOKIE[$persistedSavedQueryRequestsKey]);
 		}
 	}
 
 	//clear  all saved queries in scope if user requests
-	if(isset($_POST['clearAllQr']) && $_POST['clearAllQr'] == 'Clear All'){
+	if (isset($_POST['clearAllQr']) && $_POST['clearAllQr'] == 'Clear All') {
 		$_SESSION['savedQueryRequests'] = null;
-		if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE'){
+		if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE') {
 			setcookie($persistedSavedQueryRequestsKey,null,time()-3600);
 		}
 	} 
 	
 	//save as named query
-	if(isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' && isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0){
+	if (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' && isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0) {
 		$_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES,'UTF-8')] = $lastQr;
-		if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE'){
+		if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE') {
 			setcookie($persistedSavedQueryRequestsKey,serialize($_SESSION['savedQueryRequests']),time()+60*60*24*7);
 		}
 	} 
@@ -63,7 +63,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true){
 //show the query results with default object selected on a previous page, otherwise
 // just display the blank form. When the user selects the SCREEN or CSV options, the
 //query is processed by the correct function
-if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
+if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
 	require_once 'header.php';
 //	$queryRequest->setExportTo('screen');
 	show_query_form($queryRequest);
@@ -87,7 +87,7 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 	show_query_result($records,$queryTimeElapsed,$queryRequest);
 	include_once 'footer.php';
 } elseif (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
-	if (!substr_count($_POST['soql_query'],"count()")){
+	if (!substr_count($_POST['soql_query'],"count()")) {
 		$records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction(),null,true);
 		export_query_csv($records,$queryRequest->getExportTo());
 	} else {
@@ -113,7 +113,7 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 
 function show_query_form($queryRequest){
 
-	if ($queryRequest->getObject()){
+	if ($queryRequest->getObject()) {
 		$describeSObjectResult = describeSObject($queryRequest->getObject(), true);
 		
 		$fieldValuesToLabels = array();
@@ -127,8 +127,8 @@ function show_query_form($queryRequest){
 	print "<script>\n";
 	
 	print "var field_type_array = new Array();\n";
-	if(isset($describeSObjectResult)){
-		foreach($describeSObjectResult->fields as $fields => $field){
+	if (isset($describeSObjectResult)) {
+		foreach ($describeSObjectResult->fields as $fields => $field) {
 			print " field_type_array[\"$field->name\"]=[\"$field->type\"];\n";
 		}
 	}
@@ -151,7 +151,7 @@ function show_query_form($queryRequest){
 
 	
 	print "var compOper_array = new Array();\n";
-	foreach($ops as $opValue => $opLabel){
+	foreach ($ops as $opValue => $opLabel) {
 		print " compOper_array[\"$opValue\"]=[\"$opLabel\"];\n";
 	}
 	
@@ -160,7 +160,7 @@ function show_query_form($queryRequest){
 function parentChildRelationshipQueryBlocker(){
     var soql = document.getElementById('soql_query_textarea').value.toUpperCase();
     
-	if(soql.indexOf('(SELECT') != -1 && soql.indexOf('IN (SELECT') == -1 && document.getElementById('export_action_csv').checked){
+	if (soql.indexOf('(SELECT') != -1 && soql.indexOf('IN (SELECT') == -1 && document.getElementById('export_action_csv').checked) {
 		return confirm ("Export of parent-to-child relationship queries to CSV are not yet supported by Workbench and may give unexpected results. Are you sure you wish to continue?");
 	}
 	
@@ -168,7 +168,7 @@ function parentChildRelationshipQueryBlocker(){
 
 function doesQueryHaveName(){
     var saveQr = document.getElementById('saveQr');
-	if(saveQr.value == null || saveQr.value.length == 0){
+	if (saveQr.value == null || saveQr.value.length == 0) {
 		alert('Query must have a name to save.');
 		return false;
 	}	
@@ -180,7 +180,7 @@ function doesQueryHaveName(){
 function toggleFieldDisabled(){
 	var QB_field_sel = document.getElementById('QB_field_sel');
 
-	if(document.getElementById('QB_object_sel').value){
+	if (document.getElementById('QB_object_sel').value) {
 		QB_field_sel.disabled = false;
 	} else {
 		QB_field_sel.disabled = true;
@@ -192,14 +192,14 @@ function toggleFieldDisabled(){
 		if (QB_field_sel.options[i].selected)
 			isFieldSelected = true;
 			
-	if(isFieldSelected || (document.getElementById('matrix_rows').value != '' && document.getElementById('matrix_cols').value != '')){
+	if (isFieldSelected || (document.getElementById('matrix_rows').value != '' && document.getElementById('matrix_cols').value != '')) {
 			document.getElementById('QB_orderby_field').disabled = false;
 			document.getElementById('QB_orderby_sort').disabled = false;
 			document.getElementById('QB_nulls').disabled = false;
 			document.getElementById('QB_limit_txt').disabled = false;
 			
 			document.getElementById('QB_filter_field_0').disabled = false;
-			if(document.getElementById('QB_filter_field_0').value){
+			if (document.getElementById('QB_filter_field_0').value) {
 				document.getElementById('QB_filter_value_0').disabled = false;
 				document.getElementById('QB_filter_compOper_0').disabled = false;
 			} else {
@@ -217,13 +217,13 @@ function toggleFieldDisabled(){
 	}
 
 	var allPreviousRowsUsed = true;
-	for(var r = 1; r < document.getElementById('numFilters').value; r++){
+	for (var r = 1; r < document.getElementById('numFilters').value; r++) {
 		var lastRow = r-1;
 		var thisRow = r;
 		
-		if (isFieldSelected && allPreviousRowsUsed && document.getElementById('QB_filter_field_' + lastRow).value && document.getElementById('QB_filter_compOper_' + lastRow).value && document.getElementById('QB_filter_value_' + lastRow).value){
+		if (isFieldSelected && allPreviousRowsUsed && document.getElementById('QB_filter_field_' + lastRow).value && document.getElementById('QB_filter_compOper_' + lastRow).value && document.getElementById('QB_filter_value_' + lastRow).value) {
 			document.getElementById('QB_filter_field_' + thisRow).disabled = false;
-			if(document.getElementById('QB_filter_field_' + thisRow).value){
+			if (document.getElementById('QB_filter_field_' + thisRow).value) {
 				document.getElementById('QB_filter_value_' + thisRow).disabled = false;
 				document.getElementById('QB_filter_compOper_' + thisRow).disabled = false;
 			} else {
@@ -246,8 +246,8 @@ function updateObject(){
 
 function exportActionIs(type) {
 	var exportActions = document.getElementById('query_form')['export_action'];
-	for(node in exportActions) {
-		if(exportActions[node].checked && exportActions[node].value == type) {
+	for (node in exportActions) {
+		if (exportActions[node].checked && exportActions[node].value == type) {
 			return true;
 		}
 	}
@@ -269,8 +269,8 @@ function build_query(){
 	var QB_object_sel = document.getElementById('QB_object_sel').value;
 	var QB_field_sel = document.getElementById('QB_field_sel');
 	QB_fields_selected = new Array();
-	for (var i = 0; i < QB_field_sel.options.length; i++){
-		if (QB_field_sel.options[i].selected){
+	for (var i = 0; i < QB_field_sel.options.length; i++) {
+		if (QB_field_sel.options[i].selected) {
 			QB_fields_selected.push(QB_field_sel.options[i].value);
 		}
 	}
@@ -286,32 +286,32 @@ function build_query(){
 	}
 
 	var soql_select = '';
-	if(QB_fields_selected.toString().indexOf('count()') != -1 && QB_fields_selected.length > 1){
+	if (QB_fields_selected.toString().indexOf('count()') != -1 && QB_fields_selected.length > 1) {
 		alert('Warning: Choosing count() with other fields will result in a malformed query. Unselect either count() or the other fields to continue.');
-	} else	if (QB_fields_selected.length > 0){
+	} else	if (QB_fields_selected.length > 0) {
 		var soql_select = 'SELECT ' + QB_fields_selected + ' FROM ' + QB_object_sel;
 	}
 
 	soql_where = '';
-	for(var f = 0; f < document.getElementById('numFilters').value; f++){
+	for (var f = 0; f < document.getElementById('numFilters').value; f++) {
 	
 		var QB_filter_field = document.getElementById('QB_filter_field_' + f).value;
 		var QB_filter_compOper = document.getElementById('QB_filter_compOper_' + f).value;
 		var QB_filter_value = document.getElementById('QB_filter_value_' + f).value;
 		
 		var soql_where_logicOper = '';
-		if(f > 0){
+		if (f > 0) {
 			soql_where_logicOper = ' AND ';
 		}	
 		
-		if (QB_filter_field && QB_filter_compOper && QB_filter_value){
-			if (QB_filter_compOper == 'starts'){
+		if (QB_filter_field && QB_filter_compOper && QB_filter_value) {
+			if (QB_filter_compOper == 'starts') {
 				QB_filter_compOper = 'LIKE'
 				QB_filter_value = QB_filter_value + '%';
-			} else if (QB_filter_compOper == 'ends'){
+			} else if (QB_filter_compOper == 'ends') {
 				QB_filter_compOper = 'LIKE'
 				QB_filter_value = '%' + QB_filter_value;
-			} else if (QB_filter_compOper == 'contains'){
+			} else if (QB_filter_compOper == 'contains') {
 				QB_filter_compOper = 'LIKE'
 				QB_filter_value = '%' + QB_filter_value + '%';
 			}
@@ -345,7 +345,7 @@ function build_query(){
 	var QB_orderby_field = document.getElementById('QB_orderby_field').value;
 	var QB_orderby_sort = document.getElementById('QB_orderby_sort').value;
 	var QB_nulls = document.getElementById('QB_nulls').value;
-	if (QB_orderby_field){
+	if (QB_orderby_field) {
 		var soql_orderby = ' ORDER BY ' + QB_orderby_field + ' ' + QB_orderby_sort;
 		if (QB_nulls)
 			soql_orderby = soql_orderby + ' NULLS ' + QB_nulls;
@@ -411,7 +411,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
 	
 	document.getElementById('QB_right_sub_table').getElementsByTagName("TBODY").item(0).appendChild(newFilterRow);
 	
-	if(filterRowNum > 0){
+	if (filterRowNum > 0) {
 		var filter_plus_button = document.getElementById('filter_plus_button');
 		filter_plus_button.parentNode.removeChild(filter_plus_button);
 	}
@@ -442,7 +442,7 @@ function toggleMatrixSortSelectors(hasChanged) {
 QUERY_BUILDER_SCRIPT;
 	
 
-	if($_SESSION['config']['autoJumpToResults']){
+	if ($_SESSION['config']['autoJumpToResults']) {
 		print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
 	} else {
 		print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]'>\n";
@@ -456,21 +456,21 @@ QUERY_BUILDER_SCRIPT;
 	printObjectSelection($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
 
 	print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='build_query();'>\n";
-	if(isset($describeSObjectResult)){
+	if (isset($describeSObjectResult)) {
 
 		print   " <option value='count()'";
-		if($queryRequest->getFields() != null){ //check to make sure something is selected; otherwise warnings will display
-			foreach ($queryRequest->getFields() as $selectedField){
+		if ($queryRequest->getFields() != null) { //check to make sure something is selected; otherwise warnings will display
+			foreach ($queryRequest->getFields() as $selectedField) {
 				if ('count()' == $selectedField) print " selected='selected' ";
 			}
 		}
 		print ">count()</option>\n";
 
 		//print ">$field->name</option>\n";
-		foreach($describeSObjectResult->fields as $fields => $field){
+		foreach ($describeSObjectResult->fields as $fields => $field) {
 			print   " <option value='$field->name'";
-			if($queryRequest->getFields() != null){ //check to make sure something is selected; otherwise warnings will display
-				foreach ($queryRequest->getFields() as $selectedField){
+			if ($queryRequest->getFields() != null) { //check to make sure something is selected; otherwise warnings will display
+				foreach ($queryRequest->getFields() as $selectedField) {
 					if ($field->name == $selectedField) print " selected='selected' ";
 				}
 			}
@@ -520,8 +520,8 @@ QUERY_BUILDER_SCRIPT;
 	print "<tr id='sort_selection_row'>";
 	print "<td colspan='2'><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='build_query();'>\n";
 	print "<option value=''></option>\n";
-	if(isset($describeSObjectResult)){
-		foreach($describeSObjectResult->fields as $fields => $field){
+	if (isset($describeSObjectResult)) {
+		foreach ($describeSObjectResult->fields as $fields => $field) {
 			print   " <option value='$field->name'";
 			if ($queryRequest->getOrderByField() != null && $field->name == $queryRequest->getOrderByField()) print " selected='selected' ";
 			print ">$field->name</option>\n";
@@ -535,7 +535,7 @@ QUERY_BUILDER_SCRIPT;
 	);
 	
 	print "<select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='build_query();' onkeyup='build_query();'>\n";
-	foreach ($qBOrderbySortOptions as $opKey => $op){
+	foreach ($qBOrderbySortOptions as $opKey => $op) {
 		print "<option value='$opKey'";
 		if (isset($_POST['QB_orderby_sort']) && $opKey == $_POST['QB_orderby_sort']) print " selected='selected' ";
 		print ">$op</option>\n";
@@ -547,7 +547,7 @@ QUERY_BUILDER_SCRIPT;
 	'LAST' => 'Nulls Last'
 	);
 	print "<select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='build_query();' onkeyup='build_query();'>\n";
-	foreach ($qBNullsOptions as $opKey => $op){
+	foreach ($qBNullsOptions as $opKey => $op) {
 		print "<option value='$opKey'";
 		if ($queryRequest->getOrderByNulls() != null && $opKey == $queryRequest->getOrderByNulls()) print " selected='selected' ";
 		print ">$op</option>\n";
@@ -562,7 +562,7 @@ QUERY_BUILDER_SCRIPT;
 	print "</td></tr>\n";
 	
 	$filterRowNum = 0;
-	foreach($queryRequest->getFilters() as $filter){		
+	foreach ($queryRequest->getFilters() as $filter) {		
 		print "<script>addFilterRow(" . 
 		$filterRowNum++ . ", " . 
 		"\"" . $filter->getField()     . "\", " . 
@@ -587,8 +587,8 @@ QUERY_BUILDER_SCRIPT;
 	print "&nbsp;Run: " .
 		  "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();'>" . 
 	      "<option value='' selected='selected'></option>";
-	if(isset($_SESSION['savedQueryRequests'])){
-		foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr){
+	if (isset($_SESSION['savedQueryRequests'])) {
+		foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr) {
 			if($qrName != null) print "<option value='$qrName'>$qrName</option>";
 		}
 	}
@@ -610,14 +610,14 @@ QUERY_BUILDER_SCRIPT;
 
 
 function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false){
-	try{
+	try {
 
 		global $partnerConnection;
 		if ($queryAction == 'Query') $queryResponse = $partnerConnection->query($soqlQuery);
 		if ($queryAction == 'QueryAll') $queryResponse = $partnerConnection->queryAll($soqlQuery);
 		if ($queryAction == 'QueryMore' && isset($queryLocator)) $queryResponse = $partnerConnection->queryMore($queryLocator);
 
-		if (substr_count($soqlQuery,"count()") && $suppressScreenOutput == false){
+		if (substr_count($soqlQuery,"count()") && $suppressScreenOutput == false) {
 			$countString = "Query would return " . $queryResponse->size . " record";
 			$countString .= ($queryResponse->size == 1) ? "." : "s.";
 			show_info($countString);
@@ -626,7 +626,7 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
 			exit;
 		}
 
-		if(isset($queryResponse->records)){
+		if (isset($queryResponse->records)) {
 			$records = $queryResponse->records;
 		} else {
 			$records = null;
@@ -634,21 +634,21 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
 
 		$_SESSION['totalQuerySize'] = $queryResponse->size;
 
-		if(!$queryResponse->done){
+		if (!$queryResponse->done) {
 			$_SESSION['queryLocator'] = $queryResponse->queryLocator;
 		} else {
 			$_SESSION['queryLocator'] = null;
 		}
 		
 		//correction for documents and attachments with body. issue #176
-	    if($queryResponse->size > 0 && !is_array($records)){
+	    if ($queryResponse->size > 0 && !is_array($records)) {
 			$records = array($records);
     	}
 		
 		while(($suppressScreenOutput || $_SESSION['config']['autoRunQueryMore']) && !$queryResponse->done){
 			$queryResponse = $partnerConnection->queryMore($queryResponse->queryLocator);
 			
-			if(!is_array($queryResponse->records)){
+			if (!is_array($queryResponse->records)) {
 				$queryResponse->records = array($queryResponse->records);
 			}
 			
@@ -664,30 +664,30 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
 }
 
 function getQueryResultHeaders($sobject, $tail=""){	
-	if(!isset($headerBufferArray)){
+	if (!isset($headerBufferArray)) {
 		$headerBufferArray = array();
 	}
 
-	if (isset($sobject->Id)){
+	if (isset($sobject->Id)) {
 		$headerBufferArray[] = $tail . "Id";
 	}
 
-	if (isset($sobject->fields)){
-		foreach($sobject->fields->children() as $field){
+	if (isset($sobject->fields)) {
+		foreach ($sobject->fields->children() as $field) {
 			$headerBufferArray[] = $tail . htmlspecialchars($field->getName(),ENT_QUOTES,'UTF-8');
 		}
 	}
 
-	if(isset($sobject->sobjects)){
-		foreach($sobject->sobjects as $sobjects){
+	if (isset($sobject->sobjects)) {
+		foreach ($sobject->sobjects as $sobjects) {
 			$recurse = getQueryResultHeaders($sobjects, $tail . htmlspecialchars($sobjects->type,ENT_QUOTES,'UTF-8') . ".");
 			$headerBufferArray = array_merge($headerBufferArray, $recurse);
 		}
 	}
 
-	if(isset($sobject->queryResult)){
+	if (isset($sobject->queryResult)) {
 		if(!is_array($sobject->queryResult)) $sobject->queryResult = array($sobject->queryResult);
-		foreach($sobject->queryResult as $qr){
+		foreach ($sobject->queryResult as $qr) {
 			$headerBufferArray[] = $qr->records[0]->type;			
 		}
 	}	
@@ -697,27 +697,27 @@ function getQueryResultHeaders($sobject, $tail=""){
 
 function getQueryResultRow($sobject, $escapeHtmlChars=true){
 
-	if(!isset($rowBuffer)){
+	if (!isset($rowBuffer)) {
 		$rowBuffer = array();
 	}
 	 
-	if (isset($sobject->Id)){
+	if (isset($sobject->Id)) {
 		$rowBuffer[] = $sobject->Id;
 	}
 
-	if (isset($sobject->fields)){
-		foreach($sobject->fields as $datum){
+	if (isset($sobject->fields)) {
+		foreach ($sobject->fields as $datum) {
 			$rowBuffer[] = convertDateTimezone($escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES,'UTF-8') : $datum);
 		}
 	}
 
-	if(isset($sobject->sobjects)){
-		foreach($sobject->sobjects as $sobjects){
+	if (isset($sobject->sobjects)) {
+		foreach ($sobject->sobjects as $sobjects) {
 			$rowBuffer = array_merge($rowBuffer, getQueryResultRow($sobjects,$escapeHtmlChars));
 		}
 	}
 	
-	if(isset($sobject->queryResult)){
+	if (isset($sobject->queryResult)) {
 		$rowBuffer[] = $sobject->queryResult;
 	}
 	
@@ -763,9 +763,9 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
 			
 	$hw = false;
 	foreach ($allRowNames as $rowName) {
-		if(!$hw) {
+		if (!$hw) {
 			$table .= "<tr><td></td>";
-			foreach($allColNames as $colName) {
+			foreach ($allColNames as $colName) {
 				$table .= "<th>$colName</th>";		
 			}
 			$table .= "</tr>";
@@ -775,12 +775,12 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
 		$table .= "<tr>";
 		$table .= "<th>$rowName</th>";
 		
-		foreach($allColNames as $colName) {
+		foreach ($allColNames as $colName) {
 			
 			$table .= "<td>";
 
-			if(isset($matrix["$rowName"]["$colName"])) {
-				foreach($matrix["$rowName"]["$colName"] as $data) {
+			if (isset($matrix["$rowName"]["$colName"])) {
+				foreach ($matrix["$rowName"]["$colName"] as $data) {
 					$table .= "<div class='matrix_item'" . ($data == "" ? "style='width: 0px;'" : "") . ">$data</div>";
 				}
 			}
@@ -800,7 +800,7 @@ function createQueryResultTable($records){
 	
 	//call shared recusive function above for header printing
 	$table .= "<tr><th></th><th>";
-	if($records[0] instanceof SObject){
+	if ($records[0] instanceof SObject) {
 		$table .= implode("</th><th>", getQueryResultHeaders($records[0]));
 	} else{
 		$table .= implode("</th><th>", getQueryResultHeaders(new SObject($records[0])));
@@ -810,21 +810,21 @@ function createQueryResultTable($records){
 	
 	$rowNum = 1;
 	//Print the remaining rows in the body
-	foreach ($records as $record){
+	foreach ($records as $record) {
 		//call shared recusive function above for row printing
 		$table .= "<tr><td>" . $rowNum++ . "</td><td>";
 		
-		if($record instanceof SObject){
+		if ($record instanceof SObject) {
 			$row = getQueryResultRow($record); 
 		} else{
 			$row = getQueryResultRow(new SObject($record)); 
 		}
 
 		
-		for($i = 0; $i < count($row); $i++){				
+		for ($i = 0; $i < count($row); $i++) {				
 			if($row[$i] instanceof QueryResult && !is_array($row[$i])) $row[$i] = array($row[$i]);		
-			if(isset($row[$i][0]) && $row[$i][0] instanceof QueryResult){
-				foreach($row[$i] as $qr){
+			if (isset($row[$i][0]) && $row[$i][0] instanceof QueryResult) {
+				foreach ($row[$i] as $qr) {
 					$table .= createQueryResultTable($qr->records);	
 					if($qr != end($row[$i])) $table .= "</td><td>";
 				}
@@ -832,7 +832,7 @@ function createQueryResultTable($records){
 				$table .= $row[$i];
 			}
 					
-			if($i+1 != count($row)){
+			if ($i+1 != count($row)) {
 				$table .= "</td><td>";
 			}
 		}
@@ -854,11 +854,11 @@ function show_query_result($records, $queryTimeElapsed, QueryRequest $queryReque
 		try {
 			$rowNum = 0;
 			print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
-			if(isset($_SESSION['queryLocator']) && !$_SESSION['config']['autoRunQueryMore']){
+			if (isset($_SESSION['queryLocator']) && !$_SESSION['config']['autoRunQueryMore']) {
 				preg_match("/-(\d+)/",$_SESSION['queryLocator'],$lastRecord);
 				$rowNum = ($lastRecord[1] - count($records) + 1);
 				print "<p>Returned records $rowNum - " . $lastRecord[1] . " of ";
-			} else if (!$_SESSION['config']['autoRunQueryMore']){
+			} else if (!$_SESSION['config']['autoRunQueryMore']) {
 				$rowNum = ($_SESSION['totalQuerySize'] - count($records) + 1);
 				print "<p>Returned records $rowNum - " . $_SESSION['totalQuerySize'] . " of ";
 			} else {
@@ -872,7 +872,7 @@ function show_query_result($records, $queryTimeElapsed, QueryRequest $queryReque
 			printf ("%01.3f", $queryTimeElapsed);
 			print " seconds:</p>\n";
 
-			if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
+			if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']) {
 			 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
 			}
 			
@@ -880,7 +880,7 @@ function show_query_result($records, $queryTimeElapsed, QueryRequest $queryReque
 									createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) : 
 									createQueryResultTable($records));
 
-			if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']){
+			if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']) {
 				print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
 			}
 

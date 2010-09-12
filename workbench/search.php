@@ -7,46 +7,46 @@ $lastSr = new SearchRequest($_REQUEST);
 
 
 //save last search. always do this even if named.
-if((isset($_POST['searchSubmit']) && $_POST['searchSubmit']=='Search') || (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' )){
+if ((isset($_POST['searchSubmit']) && $_POST['searchSubmit']=='Search') || (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' )) {
 	$_SESSION['lastSearchRequest'] = $lastSr;
 }
 
 $persistedSavedSearchRequestsKey = "PSSR@";
-if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'USER'){
+if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'USER') {
 	$persistedSavedSearchRequestsKey .= $_SESSION['getUserInfo']->userId . "@" . $_SESSION['getUserInfo']->organizationId;
-} else if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == "ORG"){
+} else if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == "ORG") {
 	$persistedSavedSearchRequestsKey .= $_SESSION['getUserInfo']->organizationId;
-} else if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'ALL'){
+} else if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'ALL') {
 	$persistedSavedSearchRequestsKey .= "ALL";
 }
 
 //populate searchRequest for this page view. first see if user wants to retreive a saved search,
 //then see if there was a last search, else just show a null search with default object.
-if(isset($_REQUEST['getSr']) && $_REQUEST['getSr'] != "" && isset($_SESSION['savedSearchRequests'][$_REQUEST['getSr']])){
+if (isset($_REQUEST['getSr']) && $_REQUEST['getSr'] != "" && isset($_SESSION['savedSearchRequests'][$_REQUEST['getSr']])) {
 	$searchRequest = $_SESSION['savedSearchRequests'][$_REQUEST['getSr']];
 	$_POST['searchSubmit'] = 'Search'; //simulate the user clicking 'search' to run immediately
-} else if(isset($_SESSION['lastSearchRequest'])){
+} else if (isset($_SESSION['lastSearchRequest'])) {
 	$searchRequest = $_SESSION['lastSearchRequest'];
 } else {
 	$defaultSettings['numReturningObjects'] = 1;
 	$searchRequest = new SearchRequest($defaultSettings);
-	if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE' && !isset($_SESSION['savedSearchRequests']) && isset($_COOKIE[$persistedSavedSearchRequestsKey])) {
+	if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE' && !isset($_SESSION['savedSearchRequests']) && isset($_COOKIE[$persistedSavedSearchRequestsKey])) {
 		$_SESSION['savedSearchRequests'] = unserialize($_COOKIE[$persistedSavedSearchRequestsKey]);
 	}
 }
 
 //clear  all saved searches in scope if user requests
-if(isset($_POST['clearAllSr']) && $_POST['clearAllSr'] == 'Clear All'){
+if (isset($_POST['clearAllSr']) && $_POST['clearAllSr'] == 'Clear All') {
 	$_SESSION['savedSearchRequests'] = null;
-	if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE'){
+	if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE') {
 		setcookie($persistedSavedSearchRequestsKey,null,time()-3600);
 	}
 } 
 
 //save as named search
-if(isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST['saveSr']) && strlen($_REQUEST['saveSr']) > 0){
+if (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST['saveSr']) && strlen($_REQUEST['saveSr']) > 0) {
 	$_SESSION['savedSearchRequests'][htmlspecialchars($_REQUEST['saveSr'],ENT_QUOTES,'UTF-8')] = $lastSr;
-	if($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE'){
+	if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE') {
 		setcookie($persistedSavedSearchRequestsKey,serialize($_SESSION['savedSearchRequests']),time()+60*60*24*7);
 	}
 }
@@ -80,7 +80,7 @@ function show_search_form($searchRequest){
 print "<script>\n";
 	
 print "var searchable_objects = new Array();\n";
-foreach(describeGlobal("searchable") as $obj){
+foreach (describeGlobal("searchable") as $obj) {
 	print "searchable_objects[\"$obj\"]=\"$obj\";\n";
 }
 
@@ -88,7 +88,7 @@ print <<<SEARCH_BUILDER_SCRIPT
 
 function doesSearchHaveName(){
     var saveSr = document.getElementById('saveSr');
-	if(saveSr.value == null || saveSr.value.length == 0){
+	if (saveSr.value == null || saveSr.value.length == 0) {
 		alert('Search must have a name to save.');
 		return false;
 	}	
@@ -98,11 +98,11 @@ function doesSearchHaveName(){
 
 function toggleFieldDisabled(){
 
-	if(document.getElementById('SB_searchString').value){
+	if (document.getElementById('SB_searchString').value) {
 		document.getElementById('SB_limit').disabled = false;
 		document.getElementById('SB_fieldTypeSelect').disabled = false;
 		document.getElementById('SB_objSelect_0').disabled = false;
-		if(document.getElementById('SB_objSelect_0').value){
+		if (document.getElementById('SB_objSelect_0').value) {
 			document.getElementById('SB_objDetail_0').disabled = false;
 		} else {
 			document.getElementById('SB_objDetail_0').disabled = true;
@@ -115,17 +115,17 @@ function toggleFieldDisabled(){
 	}
 
 	var allPreviousRowsUsed = true;
-	for(var ro = 1; ro < document.getElementById('numReturningObjects').value; ro++){
+	for (var ro = 1; ro < document.getElementById('numReturningObjects').value; ro++) {
 		var this_SB_objSelect = document.getElementById('SB_objSelect_' + ro);
 		var this_SB_objDetail = document.getElementById('SB_objDetail_' + ro);
 		
 		var last_SB_objSelect = document.getElementById('SB_objSelect_' + (ro - 1));
 		var last_SB_objDetail = document.getElementById('SB_objDetail_' + (ro - 1));
 		
-		if(allPreviousRowsUsed && last_SB_objSelect.value && last_SB_objDetail.value){
+		if (allPreviousRowsUsed && last_SB_objSelect.value && last_SB_objDetail.value) {
 			this_SB_objSelect.disabled = false;
 			this_SB_objDetail.disabled = false;
-			if(this_SB_objSelect.value){
+			if (this_SB_objSelect.value) {
 				this_SB_objDetail.disabled = false;
 			} else {
 				this_SB_objDetail.disabled = true;
@@ -144,33 +144,33 @@ function build_search(){
 	var searchString = 'FIND {' + document.getElementById('SB_searchString').value + '}';
 	
 	var fieldTypeSelect = '';
-	if(document.getElementById('SB_fieldTypeSelect').value && !document.getElementById('SB_fieldTypeSelect').disabled){
+	if (document.getElementById('SB_fieldTypeSelect').value && !document.getElementById('SB_fieldTypeSelect').disabled) {
 		fieldTypeSelect = ' IN ' + document.getElementById('SB_fieldTypeSelect').value;
 	}
 	
 	var roString = '';
-	for(var ro = 0; ro < document.getElementById('numReturningObjects').value; ro++){
+	for (var ro = 0; ro < document.getElementById('numReturningObjects').value; ro++) {
 		var SB_objSelect = document.getElementById('SB_objSelect_' + ro);
 		var SB_objDetail = document.getElementById('SB_objDetail_' + ro);
 		
-		if(SB_objSelect.value && !SB_objSelect.disabled){
+		if (SB_objSelect.value && !SB_objSelect.disabled) {
 			roString += ro == 0 ? ' RETURNING ' : ', ';
 			
 			roString += SB_objSelect.value;
 
-			if(SB_objDetail.value && !SB_objDetail.disabled){
+			if (SB_objDetail.value && !SB_objDetail.disabled) {
 				roString += '(' + SB_objDetail.value + ')';
 			}
 		}
 	}
 	
 	var limit = '';
-	if(document.getElementById('SB_limit').value && !document.getElementById('SB_limit').disabled){
+	if (document.getElementById('SB_limit').value && !document.getElementById('SB_limit').disabled) {
 		limit = ' LIMIT ' + document.getElementById('SB_limit').value;
 	}
 
 
-	if (searchString){
+	if (searchString) {
 		document.getElementById('sosl_search_textarea').value = searchString + fieldTypeSelect + roString + limit;
 	}
 }
@@ -216,7 +216,7 @@ function addReturningObjectRow(rowNum, defaultObject, defaultFields){
 	var lastRow = document.getElementById('sosl_search_textarea_row');	
 	lastRow.parentNode.insertBefore(newRow, lastRow);
 	
-	if(rowNum > 0){
+	if (rowNum > 0) {
 		var row_plus_button = document.getElementById('row_plus_button');
 		row_plus_button.parentNode.removeChild(row_plus_button);
 	}
@@ -225,7 +225,7 @@ function addReturningObjectRow(rowNum, defaultObject, defaultFields){
 </script>
 SEARCH_BUILDER_SCRIPT;
 
-	if($_SESSION['config']['autoJumpToResults']){
+	if ($_SESSION['config']['autoJumpToResults']) {
 		print "<form method='POST' name='search_form' action='$_SERVER[PHP_SELF]#sr'>\n";
 	} else {
 		print "<form method='POST' name='search_form' action='$_SERVER[PHP_SELF]#sr'>\n";
@@ -245,7 +245,7 @@ SEARCH_BUILDER_SCRIPT;
 		'EMAIL FIELDS' => 'Email Fields'			
 	);
 	print "<select id='SB_fieldTypeSelect' name='SB_fieldTypeSelect' onChange='build_search();' onkeyup='build_search();'>\n";
-	foreach ($fieldTypeSelectOptions as $opKey => $op){
+	foreach ($fieldTypeSelectOptions as $opKey => $op) {
 		print "<option value='$opKey'";
 		if ($opKey == $searchRequest->getFieldType()) print " selected='selected' ";
 		print ">$op</option>";
@@ -267,8 +267,8 @@ SEARCH_BUILDER_SCRIPT;
 	print "&nbsp;Run: " .
 		  "<select name='getSr' style='width: 10em;' onChange='document.search_form.submit();'>" . 
 	      "<option value='' selected='selected'></option>";
-	if(isset($_SESSION['savedSearchRequests'])){
-		foreach ($_SESSION['savedSearchRequests'] as $srName => $sr){
+	if (isset($_SESSION['savedSearchRequests'])) {
+		foreach ($_SESSION['savedSearchRequests'] as $srName => $sr) {
 			if($srName != null) print "<option value='$srName'>$srName</option>";
 		}
 	}
@@ -286,7 +286,7 @@ SEARCH_BUILDER_SCRIPT;
 	print "</td></tr></table><p/></form>\n";
 	
 	$rowNum = 0;
-	foreach($searchRequest->getReturningObjects() as $ro){		
+	foreach ($searchRequest->getReturningObjects() as $ro) {		
 		print "<script>addReturningObjectRow(" . 
 		$rowNum++ . ", " . 
 		"\"" . $ro->getObject()     . "\", " . 
@@ -299,12 +299,12 @@ SEARCH_BUILDER_SCRIPT;
 
 
 function search($searchRequest){
-	try{
+	try {
 
 		global $partnerConnection;
 		$searchResponse = $partnerConnection->search($searchRequest->getSoslSearch());
 	
-		if(isset($searchResponse->searchRecords)){
+		if (isset($searchResponse->searchRecords)) {
 			$records = $searchResponse->searchRecords;
 		} else {
 			$records = null;
@@ -331,13 +331,13 @@ function show_search_result($records, $searchTimeElapsed){
 	print " seconds:</p>";
 	
 	$searchResultArray = array();
-	foreach($records as $record){
+	foreach ($records as $record) {
 		$recordObject = new Sobject($record->record);
 		$searchResultArray[$recordObject->type][] = $recordObject;
 	}
 
 
-	foreach($searchResultArray as $recordSetName=>$records){
+	foreach ($searchResultArray as $recordSetName=>$records) {
 		echo "<h3>$recordSetName</h3>";
 		
 	    print "<table id='" . $recordSetName . "_results' class='" . getTableClass() ."'>\n";
@@ -347,11 +347,11 @@ function show_search_result($records, $searchTimeElapsed){
 		//If the user queried for the Salesforce ID, this special method is nessisary
 		//to export it from the nested SOAP message. This will always be displayed
 		//in the first column regardless of search order
-		if (isset($record0->Id)){
+		if (isset($record0->Id)) {
 			print "<th>Id</th>";
 		}
-		if ($record0->fields){
-			foreach($record0->fields->children() as $field){
+		if ($record0->fields) {
+			foreach ($record0->fields->children() as $field) {
 		 			print "<th>";
 		        	print htmlspecialchars($field->getName(),ENT_QUOTES,'UTF-8');
 		        	print "</th>";
@@ -367,14 +367,14 @@ function show_search_result($records, $searchTimeElapsed){
 	        print "<tr><td>$rowNum</td>";
 	        $rowNum++;
 	        //Another check if there are ID columns in the body
-	        if (isset($record->Id)){
+	        if (isset($record->Id)) {
 	        	print "<td>" . addLinksToUiForIds($record->Id) . "</td>";
 	        }
 	        //Print the non-ID fields
-	        if (isset($record->fields)){
-			foreach($record->fields as $datum){
+	        if (isset($record->fields)) {
+			foreach ($record->fields as $datum) {
 				print "<td>";
-				if($datum){
+				if ($datum) {
 				print convertDateTimezone(addLinksToUiForIds(htmlspecialchars($datum,ENT_QUOTES,'UTF-8')));
 				} else {
 					print "&nbsp;";

@@ -95,7 +95,7 @@ class SforceBaseClient {
 		$_SERVER['HTTP_USER_AGENT'] = 'Salesforce/PHPToolkit/1.0';
 
 		$soapClientArray = array();
-		if(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true){
+		if (isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true) {
 			$soapClientArray['trace'] = 1;
 		}
 		$soapClientArray['encoding'] = 'utf-8';
@@ -173,7 +173,7 @@ class SforceBaseClient {
 		$this->sforce->__setSoapHeaders(NULL);
 		$headerArray = array();
 		
-		if(isset($this->sessionHeader)){
+		if (isset($this->sessionHeader)) {
 			array_push($headerArray, $this->sessionHeader);
 		}
 
@@ -382,11 +382,11 @@ class SforceBaseClient {
 	protected function _convertToAny($fields) {
     $anyString = '';
     foreach ($fields as $key => $value) {
-    	if($value instanceOf SObject) { //additional processing for nested sObject in field value for use with external ids
+    	if ($value instanceOf SObject) { //additional processing for nested sObject in field value for use with external ids
     		if (isset ($value->fields)) {
 	          $nestedAnyString = $this->_convertToAny($value->fields);
 	          $anyString = $anyString . '<' . $key . '>';
-	          if(isset($value->type)){ //check if partner wsdl (should always be, but just in case)
+	          if (isset($value->type)) { //check if partner wsdl (should always be, but just in case)
 	          	$anyString = $anyString . '<type>' . $value->type . '</type>';
 	          }
 	          $anyString = $anyString . $nestedAnyString . '</' . $key . '>';
@@ -750,7 +750,7 @@ class SforceBaseClient {
 		$arg = new stdClass;
 		$arg->searchString = new SoapVar($searchString, XSD_STRING, 'string', 'http://www.w3.org/2001/XMLSchema');
 		$SearchResult = $this->sforce->search($arg)->result;		
-		if(isset($SearchResult->searchRecords) && !is_array($SearchResult->searchRecords)){
+		if (isset($SearchResult->searchRecords) && !is_array($SearchResult->searchRecords)) {
 			$SearchResult->searchRecords = array($SearchResult->searchRecords);
 		}
 		return $SearchResult;

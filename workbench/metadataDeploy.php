@@ -2,20 +2,20 @@
 require_once 'soapclient/SforceMetadataClient.php';
 require_once 'session.php';
 require_once 'shared.php';
-if(!apiVersionIsAtLeast(10.0)) {
+if (!apiVersionIsAtLeast(10.0)) {
 	show_error("Metadata API not supported prior to version 10.0", true, true);
 	exit;
 }
 
-if(isset($_POST['deploymentConfirmed']) && isset($_POST["deployFileTmpName"])) {
+if (isset($_POST['deploymentConfirmed']) && isset($_POST["deployFileTmpName"])) {
 	$deployFileTmpName = htmlentities($_POST["deployFileTmpName"]);
 	
-  	if(!isset($_SESSION[$deployFileTmpName])) {
+  	if (!isset($_SESSION[$deployFileTmpName])) {
   		show_error("No zip file currently staged for deployment. To re-deploy, create a new deploy request.", true, true);
   		exit;
   	}
 
-  	if(!isset($_SESSION[$deployFileTmpName . "_OPTIONS"])) {
+  	if (!isset($_SESSION[$deployFileTmpName . "_OPTIONS"])) {
   		show_error("Error loading deploy options. To re-deploy, create a new deploy request.", true, true);
   		exit;
   	}
@@ -26,7 +26,7 @@ if(isset($_POST['deploymentConfirmed']) && isset($_POST["deployFileTmpName"])) {
 		unset($_SESSION[$deployFileTmpName]);
 		unset($_SESSION[$deployFileTmpName . "_OPTIONS"]);
 		
-		if(!isset($deployAsyncResults->id)){
+		if (!isset($deployAsyncResults->id)) {
 			show_error("Unknown deployment error.\n" . isset($deployAsyncResults->message) ? $deployAsyncResults->message : "", true, true);
 			exit;
 		}
@@ -38,16 +38,16 @@ if(isset($_POST['deploymentConfirmed']) && isset($_POST["deployFileTmpName"])) {
 	}
 } 
 
-else if(isset($_POST['stageForDeployment'])) {
+else if (isset($_POST['stageForDeployment'])) {
   	$validationErrors = validateZipFile($_FILES["deployFile"]);
-  	if($validationErrors) {
+  	if ($validationErrors) {
   		show_error($validationErrors, true, true);
   		exit;
   	}
   	
   	$deployFileTmpName = $_FILES["deployFile"]["tmp_name"];
   	$deployFileContents = file_get_contents($deployFileTmpName);
-  	if(!isset($deployFileContents) || !$deployFileContents) {
+  	if (!isset($deployFileContents) || !$deployFileContents) {
   		show_error("Unknown error reading file contents.", true, true);
   		exit;
   	}
@@ -66,7 +66,7 @@ else if(isset($_POST['stageForDeployment'])) {
 		<?php printTree("deployOptionsTree", $_SESSION[$deployFileTmpName . "_OPTIONS"], true); ?>
 		<p/>
 		<?php
-		if(!isset($_POST['checkOnly'])) {
+		if (!isset($_POST['checkOnly'])) {
 			show_warnings("Warning, this deployment will make permanent changes to this organization's metadata and cannot be rolled back. " .
 						  "Use the 'Check Only' option to validate this deployment without making changes.");
 			print "<p/>";
@@ -101,10 +101,10 @@ exit;
 function deserializeDeployOptions($request) {	
 	$deployOptions = new DeployOptions();
 	
-	foreach($deployOptions as $optionName => $optionValue) {
-		if(is_bool($optionValue)) {
+	foreach ($deployOptions as $optionName => $optionValue) {
+		if (is_bool($optionValue)) {
 			$deployOptions->$optionName = isset($request[$optionName]);
-		} else if(is_array($optionValue)) {
+		} else if (is_array($optionValue)) {
 			$deployOptions->$optionName = (isset($request[$optionName]) && $request[$optionName] != "") ? explodeCommaSeparated(htmlentities($request[$optionName])) : null;
 		}
 	}	
@@ -114,12 +114,12 @@ function deserializeDeployOptions($request) {
 
 function printDeployOptions($deployOptions, $editable) {
 	print "<table>\n";
-	foreach($deployOptions as $optionName => $optionValue) {
+	foreach ($deployOptions as $optionName => $optionValue) {
 		print "<tr><td style='text-align: right; padding-right: 2em; padding-bottom: 0.5em;'>" . 
 		      "<label for='$optionName'>" . unCamelCase($optionName) . "</label></td><td>";
-		if(is_bool($optionValue)) {
+		if (is_bool($optionValue)) {
 			print "<input id='$optionName' type='checkbox' name='$optionName' " . (isset($optionValue) && $optionValue ? "checked='checked'" : "")  . " " . ($editable ? "" : "disabled='disabled'")  . "/>";
-		} else if(is_array($optionValue)) {
+		} else if (is_array($optionValue)) {
 			print "<input id='$optionName' type='text' name='$optionName' value='" . implode(",", $optionValue) . "'" . " " . ($editable ? "" : "disabled='disabled'")  . "/>";
 		}
 		print "</td></tr>\n";
@@ -130,11 +130,11 @@ function printDeployOptions($deployOptions, $editable) {
 function validateZipFile($file){
 	$validationResult = validateUploadedFile($file);
 
-	if(!isset($file["tmp_name"]) || $file["tmp_name"] == "") {
+	if (!isset($file["tmp_name"]) || $file["tmp_name"] == "") {
 		return("No file uploaded for deployment.");
 	}
 	
-	if((!stristr($file['type'],'zip') && !stristr($file['type'],'octet-stream')) || !stristr($file['name'],'.zip')) {
+	if ((!stristr($file['type'],'zip') && !stristr($file['type'],'octet-stream')) || !stristr($file['name'],'.zip')) {
 		return("The file uploaded is not a valid ZIP file. Please try again.");
 	}
 	

@@ -2,7 +2,7 @@
 function getConfig($configKey) {
 	if (!isset($_SESSION["config"][$configKey])) {
 		global $config;
-		if($config[$configKey]->dataType == "boolean") {
+		if ($config[$configKey]->dataType == "boolean") {
 			return false;	
 		} else {
 			return null;
@@ -34,7 +34,7 @@ function printAsyncRefreshBlock() {
 
 function explodeCommaSeparated($css) {
 	$exploded = explode(",", $css);
-	foreach($exploded as $explodedKey => $explodedValue) {
+	foreach ($exploded as $explodedKey => $explodedValue) {
 		$exploded[$explodedKey] = trim($explodedValue);
 	}
 	return $exploded;	
@@ -49,9 +49,9 @@ function handleAllExceptions($e) {
 function processResults($raw) {
 	$processed = array();
 	
-	foreach(array(true, false) as $scalarProcessing){
-		foreach($raw as $rawKey => $rawValue) {
-			if(is_array($rawValue) || is_object($rawValue)) {
+	foreach (array(true, false) as $scalarProcessing) {
+		foreach ($raw as $rawKey => $rawValue) {
+			if (is_array($rawValue) || is_object($rawValue)) {
 				if($scalarProcessing) continue;
 				
 				if (isset($rawValue->name) && $rawValue->name != "") {
@@ -80,7 +80,7 @@ function unCamelCase($camelCasedString) {
 }
 
 function validateUploadedFile($file){
-	if($file['error'] != 0){
+	if ($file['error'] != 0) {
 		$uploadErrorCodes = array(
 		       1=>"The file uploaded is too large. Please try again. (Error 1)", //as per PHP config
 		       2=>"The file uploaded is too large. Please try again. (Error 2)", //as per form config
@@ -91,22 +91,16 @@ function validateUploadedFile($file){
 		       8=>"File upload stopped by extension.  Please try again. (Error 8)"
 			);
 			
-			if($_SESSION['config']['maxFileSize']['overrideable']){
+			if ($_SESSION['config']['maxFileSize']['overrideable']) {
 				$uploadErrorCodes[2] = "The file uploaded is too large. Please try again or adjust in Settings. (Error 2)";
 			}
 			
 		return($uploadErrorCodes[$file['error']]);
-	}
-
-	elseif(!is_uploaded_file($file['tmp_name'])){
+	} elseif (!is_uploaded_file($file['tmp_name'])) {
 		return("The file was not uploaded from your computer. Please try again.");
-	}
-
-	elseif($file['size'] == 0){
+	} elseif ($file['size'] == 0) {
 		return("The file uploaded contains no data. Please try again.");
-	}
-
-	else{
+	} else{
 		return(0);
 	}
 }
@@ -116,9 +110,9 @@ function isLoggedIn() {
 }
 
 function getMyPage(){
-	foreach($GLOBALS["MENUS"] as $pages) {
-		foreach($pages as $href => $page) {
-			if (!strcmp($href,basename($_SERVER['PHP_SELF']))){
+	foreach ($GLOBALS["MENUS"] as $pages) {
+		foreach ($pages as $href => $page) {
+			if (!strcmp($href,basename($_SERVER['PHP_SELF']))) {
 				return $page;
 			}
 		}
@@ -149,7 +143,7 @@ function clearSessionCache(){
 }
 
 function show_error($errors, $showHeader=false, $showFooter=false){
-	if($showHeader) {
+	if ($showHeader) {
 		include_once("header.php");
 		print "<p/>";
 	}
@@ -158,8 +152,8 @@ function show_error($errors, $showHeader=false, $showFooter=false){
 	if(!is_array($errors)) $errors = array($errors);
 	
 	$errorString = null;
-	foreach($errors as $error){
-		if(is_a($error, 'LibXMLError')) {
+	foreach ($errors as $error) {
+		if (is_a($error, 'LibXMLError')) {
 			$error = "$error->message [Line $error->line : Column: $error->column]";
 		}
 		
@@ -169,7 +163,7 @@ function show_error($errors, $showHeader=false, $showFooter=false){
 
 	print $errorString;
 	print "</div>\n";
-	if($showFooter) {
+	if ($showFooter) {
 		include_once("footer.php");
 		exit;
 	}
@@ -178,8 +172,8 @@ function show_error($errors, $showHeader=false, $showFooter=false){
 function show_warnings($warnings){
 	print "<div class='show_warnings'>\n";
 	print "<img src='images/warning24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
-	if(is_array($warnings)){
-		foreach($warnings as $warning){
+	if (is_array($warnings)) {
+		foreach ($warnings as $warning) {
 			$warningString .= "<p>" . htmlspecialchars($warning) . "</p>";
 		}
 		print $warningString;
@@ -192,8 +186,8 @@ function show_warnings($warnings){
 function show_info($infos){
 	print "<div class='show_info'>\n";
 	print "<img src='images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
-	if(is_array($infos)){
-		foreach($infos as $info){
+	if (is_array($infos)) {
+		foreach ($infos as $info) {
 			$infoString .= "<p>" . htmlspecialchars($info) . "</p>";
 		}
 		print $infoString;
@@ -216,7 +210,7 @@ function getWorkbenchUserAgent(){
  * @return string Converted date/time in selected format, or normal field
  */
  function convertDateTimezone($inputStr, $format = 'Y-m-d\\TH:i:s.000P') {
-    if(getConfig("convertTimezone") != '' && preg_match('|\d\d\d\d\-\d\d\-\d\dT\d\d\:\d\d:\d\d\.\d\d\dZ|', $inputStr)){
+    if (getConfig("convertTimezone") != '' && preg_match('|\d\d\d\d\-\d\d\-\d\dT\d\d\:\d\d:\d\d\.\d\d\dZ|', $inputStr)) {
         $timezone = getConfig("convertTimezone");
 
         $utcDate = new DateTime($inputStr);
@@ -231,9 +225,9 @@ function getWorkbenchUserAgent(){
 
 function printSelectOptions($valuesToLabelsArray,$defaultValue){
 	$valueAndLabelMatched = false;
-	foreach($valuesToLabelsArray as $value => $label){
+	foreach ($valuesToLabelsArray as $value => $label) {
 		print "<option value=\"" . $value . "\"";
-		if($defaultValue == $value){
+		if ($defaultValue == $value) {
 			print " selected=\"selected\"";
 			$valueAndLabelMatched = true;
 		}
@@ -247,15 +241,15 @@ function printSelectOptions($valuesToLabelsArray,$defaultValue){
 function describeGlobal($filter1=null, $filter2=null){
 	$processedDescribeGlobalResponse = array();
 	
-	if (!isset($_SESSION['myGlobal']) || !$_SESSION['config']['cacheDescribeGlobal']){
-		try{
+	if (!isset($_SESSION['myGlobal']) || !$_SESSION['config']['cacheDescribeGlobal']) {
+		try {
 			global $partnerConnection;
 			$describeGlobalResponse = $partnerConnection->describeGlobal();
 			
 			//Change to pre-17.0 format
-			if(isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)){
+			if (isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)) {
 				$describeGlobalResponse->types = array(); //create the array
-				foreach($describeGlobalResponse->sobjects as $sobject){
+				foreach ($describeGlobalResponse->sobjects as $sobject) {
 					$describeGlobalResponse->types[] = $sobject->name; //migrate to pre 17.0 format
 					$describeGlobalResponse->attributeMap["$sobject->name"] = $sobject; //recreate into a map for faster lookup later
 				}
@@ -269,7 +263,7 @@ function describeGlobal($filter1=null, $filter2=null){
 	}
 
 	//Print the global object types in a dropdown select box, using the filter set and the API version supports it
-	foreach($_SESSION['myGlobal']->types as $type){
+	foreach ($_SESSION['myGlobal']->types as $type) {
 		if(!isset($_SESSION['myGlobal']->attributeMap) || 
 			(($filter1 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter1) && 
 			($filter2 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter2))){	
@@ -289,9 +283,9 @@ function printObjectSelection($defaultObject=null, $nameId='default_object', $wi
 	print "<option value=''></option>";
 
 	//Print the global object types in a dropdown select box, using the filter set and the API version supports it
-	foreach(describeGlobal($filter1, $filter2) as $type){
+	foreach (describeGlobal($filter1, $filter2) as $type) {
 		print "	<option value='$type'";
-		if ($defaultObject == $type){
+		if ($defaultObject == $type) {
 			print " selected='true'";
 		}
 		print ">$type</option> \n";
@@ -301,7 +295,7 @@ function printObjectSelection($defaultObject=null, $nameId='default_object', $wi
 
 function describeSObject($objectTypes){
 	// if a scalar is passed to this function, change it to an array
-	if (!is_array($objectTypes)){
+	if (!is_array($objectTypes)) {
 		$objectTypeArray = array($objectTypes);
 	} else {
 		$objectTypeArray = $objectTypes;
@@ -311,9 +305,9 @@ function describeSObject($objectTypes){
 	// ones uncached ones. if caching is disabled, just retreive everything and
 	// clear the cache.
 	$objectTypesToRetreive = array();
-	if($_SESSION['config']['cacheDescribeSObject']){
-		foreach($objectTypeArray as $objectType){
-			if(!isset($_SESSION['describeSObjects_results'][$objectType])){
+	if ($_SESSION['config']['cacheDescribeSObject']) {
+		foreach ($objectTypeArray as $objectType) {
+			if (!isset($_SESSION['describeSObjects_results'][$objectType])) {
 				$objectTypesToRetreive[] = $objectType;
 			}
 		}
@@ -324,36 +318,36 @@ function describeSObject($objectTypes){
 
 
 	// retreive uncached object descriptions from the API and return as an array. 
-	if (count($objectTypesToRetreive) >= 1 && count($objectTypesToRetreive) <= 100){
-		try{
+	if (count($objectTypesToRetreive) >= 1 && count($objectTypesToRetreive) <= 100) {
+		try {
 			global $partnerConnection;
 			$describeSObjectsResults = $partnerConnection->describeSObjects($objectTypesToRetreive);
 		} catch (Exception $e) {
 			show_error($e->getMessage(),false,true);
 		}
 
-		if (!is_array($objectTypes)){
+		if (!is_array($objectTypes)) {
 			$describeSObjectsResultsArray = array($describeSObjectsResults->name => $describeSObjectsResults);
 		} else {
-			foreach ($describeSObjectsResults as $describeSObjectResultKey => $describeSObjectResultValue){
+			foreach ($describeSObjectsResults as $describeSObjectResultKey => $describeSObjectResultValue) {
 				$describeSObjectsResultsArray[$describeSObjectResultValue->name] = $describeSObjectResultValue;
 			}
 		}
 
-	} else if(count($objectTypesToRetreive) > 100) {
+	} else if (count($objectTypesToRetreive) > 100) {
 		show_error("Too many polymorphic object types: " . count($objectTypesToRetreive),false,true);
 	}
 
 	// move the describe results to the session cache and then copy all the requested object descriptions from the cache
 	// if caching is disaled, the results will just be returned directly 
-	if($_SESSION['config']['cacheDescribeSObject']){
-		if(isset($describeSObjectsResultsArray)){
-			foreach ($describeSObjectsResultsArray as $describeSObjectResultKey => $describeSObjectResult){
+	if ($_SESSION['config']['cacheDescribeSObject']) {
+		if (isset($describeSObjectsResultsArray)) {
+			foreach ($describeSObjectsResultsArray as $describeSObjectResultKey => $describeSObjectResult) {
 				$_SESSION['describeSObjects_results'][$describeSObjectResult->name] = $describeSObjectsResultsArray[$describeSObjectResult->name];
 			}
 		}
 
-		foreach($objectTypeArray as $objectTypeKey => $objectTypeValue){
+		foreach ($objectTypeArray as $objectTypeKey => $objectTypeValue) {
 			$describeSObjectsResultsToReturn[$objectTypeValue] = $_SESSION['describeSObjects_results'][$objectTypeValue];
 		}
 	} else {
@@ -361,14 +355,14 @@ function describeSObject($objectTypes){
 	}
 
 	// if alphabetize fields is enabled, alphabetize the describe results
-	if($_SESSION['config']['abcOrder']){
-		foreach ($describeSObjectsResultsToReturn as $describeSObjectResultKey => $describeSObjectResult){
+	if ($_SESSION['config']['abcOrder']) {
+		foreach ($describeSObjectsResultsToReturn as $describeSObjectResultKey => $describeSObjectResult) {
 			$describeSObjectsResultsToReturn[$describeSObjectResultKey] = alphaOrderFields($describeSObjectResult);
 		}
 	}
 
 	//finally, return the describe results
-	if (!is_array($objectTypes)){
+	if (!is_array($objectTypes)) {
 		return $describeSObjectsResultsToReturn[$objectTypes];
 	} else {
 		return $describeSObjectsResultsToReturn;
@@ -379,7 +373,7 @@ function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = 
 	print "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'expand'); return false;\">Expand All</a> | " . 
 	      "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'collapse'); return false;\">Collapse All</a>\n";
 	
-	if(isset($additionalMenus)) {
+	if (isset($additionalMenus)) {
 		print $additionalMenus;
 	}
 		
@@ -395,13 +389,13 @@ function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = 
 }
 
 function printNode($node) {
-	foreach($node as $nodeKey => $nodeValue) {
-		if(is_array($nodeValue) || is_object($nodeValue)){
+	foreach ($node as $nodeKey => $nodeValue) {
+		if (is_array($nodeValue) || is_object($nodeValue)) {
 			print "<li>$nodeKey<ul style='display:none;'>\n";
 			printNode($nodeValue);
 			print "</ul></li>\n";
 		} else {
-			if(is_bool($nodeValue)) {
+			if (is_bool($nodeValue)) {
 				$nodeValue = $nodeValue == 1 ? "<span class='trueColor'>true</span>" : "<span class='falseColor'>false</span>";
 			}
 			print "<li>". (!is_numeric($nodeKey) ? $nodeKey . ": " : "") . "<span style='font-weight:bold;'>" . addLinksToUiForIds($nodeValue) . "</span></li>\n";
@@ -411,9 +405,9 @@ function printNode($node) {
 
 function alphaOrderFields($describeSObjectResult){
     //move field name out to key name and then ksort based on key for field abc order
-    if(isset($describeSObjectResult->fields)){
+    if (isset($describeSObjectResult->fields)) {
         if(!is_array($describeSObjectResult->fields)) $describeSObjectResult->fields = array($describeSObjectResult->fields);
-    	foreach($describeSObjectResult->fields as $field){
+    	foreach ($describeSObjectResult->fields as $field) {
             $fieldNames[] = $field->name;
         }
     
@@ -438,7 +432,7 @@ function natcaseksort($array) {
 
 
 function addLinksToUiForIds($inputStr){
-	if(isset($_SESSION['config']['linkIdToUi']) && $_SESSION['config']['linkIdToUi'] == true){
+	if (isset($_SESSION['config']['linkIdToUi']) && $_SESSION['config']['linkIdToUi'] == true) {
 		preg_match("@(https?://.*)/services@", $_SESSION['location'], $instUIDomain);
 		return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$1' target='sfdcUi'>$1</a>",$inputStr);					
 	} else {
@@ -529,12 +523,12 @@ function xml_pretty_printer($xml, $htmlOutput=FALSE)
 
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
-	if(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true){
+	if (isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true) {
 
 		print "<script>
 			function toggleDebugSection(title, sectionId){
 				var section = document.getElementById(sectionId);
-				if(section.style.display == 'inline'){
+				if (section.style.display == 'inline') {
 					section.style.display = 'none';
 					title.childNodes[0].nodeValue = title.childNodes[0].nodeValue.replace('-','+');
 				} else {
@@ -547,8 +541,8 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 		print "<div style='text-align: left;'>";
 		
 
-		if($customValue){
-			if($customName){
+		if ($customValue) {
+			if ($customName) {
 				print "<h1>$customName</h1>\n";
 			} else {
 				print "<h1>CUSTOM</h1>\n";
@@ -558,7 +552,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 			print "<hr/>";
 		}
 
-		if($showSuperVars){
+		if ($showSuperVars) {
 			print "<h1 onclick=\"toggleDebugSection(this,'container_globals')\" class=\"debugHeader\">+ SUPERGLOBAL VARIABLES</h1>\n";
 			print "<div id='container_globals' class='debugContainer'>";
 			
@@ -604,8 +598,8 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 
 
 		global $partnerConnection;
-		if($showSoap && isset($partnerConnection) && $partnerConnection->getLastRequestHeaders()){
-			try{
+		if ($showSoap && isset($partnerConnection) && $partnerConnection->getLastRequestHeaders()) {
+			try {
 				print "<h1 onclick=\"toggleDebugSection(this,'partner_soap_container')\" class=\"debugHeader\">+ PARTNER SOAP MESSAGES</h1>\n";
 				print "<div id='partner_soap_container'  class='debugContainer'>";
 
@@ -634,8 +628,8 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 		}
 
 		global $metadataConnection;
-		if($showSoap && isset($metadataConnection) && $metadataConnection->getLastRequestHeaders()){
-			try{
+		if ($showSoap && isset($metadataConnection) && $metadataConnection->getLastRequestHeaders()) {
+			try {
 				print "<h1 onclick=\"toggleDebugSection(this,'metadata_soap_container')\" class=\"debugHeader\">+ METADATA SOAP MESSAGES</h1>\n";
 				print "<div id='metadata_soap_container' class='debugContainer'>";
 
@@ -664,8 +658,8 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 		}
 		
 		global $apexConnection;
-		if($showSoap && isset($apexConnection) && $apexConnection->getLastRequestHeaders()){
-			try{
+		if ($showSoap && isset($apexConnection) && $apexConnection->getLastRequestHeaders()) {
+			try {
 				print "<h1 onclick=\"toggleDebugSection(this,'apex_soap_container')\" class=\"debugHeader\">+ APEX SOAP MESSAGES</h1>\n";
 				print "<div id='apex_soap_container' class='debugContainer'>";
 
@@ -693,7 +687,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
 			}
 		}
 
-		if(isset($_SESSION['restDebugLog']) && $_SESSION['restDebugLog'] != ""){
+		if (isset($_SESSION['restDebugLog']) && $_SESSION['restDebugLog'] != "") {
 			print "<h1 onclick=\"toggleDebugSection(this,'rest_debug_container')\" class=\"debugHeader\">+ REST/BULK API LOGS</h1>\n";
 			print "<div id='rest_debug_container' class='debugContainer'>";
 				print "<pre>" . addLinksToUiForIds($_SESSION['restDebugLog']) . "</pre>";

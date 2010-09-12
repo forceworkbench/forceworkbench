@@ -66,7 +66,7 @@ class BulkApiClient {
 	
 	private function convertEndpointFromPartner($partnerEndpoint){
 	
-		if(!$this->apiVersionIsAtLeast($partnerEndpoint, 16.0)){
+		if (!$this->apiVersionIsAtLeast($partnerEndpoint, 16.0)) {
 			throw new Exception("Bulk API operations only supported in API 16.0 and higher.");
 		}
 		
@@ -74,7 +74,7 @@ class BulkApiClient {
 		$endpoint = str_replace("Soap/u", "async", $partnerEndpoint, $count);
 
 		//strip off org id hint from end, if present.
-		if(strpos($endpoint, "00D")){
+		if (strpos($endpoint, "00D")) {
 			$endpoint = substr($endpoint, 0, strripos($endpoint, "/"));
 		}
 		
@@ -97,15 +97,15 @@ class BulkApiClient {
 	}
 	
 	private function validateJob(JobInfo $job){
-		if($job->getContentType() == "CSV" && !$this->apiVersionIsAtLeast($this->endpoint, 17.0)){
+		if ($job->getContentType() == "CSV" && !$this->apiVersionIsAtLeast($this->endpoint, 17.0)) {
 			throw new Exception("Content Type 'CSV' only supported in API 17.0 and higher.");
 		}
 		
-		if($job->getOpertion() == "delete" && !$this->apiVersionIsAtLeast($this->endpoint, 18.0)){
+		if ($job->getOpertion() == "delete" && !$this->apiVersionIsAtLeast($this->endpoint, 18.0)) {
 			throw new Exception("Bulk API 'Delete' operation only supported in API 18.0 and higher.");
 		}
 		
-		if($job->getOpertion() == "hardDelete" && !$this->apiVersionIsAtLeast($this->endpoint, 19.0)){
+		if ($job->getOpertion() == "hardDelete" && !$this->apiVersionIsAtLeast($this->endpoint, 19.0)) {
 			throw new Exception("Bulk API 'Hard Delete' operation only supported in API 19.0 and higher.");
 		}
 	}
@@ -122,9 +122,9 @@ class BulkApiClient {
 	}
 	
 	public function createBatch(JobInfo $job, $data){	
-		if($job->getContentType() == "CSV"){
+		if ($job->getContentType() == "CSV") {
 			$contentType = "text/csv";
-		} else if ($job->getContentType() == "XML"){
+		} else if ($job->getContentType() == "XML") {
 			$contentType = "application/xml";
 		}
 		
@@ -139,7 +139,7 @@ class BulkApiClient {
 		$batchInfos = array();
 
 		$batchInfoList = new SimpleXMLElement($this->get($this->endpoint . "/job/" . $jobId . "/batch"));		
-		foreach($batchInfoList as $batchInfoListItem){
+		foreach ($batchInfoList as $batchInfoListItem) {
 			$batchInfos["$batchInfoListItem->id"] = new BatchInfo($batchInfoListItem->asXml());
 		}
 		
@@ -147,7 +147,7 @@ class BulkApiClient {
 	}
 
 	public function getBatchRequest($jobId, $batchId) {
-		if(!$this->apiVersionIsAtLeast($this->endpoint, 19.0)){
+		if (!$this->apiVersionIsAtLeast($this->endpoint, 19.0)) {
 			throw new Exception("Gettiing a batch request is only supported in API 19.0 and higher.");
 		}
 		
@@ -169,7 +169,7 @@ class BulkApiClient {
 			"User-Agent: " . $this->userAgent,
 			"Expect:"
 		);
-		if(isset($contentType)){
+		if (isset($contentType)) {
 			$httpHeaders[] = "Content-Type: $contentType; charset=UTF-8";
 		} 
 
@@ -188,7 +188,7 @@ class BulkApiClient {
 		$chResponse = curl_exec($ch);
 		$this->log("RESPONSE \n" . htmlentities($chResponse)); 
 		
-		if(curl_error($ch) != null){
+		if (curl_error($ch) != null) {
 			$this->log("ERROR \n" . htmlentities(curl_error($ch))); 
 			throw new Exception(curl_error($ch));
 		}
@@ -218,7 +218,7 @@ class BulkApiClient {
 	}
 	
 	protected function log($txt){
-		if($this->loggingEnabled){ 
+		if ($this->loggingEnabled) { 
 			$this->logs .= $txt .= "\n\n";
 		}
 		return $txt;

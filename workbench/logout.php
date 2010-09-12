@@ -2,10 +2,10 @@
 require_once 'session.php';
 require_once 'shared.php';
 	
-	if($_SESSION){
+	if ($_SESSION) {
 		require_once 'header.php';
-		if($_SESSION['config']['invalidateSessionOnLogout']){
-			try{
+		if ($_SESSION['config']['invalidateSessionOnLogout']) {
+			try {
 				$partnerConnection->logout();
 				$sessionInvatidated = true;
 			} catch(Exception $e){
@@ -18,7 +18,7 @@ require_once 'shared.php';
 		session_unset();
 		session_destroy();
 		print "<p/>";
-		if($sessionInvatidated == true){
+		if ($sessionInvatidated == true) {
 			show_info('You have been successfully logged out of Workbench and Salesforce.');
 		} else {
 			show_info('You have been successfully logged out of Workbench.');

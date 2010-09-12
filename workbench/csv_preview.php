@@ -17,7 +17,7 @@ require_once 'put.php';
 <body>
 
 <?php
-if(isset($_SESSION['csv_array'])){
+if (isset($_SESSION['csv_array'])) {
 	csv_array_show($_SESSION['csv_array']);
 } else {
 	show_error("No CSV has been uploaded, or it is no longer active");

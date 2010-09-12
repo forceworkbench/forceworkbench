@@ -3,7 +3,7 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'header.php';
 print "<p/>";
-if(!apiVersionIsAtLeast(10.0)) {
+if (!apiVersionIsAtLeast(10.0)) {
 	show_error("Metadata API not supported prior to version 10.0", false, true);
 	exit;
 }
@@ -18,14 +18,14 @@ try {
 }
 
 $metadataTypesSelectOptions[""] = "";
-foreach($describeMetadataResult as $resultsKey => $resultsValue) {
-	if($resultsKey == 'metadataObjects'){
-		foreach($resultsValue as $metadataResultsKey => $metadataResultsValue) {
+foreach ($describeMetadataResult as $resultsKey => $resultsValue) {
+	if ($resultsKey == 'metadataObjects') {
+		foreach ($resultsValue as $metadataResultsKey => $metadataResultsValue) {
 			$metadataTypeMap[$metadataResultsValue->xmlName] = $metadataResultsValue;
 			$metadataTypesSelectOptions[$metadataResultsValue->xmlName]= $metadataResultsValue->xmlName;
 			
-			if(isset($metadataResultsValue->childXmlNames)) {
-				if(!is_array($metadataResultsValue->childXmlNames)) {
+			if (isset($metadataResultsValue->childXmlNames)) {
+				if (!is_array($metadataResultsValue->childXmlNames)) {
 					$metadataResultsValue->childXmlNames = array($metadataResultsValue->childXmlNames);
 				}
 				
@@ -64,9 +64,9 @@ $typeStringChanged = $currentTypeString != null && $previousTypeString != $curre
 <p/>
 
 <?php
-if(isset($typeString)) {	
-	if(!isset($metadataTypeMap[$typeString])) {
-		if(isset($_REQUEST['type']) && $_REQUEST['type']) {
+if (isset($typeString)) {	
+	if (!isset($metadataTypeMap[$typeString])) {
+		if (isset($_REQUEST['type']) && $_REQUEST['type']) {
 			show_error("Invalid metadata type type: $typeString", false, true);
 		}
 		exit;
@@ -87,21 +87,21 @@ function listMetadata($type) {
 	global $partnerConnection;
 	
 	try {
-		if(isset($type->childXmlName)) {
+		if (isset($type->childXmlName)) {
 			return processListMetadataResult($metadataConnection->listMetadata($type->childXmlName, null, getApiVersion()));
 		}
 		
-		if(!$type->inFolder) {
+		if (!$type->inFolder) {
 			return processListMetadataResult($metadataConnection->listMetadata($type->xmlName, null, getApiVersion()));
 		}
 		
 		$folderQueryResult = $partnerConnection->query("SELECT DeveloperName FROM Folder WHERE Type = '" . $type->xmlName . "' AND DeveloperName != null AND NamespacePrefix = null");
 		
-		if($folderQueryResult->size == 0) {
+		if ($folderQueryResult->size == 0) {
 			return array();
 		}
 		
-		foreach($folderQueryResult->records as $folderRecord) {
+		foreach ($folderQueryResult->records as $folderRecord) {
 			$folder = new SObject($folderRecord);
 			$folderName = $folder->fields->DeveloperName;
 			
@@ -115,13 +115,13 @@ function listMetadata($type) {
 }
 
 function processListMetadataResult($response) {
-	if(!is_array($response)) {
+	if (!is_array($response)) {
 		$response = array($response);
 	}
 		
 	$processedResponse = array();
-	foreach($response as $responseKey => $responseValue) {
-		if($responseValue == null) {
+	foreach ($response as $responseKey => $responseValue) {
+		if ($responseValue == null) {
 			continue;
 		}
 		
@@ -129,7 +129,7 @@ function processListMetadataResult($response) {
 		if (strrchr($name, "/")) {
 			$simpleName = substr(strrchr($name, "/"), 1);
 			$processedResponse[$simpleName] = $responseValue;
-		} else if(strpos($name, ".")) {
+		} else if (strpos($name, ".")) {
 			$parentName = substr($name, 0, strpos($name, "."));
 			$childName = substr($name, strpos($name, ".") + 1);
 			$processedResponse[$parentName][$childName] = $responseValue;

@@ -3,17 +3,17 @@ require_once 'shared.php';
 
 set_exception_handler('handleAllExceptions');
 
-if(!isset($GLOBALS['requestTimeStart'])){
+if (!isset($GLOBALS['requestTimeStart'])) {
 	$GLOBALS['requestTimeStart'] = microtime(true);
 }
 
 session_start();
 
 //clear ResultsWithData and retrievedZips from session unless downloading them
-if(isset($_SESSION['resultsWithData']) && basename($_SERVER['PHP_SELF']) != 'downloadResultsWithData.php'){
+if (isset($_SESSION['resultsWithData']) && basename($_SERVER['PHP_SELF']) != 'downloadResultsWithData.php') {
 	unset($_SESSION['resultsWithData']);
 }
-if(isset($_SESSION['retrievedZips']) && basename($_SERVER['PHP_SELF']) != 'metadataStatus.php'){
+if (isset($_SESSION['retrievedZips']) && basename($_SERVER['PHP_SELF']) != 'metadataStatus.php') {
 	unset($_SESSION['retrievedZips']);
 }
 
@@ -21,25 +21,25 @@ if(isset($_SESSION['retrievedZips']) && basename($_SERVER['PHP_SELF']) != 'metad
 require_once 'config.php';
 if(is_file('configOverrides.php')) require_once 'configOverrides.php';
 
-foreach($config as $configKey => $configValue){
+foreach ($config as $configKey => $configValue) {
 	//only process non-headers
-	if(!isset($configValue['isHeader'])){
+	if (!isset($configValue['isHeader'])) {
 		//check if the setting is NOT overrideable and if so clear the cookie
 		//this is done to clear previously set cookeies
-		if(!$configValue['overrideable']){
+		if (!$configValue['overrideable']) {
 			setcookie($configKey,NULL,time()-3600);
 		}
 
 		//check if user has cookies that override defaults
-		if(isset($_COOKIE[$configKey])){
+		if (isset($_COOKIE[$configKey])) {
 			$_SESSION['config'][$configKey] = $_COOKIE[$configKey];
-		} else if(isset($configValue['default'])) {
+		} else if (isset($configValue['default'])) {
 			$_SESSION['config'][$configKey] = $configValue['default'];
 		}
 	}
 }
 
-if($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_COOKIE["callOptions_client"])){
+if ($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_COOKIE["callOptions_client"])) {
 	$_SESSION['config']['callOptions_client'] = getWorkbenchUserAgent();
 }
 
@@ -56,8 +56,8 @@ if (!$myPage->isReadOnly && isReadOnlyMode()) {
 }
 
 
-if(isLoggedIn()){
-	try{
+if (isLoggedIn()) {
+	try {
 		//setup SOAP client
 		if (getConfig('mockClients')) {
 			require_once 'soapclient/SforceMockPartnerClient.php';	
@@ -77,58 +77,58 @@ if(isLoggedIn()){
 		$metadataConnection = new SforceMetadataClient();
 			
 		//setting default object to remove notices through functions
-		if(!isset($_SESSION['default_object'])){
+		if (!isset($_SESSION['default_object'])) {
 			$_SESSION['default_object'] = null;
 		}
 			
 		//Has the user selected a default object on? If so,
 		//pass them to the session
-		if (isset($_REQUEST['default_object'])){
+		if (isset($_REQUEST['default_object'])) {
 			$_REQUEST['default_object_changed'] = $_SESSION['default_object'] != $_REQUEST['default_object'];
 			$_SESSION['default_object'] = $_REQUEST['default_object'];
 		}
 			
 		$defaultNamespace = isset($_SESSION['config']['callOptions_defaultNamespace']) ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
-		if(isset($_SESSION['tempClientId'])){
+		if (isset($_SESSION['tempClientId'])) {
 			$header = new CallOptions($_SESSION['tempClientId'], $defaultNamespace);
 			$partnerConnection->setCallOptions($header);
-		} else if($_SESSION['config']['callOptions_client'] || $defaultNamespace){
+		} else if ($_SESSION['config']['callOptions_client'] || $defaultNamespace) {
 			$header = new CallOptions($_SESSION['config']['callOptions_client'], $defaultNamespace);
 			$partnerConnection->setCallOptions($header);
 		}
 
 		$assignmentRuleId = isset($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']) ? $_SESSION['config']['assignmentRuleHeader_assignmentRuleId'] : null;
-		if($assignmentRuleId || $_SESSION['config']['assignmentRuleHeader_useDefaultRule']){
+		if ($assignmentRuleId || $_SESSION['config']['assignmentRuleHeader_useDefaultRule']) {
 			$header = new AssignmentRuleHeader($assignmentRuleId, $_SESSION['config']['assignmentRuleHeader_useDefaultRule']);
 			$partnerConnection->setAssignmentRuleHeader($header);
 		}
 
-		if($_SESSION['config']['mruHeader_updateMru']){
+		if ($_SESSION['config']['mruHeader_updateMru']) {
 			$header = new MruHeader($_SESSION['config']['mruHeader_updateMru']);
 			$partnerConnection->setMruHeader($header);
 		}
 
-		if($_SESSION['config']['queryOptions_batchSize']){
+		if ($_SESSION['config']['queryOptions_batchSize']) {
 			$header = new QueryOptions($_SESSION['config']['queryOptions_batchSize']);
 			$partnerConnection->setQueryOptions($header);
 		}
 
-		if($_SESSION['config']['emailHeader_triggerAutoResponseEmail'] || $_SESSION['config']['emailHeader_triggerOtherEmail'] || $_SESSION['config']['emailHeader_triggertriggerUserEmail']){
+		if ($_SESSION['config']['emailHeader_triggerAutoResponseEmail'] || $_SESSION['config']['emailHeader_triggerOtherEmail'] || $_SESSION['config']['emailHeader_triggertriggerUserEmail']) {
 			$header = new EmailHeader($_SESSION['config']['emailHeader_triggerAutoResponseEmail'], $_SESSION['config']['emailHeader_triggerOtherEmail'], $_SESSION['config']['emailHeader_triggertriggerUserEmail']);
 			$partnerConnection->setEmailHeader($header);
 		}
 
-		if(isset($_SESSION['config']['UserTerritoryDeleteHeader_transferToUserId'])){
+		if (isset($_SESSION['config']['UserTerritoryDeleteHeader_transferToUserId'])) {
 			$header = new UserTerritoryDeleteHeader($_SESSION['config']['UserTerritoryDeleteHeader_transferToUserId']);
 			$partnerConnection->setUserTerritoryDeleteHeader($header);
 		}
 
-		if($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation']){
+		if ($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation']) {
 			$header = new AllowFieldTruncationHeader($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation']);
 			$partnerConnection->setAllowFieldTruncationHeader($header);
 		}
 
-		if(!isset($_SESSION['getUserInfo']) || !$_SESSION['config']['cacheGetUserInfo']){
+		if (!isset($_SESSION['getUserInfo']) || !$_SESSION['config']['cacheGetUserInfo']) {
 			$_SESSION['getUserInfo'] = $partnerConnection->getUserInfo();
 		}
 		

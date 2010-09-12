@@ -112,9 +112,9 @@ $config["header_General"] = array(
 	);
         
         $GLOBALS['TIMEZONES'] = array(''=>'-None-');
-        foreach(timezone_identifiers_list() as $timezone) {
+        foreach (timezone_identifiers_list() as $timezone) {
             $tz = explode('/',$timezone);
-            if(isset($tz[1])) {
+            if (isset($tz[1])) {
                 $GLOBALS['TIMEZONES'][$timezone] = $tz[0].'/'.str_replace('_',' ',$tz[1]);
             }
         }

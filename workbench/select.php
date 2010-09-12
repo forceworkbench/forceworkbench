@@ -6,9 +6,9 @@ require_once 'shared.php';
 //of the action buttons. If so, proceed to that page; otherwise,
 //show the form to do so.
 
-if (isset($_POST['actionJump']) && $_POST['actionJump'] != ""){
+if (isset($_POST['actionJump']) && $_POST['actionJump'] != "") {
 	header("Location: $_POST[actionJump]");
-} elseif (isset($_POST['select'])){
+} elseif (isset($_POST['select'])) {
 	include_once 'header.php';
 	show_error("Choose an object and an action to which to jump.");
 	show_select_form();
@@ -28,9 +28,9 @@ function show_select_form(){
 	function toggleObjectSelectDisabled(){
 		var usesObject = new Array();
 		<?php
-		foreach($GLOBALS["MENUS"] as $menu => $pages) {
-			foreach($pages as $href => $page) {
-				if($page->onMenuSelect === 'usesObject') {
+		foreach ($GLOBALS["MENUS"] as $menu => $pages) {
+			foreach ($pages as $href => $page) {
+				if ($page->onMenuSelect === 'usesObject') {
 					print "usesObject['$href'] = '$href';\n";
 				}
 			}
@@ -39,7 +39,7 @@ function show_select_form(){
 	
 		var actionJumpVal = document.getElementById('actionJump').value;
 
-		if(usesObject[actionJumpVal] != undefined){
+		if (usesObject[actionJumpVal] != undefined) {
 			document.getElementById('default_object').disabled = false;		
 		} else {
 			document.getElementById('default_object').disabled = true;			
@@ -48,7 +48,7 @@ function show_select_form(){
 	</script>
 	<?php
 	
-	try{
+	try {
 	print "<form method='post' action='$_SERVER[PHP_SELF]'>\n";
 	print "<p><strong>Select a default object and action:</strong></p>\n";
 	
@@ -57,8 +57,8 @@ function show_select_form(){
 	print "<p><strong>Jump to: </strong>" . 
 		  "<select name='actionJump' id='actionJump' style='width: 20em;' onChange='toggleObjectSelectDisabled();'>" . 	
 		  "<option value='select.php'></option>";
-	foreach($GLOBALS["MENUS"] as $menu => $pages) {
-		foreach($pages as $href => $page) {
+	foreach ($GLOBALS["MENUS"] as $menu => $pages) {
+		foreach ($pages as $href => $page) {
 			if($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
 		}
 	}

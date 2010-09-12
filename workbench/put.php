@@ -12,18 +12,18 @@ function put($action){
 	
 	$confirmAction = 'Confirm ' . ucwords($action);
 	
-	if(isset($_POST['action']) && $_POST['action'] == $confirmAction){
+	if (isset($_POST['action']) && $_POST['action'] == $confirmAction) {
 		if ($action == 'upsert' && isset($_SESSION['_ext_id'])) {
 			$extId = $_SESSION['_ext_id'];
 		} else {
 			$extId = NULL;
 		}
 		
-		if($action == 'delete' && isset($_POST['doHardDelete']) && $_POST['doHardDelete']) {
+		if ($action == 'delete' && isset($_POST['doHardDelete']) && $_POST['doHardDelete']) {
 			$action = 'hardDelete';
 		}
 		
-		if(isset($_POST['doAsync'])){
+		if (isset($_POST['doAsync'])) {
 			putAsync(
 				$action,
 				$extId,
@@ -33,7 +33,7 @@ function put($action){
 			require_once 'header.php';
 			print "<h1>" . ucwords($action) . " Results</h1>";
 			if ($action == 'insert') $apiCall = 'create'; else $apiCall = $action;
-			if ($action == "insert" || $action == "update" || $action == "upsert"){
+			if ($action == "insert" || $action == "update" || $action == "upsert") {
 				putSync(
 					$apiCall,
 					$extId,
@@ -46,12 +46,10 @@ function put($action){
 			include_once 'footer.php';
 		}
 		unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name']);
-	}
-
-	elseif(isset($_POST['action']) && $_POST['action'] == 'Map Fields'){
+	} elseif (isset($_POST['action']) && $_POST['action'] == 'Map Fields') {
 		require_once 'header.php';
 		array_pop($_POST); //remove header row
-		if (isset($_POST['_ext_id'])){
+		if (isset($_POST['_ext_id'])) {
 			$_SESSION['_ext_id'] = $_POST['_ext_id'];
 			$_POST['_ext_id'] = NULL;
 		}
@@ -63,14 +61,12 @@ function put($action){
 			isset($_SESSION['_ext_id'])?$_SESSION['_ext_id']:null
 		);
 		include_once 'footer.php';
-	}
-
-	elseif (isset($_FILES['file'])){
+	} elseif (isset($_FILES['file'])) {
 		require_once 'header.php';
-		if (csv_upload_valid_check($_FILES['file'])){
+		if (csv_upload_valid_check($_FILES['file'])) {
 			form_upload_objectSelect_show('file',TRUE);
 			show_error(csv_upload_valid_check($_FILES['file']));
-		} else if (($action == "insert" || $action == "update" || $action == "upsert") && $_POST['default_object'] == ""){
+		} else if (($action == "insert" || $action == "update" || $action == "upsert") && $_POST['default_object'] == "") {
 			form_upload_objectSelect_show('file',$action);
 			show_error("Must select an object to $action.");
 		} else {
@@ -80,7 +76,7 @@ function put($action){
 			$csvArrayCount = count($_SESSION['csv_array']) - 1;
 			if (!$csvArrayCount) {
 				show_error("The file uploaded contains no records. Please try again.",false,true);
-			} elseif($csvArrayCount > $_SESSION['config']['maxFileLengthRows']){
+			} elseif ($csvArrayCount > $_SESSION['config']['maxFileLengthRows']) {
 				show_error ("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.", false, true);
 			}
 			$info = "The file $csvFileName was uploaded successfully and contains $csvArrayCount row";
@@ -114,12 +110,12 @@ function form_upload_objectSelect_show($fileInputName, $action){
 	print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n";
 	print "<input type='hidden' name='MAX_FILE_SIZE' value='" . $_SESSION['config']['maxFileSize'] . "' />\n";
 	print "<p><input type='file' name='$fileInputName' size=44 /></p>\n";
-	if ($action == "insert" || $action == "update" || $action == "upsert"){
+	if ($action == "insert" || $action == "update" || $action == "upsert") {
 		$filter1 = null;
 		$filter2 = null;
 		if($action == "insert") $filter1 = "createable";
 		elseif($action == "update") $filter1 = "updateable";
-		elseif($action == "upsert") {$filter1 = "createable"; $filter2 = "updateable";}
+		elseif ($action == "upsert") {$filter1 = "createable"; $filter2 = "updateable";}
 		
 		 printObjectSelection($_SESSION['default_object'], 'default_object', "20", null, $filter1, $filter2);
 		 
@@ -140,7 +136,7 @@ function form_upload_objectSelect_show($fileInputName, $action){
 function csv_upload_valid_check($file){
 	$validationResult = validateUploadedFile($file);
 	
-	if((!stristr($file['type'],'csv') || $file['type'] !== "application//vnd.ms-excel") && !stristr($file['name'],'.csv')){
+	if ((!stristr($file['type'],'csv') || $file['type'] !== "application//vnd.ms-excel") && !stristr($file['name'],'.csv')) {
 		return("The file uploaded is not a valid CSV file. Please try again.");
 	}
 	
@@ -165,7 +161,7 @@ function csv_file_to_array($file){
 	}
 	fclose($handle);
 
-	if ($csvArray !== NULL){
+	if ($csvArray !== NULL) {
 		return($csvArray);
 	} else {
 		show_error("There were errors parsing the CSV file. Please try again.", false, true);
@@ -180,17 +176,17 @@ function csv_file_to_array($file){
 function csv_array_show($csvArray){
 	print "<table class='data_table'>\n";
 	print "<tr><th>&nbsp;</th>";
-		for($col=0; $col < count($csvArray[0]); $col++){
+		for ($col=0; $col < count($csvArray[0]); $col++) {
 			print "<th>";
 			print htmlspecialchars($csvArray[0][$col],ENT_QUOTES,'UTF-8');
 			print "</th>";
 		}
 	print "</tr>\n";
-	for($row=1; $row < count($csvArray); $row++){
+	for ($row=1; $row < count($csvArray); $row++) {
 		print "<tr><td>$row</td>";
-		for($col=0; $col < count($csvArray[0]); $col++){
+		for ($col=0; $col < count($csvArray[0]); $col++) {
 			print "<td>";
-			if ($csvArray[$row][$col]){
+			if ($csvArray[$row][$col]) {
 				print addLinksToUiForIds(htmlspecialchars($csvArray[$row][$col],ENT_QUOTES,'UTF-8'));
 			} else {
 				print "&nbsp;";
@@ -213,8 +209,8 @@ function csv_array_show($csvArray){
  * @param $csvArray
  */
 function field_mapping_set($action,$csvArray){
-	if ($action == 'insert' || $action == 'upsert' || $action == 'update'){
-		if (isset($_SESSION['default_object'])){
+	if ($action == 'insert' || $action == 'upsert' || $action == 'update') {
+		if (isset($_SESSION['default_object'])) {
 			$describeSObjectResult = describeSObject($_SESSION['default_object']);
 		} else {
 		show_error("A default object is required to $action. Go to the Select page to choose a default object and try again.");
@@ -227,14 +223,14 @@ function field_mapping_set($action,$csvArray){
 	
 	print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
 
-	if ($action == 'upsert'){
+	if ($action == 'upsert') {
 		print "<p class='instructions'>Choose the Salesforce field to use as the External Id. Be sure to also map this field below:</p>\n";
 		print "<table class='field_mapping'><tr>\n";
 		print "<td style='color: red;'>External Id</td>";
 		print "<td><select name='_ext_id' style='width: 100%;'>\n";
 //		print "	<option value=''></option>\n";
-		foreach($describeSObjectResult->fields as $fields => $field){
-			if($field->idLookup){ //limit the fields to only those with the idLookup property set to true. Corrected Issue #10
+		foreach ($describeSObjectResult->fields as $fields => $field) {
+			if ($field->idLookup) { //limit the fields to only those with the idLookup property set to true. Corrected Issue #10
 				print   " <option value='$field->name'";
 				if($field->name == 'Id') print " selected='true'";
 				print ">$field->name</option>\n";
@@ -253,34 +249,34 @@ function field_mapping_set($action,$csvArray){
 		print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided in the CSV file and can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='images/help16.png'/></th>";
 	print "</tr>\n";
 
-	if ($action == 'insert'){
-		foreach($describeSObjectResult->fields as $fields => $field){
-			if ($field->createable){
+	if ($action == 'insert') {
+		foreach ($describeSObjectResult->fields as $fields => $field) {
+			if ($field->createable) {
 				printPutFieldForMapping($field, $csvArray, true);
 			}
 		}
 	}
 
-	if ($action == 'update'){
+	if ($action == 'update') {
 		printPutFieldForMappingId($csvArray, true);
-		foreach($describeSObjectResult->fields as $fields => $field){
-			if ($field->updateable){
+		foreach ($describeSObjectResult->fields as $fields => $field) {
+			if ($field->updateable) {
 				printPutFieldForMapping($field, $csvArray, true);
 			}
 		}
 	}
 
-	if ($action == 'upsert'){
+	if ($action == 'upsert') {
 		printPutFieldForMappingId($csvArray, true);
-		foreach($describeSObjectResult->fields as $fields => $field){
-			if ($field->updateable && $field->createable){
+		foreach ($describeSObjectResult->fields as $fields => $field) {
+			if ($field->updateable && $field->createable) {
 				printPutFieldForMapping($field, $csvArray, true);
 			}
 		}
 	}
 
 
-	if ($action == 'delete' || $action == 'undelete' || $action == 'purge'){
+	if ($action == 'delete' || $action == 'undelete' || $action == 'purge') {
 		printPutFieldForMappingId($csvArray, false);
 	}
 
@@ -316,15 +312,15 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol){
 
 		print "<td><select name='$field->name' style='width: 100%;'>";
 		print "	<option value=''></option>\n";
-		foreach($csvArray[0] as $col){
+		foreach ($csvArray[0] as $col) {
 			print   "<option value='$col'";
 			if (strtolower($col) == strtolower($field->name)) print " selected='true' ";
 			print ">$col</option>\n";
 		}
 		print "</select></td>";
 
-		if($showRefCol && $_SESSION['config']['showReferenceBy']){
-			if(isset($field->referenceTo) && isset($field->relationshipName)){
+		if ($showRefCol && $_SESSION['config']['showReferenceBy']) {
+			if (isset($field->referenceTo) && isset($field->relationshipName)) {
 				$describeRefObjResult = describeSObject($field->referenceTo);
 				printRefField($field, $describeRefObjResult);
 			} else {
@@ -342,13 +338,13 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol){
  * @param $describeRefObjResult
  */
 function printRefField($field, $describeRefObjResult){
-	if(is_array($describeRefObjResult)){
+	if (is_array($describeRefObjResult)) {
 		$polyExtFields = array();
-		foreach($describeRefObjResult as $describeRefObjResultKey => $describeRefObjResult){
+		foreach ($describeRefObjResult as $describeRefObjResultKey => $describeRefObjResult) {
 			$extFields = null;
-			if(isset($describeRefObjResult->fields)){
-				foreach($describeRefObjResult->fields as $extFieldKey => $extFieldVal){
-					if($extFieldVal->idLookup == true){
+			if (isset($describeRefObjResult->fields)) {
+				foreach ($describeRefObjResult->fields as $extFieldKey => $extFieldVal) {
+					if ($extFieldVal->idLookup == true) {
 						$extFields[$extFieldKey] = $extFieldVal;
 					}
 				}
@@ -360,22 +356,22 @@ function printRefField($field, $describeRefObjResult){
 		print "<td><select name='$field->name:$field->relationshipName' style='width: 100%;'";
 
 		$numOfExtFields = 0;
-		foreach($polyExtFields as $extFields){
-			if(count($extFields) > 1){
+		foreach ($polyExtFields as $extFields) {
+			if (count($extFields) > 1) {
 				$numOfExtFields = $numOfExtFields + count($extFields) - 1;
 			}
 		}
 
-		if($numOfExtFields <= 0){
+		if ($numOfExtFields <= 0) {
 			print " disabled='true' ";
 		}
 		print ">\n";
 
 		print  " <option value='Id' selected='true'></option>\n";
-		foreach($polyExtFields as $objectType => $extFields){
-			if(count($extFields) > 0){
-				foreach($extFields as $extFieldKey => $extFieldVal){
-					if ($extFieldVal->name != 'Id'){
+		foreach ($polyExtFields as $objectType => $extFields) {
+			if (count($extFields) > 0) {
+				foreach ($extFields as $extFieldKey => $extFieldVal) {
+					if ($extFieldVal->name != 'Id') {
 						$isPolymorphic = is_array($field->referenceTo) ? "1" : "0";
 						print  " <option value='$field->name.$field->relationshipName.$isPolymorphic.$objectType.$extFieldVal->name'>$objectType.$extFieldVal->name</option>\n";
 					}
@@ -387,9 +383,9 @@ function printRefField($field, $describeRefObjResult){
 	} else { //for scalar values
 		//check to see if there are any IdLookup fields and if so move them to a new array
 		$extFields = null;
-		if(count($describeRefObjResult->fields) > 0){
-			foreach($describeRefObjResult->fields as $extFieldKey => $extFieldVal){
-				if($extFieldVal->idLookup == true){
+		if (count($describeRefObjResult->fields) > 0) {
+			foreach ($describeRefObjResult->fields as $extFieldKey => $extFieldVal) {
+				if ($extFieldVal->idLookup == true) {
 					$extFields[$extFieldKey] = $extFieldVal;
 				}
 			}
@@ -397,14 +393,14 @@ function printRefField($field, $describeRefObjResult){
 
 
 		//check if the new array has any fields and if so
-		if(count($extFields) > 0){
+		if (count($extFields) > 0) {
 			print "<td><select name='$field->name:$field->relationshipName' style='width: 100%;'";
 			if (count($extFields) == 1) print " disabled='true' "; //disable the selection if only one choice ('Id') is available
 			print ">\n";
 
 			print  " <option value='Id' selected='true'></option>\n";
-			foreach($extFields as $extFieldKey => $extFieldVal){
-				if ($extFieldVal->name != 'Id'){
+			foreach ($extFields as $extFieldKey => $extFieldVal) {
+				if ($extFieldVal->name != 'Id') {
 					$isPolymorphic = is_array($field->referenceTo) ? "1" : "0";
 					print  " <option value='$field->name.$field->relationshipName.$isPolymorphic.$describeRefObjResult->name.$extFieldVal->name'>$describeRefObjResult->name.$extFieldVal->name</option>\n";
 				}
@@ -426,15 +422,15 @@ function printRefField($field, $describeRefObjResult){
 function field_map_to_array($fieldMap){
 	$fieldMapArray = array();
 
-	foreach($fieldMap as $fieldMapKey=>$fieldMapValue){
-		if(preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)){
-			if(preg_match('/^(\w+).(\w+).(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches)){
+	foreach ($fieldMap as $fieldMapKey=>$fieldMapValue) {
+		if (preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)) {
+			if (preg_match('/^(\w+).(\w+).(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches)) {
 				$fieldMapArray[$valueMatches[1]]["relationshipName"] = $valueMatches[2];
 				$fieldMapArray[$valueMatches[1]]["isPolymorphic"] = $valueMatches[3];
 				$fieldMapArray[$valueMatches[1]]["relatedObjectName"] = $valueMatches[4];
 				$fieldMapArray[$valueMatches[1]]["relatedFieldName"] = $valueMatches[5];
 			}
-		} else if ($fieldMapValue){
+		} else if ($fieldMapValue) {
 			$fieldMapArray[$fieldMapKey]["csvField"] = $fieldMapValue;
 		}
 	}
@@ -453,25 +449,25 @@ function field_map_to_array($fieldMap){
  * @param $extId
  */
 function field_mapping_confirm($action,$fieldMap,$csvArray,$extId){
-	if (!($fieldMap && $csvArray)){
+	if (!($fieldMap && $csvArray)) {
 		show_error("CSV file and field mapping not initialized successfully. Upload a new file and map fields.",true,true);
 	} else {
 
-	if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')){
-		if (!isset($fieldMap['Id'])){
+	if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
+		if (!isset($fieldMap['Id'])) {
 			show_error("Salesforce ID not selected. Please try again.",false,true);
 		} else {
 		ob_start();
 		
-		if(($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')){
+		if (($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
 			field_mapping_show($fieldMap, null, false);
 		} else {
 			field_mapping_show($fieldMap, null, true);
 		}
 		
 		$idCol = array_search($fieldMap['Id'],$csvArray[0]);
-		for($row=1,$idCount = 0; $row < count($csvArray); $row++){
-			if ($csvArray[$row][$idCol]){
+		for ($row=1,$idCount = 0; $row < count($csvArray); $row++) {
+			if ($csvArray[$row][$idCol]) {
 				$idCount++;
 			}
 		}
@@ -490,7 +486,7 @@ function field_mapping_confirm($action,$fieldMap,$csvArray,$extId){
 	print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
 
 	//Hard Delete option
-	if(apiVersionIsAtLeast(19.0) && $action == 'Confirm Delete') {
+	if (apiVersionIsAtLeast(19.0) && $action == 'Confirm Delete') {
 		print "<p><label><input type='checkbox' name='doHardDelete' onChange=\"if(this.checked) document.getElementById('doAsync').checked=true; document.getElementById('asyncDeleteObjectSelection').style.display='inline';\"/> Permanently hard delete records</label>" .
 		  "&nbsp;<img onmouseover=\"Tip('When specified, the deleted records are not stored in the Recycle Bin. Instead, the records become immediately eligible for deletion, don\'t count toward the storage space used by your organization, and may improve performance. The Administrative permission for this operation, \'Bulk API Hard Delete\', is disabled by default and must be enabled by an administrator. A Salesforce user license is required for hard delete. Hard Delete is only available via Bulk API.')\" align='absmiddle' src='images/help16.png'/>" . 
 		  "</p>";
@@ -503,7 +499,7 @@ function field_mapping_confirm($action,$fieldMap,$csvArray,$extId){
 		  "&nbsp;<img onmouseover=\"Tip('Processing records asynchronously is recommended for large data loads. The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" align='absmiddle' src='images/help16.png'/>" . 
 		  "</p>";
 		
-		if($action == 'Confirm Delete') {
+		if ($action == 'Confirm Delete') {
 			print "<div id='asyncDeleteObjectSelection' style='display: none; margin-left: 3em;'>Object Type: ";
 			printObjectSelection($_SESSION['default_object']);
 			print "</div>";
@@ -523,7 +519,7 @@ function field_mapping_confirm($action,$fieldMap,$csvArray,$extId){
  * @param unknown_type $extId
  */
 function field_mapping_show($fieldMap,$extId,$showRefCol){
-	if ($extId){
+	if ($extId) {
 		print "<table class='field_mapping'>\n";
 		print "<tr><td>External Id</td> <td>$extId</td></tr>\n";
 		print "</table><p/>\n";
@@ -535,12 +531,12 @@ function field_mapping_show($fieldMap,$extId,$showRefCol){
 	if ($showRefCol && $_SESSION['config']['showReferenceBy']) print "<th>Smart Lookup</th>";
 	print "</tr>\n";
 
-	foreach($fieldMap as $salesforceField=>$fieldMapArray){
+	foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
 		print "<tr><td>$salesforceField</td>";
 		print "<td>" . $fieldMapArray['csvField'] . "</td>";
-		if ($showRefCol && $_SESSION['config']['showReferenceBy']){
+		if ($showRefCol && $_SESSION['config']['showReferenceBy']) {
 			print "<td>";
-			if (isset($fieldMapArray['relatedObjectName']) && isset($fieldMapArray['relatedFieldName'])){
+			if (isset($fieldMapArray['relatedObjectName']) && isset($fieldMapArray['relatedFieldName'])) {
 				print $fieldMapArray['relatedObjectName'] . "." . $fieldMapArray['relatedFieldName'];
 			}
 			print "</td>";
@@ -566,15 +562,15 @@ function field_mapping_show($fieldMap,$extId,$showRefCol){
 function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults){
 	$origCsvArray = $csvArray;
 	
-	if (!($fieldMap && $csvArray)){
+	if (!($fieldMap && $csvArray)) {
 		show_error("CSV file and field mapping not initialized successfully. Upload a new file and map fields.");
 	} else {
 
 	$idArray =  array();
 	$idCol = array_search($fieldMap['Id'],$csvArray[0]);
 
-	for($row=1; $row < count($csvArray); $row++){
-		if ($csvArray[$row][$idCol]){
+	for ($row=1; $row < count($csvArray); $row++) {
+		if ($csvArray[$row][$idCol]) {
 			$idArray[] = $csvArray[$row][$idCol];
 		}
 	}
@@ -584,12 +580,12 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults){
 
 	while($idArray){
 		$idArrayBatch = array_splice($idArray,0,$_SESSION['config']['batchSize']);
-		try{
+		try {
 			global $partnerConnection;
 			if($apiCall == 'purge') $apiCall = 'emptyRecycleBin';
 			$resultsMore = $partnerConnection->$apiCall($idArrayBatch);
 
-		    if(!$results){
+		    if (!$results) {
 		    	$results = $resultsMore;
 		    } else {
 		    	$results = array_merge($results,$resultsMore);
@@ -615,7 +611,7 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults){
  */
 function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults){
 	$origCsvArray = $csvArray;//backing up for results
-	if (!($fieldMap && $csvArray && $_SESSION['default_object'])){
+	if (!($fieldMap && $csvArray && $_SESSION['default_object'])) {
 		show_error("CSV file and field mapping not initialized. Upload a new file and map fields.",true,true);
 	} else {
 		$csvHeader = array_shift($csvArray);
@@ -625,31 +621,31 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults){
 			$sObjects = array();
 			$csvArrayBatch = array_splice($csvArray,0,$_SESSION['config']['batchSize']);
 
-			for($row=0; $row < count($csvArrayBatch); $row++){
+			for ($row=0; $row < count($csvArrayBatch); $row++) {
 			    $sObject = new SObject;
 		    	$sObject->type = $_SESSION['default_object'];
 		    	if($_SESSION['config']['fieldsToNull']) $sObject->fieldsToNull = array();
 		    	$fields = array();
 
-				foreach($fieldMap as $salesforceField=>$fieldMapArray){
-					if(isset($fieldMapArray['relatedObjectName']) && isset($fieldMapArray['relatedFieldName']) && isset($fieldMapArray['csvField'])){
+				foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
+					if (isset($fieldMapArray['relatedObjectName']) && isset($fieldMapArray['relatedFieldName']) && isset($fieldMapArray['csvField'])) {
 						$refSObject = new SObject;
 				    	$refSObject->type = $fieldMapArray['relatedObjectName'];
 						$col = array_search($fieldMapArray['csvField'],$csvHeader);
-				    	if($csvArrayBatch[$row][$col] != ""){
+				    	if ($csvArrayBatch[$row][$col] != "") {
 				    		$refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
 				    	}
 				    	$field = array($fieldMapArray['relationshipName'] => $refSObject);
-					} else if(isset($salesforceField) && isset($fieldMapArray['csvField'])){
+					} else if (isset($salesforceField) && isset($fieldMapArray['csvField'])) {
 						$col = array_search($fieldMapArray['csvField'],$csvHeader);
-						if($csvArrayBatch[$row][$col] != ""){
+						if ($csvArrayBatch[$row][$col] != "") {
 							$field = array($salesforceField => htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
-						} elseif($_SESSION['config']['fieldsToNull']){
+						} elseif ($_SESSION['config']['fieldsToNull']) {
 							$sObject->fieldsToNull[] = $salesforceField;
 						}
 					}
 
-					if (!$fields){
+					if (!$fields) {
 						$fields = $field;
 					} else {
 						$fields = array_merge($fields,$field);
@@ -662,9 +658,9 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults){
 			}
 
 
-			try{
+			try {
 				global $partnerConnection;
-				if ($apiCall == 'upsert'){
+				if ($apiCall == 'upsert') {
 					$resultsMore = $partnerConnection->$apiCall($extId,$sObjects);					
 				} else {
 					$resultsMore = $partnerConnection->$apiCall($sObjects);
@@ -677,7 +673,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults){
 				include_once("footer.php");
 				exit;
 		    }
-		    if(!$results){
+		    if (!$results) {
 		    	$results = $resultsMore;
 		    } else {
 		    	$results = array_merge($results,$resultsMore);
@@ -698,11 +694,11 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults){
  * @param unknown_type $csvArray
  */
 function putAsync($apiCall,$extId,$fieldMap,$csvArray){
-	if (!($fieldMap && $csvArray && $_SESSION['default_object'])){  
+	if (!($fieldMap && $csvArray && $_SESSION['default_object'])) {  
 		show_error("CSV file and field mapping not initialized or object not selected. Upload a new file and map fields.",true,true);
 	} else {
 		require_once 'restclient/BulkApiClient.php';
-		try{
+		try {
 			$job = new JobInfo();
 			$job->setObject($_SESSION['default_object']);
 			$job->setOpertion($apiCall);
@@ -717,7 +713,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray){
 			show_error($e->getMessage(), true, true);
 	    }
 
-		if($job->getId() == null){
+		if ($job->getId() == null) {
 			show_error("No job id found. Aborting Bulk API operation.", true, true);
 		}
 		
@@ -731,26 +727,26 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray){
 			$asyncCsv = array();
 			
 			$asyncCsvHeaderRow = array();
-			foreach($fieldMap as $salesforceField=>$fieldMapArray){
-				if(isset($fieldMapArray['csvField'])){
-					if(isset($fieldMapArray['relationshipName']) && isset($fieldMapArray['relatedFieldName'])){
+			foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
+				if (isset($fieldMapArray['csvField'])) {
+					if (isset($fieldMapArray['relationshipName']) && isset($fieldMapArray['relatedFieldName'])) {
 						$asyncCsvHeaderRow[] = ($fieldMapArray['isPolymorphic'] ? ($fieldMapArray['relatedObjectName'] . ":") : "") .
 						                        $fieldMapArray['relationshipName'] . "." .
 						                        $fieldMapArray['relatedFieldName'];
-					} elseif(isset($salesforceField)) {
+					} elseif (isset($salesforceField)) {
 						$asyncCsvHeaderRow[] = $salesforceField;
 					}
 				}
 			}
 			$asyncCsv[] = $asyncCsvHeaderRow;
 			
-			for($row=0; $row < count($csvArrayBatch); $row++){
+			for ($row=0; $row < count($csvArrayBatch); $row++) {
 				//create new row
 				$asyncCsvRow = array();
-				foreach($fieldMap as $salesforceField=>$fieldMapArray){
+				foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
 					$col = array_search($fieldMapArray['csvField'],$csvHeader);
-					if(isset($salesforceField) && isset($fieldMapArray['csvField'])){
-						if($csvArrayBatch[$row][$col] == "" && $_SESSION['config']['fieldsToNull']) {
+					if (isset($salesforceField) && isset($fieldMapArray['csvField'])) {
+						if ($csvArrayBatch[$row][$col] == "" && $_SESSION['config']['fieldsToNull']) {
 							$asyncCsvRow[] = "#N/A";
 						} else {
 							$asyncCsvRow[] = htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8');
@@ -762,14 +758,14 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray){
 				$asyncCsv[] = $asyncCsvRow;
 			}
 
-			try{
+			try {
 				$batch = $asyncConnection->createBatch($job, arr_to_csv($asyncCsv));
 			} catch (Exception $e) {
 				show_error($e->getMessage(), true, true);
 		    }
 		}
 		
-		try{
+		try {
 			$job = $asyncConnection->updateJobState($job->getId(), "Closed");
 		} catch (Exception $e) {
 			show_error($e->getMessage(), true, true);
@@ -802,12 +798,12 @@ function show_putAndId_results($results,$apiCall,$csvArray,$idArray){
 	$successCount = 0;
 	$errorCount = 0;
 	ob_start();
-	for($row=0; $row < count($results); $row++){
+	for ($row=0; $row < count($results); $row++) {
 		$excelRow = $row + 1;
 		
 		$_SESSION['resultsWithData'][$row+1] = array(); //create array for row
 		
-		if ($results[$row]->success){
+		if ($results[$row]->success) {
 			$successCount++;
 			print "<tr>";
 			print "<td>" . $excelRow . "</td>";
@@ -815,7 +811,7 @@ function show_putAndId_results($results,$apiCall,$csvArray,$idArray){
 			$_SESSION['resultsWithData'][$row+1][0] = $results[$row]->id;
 			print "<td>Success</td>";
 			$_SESSION['resultsWithData'][$row+1][1] = "Success";
-			if (($apiCall == 'upsert' && $results[$row]->created) || $apiCall == 'create'){
+			if (($apiCall == 'upsert' && $results[$row]->created) || $apiCall == 'create') {
 				print "<td>Created</td>";
 				$_SESSION['resultsWithData'][$row+1][2] = "Created";
 			} elseif (($apiCall == 'upsert' && !$results[$row]->created) || $apiCall == 'update') {
@@ -834,7 +830,7 @@ function show_putAndId_results($results,$apiCall,$csvArray,$idArray){
 			print "<tr style='color: red;'>";
 			print "<td>" . $excelRow . "</td>";
 						
-			if(!isset($results[$row]->id) && isset($idArray)){
+			if (!isset($results[$row]->id) && isset($idArray)) {
 				$_SESSION['resultsWithData'][$row+1][0] = $idArray[$row]; //add id from idArray for id-only calls
 				print "<td>" . addLinksToUiForIds($idArray[$row]) . "</td>";
 			} else {

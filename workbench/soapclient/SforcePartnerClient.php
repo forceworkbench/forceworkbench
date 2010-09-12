@@ -236,7 +236,7 @@ class SObject {
 				//Otherwise ANY must be just a field
 				} else {
 					//if ANY is not an array, make it one.
-					if(!is_array($response->any)){
+					if (!is_array($response->any)) {
 						$response->any = array($response->any);
 					}
 					
@@ -257,7 +257,7 @@ class SObject {
 							}
 						} else {
 							//if the field is not wrapped in sf tag, consider it of an unknown type
-							if(!strstr($item, '<sf:')){
+							if (!strstr($item, '<sf:')) {
 								$unknownTag = "Unknown_Field__" . $unknownFieldNum++;
 								$item = "<$unknownTag>$item</$unknownTag>";
 							}
