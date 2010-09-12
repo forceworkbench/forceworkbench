@@ -81,7 +81,7 @@ function unCamelCase($camelCasedString) {
 
 function validateUploadedFile($file){
 	if($file['error'] != 0){
-		$upload_error_codes = array(
+		$uploadErrorCodes = array(
 		       1=>"The file uploaded is too large. Please try again. (Error 1)", //as per PHP config
 		       2=>"The file uploaded is too large. Please try again. (Error 2)", //as per form config
 		       3=>"The file uploaded was only partially uploaded.  Please try again. (Error 3)",
@@ -92,10 +92,10 @@ function validateUploadedFile($file){
 			);
 			
 			if($_SESSION['config']['maxFileSize']['overrideable']){
-				$upload_error_codes[2] = "The file uploaded is too large. Please try again or adjust in Settings. (Error 2)";
+				$uploadErrorCodes[2] = "The file uploaded is too large. Please try again or adjust in Settings. (Error 2)";
 			}
 			
-		return($upload_error_codes[$file['error']]);
+		return($uploadErrorCodes[$file['error']]);
 	}
 
 	elseif(!is_uploaded_file($file['tmp_name'])){
@@ -281,8 +281,8 @@ function describeGlobal($filter1=null, $filter2=null){
 	return $processedDescribeGlobalResponse;
 }
 
-function printObjectSelection($default_object=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null){
-	$_SESSION['default_object'] = $default_object;
+function printObjectSelection($defaultObject=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null){
+	$_SESSION['default_object'] = $defaultObject;
 	
 	print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";	
 	
@@ -291,7 +291,7 @@ function printObjectSelection($default_object=null, $nameId='default_object', $w
 	//Print the global object types in a dropdown select box, using the filter set and the API version supports it
 	foreach(describeGlobal($filter1, $filter2) as $type){
 		print "	<option value='$type'";
-		if ($default_object == $type){
+		if ($defaultObject == $type){
 			print " selected='true'";
 		}
 		print ">$type</option> \n";
@@ -327,16 +327,16 @@ function describeSObject($objectTypes){
 	if (count($objectTypesToRetreive) >= 1 && count($objectTypesToRetreive) <= 100){
 		try{
 			global $partnerConnection;
-			$describeSObjects_results = $partnerConnection->describeSObjects($objectTypesToRetreive);
+			$describeSObjectsResults = $partnerConnection->describeSObjects($objectTypesToRetreive);
 		} catch (Exception $e) {
 			show_error($e->getMessage(),false,true);
 		}
 
 		if (!is_array($objectTypes)){
-			$describeSObjects_results_array = array($describeSObjects_results->name => $describeSObjects_results);
+			$describeSObjectsResultsArray = array($describeSObjectsResults->name => $describeSObjectsResults);
 		} else {
-			foreach ($describeSObjects_results as $describeSObject_resultKey => $describeSObject_resultValue){
-				$describeSObjects_results_array[$describeSObject_resultValue->name] = $describeSObject_resultValue;
+			foreach ($describeSObjectsResults as $describeSObjectResultKey => $describeSObjectResultValue){
+				$describeSObjectsResultsArray[$describeSObjectResultValue->name] = $describeSObjectResultValue;
 			}
 		}
 
@@ -347,31 +347,31 @@ function describeSObject($objectTypes){
 	// move the describe results to the session cache and then copy all the requested object descriptions from the cache
 	// if caching is disaled, the results will just be returned directly 
 	if($_SESSION['config']['cacheDescribeSObject']){
-		if(isset($describeSObjects_results_array)){
-			foreach ($describeSObjects_results_array as $describeSObject_resultKey => $describeSObject_result){
-				$_SESSION['describeSObjects_results'][$describeSObject_result->name] = $describeSObjects_results_array[$describeSObject_result->name];
+		if(isset($describeSObjectsResultsArray)){
+			foreach ($describeSObjectsResultsArray as $describeSObjectResultKey => $describeSObjectResult){
+				$_SESSION['describeSObjects_results'][$describeSObjectResult->name] = $describeSObjectsResultsArray[$describeSObjectResult->name];
 			}
 		}
 
 		foreach($objectTypeArray as $objectTypeKey => $objectTypeValue){
-			$describeSObjects_results_ToReturn[$objectTypeValue] = $_SESSION['describeSObjects_results'][$objectTypeValue];
+			$describeSObjectsResultsToReturn[$objectTypeValue] = $_SESSION['describeSObjects_results'][$objectTypeValue];
 		}
 	} else {
-		$describeSObjects_results_ToReturn = $describeSObjects_results_array;
+		$describeSObjectsResultsToReturn = $describeSObjectsResultsArray;
 	}
 
 	// if alphabetize fields is enabled, alphabetize the describe results
 	if($_SESSION['config']['abcOrder']){
-		foreach ($describeSObjects_results_ToReturn as $describeSObject_resultKey => $describeSObject_result){
-			$describeSObjects_results_ToReturn[$describeSObject_resultKey] = alphaOrderFields($describeSObject_result);
+		foreach ($describeSObjectsResultsToReturn as $describeSObjectResultKey => $describeSObjectResult){
+			$describeSObjectsResultsToReturn[$describeSObjectResultKey] = alphaOrderFields($describeSObjectResult);
 		}
 	}
 
 	//finally, return the describe results
 	if (!is_array($objectTypes)){
-		return $describeSObjects_results_ToReturn[$objectTypes];
+		return $describeSObjectsResultsToReturn[$objectTypes];
 	} else {
-		return $describeSObjects_results_ToReturn;
+		return $describeSObjectsResultsToReturn;
 	}
 }
 
@@ -409,18 +409,18 @@ function printNode($node) {
 	}
 }
 
-function alphaOrderFields($describeSObject_result){
+function alphaOrderFields($describeSObjectResult){
     //move field name out to key name and then ksort based on key for field abc order
-    if(isset($describeSObject_result->fields)){
-        if(!is_array($describeSObject_result->fields)) $describeSObject_result->fields = array($describeSObject_result->fields);
-    	foreach($describeSObject_result->fields as $field){
+    if(isset($describeSObjectResult->fields)){
+        if(!is_array($describeSObjectResult->fields)) $describeSObjectResult->fields = array($describeSObjectResult->fields);
+    	foreach($describeSObjectResult->fields as $field){
             $fieldNames[] = $field->name;
         }
     
-        $describeSObject_result->fields = array_combine($fieldNames, $describeSObject_result->fields);
-        $describeSObject_result->fields = natcaseksort($describeSObject_result->fields);
+        $describeSObjectResult->fields = array_combine($fieldNames, $describeSObjectResult->fields);
+        $describeSObjectResult->fields = natcaseksort($describeSObjectResult->fields);
     }
-    return $describeSObject_result;
+    return $describeSObjectResult;
 }
 
 function natcaseksort($array) {
@@ -428,12 +428,12 @@ function natcaseksort($array) {
   $keys = array_keys($array);
   natcasesort($keys);
 
-  $new_array = array();
+  $newArray = array();
   foreach ($keys as $k) {
-    $new_array[$k] = $array[$k];
+    $newArray[$k] = $array[$k];
   }
 
-  return $new_array;
+  return $newArray;
 }
 
 
@@ -488,43 +488,43 @@ function getAsyncApiConnection(){
 * Takes xml as a string and returns it nicely indented
 *
 * @param string $xml The xml to beautify
-* @param boolean $html_output If the xml should be formatted for display on an html page
+* @param boolean $htmlOutput If the xml should be formatted for display on an html page
 * @return string The beautified xml
 */
-function xml_pretty_printer($xml, $html_output=FALSE)
+function xml_pretty_printer($xml, $htmlOutput=FALSE)
 {
-	$xml_obj = new SimpleXMLElement($xml);
-	$xml_lines = explode("
+	$xmlObj = new SimpleXMLElement($xml);
+	$xmlLines = explode("
 ", str_replace("><", ">
-<", $xml_obj->asXML()));
-	$indent_level = 0;
+<", $xmlObj->asXML()));
+	$indentLevel = 0;
 	
-	$new_xml_lines = array();
-	foreach ($xml_lines as $xml_line) {
-		if (preg_match('#^(<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?>.*<s*/s*[^>]+>)|(<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?s*/s*>)#i', ltrim($xml_line))) {
-			$new_line = str_pad('', $indent_level*4) . ltrim($xml_line);
-			$new_xml_lines[] = $new_line;
-		} elseif (preg_match('#^<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?>#i', ltrim($xml_line))) {
-			$new_line = str_pad('', $indent_level*4) . ltrim($xml_line);
-			$indent_level++;
-			$new_xml_lines[] = $new_line;
-		} elseif (preg_match('#<s*/s*[^>/]+>#i', $xml_line)) {
-			$indent_level--;
-			if (trim($new_xml_lines[sizeof($new_xml_lines)-1]) == trim(str_replace("/", "", $xml_line))) {
-				$new_xml_lines[sizeof($new_xml_lines)-1] .= $xml_line;
+	$newXmlLines = array();
+	foreach ($xmlLines as $xmlLine) {
+		if (preg_match('#^(<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?>.*<s*/s*[^>]+>)|(<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?s*/s*>)#i', ltrim($xmlLine))) {
+			$newLine = str_pad('', $indentLevel*4) . ltrim($xmlLine);
+			$newXmlLines[] = $newLine;
+		} elseif (preg_match('#^<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?>#i', ltrim($xmlLine))) {
+			$newLine = str_pad('', $indentLevel*4) . ltrim($xmlLine);
+			$indentLevel++;
+			$newXmlLines[] = $newLine;
+		} elseif (preg_match('#<s*/s*[^>/]+>#i', $xmlLine)) {
+			$indentLevel--;
+			if (trim($newXmlLines[sizeof($newXmlLines)-1]) == trim(str_replace("/", "", $xmlLine))) {
+				$newXmlLines[sizeof($newXmlLines)-1] .= $xmlLine;
 			} else {
-				$new_line = str_pad('', $indent_level*4) . $xml_line;
-				$new_xml_lines[] = $new_line;
+				$newLine = str_pad('', $indentLevel*4) . $xmlLine;
+				$newXmlLines[] = $newLine;
 			}
 		} else {
-			$new_line = str_pad('', $indent_level*4) . $xml_line;
-			$new_xml_lines[] = $new_line;
+			$newLine = str_pad('', $indentLevel*4) . $xmlLine;
+			$newXmlLines[] = $newLine;
 		}
 	}
 	
 	$xml = join("
-", $new_xml_lines);
-	return ($html_output) ? '<pre>' . htmlentities($xml) . '</pre>' : $xml;
+", $newXmlLines);
+	return ($htmlOutput) ? '<pre>' . htmlentities($xml) . '</pre>' : $xml;
 }
 
 

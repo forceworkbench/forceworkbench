@@ -245,9 +245,9 @@ SEARCH_BUILDER_SCRIPT;
 		'EMAIL FIELDS' => 'Email Fields'			
 	);
 	print "<select id='SB_fieldTypeSelect' name='SB_fieldTypeSelect' onChange='build_search();' onkeyup='build_search();'>\n";
-	foreach ($fieldTypeSelectOptions as $op_key => $op){
-		print "<option value='$op_key'";
-		if ($op_key == $searchRequest->getFieldType()) print " selected='selected' ";
+	foreach ($fieldTypeSelectOptions as $opKey => $op){
+		print "<option value='$opKey'";
+		if ($opKey == $searchRequest->getFieldType()) print " selected='selected' ";
 		print ">$op</option>";
 	}
 	print "</select>";
@@ -302,10 +302,10 @@ function search($searchRequest){
 	try{
 
 		global $partnerConnection;
-		$search_response = $partnerConnection->search($searchRequest->getSoslSearch());
+		$searchResponse = $partnerConnection->search($searchRequest->getSoslSearch());
 	
-		if(isset($search_response->searchRecords)){
-			$records = $search_response->searchRecords;
+		if(isset($searchResponse->searchRecords)){
+			$records = $searchResponse->searchRecords;
 		} else {
 			$records = null;
 		}

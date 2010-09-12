@@ -31,12 +31,12 @@ abstract class SoapBaseClient {
 		$this->sforce = new SoapClient($this->getWsdl(), $soapClientArray);
 
 		//start to set headers
-		$header_array = array();
+		$headerArray = array();
 
 		//set session header
 		$sessionVar = array('sessionId' => new SoapVar($_SESSION['sessionId'], XSD_STRING));
 		$headerBody = new SoapVar($sessionVar, SOAP_ENC_OBJECT);
-		$header_array[] = new SoapHeader($this->getNamespace(), 'SessionHeader', $headerBody, false);
+		$headerArray[] = new SoapHeader($this->getNamespace(), 'SessionHeader', $headerBody, false);
 
 		//set debugging header
 		if(isset($LogCategory) && isset($LogCategoryLevel)) {
@@ -51,23 +51,23 @@ abstract class SoapBaseClient {
 	
 			$debugBody = new SoapVar($logInfoVar, SOAP_ENC_OBJECT);
 	
-			$header_array[] = new SoapHeader($this->getNamespace(), 'DebuggingHeader', $debugBody, false);
+			$headerArray[] = new SoapHeader($this->getNamespace(), 'DebuggingHeader', $debugBody, false);
 		}
 		
 		//set call options header    
 		if(isset($_SESSION['config']['callOptions_client'])){
 			$clientBody = array('client' => new SoapVar($_SESSION['config']['callOptions_client'], XSD_STRING));
-			$callOptions_header = new SoapHeader($this->getNamespace(), 'CallOptions', $clientBody, false);
-			$header_array[] = $callOptions_header;
+			$callOptionsHeader = new SoapHeader($this->getNamespace(), 'CallOptions', $clientBody, false);
+			$headerArray[] = $callOptionsHeader;
 		} 
 
 		//set allowFieldTruncationHeader header    
 		if(isset($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation'])){
 			$allowFieldTruncationBody = array('allowFieldTruncation' => new SoapVar($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation'], XSD_BOOLEAN));
 			$allowFieldTruncationHeader = new SoapHeader($this->getNamespace(), 'AllowFieldTruncationHeader', $allowFieldTruncationBody, false);
-			$header_array[] = $allowFieldTruncationHeader;
+			$headerArray[] = $allowFieldTruncationHeader;
 		} 
-		$this->sforce->__setSoapHeaders($header_array);
+		$this->sforce->__setSoapHeaders($headerArray);
 		$this->sforce->__setLocation($this->getServerUrl());
 
 		return $this->sforce;

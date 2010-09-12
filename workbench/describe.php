@@ -30,7 +30,7 @@ function show_describeSObject_form(){
 function show_describeSObject_result(){
 		try{
 			//Ping Apex API
-			$describeSObject_result = describeSObject($_SESSION['default_object']);
+			$describeSObjectResult = describeSObject($_SESSION['default_object']);
 		} catch (Exception $e) {
 			
 			show_error($e->getMessage(), false, true);
@@ -62,7 +62,7 @@ function show_describeSObject_result(){
 
 
 		print "<li>Attributes<ul style='display:none;'>\n";
-		foreach($describeSObject_result as $key => $value){
+		foreach($describeSObjectResult as $key => $value){
 			//Change bool data to printed as TRUE and FALSE for visibility in table
 			if (is_bool($value)){
 				print "<li>$key: ";
@@ -74,8 +74,8 @@ function show_describeSObject_result(){
 		}
 		print "</ul></li>\n"; ///end attributes node
 
-		print "<li>Fields (" . count($describeSObject_result->fields) . ")<ul style='display:none;'>\n";
-		foreach($describeSObject_result->fields as $key => $value){
+		print "<li>Fields (" . count($describeSObjectResult->fields) . ")<ul style='display:none;'>\n";
+		foreach($describeSObjectResult->fields as $key => $value){
 			highlightSpecialField($value);
 			foreach($value as $subkey => $subvalue){
 				//Change bool data to printed as TRUE and FALSE for visibility in table
@@ -125,10 +125,10 @@ function show_describeSObject_result(){
 
 
 		//Print Record Types, if they exists
-		if (isset($describeSObject_result->recordTypeInfos)){
-			if(!is_array($describeSObject_result->recordTypeInfos)) $describeSObject_result->recordTypeInfos = array($describeSObject_result->recordTypeInfos);
-			print "<li>Record Types (" . count($describeSObject_result->recordTypeInfos) . ")<ul style='display:none;'>\n";
-			foreach($describeSObject_result->recordTypeInfos as $key => $value){
+		if (isset($describeSObjectResult->recordTypeInfos)){
+			if(!is_array($describeSObjectResult->recordTypeInfos)) $describeSObjectResult->recordTypeInfos = array($describeSObjectResult->recordTypeInfos);
+			print "<li>Record Types (" . count($describeSObjectResult->recordTypeInfos) . ")<ul style='display:none;'>\n";
+			foreach($describeSObjectResult->recordTypeInfos as $key => $value){
 				if(isset($value->name)){
 					print "<li>$value->name<ul style='display:none;'>\n";
 					foreach($value as $subkey => $subvalue){
@@ -148,10 +148,10 @@ function show_describeSObject_result(){
 
 
 		//Print Child Relationships, if they exists
-		if (isset($describeSObject_result->childRelationships)){
-			if(!is_array($describeSObject_result->childRelationships)) $describeSObject_result->childRelationships = array($describeSObject_result->childRelationships);
-			print "<li>Child Relationships (" . count($describeSObject_result->childRelationships) . ")<ul style='display:none;'>\n";
-			foreach($describeSObject_result->childRelationships as $key => $value){
+		if (isset($describeSObjectResult->childRelationships)){
+			if(!is_array($describeSObjectResult->childRelationships)) $describeSObjectResult->childRelationships = array($describeSObjectResult->childRelationships);
+			print "<li>Child Relationships (" . count($describeSObjectResult->childRelationships) . ")<ul style='display:none;'>\n";
+			foreach($describeSObjectResult->childRelationships as $key => $value){
 				print "<li>$value->childSObject<ul style='display:none;'>\n";
 				foreach($value as $subkey => $subvalue){
 					if (is_string($subvalue) || is_numeric($subvalue)){

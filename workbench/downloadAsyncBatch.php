@@ -37,9 +37,9 @@ if(strpos($batchData, "<exceptionCode>")){
 	show_error("No results found. Confirm job or batch has not expired.", true, true);
 	exit;
 } else {
-	$csv_filename = "bulk" . ucwords($jobInfo->getOpertion()). "_" . $_GET['op'] . "_" . $_GET['jobId'] . "_" . $_GET['batchId'] . ".csv";
+	$csvFilename = "bulk" . ucwords($jobInfo->getOpertion()). "_" . $_GET['op'] . "_" . $_GET['jobId'] . "_" . $_GET['batchId'] . ".csv";
 	header("Content-Type: application/csv");
-	header("Content-Disposition: attachment; filename=$csv_filename");
+	header("Content-Disposition: attachment; filename=$csvFilename");
 	print $batchData;
 }
 

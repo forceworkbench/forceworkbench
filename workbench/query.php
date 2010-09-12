@@ -114,10 +114,10 @@ if(isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])){
 function show_query_form($queryRequest){
 
 	if ($queryRequest->getObject()){
-		$describeSObject_result = describeSObject($queryRequest->getObject(), true);
+		$describeSObjectResult = describeSObject($queryRequest->getObject(), true);
 		
 		$fieldValuesToLabels = array();
-		foreach ($describeSObject_result->fields as $field) {
+		foreach ($describeSObjectResult->fields as $field) {
 			$fieldValuesToLabels[$field->name] = $field->name;
 		}
 	} else {
@@ -127,8 +127,8 @@ function show_query_form($queryRequest){
 	print "<script>\n";
 	
 	print "var field_type_array = new Array();\n";
-	if(isset($describeSObject_result)){
-		foreach($describeSObject_result->fields as $fields => $field){
+	if(isset($describeSObjectResult)){
+		foreach($describeSObjectResult->fields as $fields => $field){
 			print " field_type_array[\"$field->name\"]=[\"$field->type\"];\n";
 		}
 	}
@@ -151,8 +151,8 @@ function show_query_form($queryRequest){
 
 	
 	print "var compOper_array = new Array();\n";
-	foreach($ops as $op_value => $op_label){
-		print " compOper_array[\"$op_value\"]=[\"$op_label\"];\n";
+	foreach($ops as $opValue => $opLabel){
+		print " compOper_array[\"$opValue\"]=[\"$opLabel\"];\n";
 	}
 	
 	print <<<QUERY_BUILDER_SCRIPT
@@ -456,22 +456,22 @@ QUERY_BUILDER_SCRIPT;
 	printObjectSelection($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
 
 	print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='build_query();'>\n";
-	if(isset($describeSObject_result)){
+	if(isset($describeSObjectResult)){
 
 		print   " <option value='count()'";
 		if($queryRequest->getFields() != null){ //check to make sure something is selected; otherwise warnings will display
-			foreach ($queryRequest->getFields() as $selected_field){
-				if ('count()' == $selected_field) print " selected='selected' ";
+			foreach ($queryRequest->getFields() as $selectedField){
+				if ('count()' == $selectedField) print " selected='selected' ";
 			}
 		}
 		print ">count()</option>\n";
 
 		//print ">$field->name</option>\n";
-		foreach($describeSObject_result->fields as $fields => $field){
+		foreach($describeSObjectResult->fields as $fields => $field){
 			print   " <option value='$field->name'";
 			if($queryRequest->getFields() != null){ //check to make sure something is selected; otherwise warnings will display
-				foreach ($queryRequest->getFields() as $selected_field){
-					if ($field->name == $selected_field) print " selected='selected' ";
+				foreach ($queryRequest->getFields() as $selectedField){
+					if ($field->name == $selectedField) print " selected='selected' ";
 				}
 			}
 			print ">$field->name</option>\n";
@@ -520,8 +520,8 @@ QUERY_BUILDER_SCRIPT;
 	print "<tr id='sort_selection_row'>";
 	print "<td colspan='2'><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='build_query();'>\n";
 	print "<option value=''></option>\n";
-	if(isset($describeSObject_result)){
-		foreach($describeSObject_result->fields as $fields => $field){
+	if(isset($describeSObjectResult)){
+		foreach($describeSObjectResult->fields as $fields => $field){
 			print   " <option value='$field->name'";
 			if ($queryRequest->getOrderByField() != null && $field->name == $queryRequest->getOrderByField()) print " selected='selected' ";
 			print ">$field->name</option>\n";
@@ -529,27 +529,27 @@ QUERY_BUILDER_SCRIPT;
 	}
 	print "</select>\n";
 
-	$QB_orderby_sort_options = array(
+	$qBOrderbySortOptions = array(
 		'ASC' => 'A to Z',
 		'DESC' => 'Z to A'
 	);
 	
 	print "<select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='build_query();' onkeyup='build_query();'>\n";
-	foreach ($QB_orderby_sort_options as $op_key => $op){
-		print "<option value='$op_key'";
-		if (isset($_POST['QB_orderby_sort']) && $op_key == $_POST['QB_orderby_sort']) print " selected='selected' ";
+	foreach ($qBOrderbySortOptions as $opKey => $op){
+		print "<option value='$opKey'";
+		if (isset($_POST['QB_orderby_sort']) && $opKey == $_POST['QB_orderby_sort']) print " selected='selected' ";
 		print ">$op</option>\n";
 	}
 	print "</select>\n";
 
-	$QB_nulls_options = array(
+	$qBNullsOptions = array(
 	'FIRST' => 'Nulls First',
 	'LAST' => 'Nulls Last'
 	);
 	print "<select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='build_query();' onkeyup='build_query();'>\n";
-	foreach ($QB_nulls_options as $op_key => $op){
-		print "<option value='$op_key'";
-		if ($queryRequest->getOrderByNulls() != null && $op_key == $queryRequest->getOrderByNulls()) print " selected='selected' ";
+	foreach ($qBNullsOptions as $opKey => $op){
+		print "<option value='$opKey'";
+		if ($queryRequest->getOrderByNulls() != null && $opKey == $queryRequest->getOrderByNulls()) print " selected='selected' ";
 		print ">$op</option>\n";
 	}
 	print "</select></td>\n";
@@ -609,50 +609,50 @@ QUERY_BUILDER_SCRIPT;
 }
 
 
-function query($soql_query,$query_action,$query_locator = null,$suppressScreenOutput=false){
+function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false){
 	try{
 
 		global $partnerConnection;
-		if ($query_action == 'Query') $query_response = $partnerConnection->query($soql_query);
-		if ($query_action == 'QueryAll') $query_response = $partnerConnection->queryAll($soql_query);
-		if ($query_action == 'QueryMore' && isset($query_locator)) $query_response = $partnerConnection->queryMore($query_locator);
+		if ($queryAction == 'Query') $queryResponse = $partnerConnection->query($soqlQuery);
+		if ($queryAction == 'QueryAll') $queryResponse = $partnerConnection->queryAll($soqlQuery);
+		if ($queryAction == 'QueryMore' && isset($queryLocator)) $queryResponse = $partnerConnection->queryMore($queryLocator);
 
-		if (substr_count($soql_query,"count()") && $suppressScreenOutput == false){
-			$countString = "Query would return " . $query_response->size . " record";
-			$countString .= ($query_response->size == 1) ? "." : "s.";
+		if (substr_count($soqlQuery,"count()") && $suppressScreenOutput == false){
+			$countString = "Query would return " . $queryResponse->size . " record";
+			$countString .= ($queryResponse->size == 1) ? "." : "s.";
 			show_info($countString);
-			$records = $query_response->size;
+			$records = $queryResponse->size;
 			include_once 'footer.php';
 			exit;
 		}
 
-		if(isset($query_response->records)){
-			$records = $query_response->records;
+		if(isset($queryResponse->records)){
+			$records = $queryResponse->records;
 		} else {
 			$records = null;
 		}
 
-		$_SESSION['totalQuerySize'] = $query_response->size;
+		$_SESSION['totalQuerySize'] = $queryResponse->size;
 
-		if(!$query_response->done){
-			$_SESSION['queryLocator'] = $query_response->queryLocator;
+		if(!$queryResponse->done){
+			$_SESSION['queryLocator'] = $queryResponse->queryLocator;
 		} else {
 			$_SESSION['queryLocator'] = null;
 		}
 		
 		//correction for documents and attachments with body. issue #176
-	    if($query_response->size > 0 && !is_array($records)){
+	    if($queryResponse->size > 0 && !is_array($records)){
 			$records = array($records);
     	}
 		
-		while(($suppressScreenOutput || $_SESSION['config']['autoRunQueryMore']) && !$query_response->done){
-			$query_response = $partnerConnection->queryMore($query_response->queryLocator);
+		while(($suppressScreenOutput || $_SESSION['config']['autoRunQueryMore']) && !$queryResponse->done){
+			$queryResponse = $partnerConnection->queryMore($queryResponse->queryLocator);
 			
-			if(!is_array($query_response->records)){
-				$query_response->records = array($query_response->records);
+			if(!is_array($queryResponse->records)){
+				$queryResponse->records = array($queryResponse->records);
 			}
 			
-			$records = array_merge($records,$query_response->records);
+			$records = array_merge($records,$queryResponse->records);
 		}
     	
 		return $records;
@@ -724,7 +724,7 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true){
 	return $rowBuffer;
 }
 
-function createQueryResultsMatrix($records, $matrix_cols, $matrix_rows) {
+function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
 	$matrix;
 	$allColNames = array();
 	$allRowNames = array();
@@ -736,7 +736,7 @@ function createQueryResultsMatrix($records, $matrix_cols, $matrix_rows) {
 		if (isset($record->Id)) $record->fields->Id = $record->Id;
 		
 		foreach ($record->fields as $fieldName => $fieldValue) {
-			if ($fieldName == $matrix_cols || $fieldName == $matrix_rows) {
+			if ($fieldName == $matrixCols || $fieldName == $matrixRows) {
 				continue;
 			}
 			
@@ -744,9 +744,9 @@ function createQueryResultsMatrix($records, $matrix_cols, $matrix_rows) {
 		}
 			
 		foreach ($record->fields as $rowName => $rowValue) {
-			if ($rowName != $matrix_rows) continue;
+			if ($rowName != $matrixRows) continue;
 			foreach ($record->fields as $colName => $colValue) {
-				if($colName != $matrix_cols) continue;
+				if($colName != $matrixCols) continue;
 				$allColNames["$colValue"] = $colValue;
 				$allRowNames["$rowValue"] = $rowValue;
 				$matrix["$rowValue"]["$colValue"][] = $data;
@@ -898,33 +898,33 @@ function show_query_result($records, $queryTimeElapsed, QueryRequest $queryReque
 
 
 //Export the above query to a CSV file
-function export_query_csv($records,$query_action){
+function export_query_csv($records,$queryAction){
 	if ($records) {
 		try {
-			$csv_file = fopen('php://output','w') or die("Error opening php://output");
-			$csv_filename = "export" . date('YmdHis') . ".csv";
+			$csvFile = fopen('php://output','w') or die("Error opening php://output");
+			$csvFilename = "export" . date('YmdHis') . ".csv";
 			header("Content-Type: application/csv");
-			header("Content-Disposition: attachment; filename=$csv_filename");
+			header("Content-Disposition: attachment; filename=$csvFilename");
 
 			//Write first row to CSV and unset variable
-			fputcsv($csv_file,getQueryResultHeaders(new SObject($records[0])));
+			fputcsv($csvFile,getQueryResultHeaders(new SObject($records[0])));
 
 			//Export remaining rows and write to CSV line-by-line
 			foreach ($records as $record) {
-				fputcsv($csv_file, getQueryResultRow(new SObject($record),false));
+				fputcsv($csvFile, getQueryResultRow(new SObject($record),false));
 			}
 			
-			fclose($csv_file) or die("Error closing php://output");
+			fclose($csvFile) or die("Error closing php://output");
 			
 		} catch (Exception $e) {
 			require_once("header.php");
-			show_query_form(new QueryRequest($_POST),'csv',$query_action);
+			show_query_form(new QueryRequest($_POST),'csv',$queryAction);
 			print "<p />";
 			show_error($e->getMessage(),false,true);
 		}
 	} else {
 		require_once("header.php");
-		show_query_form(new QueryRequest($_POST),'csv',$query_action);
+		show_query_form(new QueryRequest($_POST),'csv',$queryAction);
 		print "<p />";
 		show_warnings("No records returned for CSV output.",false,true);
 	}

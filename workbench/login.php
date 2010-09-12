@@ -406,9 +406,9 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 			$partnerConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));	
 				
 		} else if(isset($_SESSION['config']['loginScopeHeader_organizationId']) || isset($_SESSION['config']['loginScopeHeader_portalId'])){
-			$loginScopeHeader_organizationId = isset($_SESSION['config']['loginScopeHeader_organizationId']) ? $_SESSION['config']['loginScopeHeader_organizationId'] : null;
-			$loginScopeHeader_portalId = isset($_SESSION['config']['loginScopeHeader_portalId']) ? $_SESSION['config']['loginScopeHeader_portalId'] : null;
-			$partnerConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeader_organizationId, $loginScopeHeader_portalId));
+			$loginScopeHeaderOrganizationId = isset($_SESSION['config']['loginScopeHeader_organizationId']) ? $_SESSION['config']['loginScopeHeader_organizationId'] : null;
+			$loginScopeHeaderPortalId = isset($_SESSION['config']['loginScopeHeader_portalId']) ? $_SESSION['config']['loginScopeHeader_portalId'] : null;
+			$partnerConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeaderOrganizationId, $loginScopeHeaderPortalId));
 		}		
 
 	    if($username && $password && !$sessionId){

@@ -65,7 +65,7 @@ class SforceBaseClient {
 	// salesforce.com API. For applications that are certified salesforce.com
 	// solutions, replace this with the value provided by salesforce.com.
 	// Otherwise, leave this value as 'phpClient/1.0'.
-	protected $client_id;
+	protected $clientId;
 
 	public function printDebugInfo() {
 		echo "PHP Toolkit Version: $this->version\r\n";
@@ -171,15 +171,15 @@ class SforceBaseClient {
 
 	private function setHeaders($call=NULL) {
 		$this->sforce->__setSoapHeaders(NULL);
-		$header_array = array();
+		$headerArray = array();
 		
 		if(isset($this->sessionHeader)){
-			array_push($header_array, $this->sessionHeader);
+			array_push($headerArray, $this->sessionHeader);
 		}
 
 		$header = $this->callOptions;
 		if ($header != NULL) {
-			array_push($header_array, $header);
+			array_push($headerArray, $header);
 		}
 
 		if ($call == "create" ||
@@ -189,14 +189,14 @@ class SforceBaseClient {
 		) {
 			$header = $this->assignmentRuleHeader;
 			if ($header != NULL) {
-				array_push($header_array, $header);
+				array_push($headerArray, $header);
 			}
 		}
 
 		if ($call == "login") {
 			$header = $this->loginScopeHeader;
 			if ($header != NULL) {
-				array_push($header_array, $header);
+				array_push($headerArray, $header);
 			}
 		}
 
@@ -207,7 +207,7 @@ class SforceBaseClient {
 		) {
 			$header = $this->emailHeader;
 			if ($header != NULL) {
-				array_push($header_array, $header);
+				array_push($headerArray, $header);
 			}
 		}
 
@@ -220,7 +220,7 @@ class SforceBaseClient {
 		) {
 			$header = $this->mruHeader;
 			if ($header != NULL) {
-				array_push($header_array, $header);
+				array_push($headerArray, $header);
 			}
 		}
 
@@ -234,14 +234,14 @@ class SforceBaseClient {
 		) {
 			$header = $this->allowFieldTruncationHeader;
 			if ($header != NULL) {
-				array_push($header_array, $header);
+				array_push($headerArray, $header);
 			}
 		}
 		
 		if ($call == "delete") {
 			$header = $this->userTerritoryDeleteHeader;
 			if ($header != NULL) {
-				array_push($header_array, $header);
+				array_push($headerArray, $header);
 			}
 		}
 
@@ -250,10 +250,10 @@ class SforceBaseClient {
 			$call == "retrieve") {
 			$header = $this->queryHeader;
 			if ($header != NULL) {
-				array_push($header_array, $header);
+				array_push($headerArray, $header);
 			}
 		}
-		$this->sforce->__setSoapHeaders($header_array);
+		$this->sforce->__setSoapHeaders($headerArray);
 	}
 
 	public function setAssignmentRuleHeader($header) {
