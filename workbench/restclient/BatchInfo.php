@@ -35,70 +35,70 @@
  */
 
 class BatchInfo {
-	
-	private $xml;
-	
-	public function __construct($xml){
-		$this->xml = new SimpleXMLElement($xml);
-			
-		if ($this->getExceptionCode() != "") {
-			throw new Exception($this->getExceptionCode() . ": " . $this->getExceptionMessage());
-		}
-	}
+    
+    private $xml;
+    
+    public function __construct($xml){
+        $this->xml = new SimpleXMLElement($xml);
+            
+        if ($this->getExceptionCode() != "") {
+            throw new Exception($this->getExceptionCode() . ": " . $this->getExceptionMessage());
+        }
+    }
 
-	//GETTERS
-	public function getId(){
-		return $this->xml->id;
-	}
+    //GETTERS
+    public function getId(){
+        return $this->xml->id;
+    }
 
-	public function getJobId(){
-		return $this->xml->jobId;
-	}
-	
-	public function getState(){
-		return $this->xml->state;
-	}
+    public function getJobId(){
+        return $this->xml->jobId;
+    }
+    
+    public function getState(){
+        return $this->xml->state;
+    }
 
-	public function getStateMessage(){
-		return $this->xml->stateMessage;
-	}
-	
-	public function getCreatedDate(){
-		return $this->xml->createdDate;
-	}
-	
-	public function getSystemModstamp(){
-		return $this->xml->systemModstamp;
-	}
-	
-	public function getNumberRecordsProcessed(){
-		return $this->xml->numberRecordsProcessed;
-	}
-	
-	public function getExceptionCode(){
-		return $this->xml->exceptionCode;
-	}
-	
-	public function getExceptionMessage(){
-		return $this->xml->exceptionMessage;
-	}	
-	
-	//New in 19.0 Below:
-	
-	public function getTotalProcessingTime(){
-		return $this->xml->totalProcessingTime;
-	}
-	
-	public function getApexProcessingTime(){
-		return $this->xml->apexProcessingTime;
-	}
-	
-	public function getApiActiveProcessingTime(){
-		return $this->xml->apiActiveProcessingTime;
-	}
+    public function getStateMessage(){
+        return $this->xml->stateMessage;
+    }
+    
+    public function getCreatedDate(){
+        return $this->xml->createdDate;
+    }
+    
+    public function getSystemModstamp(){
+        return $this->xml->systemModstamp;
+    }
+    
+    public function getNumberRecordsProcessed(){
+        return $this->xml->numberRecordsProcessed;
+    }
+    
+    public function getExceptionCode(){
+        return $this->xml->exceptionCode;
+    }
+    
+    public function getExceptionMessage(){
+        return $this->xml->exceptionMessage;
+    }    
+    
+    //New in 19.0 Below:
+    
+    public function getTotalProcessingTime(){
+        return $this->xml->totalProcessingTime;
+    }
+    
+    public function getApexProcessingTime(){
+        return $this->xml->apexProcessingTime;
+    }
+    
+    public function getApiActiveProcessingTime(){
+        return $this->xml->apiActiveProcessingTime;
+    }
 
-	public function getNumberRecordsFailed(){
-		return $this->xml->numberRecordsFailed;
-	}
+    public function getNumberRecordsFailed(){
+        return $this->xml->numberRecordsFailed;
+    }
 }
 ?>

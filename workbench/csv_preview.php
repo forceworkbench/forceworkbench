@@ -18,9 +18,9 @@ require_once 'put.php';
 
 <?php
 if (isset($_SESSION['csv_array'])) {
-	csv_array_show($_SESSION['csv_array']);
+    csv_array_show($_SESSION['csv_array']);
 } else {
-	show_error("No CSV has been uploaded, or it is no longer active");
+    show_error("No CSV has been uploaded, or it is no longer active");
 }
 
 include_once 'footer.php';

@@ -1,11 +1,11 @@
 <?php
 abstract class ProcessRequest {
-	public $comments;
-	public $nextApproverIds;
+    public $comments;
+    public $nextApproverIds;
 }
 
 class ProcessSubmitRequest extends ProcessRequest {
-	public $objectId;
+    public $objectId;
 }
 
 class ProcessWorkitemRequest extends ProcessRequest {
