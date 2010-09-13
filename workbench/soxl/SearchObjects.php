@@ -10,7 +10,7 @@ class SearchRequest {
     private $soslSearch                = null;
 
     //CONSTRUCTORS
-    public function __construct($source){
+    public function __construct($source) {
         if(isset($source['saveSr']))                     $this->name                  = $source['saveSr'];
         if(isset($source['SB_searchString']))             $this->searchString         = $source['SB_searchString'];
         if(isset($source['SB_fieldTypeSelect']))         $this->fieldType            = $source['SB_fieldTypeSelect'];
@@ -35,32 +35,32 @@ class SearchRequest {
     }
 
     //GETTERS
-    public function getName(){
+    public function getName() {
         return $this->name;
     }
 
-    public function getSearchString(){
+    public function getSearchString() {
         return $this->searchString;
     }
 
-    public function getFieldType(){
+    public function getFieldType() {
         return $this->fieldType;
     }
 
-    public function getLimit(){
+    public function getLimit() {
         return $this->limit;
     }
 
-    public function getReturningObjects(){
+    public function getReturningObjects() {
         return $this->returningObjects;
     }
 
-    public function getSoslSearch(){
+    public function getSoslSearch() {
         return $this->soslSearch;
     }
 
     //SETTERS
-    public function setName($name){
+    public function setName($name) {
         $this->name = $name;
     }
 }
@@ -69,16 +69,16 @@ class ReturningObject {
     private $object        = null;
     private $fields     = null;
 
-    public function __construct($object, $fields){
+    public function __construct($object, $fields) {
         $this->object = $object;
         $this->fields = $fields;
     }
 
-    public function getObject(){
+    public function getObject() {
         return $this->object;
     }
 
-    public function getFields(){
+    public function getFields() {
         return $this->fields;
     }
 }

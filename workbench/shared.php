@@ -79,7 +79,7 @@ function unCamelCase($camelCasedString) {
     return ucfirst(preg_replace( '/([a-z0-9])([A-Z])/', "$1 $2", $camelCasedString));
 }
 
-function validateUploadedFile($file){
+function validateUploadedFile($file) {
     if ($file['error'] != 0) {
         $uploadErrorCodes = array(
         1=>"The file uploaded is too large. Please try again. (Error 1)", //as per PHP config
@@ -109,7 +109,7 @@ function isLoggedIn() {
     return isset($_SESSION['sessionId']);
 }
 
-function getMyPage(){
+function getMyPage() {
     foreach ($GLOBALS["MENUS"] as $pages) {
         foreach ($pages as $href => $page) {
             if (!strcmp($href,basename($_SERVER['PHP_SELF']))) {
@@ -119,30 +119,30 @@ function getMyPage(){
     }
 }
 
-function getMyTitle(){
+function getMyTitle() {
     $myPage = getMyPage();
     return $myPage->title;
 }
 
-function getTableClass($defaultClass = 'data_table'){
+function getTableClass($defaultClass = 'data_table') {
     return $_SESSION['config']['areTablesSortable'] ? "sortable" : $defaultClass;
 }
 
-function apiVersionIsAtLeast($minVersion){
+function apiVersionIsAtLeast($minVersion) {
     return getApiVersion() >= $minVersion;
 }
 
-function getApiVersion(){
+function getApiVersion() {
     preg_match('!/(\d{1,2}\.\d)!',$_SESSION['location'],$apiVersionMatches);
     return $apiVersionMatches[1];
 }
 
-function clearSessionCache(){
+function clearSessionCache() {
     $_SESSION['myGlobal'] = null;
     $_SESSION['describeSObjects_results'] = null;
 }
 
-function show_error($errors, $showHeader=false, $showFooter=false){
+function show_error($errors, $showHeader=false, $showFooter=false) {
     if ($showHeader) {
         include_once("header.php");
         print "<p/>";
@@ -169,7 +169,7 @@ function show_error($errors, $showHeader=false, $showFooter=false){
     }
 }
 
-function show_warnings($warnings){
+function show_warnings($warnings) {
     print "<div class='show_warnings'>\n";
     print "<img src='images/warning24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($warnings)) {
@@ -183,7 +183,7 @@ function show_warnings($warnings){
     print "</div>\n";
 }
 
-function show_info($infos){
+function show_info($infos) {
     print "<div class='show_info'>\n";
     print "<img src='images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($infos)) {
@@ -197,7 +197,7 @@ function show_info($infos){
     print "</div>\n";
 }
 
-function getWorkbenchUserAgent(){
+function getWorkbenchUserAgent() {
     return "Workbench/" . str_replace(" ", "_", trim($GLOBALS["WORKBENCH_VERSION"]));
 }
 
@@ -223,7 +223,7 @@ function convertDateTimezone($inputStr, $format = 'Y-m-d\\TH:i:s.000P') {
 
 }
 
-function printSelectOptions($valuesToLabelsArray,$defaultValue){
+function printSelectOptions($valuesToLabelsArray,$defaultValue) {
     $valueAndLabelMatched = false;
     foreach ($valuesToLabelsArray as $value => $label) {
         print "<option value=\"" . $value . "\"";
@@ -238,7 +238,7 @@ function printSelectOptions($valuesToLabelsArray,$defaultValue){
 
 
 
-function describeGlobal($filter1=null, $filter2=null){
+function describeGlobal($filter1=null, $filter2=null) {
     $processedDescribeGlobalResponse = array();
 
     if (!isset($_SESSION['myGlobal']) || !$_SESSION['config']['cacheDescribeGlobal']) {
@@ -266,7 +266,7 @@ function describeGlobal($filter1=null, $filter2=null){
     foreach ($_SESSION['myGlobal']->types as $type) {
         if(!isset($_SESSION['myGlobal']->attributeMap) ||
         (($filter1 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter1) &&
-        ($filter2 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter2))){
+        ($filter2 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter2))) {
 
             $processedDescribeGlobalResponse[] = $type;
         }
@@ -275,7 +275,7 @@ function describeGlobal($filter1=null, $filter2=null){
     return $processedDescribeGlobalResponse;
 }
 
-function printObjectSelection($defaultObject=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null){
+function printObjectSelection($defaultObject=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null) {
     $_SESSION['default_object'] = $defaultObject;
 
     print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";
@@ -293,7 +293,7 @@ function printObjectSelection($defaultObject=null, $nameId='default_object', $wi
     print "</select>\n";
 }
 
-function describeSObject($objectTypes){
+function describeSObject($objectTypes) {
     // if a scalar is passed to this function, change it to an array
     if (!is_array($objectTypes)) {
         $objectTypeArray = array($objectTypes);
@@ -403,7 +403,7 @@ function printNode($node) {
     }
 }
 
-function alphaOrderFields($describeSObjectResult){
+function alphaOrderFields($describeSObjectResult) {
     //move field name out to key name and then ksort based on key for field abc order
     if (isset($describeSObjectResult->fields)) {
         if(!is_array($describeSObjectResult->fields)) $describeSObjectResult->fields = array($describeSObjectResult->fields);
@@ -431,7 +431,7 @@ function natcaseksort($array) {
 }
 
 
-function addLinksToUiForIds($inputStr){
+function addLinksToUiForIds($inputStr) {
     if (isset($_SESSION['config']['linkIdToUi']) && $_SESSION['config']['linkIdToUi'] == true) {
         preg_match("@(https?://.*)/services@", $_SESSION['location'], $instUIDomain);
         return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$1' target='sfdcUi'>$1</a>",$inputStr);
@@ -440,7 +440,7 @@ function addLinksToUiForIds($inputStr){
     }
 }
 
-function addLinksToUi($startUrl){
+function addLinksToUi($startUrl) {
     preg_match("@(https?://.*)/services@", $_SESSION['location'], $instUIDomain);
     return "$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$startUrl";
 }
@@ -462,12 +462,12 @@ function arr_to_csv($arr) {
     return implode("\n", $lines);
 }
 
-function simpleFormattedTime($timestamp){
+function simpleFormattedTime($timestamp) {
     $dateTime = new DateTime($timestamp);
     return date("h:i:s A",$dateTime->format("U"));
 }
 
-function getAsyncApiConnection(){
+function getAsyncApiConnection() {
     $asyncConnection = new BulkApiClient($_SESSION['location'], $_SESSION['sessionId']);
     $asyncConnection->setCompressionEnabled($_SESSION['config']['enableGzip']);
     $asyncConnection->setUserAgent(getWorkbenchUserAgent());
@@ -522,11 +522,11 @@ function xml_pretty_printer($xml, $htmlOutput=FALSE)
 }
 
 
-function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null){
+function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {
     if (isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true) {
 
         print "<script>
-            function toggleDebugSection(title, sectionId){
+            function toggleDebugSection(title, sectionId) {
                 var section = document.getElementById(sectionId);
                 if (section.style.display == 'inline') {
                     section.style.display = 'none';

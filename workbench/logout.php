@@ -8,7 +8,7 @@ if ($_SESSION) {
         try {
             $partnerConnection->logout();
             $sessionInvatidated = true;
-        } catch(Exception $e){
+        } catch(Exception $e) {
             $sessionInvatidated = false;
         }
     } else {

@@ -10,7 +10,7 @@ if (isset($_POST['passwordChangeType'])) {
 }
 
 
-function changePassword($passwordChangeType){
+function changePassword($passwordChangeType) {
     global $partnerConnection;
 
     try {
@@ -25,7 +25,7 @@ function changePassword($passwordChangeType){
             $changePasswordResult = $partnerConnection->resetPassword($_POST['userId']);
             $infos[] = "Successfully reset password for " . $_POST['userId'];
         }
-    } catch(Exception $e){
+    } catch(Exception $e) {
         $errors[] = $e->getMessage();
     }
 
@@ -34,12 +34,12 @@ function changePassword($passwordChangeType){
 }
 
 
-function displayForm($infos=null, $errors=null){
+function displayForm($infos=null, $errors=null) {
     ?>
 <script type="text/javascript">
 <!--
  
- function togglePasswordFields(changeType){
+ function togglePasswordFields(changeType) {
  
      if (changeType == 'set') {
          document.getElementById('passwordOne').disabled = false;
@@ -62,7 +62,7 @@ function displayForm($infos=null, $errors=null){
  }
  
  
- function doPasswordsMatch(doAlert){
+ function doPasswordsMatch(doAlert) {
       if (document.getElementById('passwordOne').value.length < document.getElementById('passwordConfirm').value.length) {     
           document.getElementById('passwordConfirm').style.background = 'LightPink';
       }
@@ -94,7 +94,7 @@ function displayForm($infos=null, $errors=null){
       }
  }
  
- function clearForm(){
+ function clearForm() {
     document.getElementById('userId').value = null;
      document.getElementById('passwordOne').value = null;
      document.getElementById('passwordConfirm').value = null;

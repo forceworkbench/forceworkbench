@@ -14,7 +14,7 @@ if (isset($_GET['ajaxBurn'])) {
         try {
             $partnerConnection->getServerTimestamp();
             $burnt++;
-        } catch (Exception $ex){
+        } catch (Exception $ex) {
             $burnErrors[] = $ex->getMessage();
         }
     }
@@ -40,7 +40,7 @@ require_once 'header.php';
 
 <script type="text/javascript">
 <!--
- function checkEnter(e){ //e is event object passed from function invocation
+ function checkEnter(e) { //e is event object passed from function invocation
      var characterCode; //literal character code will be stored in this variable
      
      if (e && e.which) { //if which property of event object is supported (NN4)
@@ -58,7 +58,7 @@ require_once 'header.php';
  }
 
  // Get the HTTP Object
- function getHTTPObject(){
+ function getHTTPObject() {
      if (window.ActiveXObject) {
         return new ActiveXObject("Microsoft.XMLHTTP");
      } else if (window.XMLHttpRequest) { 
@@ -69,7 +69,7 @@ require_once 'header.php';
      }
  }
 
-function ajaxBurn(){
+function ajaxBurn() {
     var ajax = getHTTPObject();
 
     if (ajax != null) {
@@ -77,7 +77,7 @@ function ajaxBurn(){
         ajax.send(null);
         document.getElementById('burnResults').innerHTML = "";
         document.getElementById('burnStatus').innerHTML = "<img src='images/wait16trans.gif'/>&nbsp; Burning...";
-        ajax.onreadystatechange = function handleAjaxBurnResponse(){
+        ajax.onreadystatechange = function handleAjaxBurnResponse() {
             if (ajax.readyState == 4) {
                 document.getElementById('burnStatus').innerHTML = "";
                 document.getElementById('burnResults').innerHTML = ajax.responseText;

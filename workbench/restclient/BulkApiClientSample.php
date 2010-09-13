@@ -94,7 +94,7 @@ try {
 
 
     // STEP 6: MONITOR BATCH STATUS UNTIL DONE
-    while($batch->getState() == "Queued" || $batch->getState() == "InProgress"){
+    while($batch->getState() == "Queued" || $batch->getState() == "InProgress") {
         $batch = $myBulkApiConnection->getBatchInfo($job->getId(), $batch->getId());
         sleep(5); //wait for 5 seconds before polling again. in the real world, probably make this exponential as to not ping the server so much
     }
@@ -104,7 +104,7 @@ try {
     $batchResults = $myBulkApiConnection->getBatchResults($job->getId(), $batch->getId());
 
 
-} catch (Exception $ex){
+} catch (Exception $ex) {
     print "<div style='color: red'>ERROR: " . $ex->getMessage() . "</div>";
 }
 

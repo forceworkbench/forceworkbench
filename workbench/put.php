@@ -8,7 +8,7 @@
  * Main logic and control flow for all PUT funcions
  * @param unknown_type $action
  */
-function put($action){
+function put($action) {
 
     $confirmAction = 'Confirm ' . ucwords($action);
 
@@ -106,7 +106,7 @@ function put($action){
  * @param $showObjectSelect
  * @param $action
  */
-function form_upload_objectSelect_show($fileInputName, $action){
+function form_upload_objectSelect_show($fileInputName, $action) {
     print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n";
     print "<input type='hidden' name='MAX_FILE_SIZE' value='" . $_SESSION['config']['maxFileSize'] . "' />\n";
     print "<p><input type='file' name='$fileInputName' size=44 /></p>\n";
@@ -133,7 +133,7 @@ function form_upload_objectSelect_show($fileInputName, $action){
  * @param csvfile $file
  * @return error codes or 0 if ok
  */
-function csv_upload_valid_check($file){
+function csv_upload_valid_check($file) {
     $validationResult = validateUploadedFile($file);
 
     if ((!stristr($file['type'],'csv') || $file['type'] !== "application//vnd.ms-excel") && !stristr($file['name'],'.csv')) {
@@ -149,7 +149,7 @@ function csv_upload_valid_check($file){
  * @param csv $file
  * @return PHP array
  */
-function csv_file_to_array($file){
+function csv_file_to_array($file) {
     ini_set("auto_detect_line_endings", true); //detect mac os line endings too
 
     $csvArray = array();
@@ -173,7 +173,7 @@ function csv_file_to_array($file){
  *
  * @param $csvArray
  */
-function csv_array_show($csvArray){
+function csv_array_show($csvArray) {
     print "<table class='data_table'>\n";
     print "<tr><th>&nbsp;</th>";
     for ($col=0; $col < count($csvArray[0]); $col++) {
@@ -208,7 +208,7 @@ function csv_array_show($csvArray){
  * @param $action
  * @param $csvArray
  */
-function field_mapping_set($action,$csvArray){
+function field_mapping_set($action,$csvArray) {
     if ($action == 'insert' || $action == 'upsert' || $action == 'update') {
         if (isset($_SESSION['default_object'])) {
             $describeSObjectResult = describeSObject($_SESSION['default_object']);
@@ -289,7 +289,7 @@ function field_mapping_set($action,$csvArray){
     print "<script>document.getElementById('field_mapping_setter_block').style.display = 'block';</script>";
 }
 
-function printPutFieldForMappingId($csvArray, $showRefCol){
+function printPutFieldForMappingId($csvArray, $showRefCol) {
     $idField = new stdClass();
     $idField->nillable = false;
     $idField->defaultedOnCreate = false;
@@ -305,7 +305,7 @@ function printPutFieldForMappingId($csvArray, $showRefCol){
  * @param $field
  * @param $csvArray
  */
-function printPutFieldForMapping($field, $csvArray, $showRefCol){
+function printPutFieldForMapping($field, $csvArray, $showRefCol) {
     print "<tr";
     if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
     print "><td>$field->name</td>";
@@ -337,7 +337,7 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol){
  * @param $field
  * @param $describeRefObjResult
  */
-function printRefField($field, $describeRefObjResult){
+function printRefField($field, $describeRefObjResult) {
     if (is_array($describeRefObjResult)) {
         $polyExtFields = array();
         foreach ($describeRefObjResult as $describeRefObjResultKey => $describeRefObjResult) {
@@ -419,7 +419,7 @@ function printRefField($field, $describeRefObjResult){
  * @param unknown_type $fieldMap
  * @return unknown
  */
-function field_map_to_array($fieldMap){
+function field_map_to_array($fieldMap) {
     $fieldMapArray = array();
 
     foreach ($fieldMap as $fieldMapKey=>$fieldMapValue) {
@@ -448,7 +448,7 @@ function field_map_to_array($fieldMap){
  * @param $csvArray
  * @param $extId
  */
-function field_mapping_confirm($action,$fieldMap,$csvArray,$extId){
+function field_mapping_confirm($action,$fieldMap,$csvArray,$extId) {
     if (!($fieldMap && $csvArray)) {
         show_error("CSV file and field mapping not initialized successfully. Upload a new file and map fields.",true,true);
     } else {
@@ -518,7 +518,7 @@ function field_mapping_confirm($action,$fieldMap,$csvArray,$extId){
  * @param unknown_type $fieldMap
  * @param unknown_type $extId
  */
-function field_mapping_show($fieldMap,$extId,$showRefCol){
+function field_mapping_show($fieldMap,$extId,$showRefCol) {
     if ($extId) {
         print "<table class='field_mapping'>\n";
         print "<tr><td>External Id</td> <td>$extId</td></tr>\n";
@@ -559,7 +559,7 @@ function field_mapping_show($fieldMap,$extId,$showRefCol){
  * @param $csvArray
  * @param $showResults
  */
-function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults){
+function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults) {
     $origCsvArray = $csvArray;
 
     if (!($fieldMap && $csvArray)) {
@@ -578,7 +578,7 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults){
         $results = array();
         $idArrayAll = $idArray;
 
-        while($idArray){
+        while($idArray) {
             $idArrayBatch = array_splice($idArray,0,$_SESSION['config']['batchSize']);
             try {
                 global $partnerConnection;
@@ -609,7 +609,7 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults){
  * @param $csvArray
  * @param $showResults
  */
-function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults){
+function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
     $origCsvArray = $csvArray;//backing up for results
     if (!($fieldMap && $csvArray && $_SESSION['default_object'])) {
         show_error("CSV file and field mapping not initialized. Upload a new file and map fields.",true,true);
@@ -617,7 +617,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults){
         $csvHeader = array_shift($csvArray);
         $results = array();
 
-        while($csvArray){
+        while($csvArray) {
             $sObjects = array();
             $csvArrayBatch = array_splice($csvArray,0,$_SESSION['config']['batchSize']);
 
@@ -693,7 +693,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults){
  * @param unknown_type $fieldMap
  * @param unknown_type $csvArray
  */
-function putAsync($apiCall,$extId,$fieldMap,$csvArray){
+function putAsync($apiCall,$extId,$fieldMap,$csvArray) {
     if (!($fieldMap && $csvArray && $_SESSION['default_object'])) {
         show_error("CSV file and field mapping not initialized or object not selected. Upload a new file and map fields.",true,true);
     } else {
@@ -720,7 +720,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray){
         $csvHeader = array_shift($csvArray);
         $results = array();
 
-        while($csvArray){
+        while($csvArray) {
             $sObjects = array();
             $csvArrayBatch = array_splice($csvArray,0,$_SESSION['config']['asyncBatchSize']);
 
@@ -786,7 +786,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray){
  * @param $csvArray
  * @param $idArray
  */
-function show_putAndId_results($results,$apiCall,$csvArray,$idArray){
+function show_putAndId_results($results,$apiCall,$csvArray,$idArray) {
     //check if only result is returned
     if(!is_array($results)) $results = array($results);
 

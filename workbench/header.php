@@ -51,7 +51,7 @@ if (!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basena
                 }
             }
         }
-    } catch (Exception $e){
+    } catch (Exception $e) {
         //do nothing
     }
 }

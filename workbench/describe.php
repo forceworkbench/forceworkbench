@@ -16,7 +16,7 @@ require_once 'footer.php';
 
 
 //Print a form with the global object types to choose for description
-function show_describeSObject_form(){
+function show_describeSObject_form() {
     print "<form name='describeForm' method='POST' action='$_SERVER[PHP_SELF]'>" .
           "<p class='instructions'>Choose an object to describe:</p>\n";
     printObjectSelection($_SESSION['default_object'], 'default_object', 30, "onChange=\"document.getElementById('loadingMessage').style.visibility='visible'; document.describeForm.submit();\"");
@@ -27,7 +27,7 @@ function show_describeSObject_form(){
 
 
 //Print the description of selected/default object type in multiple tables
-function show_describeSObject_result(){
+function show_describeSObject_result() {
     try {
         //Ping Apex API
         $describeSObjectResult = describeSObject($_SESSION['default_object']);
@@ -38,7 +38,7 @@ function show_describeSObject_result(){
 
     if(isset($_SESSION['config']['colorBooleanValues']) && $_SESSION['config']['colorBooleanValues'] ||
     isset($_SESSION['config']['highlightCustomFields']) && $_SESSION['config']['highlightCustomFields'] ||
-    isset($_SESSION['config']['highlightSystemFields']) && $_SESSION['config']['highlightSystemFields']){
+    isset($_SESSION['config']['highlightSystemFields']) && $_SESSION['config']['highlightSystemFields']) {
          
         print "<div style='float: right; border:1px solid #bbb; padding:0.5em; margin-right:1em;'>" .
                      "<strong>Legend:</strong>" . 

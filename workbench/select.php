@@ -21,11 +21,11 @@ else {
     include_once 'footer.php';
 }
 
-function show_select_form(){
+function show_select_form() {
     ?>
 <script>
     
-    function toggleObjectSelectDisabled(){
+    function toggleObjectSelectDisabled() {
         var usesObject = new Array();
         <?php
         foreach ($GLOBALS["MENUS"] as $menu => $pages) {

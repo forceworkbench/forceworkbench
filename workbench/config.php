@@ -619,7 +619,7 @@ $config["linkIdToUi"] = array(
             public $showTitle;
             public $window;
 
-            public function __construct($title, $desc, $requiresSfdcSession=true, $isReadOnly=false, $onNavBar=false, $onMenuSelect=false, $showTitle=true, $window=''){
+            public function __construct($title, $desc, $requiresSfdcSession=true, $isReadOnly=false, $onNavBar=false, $onMenuSelect=false, $showTitle=true, $window='') {
                 $this->title = $title;
                 $this->desc = $desc;
                 $this->requiresSfdcSession = $requiresSfdcSession;

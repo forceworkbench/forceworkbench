@@ -38,7 +38,7 @@ class BatchInfo {
 
     private $xml;
 
-    public function __construct($xml){
+    public function __construct($xml) {
         $this->xml = new SimpleXMLElement($xml);
 
         if ($this->getExceptionCode() != "") {
@@ -47,57 +47,57 @@ class BatchInfo {
     }
 
     //GETTERS
-    public function getId(){
+    public function getId() {
         return $this->xml->id;
     }
 
-    public function getJobId(){
+    public function getJobId() {
         return $this->xml->jobId;
     }
 
-    public function getState(){
+    public function getState() {
         return $this->xml->state;
     }
 
-    public function getStateMessage(){
+    public function getStateMessage() {
         return $this->xml->stateMessage;
     }
 
-    public function getCreatedDate(){
+    public function getCreatedDate() {
         return $this->xml->createdDate;
     }
 
-    public function getSystemModstamp(){
+    public function getSystemModstamp() {
         return $this->xml->systemModstamp;
     }
 
-    public function getNumberRecordsProcessed(){
+    public function getNumberRecordsProcessed() {
         return $this->xml->numberRecordsProcessed;
     }
 
-    public function getExceptionCode(){
+    public function getExceptionCode() {
         return $this->xml->exceptionCode;
     }
 
-    public function getExceptionMessage(){
+    public function getExceptionMessage() {
         return $this->xml->exceptionMessage;
     }
 
     //New in 19.0 Below:
 
-    public function getTotalProcessingTime(){
+    public function getTotalProcessingTime() {
         return $this->xml->totalProcessingTime;
     }
 
-    public function getApexProcessingTime(){
+    public function getApexProcessingTime() {
         return $this->xml->apexProcessingTime;
     }
 
-    public function getApiActiveProcessingTime(){
+    public function getApiActiveProcessingTime() {
         return $this->xml->apiActiveProcessingTime;
     }
 
-    public function getNumberRecordsFailed(){
+    public function getNumberRecordsFailed() {
         return $this->xml->numberRecordsFailed;
     }
 }

@@ -24,7 +24,7 @@ class QueryRequest {
     private $soqlQuery        = null;
 
     //CONSTRUCTORS
-    public function __construct($source){
+    public function __construct($source) {
         if(isset($source['saveQr']))             $this->name          = $source['saveQr'];
         if(isset($source['QB_object_sel']))     $this->object        = $source['QB_object_sel'];
         if(isset($source['QB_field_sel']))         $this->fields          = $source['QB_field_sel'];
@@ -58,72 +58,72 @@ class QueryRequest {
     }
 
     //GETTERS
-    public function getName(){
+    public function getName() {
         return $this->name;
     }
 
-    public function getExportTo(){
+    public function getExportTo() {
         return $this->exportTo;
     }
 
-    public function getQueryAction(){
+    public function getQueryAction() {
         return $this->queryAction;
     }
 
-    public function getObject(){
+    public function getObject() {
         return $this->object;
     }
 
-    public function getFields(){
+    public function getFields() {
         return $this->fields;
     }
 
-    public function getOrderByField(){
+    public function getOrderByField() {
         return $this->orderByField;
     }
 
-    public function getOrderByDir(){
+    public function getOrderByDir() {
         return $this->orderByDir;
     }
 
-    public function getOrderByNulls(){
+    public function getOrderByNulls() {
         return $this->orderByNulls;
     }
 
-    public function getLimit(){
+    public function getLimit() {
         return $this->limit;
     }
 
-    public function getMatrixRows(){
+    public function getMatrixRows() {
         return $this->matrixRows;
     }
 
-    public function getMatrixCols(){
+    public function getMatrixCols() {
         return $this->matrixCols;
     }
 
-    public function getFilters(){
+    public function getFilters() {
         return $this->filters;
     }
 
-    public function getSoqlQuery(){
+    public function getSoqlQuery() {
         return $this->soqlQuery;
     }
 
     //SETTERS
-    public function setName($name){
+    public function setName($name) {
         $this->name = $name;
     }
 
-    public function setQueryAction($queryAction){
+    public function setQueryAction($queryAction) {
         $this->queryAction = $queryAction;
     }
 
-    public function setExportTo($exportTo){
+    public function setExportTo($exportTo) {
         $this->exportTo = $exportTo;
     }
 
-    public function setObject($object){
+    public function setObject($object) {
         $this->object = $object;
     }
 }
@@ -134,21 +134,21 @@ class QueryRequestFilter {
     private $compOper    = "=";
     private $value        = null;
 
-    public function __construct($field, $compOper, $value, $logicOper = "AND"){
+    public function __construct($field, $compOper, $value, $logicOper = "AND") {
         $this->field = $field;
         $this->compOper = $compOper;
         $this->value = $value;
     }
 
-    public function getField(){
+    public function getField() {
         return $this->field;
     }
 
-    public function getCompOper(){
+    public function getCompOper() {
         return $this->compOper;
     }
 
-    public function getValue(){
+    public function getValue() {
         return $this->value;
     }
 

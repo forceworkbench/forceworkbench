@@ -74,7 +74,7 @@ if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
 
 //Show the main SOSL search form with default search or last submitted search and export action (screen or CSV)
 
-function show_search_form($searchRequest){
+function show_search_form($searchRequest) {
 
 
     print "<script>\n";
@@ -86,7 +86,7 @@ function show_search_form($searchRequest){
 
     print <<<SEARCH_BUILDER_SCRIPT
 
-function doesSearchHaveName(){
+function doesSearchHaveName() {
     var saveSr = document.getElementById('saveSr');
     if (saveSr.value == null || saveSr.value.length == 0) {
         alert('Search must have a name to save.');
@@ -96,7 +96,7 @@ function doesSearchHaveName(){
     return true;
 }
 
-function toggleFieldDisabled(){
+function toggleFieldDisabled() {
 
     if (document.getElementById('SB_searchString').value) {
         document.getElementById('SB_limit').disabled = false;
@@ -138,7 +138,7 @@ function toggleFieldDisabled(){
     }
 }
 
-function build_search(){
+function build_search() {
     toggleFieldDisabled();
     
     var searchString = 'FIND {' + document.getElementById('SB_searchString').value + '}';
@@ -175,7 +175,7 @@ function build_search(){
     }
 }
 
-function addReturningObjectRow(rowNum, defaultObject, defaultFields){
+function addReturningObjectRow(rowNum, defaultObject, defaultFields) {
     //build the row inner html
     var row = "";
     
@@ -298,7 +298,7 @@ SEARCH_BUILDER_SCRIPT;
 }
 
 
-function search($searchRequest){
+function search($searchRequest) {
     try {
 
         global $partnerConnection;
@@ -312,14 +312,14 @@ function search($searchRequest){
 
         return $records;
 
-    } catch (Exception $e){
+    } catch (Exception $e) {
         show_error($e->getMessage(),false, true);
     }
 }
 
 
 //If the user selects to display the form on screen, they are routed to this function
-function show_search_result($records, $searchTimeElapsed){
+function show_search_result($records, $searchTimeElapsed) {
     //Check if records were returned
     if ($records) {
         try {

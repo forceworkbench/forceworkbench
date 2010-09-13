@@ -43,28 +43,28 @@ class BulkApiClient {
     private $logs;
     private $loggingEnabled = false;
 
-    public function __construct($partnerEndpoint, $sessionId){
+    public function __construct($partnerEndpoint, $sessionId) {
         $this->endpoint = $this->convertEndpointFromPartner($partnerEndpoint);
         $this->sessionId = $sessionId;
     }
 
-    public function getUserAgent(){
+    public function getUserAgent() {
         return $this->userAgent;
     }
 
-    public function setUserAgent($userAgent){
+    public function setUserAgent($userAgent) {
         $this->userAgent = $userAgent;
     }
 
-    public function getCompressionEnabled(){
+    public function getCompressionEnabled() {
         return $this->compressionEnabled;
     }
 
-    public function setCompressionEnabled($compressionEnabled){
+    public function setCompressionEnabled($compressionEnabled) {
         $this->compressionEnabled = $compressionEnabled;
     }
 
-    private function convertEndpointFromPartner($partnerEndpoint){
+    private function convertEndpointFromPartner($partnerEndpoint) {
 
         if (!$this->apiVersionIsAtLeast($partnerEndpoint, 16.0)) {
             throw new Exception("Bulk API operations only supported in API 16.0 and higher.");
@@ -81,22 +81,22 @@ class BulkApiClient {
         return $endpoint;
     }
 
-    private function apiVersionIsAtLeast($endpoint, $minVersion){
+    private function apiVersionIsAtLeast($endpoint, $minVersion) {
         preg_match('!/(\d{1,2}\.\d)!',$endpoint,$apiVersionMatches);
         return $apiVersionMatches[1] >= $minVersion;
     }
 
-    public function createJob(JobInfo $job){
+    public function createJob(JobInfo $job) {
         $this->validateJob($job);
         return new JobInfo($this->post($this->endpoint . "/job", "application/xml", $job->asXml()));
     }
 
-    public function updateJob(JobInfo $job){
+    public function updateJob(JobInfo $job) {
         $this->validateJob($job);
         return new JobInfo($this->post($this->endpoint . "/job/" . $job->getId(), "application/xml", $job->asXml()));
     }
 
-    private function validateJob(JobInfo $job){
+    private function validateJob(JobInfo $job) {
         if ($job->getContentType() == "CSV" && !$this->apiVersionIsAtLeast($this->endpoint, 17.0)) {
             throw new Exception("Content Type 'CSV' only supported in API 17.0 and higher.");
         }
@@ -110,18 +110,18 @@ class BulkApiClient {
         }
     }
 
-    public function updateJobState($jobId, $state){
+    public function updateJobState($jobId, $state) {
         $job = new JobInfo();
         $job->setId($jobId);
         $job->setState($state);
         return $this->updateJob($job);
     }
 
-    public function getJobInfo($jobId){
+    public function getJobInfo($jobId) {
         return new JobInfo($this->get($this->endpoint . "/job/" . $jobId));
     }
 
-    public function createBatch(JobInfo $job, $data){
+    public function createBatch(JobInfo $job, $data) {
         if ($job->getContentType() == "CSV") {
             $contentType = "text/csv";
         } else if ($job->getContentType() == "XML") {
@@ -131,11 +131,11 @@ class BulkApiClient {
         return new BatchInfo($this->post($this->endpoint . "/job/" . $job->getId() . "/batch", $contentType, $data));
     }
 
-    public function getBatchInfo($jobId, $batchId){
+    public function getBatchInfo($jobId, $batchId) {
         return new BatchInfo($this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId));
     }
 
-    public function getBatchInfos($jobId){
+    public function getBatchInfos($jobId) {
         $batchInfos = array();
 
         $batchInfoList = new SimpleXMLElement($this->get($this->endpoint . "/job/" . $jobId . "/batch"));
@@ -198,41 +198,41 @@ class BulkApiClient {
             return $chResponse;
     }
 
-    private function get($url){
+    private function get($url) {
         return $this->http(false, $url, null, null);
     }
 
-    private function post($url, $contentType, $data){
+    private function post($url, $contentType, $data) {
         return $this->http(true, $url, $contentType, $data);
     }
 
 
     //LOGGING FUNCTIONS
 
-    public function isLoggingEnabled(){
+    public function isLoggingEnabled() {
         return $this->loggingEnabled;
     }
 
-    public function setLoggingEnabled($loggingEnabled){
+    public function setLoggingEnabled($loggingEnabled) {
         $this->loggingEnabled = $loggingEnabled;
     }
 
-    protected function log($txt){
+    protected function log($txt) {
         if ($this->loggingEnabled) {
             $this->logs .= $txt .= "\n\n";
         }
         return $txt;
     }
 
-    public function setExternalLogReference(&$extLogs){
+    public function setExternalLogReference(&$extLogs) {
         $this->logs = &$extLogs;
     }
 
-    public function getLogs(){
+    public function getLogs() {
         return $this->logs;
     }
 
-    public function clearLogs(){
+    public function clearLogs() {
         $this->logs = null;
     }
 }

@@ -129,7 +129,7 @@ function printDeployOptions($deployOptions, $editable) {
     print "</table>\n";
 }
 
-function validateZipFile($file){
+function validateZipFile($file) {
     $validationResult = validateUploadedFile($file);
 
     if (!isset($file["tmp_name"]) || $file["tmp_name"] == "") {

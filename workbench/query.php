@@ -111,7 +111,7 @@ if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
 
 //Show the main SOQL query form with default query or last submitted query and export action (screen or CSV)
 
-function show_query_form($queryRequest){
+function show_query_form($queryRequest) {
 
     if ($queryRequest->getObject()) {
         $describeSObjectResult = describeSObject($queryRequest->getObject(), true);
@@ -157,7 +157,7 @@ function show_query_form($queryRequest){
 
         print <<<QUERY_BUILDER_SCRIPT
 
-function parentChildRelationshipQueryBlocker(){
+function parentChildRelationshipQueryBlocker() {
     var soql = document.getElementById('soql_query_textarea').value.toUpperCase();
     
     if (soql.indexOf('(SELECT') != -1 && soql.indexOf('IN (SELECT') == -1 && document.getElementById('export_action_csv').checked) {
@@ -166,7 +166,7 @@ function parentChildRelationshipQueryBlocker(){
     
 }
 
-function doesQueryHaveName(){
+function doesQueryHaveName() {
     var saveQr = document.getElementById('saveQr');
     if (saveQr.value == null || saveQr.value.length == 0) {
         alert('Query must have a name to save.');
@@ -177,7 +177,7 @@ function doesQueryHaveName(){
 }
 
 
-function toggleFieldDisabled(){
+function toggleFieldDisabled() {
     var QB_field_sel = document.getElementById('QB_field_sel');
 
     if (document.getElementById('QB_object_sel').value) {
@@ -239,7 +239,7 @@ function toggleFieldDisabled(){
     }
 }
 
-function updateObject(){
+function updateObject() {
   document.query_form.justUpdate.value = 1;
   document.query_form.submit();
 }
@@ -264,7 +264,7 @@ function arrayContains(haystack, needle) {
     return false;
 }
 
-function build_query(){
+function build_query() {
     toggleFieldDisabled();
     var QB_object_sel = document.getElementById('QB_object_sel').value;
     var QB_field_sel = document.getElementById('QB_field_sel');
@@ -320,7 +320,7 @@ function build_query(){
             if (QB_filter_compOper == 'IN' || 
                 QB_filter_compOper == 'NOT IN' ||
                 QB_filter_compOper == 'INCLUDES' || 
-                QB_filter_compOper == 'EXCLUDES'){
+                QB_filter_compOper == 'EXCLUDES') {
                     QB_filter_value_q = '(' + QB_filter_value + ')';
             } else if ((QB_filter_value == 'null') ||
                 (field_type_array[QB_filter_field] == "datetime") ||
@@ -329,7 +329,7 @@ function build_query(){
                 (field_type_array[QB_filter_field] == "percent") ||
                 (field_type_array[QB_filter_field] == "double") ||
                 (field_type_array[QB_filter_field] == "int") ||
-                (field_type_array[QB_filter_field] == "boolean")){
+                (field_type_array[QB_filter_field] == "boolean")) {
                     QB_filter_value_q = QB_filter_value;
             } else {
                 QB_filter_value_q = '\'' + QB_filter_value + '\'';
@@ -365,7 +365,7 @@ function build_query(){
 }
 
 
-function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue){
+function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue) {
     //build the row inner html
     var row = filterRowNum == 0 ? "<br/>Filter results by:<br/>" : "" ;
     row +=     "<select id='QB_filter_field_" + filterRowNum + "' name='QB_filter_field_" + filterRowNum + "' style='width: 16em;' onChange='build_query();' onkeyup='build_query();'>" +
@@ -609,7 +609,7 @@ QUERY_BUILDER_SCRIPT;
 }
 
 
-function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false){
+function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false) {
     try {
 
         global $partnerConnection;
@@ -645,7 +645,7 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
             $records = array($records);
         }
 
-        while(($suppressScreenOutput || $_SESSION['config']['autoRunQueryMore']) && !$queryResponse->done){
+        while(($suppressScreenOutput || $_SESSION['config']['autoRunQueryMore']) && !$queryResponse->done) {
             $queryResponse = $partnerConnection->queryMore($queryResponse->queryLocator);
 
             if (!is_array($queryResponse->records)) {
@@ -657,13 +657,13 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
 
         return $records;
 
-    } catch (Exception $e){
+    } catch (Exception $e) {
         print "<p><a name='qr'>&nbsp;</a></p>";
         show_error($e->getMessage(),true,true);
     }
 }
 
-function getQueryResultHeaders($sobject, $tail=""){
+function getQueryResultHeaders($sobject, $tail="") {
     if (!isset($headerBufferArray)) {
         $headerBufferArray = array();
     }
@@ -695,7 +695,7 @@ function getQueryResultHeaders($sobject, $tail=""){
     return $headerBufferArray;
 }
 
-function getQueryResultRow($sobject, $escapeHtmlChars=true){
+function getQueryResultRow($sobject, $escapeHtmlChars=true) {
 
     if (!isset($rowBuffer)) {
         $rowBuffer = array();
@@ -795,7 +795,7 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
     return $table;
 }
 
-function createQueryResultTable($records){
+function createQueryResultTable($records) {
     $table = "<table id='query_results' class='" . getTableClass() . "'>\n";
 
     //call shared recusive function above for header printing
@@ -847,7 +847,7 @@ function createQueryResultTable($records){
 
 
 //If the user selects to display the form on screen, they are routed to this function
-function show_query_result($records, $queryTimeElapsed, QueryRequest $queryRequest){
+function show_query_result($records, $queryTimeElapsed, QueryRequest $queryRequest) {
 
     //Check if records were returned
     if ($records) {
@@ -898,7 +898,7 @@ function show_query_result($records, $queryTimeElapsed, QueryRequest $queryReque
 
 
 //Export the above query to a CSV file
-function export_query_csv($records,$queryAction){
+function export_query_csv($records,$queryAction) {
     if ($records) {
         try {
             $csvFile = fopen('php://output','w') or die("Error opening php://output");

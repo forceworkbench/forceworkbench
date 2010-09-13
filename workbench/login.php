@@ -3,7 +3,7 @@ require_once 'session.php';
 require_once 'shared.php';
 
 //general functions
-function getDefaultServerUrl(){
+function getDefaultServerUrl() {
     $serverUrl = '';
 
     if (isset($_GET['serverUrlPrefix'])) {
@@ -91,7 +91,7 @@ if (isset($_POST['login_type'])) {
     display_login(null);
 }
 
-function display_login($errors){
+function display_login($errors) {
     require_once 'header.php';
 
     //Displays errors if there are any
@@ -135,7 +135,7 @@ function display_login($errors){
 
     print <<<LOGIN_FORM
 
-function fuzzyServerUrlSelect(){
+function fuzzyServerUrlSelect() {
     var sid = document.getElementById('sessionId').value
     var sidIndex = sid.indexOf('00D');
         
@@ -149,7 +149,7 @@ function fuzzyServerUrlSelect(){
     }
 }
 
-function toggleUsernamePasswordSessionDisabled(){
+function toggleUsernamePasswordSessionDisabled() {
     if (document.getElementById('sessionId').value) {
         document.getElementById('usernameAdv').disabled = true;
         document.getElementById('passwordAdv').disabled = true;
@@ -189,13 +189,13 @@ function form_become_std() {
     }
 }
 
-function build_location(){
+function build_location() {
     var inst = document.getElementById('inst').value;
     var endp = document.getElementById('endp').value;
     document.getElementById('serverUrl').value = 'http' + ($useHTTPS && (inst.search(/localhost/i) == -1) ? 's' : '') + '://' + inst + '.salesforce.com/services/Soap/u/' + endp;
 }
 
-function giveUserFocus(){
+function giveUserFocus() {
     if (document.getElementById('login_become_adv').checked) {
         document.getElementById('usernameAdv').focus();
     } else {
@@ -203,7 +203,7 @@ function giveUserFocus(){
     }
 }
 
-function givePassFocus(){
+function givePassFocus() {
     if (document.getElementById('login_become_adv').checked) {
         document.getElementById('passwordAdv').focus();
     } else {
@@ -320,7 +320,7 @@ LOGIN_FORM_PART_2;
 
     //if 'adv' is added to the login url and is not 0, default to advanced login
     if ((isset($_GET['adv']) && $_GET['adv'] != 0) ||
-    (isset($_SESSION['config']['defaultLoginType']) && $_SESSION['config']['defaultLoginType']=='Advanced')){
+    (isset($_SESSION['config']['defaultLoginType']) && $_SESSION['config']['defaultLoginType']=='Advanced')) {
         print "<script>
                 document.getElementById('login_become_adv').checked=true; 
                 form_become_adv(); 
@@ -343,7 +343,7 @@ LOGIN_FORM_PART_2;
 } //end display_form()
 
 
-function process_Login($username, $password, $serverUrl, $sessionId, $actionJump){
+function process_Login($username, $password, $serverUrl, $sessionId, $actionJump) {
     $username = htmlspecialchars(trim($username));
     $password = htmlspecialchars(trim($password));
     $serverUrl = htmlspecialchars(trim($serverUrl));

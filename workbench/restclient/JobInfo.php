@@ -37,7 +37,7 @@
 class JobInfo {
     private $xml;
 
-    public function __construct($xml = null){
+    public function __construct($xml = null) {
         if ($xml != null) {
             $this->xml = new SimpleXMLElement($xml);
         } else {
@@ -60,7 +60,7 @@ class JobInfo {
         }
     }
 
-    public function asXml(){
+    public function asXml() {
         //removing empty fields to allow API to parse correctly
         //two loops are needed to not cause errors
         $emptyFields = array();
@@ -77,138 +77,138 @@ class JobInfo {
     }
 
     //SETTERS
-    public function setId($id){
+    public function setId($id) {
         $this->xml->id = $id;
     }
 
-    public function setOpertion($operation){
+    public function setOpertion($operation) {
         $this->xml->operation = $operation;
     }
 
-    public function setObject($object){
+    public function setObject($object) {
         $this->xml->object = $object;
     }
 
-    public function setExternalIdFieldName($externalIdFieldName){
+    public function setExternalIdFieldName($externalIdFieldName) {
         $this->xml->externalIdFieldName = $externalIdFieldName;
     }
 
-    public function setAssignmentRuleId($assignmentRuleId){
+    public function setAssignmentRuleId($assignmentRuleId) {
         $this->xml->assignmentRuleId = $assignmentRuleId;
     }
 
-    public function setState($state){
+    public function setState($state) {
         $this->xml->state = $state;
     }
 
-    public function setConcurrencyMode($concurrencyMode){
+    public function setConcurrencyMode($concurrencyMode) {
         $this->xml->concurrencyMode = $concurrencyMode;
     }
 
-    public function setContentType($contentType){
+    public function setContentType($contentType) {
         $this->xml->contentType = $contentType;
     }
 
     //GETTERS
-    public function getId(){
+    public function getId() {
         return $this->xml->id;
     }
 
-    public function getOpertion(){
+    public function getOpertion() {
         return $this->xml->operation;
     }
 
-    public function getObject(){
+    public function getObject() {
         return $this->xml->object;
     }
 
-    public function getExternalIdFieldName(){
+    public function getExternalIdFieldName() {
         return $this->xml->externalIdFieldName;
     }
 
-    public function getCreatedById(){
+    public function getCreatedById() {
         return $this->xml->createdById;
     }
 
-    public function getCreatedDate(){
+    public function getCreatedDate() {
         return $this->xml->createdDate;
     }
 
-    public function getSystemModstamp(){
+    public function getSystemModstamp() {
         return $this->xml->systemModstamp;
     }
 
-    public function getState(){
+    public function getState() {
         return $this->xml->state;
     }
 
-    public function getStateMessage(){
+    public function getStateMessage() {
         return $this->xml->stateMessage;
     }
 
-    public function getConcurrencyMode(){
+    public function getConcurrencyMode() {
         return $this->xml->concurrencyMode;
     }
 
-    public function getContentType(){
+    public function getContentType() {
         return $this->xml->contentType;
     }
 
-    public function getNumberBatchesQueued(){
+    public function getNumberBatchesQueued() {
         return $this->xml->numberBatchesQueued;
     }
 
-    public function getNumberBatchesInProgress(){
+    public function getNumberBatchesInProgress() {
         return $this->xml->numberBatchesInProgress;
     }
 
-    public function getNumberBatchesCompleted(){
+    public function getNumberBatchesCompleted() {
         return $this->xml->numberBatchesCompleted;
     }
 
-    public function getNumberBatchesFailed(){
+    public function getNumberBatchesFailed() {
         return $this->xml->numberBatchesFailed;
     }
 
-    public function getNumberBatchesTotal(){
+    public function getNumberBatchesTotal() {
         return $this->xml->numberBatchesTotal;
     }
 
-    public function getNumberRecordsProcessed(){
+    public function getNumberRecordsProcessed() {
         return $this->xml->numberRecordsProcessed;
     }
 
-    public function getNumberRetries(){
+    public function getNumberRetries() {
         return $this->xml->numberRetries;
     }
 
-    public function getApiVersion(){
+    public function getApiVersion() {
         return $this->xml->apiVersion;
     }
 
-    public function getExceptionCode(){
+    public function getExceptionCode() {
         return $this->xml->exceptionCode;
     }
 
-    public function getExceptionMessage(){
+    public function getExceptionMessage() {
         return $this->xml->exceptionMessage;
     }
 
     //New in 19.0 Below:
 
-    public function getTotalProcessingTime(){
+    public function getTotalProcessingTime() {
         return $this->xml->totalProcessingTime;
     }
 
-    public function getApexProcessingTime(){
+    public function getApexProcessingTime() {
         return $this->xml->apexProcessingTime;
     }
 
-    public function getApiActiveProcessingTime(){
+    public function getApiActiveProcessingTime() {
         return $this->xml->apiActiveProcessingTime;
     }
 
-    public function getNumberRecordsFailed(){
+    public function getNumberRecordsFailed() {
         return $this->xml->numberRecordsFailed;
     }
 }

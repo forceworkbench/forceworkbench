@@ -24,7 +24,7 @@ try {
         show_error("Invalid operation specified", true, true);
         exit;
     }
-} catch (Exception $e){
+} catch (Exception $e) {
     show_error($e->getMessage(), true, true);
     exit;
 }
