@@ -356,7 +356,7 @@ function show_search_result($records, $searchTimeElapsed) {
                         print htmlspecialchars($field->getName(),ENT_QUOTES,'UTF-8');
                         print "</th>";
                     }
-                }else {
+                } else {
                     print "</td></tr>";
                 }
                 print "</tr>\n";
