@@ -53,8 +53,8 @@ function put($action) {
             $_SESSION['_ext_id'] = $_POST['_ext_id'];
             $_POST['_ext_id'] = NULL;
         }
-        $_SESSION['field_map'] = field_map_to_array($_POST);
-        field_mapping_confirm(
+        $_SESSION['field_map'] = convertFieldMapToArray($_POST);
+        confirmFieldMappings(
         $confirmAction,
         $_SESSION['field_map'],
         isset($_SESSION['csv_array'])?$_SESSION['csv_array']:null,
@@ -63,27 +63,27 @@ function put($action) {
         include_once 'footer.php';
     } elseif (isset($_FILES['file'])) {
         require_once 'header.php';
-        if (csv_upload_valid_check($_FILES['file'])) {
-            form_upload_objectSelect_show('file',TRUE);
-            show_error(csv_upload_valid_check($_FILES['file']));
+        if (validateCsvUpload($_FILES['file'])) {
+            displayUploadFileWithObjectSelectionForm('file',TRUE);
+            displayError(validateCsvUpload($_FILES['file']));
         } else if (($action == "insert" || $action == "update" || $action == "upsert") && $_POST['default_object'] == "") {
-            form_upload_objectSelect_show('file',$action);
-            show_error("Must select an object to $action.");
+            displayUploadFileWithObjectSelectionForm('file',$action);
+            displayError("Must select an object to $action.");
         } else {
             $csvFileName = basename($_FILES['file']['name']);
             $_SESSION['file_tmp_name'] = $_FILES['file']['tmp_name'];
-            $_SESSION['csv_array'] = csv_file_to_array($_SESSION['file_tmp_name']);
+            $_SESSION['csv_array'] = convertCsvFileToArray($_SESSION['file_tmp_name']);
             $csvArrayCount = count($_SESSION['csv_array']) - 1;
             if (!$csvArrayCount) {
-                show_error("The file uploaded contains no records. Please try again.",false,true);
+                displayError("The file uploaded contains no records. Please try again.",false,true);
             } elseif ($csvArrayCount > $_SESSION['config']['maxFileLengthRows']) {
-                show_error ("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.", false, true);
+                displayError ("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.", false, true);
             }
             $info = "The file $csvFileName was uploaded successfully and contains $csvArrayCount row";
             if ($csvArrayCount !== 1) $info .= 's';
-            show_info($info);
+            displayInfo($info);
             print "<br/>";
-            field_mapping_set($action,$_SESSION['csv_array']);
+            setFieldMappings($action,$_SESSION['csv_array']);
         }
         include_once 'footer.php';
     }
@@ -91,7 +91,7 @@ function put($action) {
     else {
         require_once 'header.php';
         print "<p class='instructions'>Select an object and upload a CSV file to $action:</p>\n";
-        form_upload_objectSelect_show('file', $action);
+        displayUploadFileWithObjectSelectionForm('file', $action);
         include_once 'footer.php';
     }
 }
@@ -106,7 +106,7 @@ function put($action) {
  * @param $showObjectSelect
  * @param $action
  */
-function form_upload_objectSelect_show($fileInputName, $action) {
+function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
     print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n";
     print "<input type='hidden' name='MAX_FILE_SIZE' value='" . $_SESSION['config']['maxFileSize'] . "' />\n";
     print "<p><input type='file' name='$fileInputName' size=44 /></p>\n";
@@ -133,7 +133,7 @@ function form_upload_objectSelect_show($fileInputName, $action) {
  * @param csvfile $file
  * @return error codes or 0 if ok
  */
-function csv_upload_valid_check($file) {
+function validateCsvUpload($file) {
     $validationResult = validateUploadedFile($file);
 
     if ((!stristr($file['type'],'csv') || $file['type'] !== "application//vnd.ms-excel") && !stristr($file['name'],'.csv')) {
@@ -149,7 +149,7 @@ function csv_upload_valid_check($file) {
  * @param csv $file
  * @return PHP array
  */
-function csv_file_to_array($file) {
+function convertCsvFileToArray($file) {
     ini_set("auto_detect_line_endings", true); //detect mac os line endings too
 
     $csvArray = array();
@@ -164,7 +164,7 @@ function csv_file_to_array($file) {
     if ($csvArray !== NULL) {
         return($csvArray);
     } else {
-        show_error("There were errors parsing the CSV file. Please try again.", false, true);
+        displayError("There were errors parsing the CSV file. Please try again.", false, true);
     }
 }
 
@@ -173,7 +173,7 @@ function csv_file_to_array($file) {
  *
  * @param $csvArray
  */
-function csv_array_show($csvArray) {
+function displayCsvArray($csvArray) {
     print "<table class='data_table'>\n";
     print "<tr><th>&nbsp;</th>";
     for ($col=0; $col < count($csvArray[0]); $col++) {
@@ -208,18 +208,18 @@ function csv_array_show($csvArray) {
  * @param $action
  * @param $csvArray
  */
-function field_mapping_set($action,$csvArray) {
+function setFieldMappings($action,$csvArray) {
     if ($action == 'insert' || $action == 'upsert' || $action == 'update') {
         if (isset($_SESSION['default_object'])) {
             $describeSObjectResult = describeSObject($_SESSION['default_object']);
         } else {
-            show_error("A default object is required to $action. Go to the Select page to choose a default object and try again.");
+            displayError("A default object is required to $action. Go to the Select page to choose a default object and try again.");
         }
     }
 
-    print "<div id='field_mapping_setter_block_loading' style='display:block; color:#888;'><img src='images/wait16trans.gif' align='absmiddle'/> Loading...</div>";
+    print "<div id='setFieldMappingster_block_loading' style='display:block; color:#888;'><img src='images/wait16trans.gif' align='absmiddle'/> Loading...</div>";
 
-    print "<div id='field_mapping_setter_block' style='display:none;'>";
+    print "<div id='setFieldMappingster_block' style='display:none;'>";
 
     print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
 
@@ -285,8 +285,8 @@ function field_mapping_set($action,$csvArray) {
     print "<p><input type='submit' name='action' value='Map Fields' />\n";
     print "<input type='button' value='Preview CSV' onClick='window.open(" . '"csv_preview.php"' . ")'></p>\n";
     print "</form>\n</div>\n";
-    print "<script>document.getElementById('field_mapping_setter_block_loading').style.display = 'none';</script>";
-    print "<script>document.getElementById('field_mapping_setter_block').style.display = 'block';</script>";
+    print "<script>document.getElementById('setFieldMappingster_block_loading').style.display = 'none';</script>";
+    print "<script>document.getElementById('setFieldMappingster_block').style.display = 'block';</script>";
 }
 
 function printPutFieldForMappingId($csvArray, $showRefCol) {
@@ -419,7 +419,7 @@ function printRefField($field, $describeRefObjResult) {
  * @param unknown_type $fieldMap
  * @return unknown
  */
-function field_map_to_array($fieldMap) {
+function convertFieldMapToArray($fieldMap) {
     $fieldMapArray = array();
 
     foreach ($fieldMap as $fieldMapKey=>$fieldMapValue) {
@@ -448,21 +448,21 @@ function field_map_to_array($fieldMap) {
  * @param $csvArray
  * @param $extId
  */
-function field_mapping_confirm($action,$fieldMap,$csvArray,$extId) {
+function confirmFieldMappings($action,$fieldMap,$csvArray,$extId) {
     if (!($fieldMap && $csvArray)) {
-        show_error("CSV file and field mapping not initialized successfully. Upload a new file and map fields.",true,true);
+        displayError("CSV file and field mapping not initialized successfully. Upload a new file and map fields.",true,true);
     } else {
 
         if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
             if (!isset($fieldMap['Id'])) {
-                show_error("Salesforce ID not selected. Please try again.",false,true);
+                displayError("Salesforce ID not selected. Please try again.",false,true);
             } else {
                 ob_start();
 
                 if (($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
-                    field_mapping_show($fieldMap, null, false);
+                    displayFieldMappings($fieldMap, null, false);
                 } else {
-                    field_mapping_show($fieldMap, null, true);
+                    displayFieldMappings($fieldMap, null, true);
                 }
 
                 $idCol = array_search($fieldMap['Id'],$csvArray[0]);
@@ -472,15 +472,15 @@ function field_mapping_confirm($action,$fieldMap,$csvArray,$extId) {
                     }
                 }
                 $fieldMappingTable = ob_get_clean();
-                show_info ("The file uploaded contains $idCount records with Salesforce IDs with the field mapping below.");
+                displayInfo ("The file uploaded contains $idCount records with Salesforce IDs with the field mapping below.");
                 print "<p class='instructions'>Confirm the mappings below:</p>";
                 print "<p>$fieldMappingTable</p>";
             }
         } else {
             $recordCount = count($csvArray) - 1;
-            show_info ("The file uploaded contains $recordCount records to be added to " . $_SESSION['default_object']);
+            displayInfo ("The file uploaded contains $recordCount records to be added to " . $_SESSION['default_object']);
             print "<p class='instructions'>Confirm the mappings below:</p>";
-            field_mapping_show($fieldMap, $extId, true);
+            displayFieldMappings($fieldMap, $extId, true);
         }
 
         print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
@@ -518,7 +518,7 @@ function field_mapping_confirm($action,$fieldMap,$csvArray,$extId) {
  * @param unknown_type $fieldMap
  * @param unknown_type $extId
  */
-function field_mapping_show($fieldMap,$extId,$showRefCol) {
+function displayFieldMappings($fieldMap,$extId,$showRefCol) {
     if ($extId) {
         print "<table class='field_mapping'>\n";
         print "<tr><td>External Id</td> <td>$extId</td></tr>\n";
@@ -563,7 +563,7 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults) {
     $origCsvArray = $csvArray;
 
     if (!($fieldMap && $csvArray)) {
-        show_error("CSV file and field mapping not initialized successfully. Upload a new file and map fields.");
+        displayError("CSV file and field mapping not initialized successfully. Upload a new file and map fields.");
     } else {
 
         $idArray =  array();
@@ -592,10 +592,10 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults) {
                 }
 
             } catch (Exception $e) {
-                show_error($e->getMessage(),false,true);
+                displayError($e->getMessage(),false,true);
             }
         }
-        if($showResults) show_putAndId_results($results,$apiCall,$origCsvArray,$idArrayAll);
+        if($showResults) displayIdOnlyPutResults($results,$apiCall,$origCsvArray,$idArrayAll);
     }
 }
 
@@ -612,7 +612,7 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults) {
 function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
     $origCsvArray = $csvArray;//backing up for results
     if (!($fieldMap && $csvArray && $_SESSION['default_object'])) {
-        show_error("CSV file and field mapping not initialized. Upload a new file and map fields.",true,true);
+        displayError("CSV file and field mapping not initialized. Upload a new file and map fields.",true,true);
     } else {
         $csvHeader = array_shift($csvArray);
         $results = array();
@@ -669,7 +669,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
             } catch (Exception $e) {
                 $errors = null;
                 $errors = $e->getMessage();
-                show_error($errors);
+                displayError($errors);
                 include_once("footer.php");
                 exit;
             }
@@ -679,7 +679,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
                 $results = array_merge($results,$resultsMore);
             }
         }
-        if($showResults) show_putAndId_results($results,$apiCall,$origCsvArray,null);
+        if($showResults) displayIdOnlyPutResults($results,$apiCall,$origCsvArray,null);
     }
 }
 
@@ -695,7 +695,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
  */
 function putAsync($apiCall,$extId,$fieldMap,$csvArray) {
     if (!($fieldMap && $csvArray && $_SESSION['default_object'])) {
-        show_error("CSV file and field mapping not initialized or object not selected. Upload a new file and map fields.",true,true);
+        displayError("CSV file and field mapping not initialized or object not selected. Upload a new file and map fields.",true,true);
     } else {
         require_once 'restclient/BulkApiClient.php';
         try {
@@ -710,11 +710,11 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray) {
             $asyncConnection = getAsyncApiConnection();
             $job = $asyncConnection->createJob($job);
         } catch (Exception $e) {
-            show_error($e->getMessage(), true, true);
+            displayError($e->getMessage(), true, true);
         }
 
         if ($job->getId() == null) {
-            show_error("No job id found. Aborting Bulk API operation.", true, true);
+            displayError("No job id found. Aborting Bulk API operation.", true, true);
         }
 
         $csvHeader = array_shift($csvArray);
@@ -759,16 +759,16 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray) {
             }
 
             try {
-                $batch = $asyncConnection->createBatch($job, arr_to_csv($asyncCsv));
+                $batch = $asyncConnection->createBatch($job, convertArrayToCsv($asyncCsv));
             } catch (Exception $e) {
-                show_error($e->getMessage(), true, true);
+                displayError($e->getMessage(), true, true);
             }
         }
 
         try {
             $job = $asyncConnection->updateJobState($job->getId(), "Closed");
         } catch (Exception $e) {
-            show_error($e->getMessage(), true, true);
+            displayError($e->getMessage(), true, true);
         }
 
         header("Location: asyncStatus.php?jobId=" . $job->getId());
@@ -786,7 +786,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray) {
  * @param $csvArray
  * @param $idArray
  */
-function show_putAndId_results($results,$apiCall,$csvArray,$idArray) {
+function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
     //check if only result is returned
     if(!is_array($results)) $results = array($results);
 
@@ -851,7 +851,7 @@ function show_putAndId_results($results,$apiCall,$csvArray,$idArray) {
     }
     print "</table><br/>";
     $resultsTable = ob_get_clean();
-    show_info("There were $successCount successes and $errorCount errors.");
+    displayInfo("There were $successCount successes and $errorCount errors.");
 
     print "<br/><form action='downloadResultsWithData.php' method='GET'><input type='hidden' name='action' value='$apiCall'/><input type='submit' value='Download Full Results'/></form>";
 

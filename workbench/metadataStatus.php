@@ -3,14 +3,14 @@ require_once 'session.php';
 require_once 'shared.php';
 
 if (!apiVersionIsAtLeast(10.0)) {
-    show_error("Metadata API not supported prior to version 10.0", true, true);
+    displayError("Metadata API not supported prior to version 10.0", true, true);
     exit;
 }
 
 if (!isset($_GET['asyncProcessId'])) {
     require_once 'header.php';
     print "<p/>";
-    show_error("Parameter 'asyncProcessId' must be specified.",false,false);
+    displayError("Parameter 'asyncProcessId' must be specified.",false,false);
     print     "<p/>" .
             "<form action='$_SERVER[PHP_SELF]' method='GET'>" . 
             "Async Process Id: <input type='text' name='asyncProcessId'/> &nbsp;" .  
@@ -24,7 +24,7 @@ $asyncProcessId = htmlentities($_GET['asyncProcessId']);
 
 if (isset($_GET['downloadZip'])) {
     if (!isset($_SESSION['retrievedZips'][$asyncProcessId])) {
-        show_error("No zip file found for async process id '$asyncProcessId'. Note, retrieve results are deleted after first download or navigating away from this page.", true, true);
+        displayError("No zip file found for async process id '$asyncProcessId'. Note, retrieve results are deleted after first download or navigating away from this page.", true, true);
     }
 
     header("Content-Type: application/zip");
@@ -44,7 +44,7 @@ try {
     $asyncResults = $metadataConnection->checkStatus($asyncProcessId);
 
     if (!isset($asyncResults)) {
-        show_error("No results returned for '$asyncProcessId'", false, true);
+        displayError("No results returned for '$asyncProcessId'", false, true);
     }
 
     if (!$asyncResults->done) {
@@ -83,7 +83,7 @@ try {
 
         $zipLink = null;
         if (isset($results->zipFile)) {
-            show_info("Retrieve result ZIP file is ready for download.");
+            displayInfo("Retrieve result ZIP file is ready for download.");
             print "<p/>";
 
             $zipLink = " | <a id='zipLink' href='$_SERVER[PHP_SELF]?asyncProcessId=$asyncResults->id&downloadZip' onclick='undownloadedZip=false;' style='text-decoration:none;'>" .
@@ -101,7 +101,7 @@ try {
         }
     }
 } catch (Exception $e) {
-    show_error($e->getMessage(), false, true);
+    displayError($e->getMessage(), false, true);
 }
 ?>
 <script>

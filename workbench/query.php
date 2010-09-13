@@ -66,43 +66,43 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
 if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
     require_once 'header.php';
     //    $queryRequest->setExportTo('screen');
-    show_query_form($queryRequest);
+    displayQueryForm($queryRequest);
     $queryTimeStart = microtime(true);
     $records = query(null,'QueryMore',$_SESSION['queryLocator']);
     $queryTimeEnd = microtime(true);
     $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
-    show_query_result($records,$queryTimeElapsed,$queryRequest);
+    displayQueryResults($records,$queryTimeElapsed,$queryRequest);
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && ($queryRequest->getExportTo() == 'screen' || $queryRequest->getExportTo() == 'matrix')) {
     require_once 'header.php';
-    show_query_form($queryRequest);
+    displayQueryForm($queryRequest);
     if ($queryRequest->getExportTo() == 'matrix' && ($queryRequest->getMatrixCols() == "" || $queryRequest->getMatrixRows() == "")) {
-        show_warnings("Both column and row must be specified for Matrix view.", false, true);
+        displayWarning("Both column and row must be specified for Matrix view.", false, true);
         return;
     }
     $queryTimeStart = microtime(true);
     $records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction());
     $queryTimeEnd = microtime(true);
     $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
-    show_query_result($records,$queryTimeElapsed,$queryRequest);
+    displayQueryResults($records,$queryTimeElapsed,$queryRequest);
     include_once 'footer.php';
 } elseif (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
     if (!substr_count($_POST['soql_query'],"count()")) {
         $records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction(),null,true);
-        export_query_csv($records,$queryRequest->getExportTo());
+        exportQueryAsCsv($records,$queryRequest->getExportTo());
     } else {
         require_once 'header.php';
-        show_query_form($queryRequest);
+        displayQueryForm($queryRequest);
         print "</form>"; //could include inside because if IE page loading bug
         print "<p>&nbsp;</p>";
-        show_error("count() is not supported for CSV file export. Change export to Browser or choose fields and try again.");
+        displayError("count() is not supported for CSV file export. Change export to Browser or choose fields and try again.");
         include_once 'footer.php';
     }
 } else {
     require_once 'header.php';
     if ($queryRequest->getExportTo() == null) $queryRequest->setExportTo('screen');
     $queryRequest->setQueryAction('Query');
-    show_query_form($queryRequest);
+    displayQueryForm($queryRequest);
     print "</form>"; //could include inside because if IE page loading bug
     include_once 'footer.php';
 }
@@ -111,7 +111,7 @@ if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
 
 //Show the main SOQL query form with default query or last submitted query and export action (screen or CSV)
 
-function show_query_form($queryRequest) {
+function displayQueryForm($queryRequest) {
 
     if ($queryRequest->getObject()) {
         $describeSObjectResult = describeSObject($queryRequest->getObject(), true);
@@ -121,7 +121,7 @@ function show_query_form($queryRequest) {
             $fieldValuesToLabels[$field->name] = $field->name;
         }
     } else {
-        show_info('First choose an object to use the SOQL builder wizard.');
+        displayInfo('First choose an object to use the SOQL builder wizard.');
     }
 
     print "<script>\n";
@@ -264,7 +264,7 @@ function arrayContains(haystack, needle) {
     return false;
 }
 
-function build_query() {
+function buildQuery() {
     toggleFieldDisabled();
     var QB_object_sel = document.getElementById('QB_object_sel').value;
     var QB_field_sel = document.getElementById('QB_field_sel');
@@ -368,7 +368,7 @@ function build_query() {
 function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue) {
     //build the row inner html
     var row = filterRowNum == 0 ? "<br/>Filter results by:<br/>" : "" ;
-    row +=     "<select id='QB_filter_field_" + filterRowNum + "' name='QB_filter_field_" + filterRowNum + "' style='width: 16em;' onChange='build_query();' onkeyup='build_query();'>" +
+    row +=     "<select id='QB_filter_field_" + filterRowNum + "' name='QB_filter_field_" + filterRowNum + "' style='width: 16em;' onChange='buildQuery();' onkeyup='buildQuery();'>" +
             "<option value=''></option>";
     
     for (var field in field_type_array) {
@@ -379,7 +379,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
     
     row += "</select>&nbsp;" +
             "" +
-            "<select id='QB_filter_compOper_" + filterRowNum + "' name='QB_filter_compOper_" + filterRowNum + "' style='width: 6em;' onChange='build_query();' onkeyup='build_query();'>";
+            "<select id='QB_filter_compOper_" + filterRowNum + "' name='QB_filter_compOper_" + filterRowNum + "' style='width: 6em;' onChange='buildQuery();' onkeyup='buildQuery();'>";
 
     for (var opKey in compOper_array) {
         row += "<option value='" + opKey + "'";
@@ -389,7 +389,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
     
     defaultValue = defaultValue != null ? defaultValue : "";
     row +=  "</select>&nbsp;" +
-            "<input type='text' id='QB_filter_value_" + filterRowNum + "' size='31' name='QB_filter_value_" + filterRowNum + "' value='" + defaultValue + "' onkeyup='build_query();' />";
+            "<input type='text' id='QB_filter_value_" + filterRowNum + "' size='31' name='QB_filter_value_" + filterRowNum + "' value='" + defaultValue + "' onkeyup='buildQuery();' />";
             
 
     //add to the DOM
@@ -426,13 +426,13 @@ function toggleMatrixSortSelectors(hasChanged) {
         document.getElementById('matrix_selection_row').style.display = '';
         document.getElementById('QB_field_sel').size += 4;
         
-        if(hasChanged) build_query();
+        if(hasChanged) buildQuery();
     } else if (document.getElementById('matrix_selection_headers').style.display == '') {
         document.getElementById('matrix_selection_headers').style.display = 'none';
         document.getElementById('matrix_selection_row').style.display = 'none';
         document.getElementById('QB_field_sel').size -= 4;
         
-        if(hasChanged) build_query();
+        if(hasChanged) buildQuery();
     }
     
     //don't do anything if moving from screen to csv
@@ -455,7 +455,7 @@ QUERY_BUILDER_SCRIPT;
 
         printObjectSelection($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
 
-        print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='build_query();'>\n";
+        print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='buildQuery();'>\n";
         if (isset($describeSObjectResult)) {
 
             print   " <option value='count()'";
@@ -510,15 +510,15 @@ QUERY_BUILDER_SCRIPT;
         print "<table id='QB_right_sub_table' border='0' align='right' style='width:100%'>\n";
 
         print "<tr id='matrix_selection_headers' style='display: none;'><td><br/>Columns:</td> <td><br/>Rows:</td> <td>&nbsp;</td></tr>\n";
-        print "<tr id='matrix_selection_row' style='display: none;'><td><select id='matrix_cols' name='matrix_cols' style='width: 15em;' onChange='toggleFieldDisabled();build_query();' onkeyup='toggleFieldDisabled();build_query();'>";
+        print "<tr id='matrix_selection_row' style='display: none;'><td><select id='matrix_cols' name='matrix_cols' style='width: 15em;' onChange='toggleFieldDisabled();buildQuery();' onkeyup='toggleFieldDisabled();buildQuery();'>";
         if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixCols());
-        print "</select></td> <td><select id='matrix_rows' name='matrix_rows' style='width: 15em;' onChange='toggleFieldDisabled();build_query();' onkeyup='toggleFieldDisabled();build_query();'>";
+        print "</select></td> <td><select id='matrix_rows' name='matrix_rows' style='width: 15em;' onChange='toggleFieldDisabled();buildQuery();' onkeyup='toggleFieldDisabled();buildQuery();'>";
         if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixRows());
         print "</select></td> <td><img onmouseover=\"Tip('Matrix view groups records into columns and rows of common field values.')\" align='absmiddle' src='images/help16.png'/></td></tr>\n";
 
         print "<tr id='sort_selection_headers'><td colspan='2'><br/>Sort results by:</td> <td><br/>Max Records:</td></tr>\n";
         print "<tr id='sort_selection_row'>";
-        print "<td colspan='2'><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='build_query();'>\n";
+        print "<td colspan='2'><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='buildQuery();'>\n";
         print "<option value=''></option>\n";
         if (isset($describeSObjectResult)) {
             foreach ($describeSObjectResult->fields as $fields => $field) {
@@ -534,7 +534,7 @@ QUERY_BUILDER_SCRIPT;
         'DESC' => 'Z to A'
         );
 
-        print "<select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='build_query();' onkeyup='build_query();'>\n";
+        print "<select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='buildQuery();' onkeyup='buildQuery();'>\n";
         foreach ($qBOrderbySortOptions as $opKey => $op) {
             print "<option value='$opKey'";
             if (isset($_POST['QB_orderby_sort']) && $opKey == $_POST['QB_orderby_sort']) print " selected='selected' ";
@@ -546,7 +546,7 @@ QUERY_BUILDER_SCRIPT;
     'FIRST' => 'Nulls First',
     'LAST' => 'Nulls Last'
     );
-    print "<select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='build_query();' onkeyup='build_query();'>\n";
+    print "<select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='buildQuery();' onkeyup='buildQuery();'>\n";
     foreach ($qBNullsOptions as $opKey => $op) {
         print "<option value='$opKey'";
         if ($queryRequest->getOrderByNulls() != null && $opKey == $queryRequest->getOrderByNulls()) print " selected='selected' ";
@@ -554,7 +554,7 @@ QUERY_BUILDER_SCRIPT;
     }
     print "</select></td>\n";
 
-    print "<td><input type='text' id='QB_limit_txt' size='10' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() != null ? $queryRequest->getLimit() : null,ENT_QUOTES,'UTF-8') . "' onkeyup='build_query();' /></td>\n";
+    print "<td><input type='text' id='QB_limit_txt' size='10' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() != null ? $queryRequest->getLimit() : null,ENT_QUOTES,'UTF-8') . "' onkeyup='buildQuery();' /></td>\n";
 
     print "</tr>\n";
 
@@ -620,7 +620,7 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
         if (substr_count($soqlQuery,"count()") && $suppressScreenOutput == false) {
             $countString = "Query would return " . $queryResponse->size . " record";
             $countString .= ($queryResponse->size == 1) ? "." : "s.";
-            show_info($countString);
+            displayInfo($countString);
             $records = $queryResponse->size;
             include_once 'footer.php';
             exit;
@@ -659,7 +659,7 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
 
     } catch (Exception $e) {
         print "<p><a name='qr'>&nbsp;</a></p>";
-        show_error($e->getMessage(),true,true);
+        displayError($e->getMessage(),true,true);
     }
 }
 
@@ -755,7 +755,7 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
     }
 
     if (count($allColNames) == 0 || count($allRowNames) == 0) {
-        show_warnings("No records match matrix column and row selections.", false, true);
+        displayWarning("No records match matrix column and row selections.", false, true);
         return;
     }
 
@@ -847,7 +847,7 @@ function createQueryResultTable($records) {
 
 
 //If the user selects to display the form on screen, they are routed to this function
-function show_query_result($records, $queryTimeElapsed, QueryRequest $queryRequest) {
+function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryRequest) {
 
     //Check if records were returned
     if ($records) {
@@ -887,18 +887,18 @@ function show_query_result($records, $queryTimeElapsed, QueryRequest $queryReque
             print    "</form></div>\n";
         } catch (Exception $e) {
             print "<p />";
-            show_error($e->getMessage(), false, true);
+            displayError($e->getMessage(), false, true);
         }
     } else {
         print "<p><a name='qr'>&nbsp;</a></p>";
-        show_warnings("Sorry, no records returned.");
+        displayWarning("Sorry, no records returned.");
     }
     include_once 'footer.php';
 }
 
 
 //Export the above query to a CSV file
-function export_query_csv($records,$queryAction) {
+function exportQueryAsCsv($records,$queryAction) {
     if ($records) {
         try {
             $csvFile = fopen('php://output','w') or die("Error opening php://output");
@@ -918,15 +918,15 @@ function export_query_csv($records,$queryAction) {
 
         } catch (Exception $e) {
             require_once("header.php");
-            show_query_form(new QueryRequest($_POST),'csv',$queryAction);
+            displayQueryForm(new QueryRequest($_POST),'csv',$queryAction);
             print "<p />";
-            show_error($e->getMessage(),false,true);
+            displayError($e->getMessage(),false,true);
         }
     } else {
         require_once("header.php");
-        show_query_form(new QueryRequest($_POST),'csv',$queryAction);
+        displayQueryForm(new QueryRequest($_POST),'csv',$queryAction);
         print "<p />";
-        show_warnings("No records returned for CSV output.",false,true);
+        displayWarning("No records returned for CSV output.",false,true);
     }
 }
 

@@ -20,7 +20,7 @@ if (isset($_REQUEST['previousVersion'])) {
             $_SESSION['wsdl'] = 'soapclient/sforce.' . str_replace('.', '', $_REQUEST['previousVersion']) . '.partner.wsdl';
             header("Location: $_SERVER[PHP_SELF]?UNSUPPORTED_API_VERSION");
         }
-        show_error($e->getMessage(),true,true);
+        displayError($e->getMessage(),true,true);
         exit;
     }
 }
@@ -47,7 +47,7 @@ print "</select>";
 
 if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
     print "<div style='margin-top: 3em;'>";
-    show_error("Selected API version is not supported by this Salesforce organization. Automatically reverted to prior version.",false,false);
+    displayError("Selected API version is not supported by this Salesforce organization. Automatically reverted to prior version.",false,false);
     print "<p/>";
 } else {
     print "<div>";
@@ -90,7 +90,7 @@ if (apiVersionIsAtLeast(10.0)) {
 
 if (count($errors) > 0) {
     print "<p>&nbsp;</p>";
-    show_error($errors);
+    displayError($errors);
     print "</p>";
 }
 

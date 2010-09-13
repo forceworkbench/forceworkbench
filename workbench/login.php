@@ -52,14 +52,14 @@ if ((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])) {
     $sid      = isset($_GET['sid'])      ? $_GET['sid']      : null;
     $startUrl = isset($_GET['startUrl']) ? $_GET['startUrl'] : "select.php";
     //error handling for these (so users can't set all three
-    //is already done in the process_Login() function
+    //is already done in the processLogin() function
     //as it applies to both ui and auto-login
 
     //make sure the user isn't setting invalid combinations of query params
     if (isset($_GET['serverUrl']) && isset($_GET['inst']) && isset($_GET['api'])) {
 
         //display UI login page with error.
-        display_login("Invalid auto-login parameters. Must set either serverUrl OR inst and/or api.");
+        displayLogin("Invalid auto-login parameters. Must set either serverUrl OR inst and/or api.");
 
     } else if (isset($_GET['serverUrl']) && !(isset($_GET['inst'])  || isset($_GET['api'])) ) {
 
@@ -72,7 +72,7 @@ if ((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])) {
     }
 
     $_REQUEST['autoLogin'] = 1;
-    process_Login($un, $pw, $serverUrl, $sid, $startUrl);
+    processLogin($un, $pw, $serverUrl, $sid, $startUrl);
 }
 
 if (isset($_POST['login_type'])) {
@@ -88,15 +88,15 @@ if (isset($_POST['login_type'])) {
         );
     }
 } else {
-    display_login(null);
+    displayLogin(null);
 }
 
-function display_login($errors) {
+function displayLogin($errors) {
     require_once 'header.php';
 
     //Displays errors if there are any
     if (isset($errors)) {
-        show_error($errors, false, true);
+        displayError($errors, false, true);
     }
 
     $isRemembered = "";
@@ -144,7 +144,7 @@ function fuzzyServerUrlSelect() {
         var instVal = instNumDomainMap[instNum];
         if (instVal != null) {
             document.getElementById('inst').value = instVal;
-            build_location();
+            buildLocation();
         }
     }
 }
@@ -167,7 +167,7 @@ function toggleUsernamePasswordSessionDisabled() {
 }
 
 
-function form_become_adv() {
+function toggleLoginFormToAdv() {
     document.getElementById('login_std').style.display='none';
     document.getElementById('login_adv').style.display='inline';
     
@@ -178,7 +178,7 @@ function form_become_adv() {
     }
 }
 
-function form_become_std() {
+function toggleLoginFormToStd() {
     document.getElementById('login_std').style.display='inline';
     document.getElementById('login_adv').style.display='none';
     
@@ -189,7 +189,7 @@ function form_become_std() {
     }
 }
 
-function build_location() {
+function buildLocation() {
     var inst = document.getElementById('inst').value;
     var endp = document.getElementById('endp').value;
     document.getElementById('serverUrl').value = 'http' + ($useHTTPS && (inst.search(/localhost/i) == -1) ? 's' : '') + '://' + inst + '.salesforce.com/services/Soap/u/' + endp;
@@ -249,8 +249,8 @@ function checkCaps( pwcapsDivId, e ) {
 <div id='login_block'>
     <form id='login_form' action='$_SERVER[PHP_SELF]' method='post'>
         <div id='login_become_select' style='text-align: right;'>
-            <input type='radio' id='login_become_std' name='login_type' value='std' onClick='form_become_std();' checked='true' /><label for='login_become_std'>Standard</label>
-            <input type='radio' id='login_become_adv' name='login_type' value='adv' onClick='form_become_adv();' /><label for='login_become_adv'>Advanced</label>
+            <input type='radio' id='login_become_std' name='login_type' value='std' onClick='toggleLoginFormToStd();' checked='true' /><label for='login_become_std'>Standard</label>
+            <input type='radio' id='login_become_adv' name='login_type' value='adv' onClick='toggleLoginFormToAdv();' /><label for='login_become_adv'>Advanced</label>
         </div>
 
         <div id='login_std'>
@@ -285,7 +285,7 @@ LOGIN_FORM;
 LOGIN_FORM_PART_2;
 
     //instance
-    print "<select name='inst' id='inst' onChange='build_location();' onkeyup='build_location();'>";
+    print "<select name='inst' id='inst' onChange='buildLocation();' onkeyup='buildLocation();'>";
     $instanceNames = array();
     foreach ($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo) {
         $instanceNames[$subdomain] = $instInfo[0];
@@ -294,7 +294,7 @@ LOGIN_FORM_PART_2;
     print "</select>&nbsp;";
 
     //endpoint
-    print "<select name='endp' id='endp' onChange='build_location();' onkeyup='build_location();'>";
+    print "<select name='endp' id='endp' onChange='buildLocation();' onkeyup='buildLocation();'>";
     printSelectOptions($GLOBALS['config']['defaultApiVersion']['valuesToLabels'],$_SESSION['config']['defaultApiVersion']);
     print "</select></p>";
 
@@ -323,7 +323,7 @@ LOGIN_FORM_PART_2;
     (isset($_SESSION['config']['defaultLoginType']) && $_SESSION['config']['defaultLoginType']=='Advanced')) {
         print "<script>
                 document.getElementById('login_become_adv').checked=true; 
-                form_become_adv(); 
+                toggleLoginFormToAdv(); 
             </script>";
 
     }
@@ -343,7 +343,7 @@ LOGIN_FORM_PART_2;
 } //end display_form()
 
 
-function process_Login($username, $password, $serverUrl, $sessionId, $actionJump) {
+function processLogin($username, $password, $serverUrl, $sessionId, $actionJump) {
     $username = htmlspecialchars(trim($username));
     $password = htmlspecialchars(trim($password));
     $serverUrl = htmlspecialchars(trim($serverUrl));
@@ -355,7 +355,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
     if ($username && $password && $sessionId) {
         $errors = null;
         $errors = 'Provide only username and password OR session id, but not all three.';
-        display_login($errors);
+        displayLogin($errors);
         exit;
     }
 
@@ -375,9 +375,9 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
         //block connections to localhost
         if (stripos($serverUrl,'localhost')) {
             if (isset($GLOBALS['internal']['localhostLoginError'])) {
-                display_login($GLOBALS['internal']['localhostLoginError'],false,true);
+                displayLogin($GLOBALS['internal']['localhostLoginError'],false,true);
             } else {
-                display_login("Must not connect to 'localhost'",false,true);
+                displayLogin("Must not connect to 'localhost'",false,true);
             }
             exit;
         }
@@ -385,7 +385,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
         if (preg_match('!/(\d{1,2})\.(\d)!',$serverUrl,$serverUrlMatches) && $serverUrlMatches[1] >= 8) {
             $wsdl = 'soapclient/sforce.' . $serverUrlMatches[1] . $serverUrlMatches[2] . '.partner.wsdl';
         } else {
-            display_login("Could not find WSDL for this API version. Please try logging in again.");
+            displayLogin("Could not find WSDL for this API version. Please try logging in again.");
         }
 
         $partnerConnection = (getConfig('mockClients') ? new SforceMockPartnerClient() : new SforcePartnerClient());
@@ -416,7 +416,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
             $partnerConnection->login($username, $password);
         } elseif ($sessionId && $serverUrl && !($username && $password)) {
             if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
-                display_login('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. Choose your specific Salesforce instance on the QuickSelect menu when using a session id; otherwise, provide a username and password and choose the appropriate a login server.');
+                displayLogin('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. Choose your specific Salesforce instance on the QuickSelect menu when using a session id; otherwise, provide a username and password and choose the appropriate a login server.');
                 exit;
             }
 
@@ -426,9 +426,9 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
 
         if (stripos($partnerConnection->getLocation(),'localhost')) {
             if (isset($GLOBALS['internal']['localhostLoginRedirectError'])) {
-                display_login($GLOBALS['internal']['localhostLoginRedirectError'],false,true);
+                displayLogin($GLOBALS['internal']['localhostLoginRedirectError'],false,true);
             } else {
-                display_login("Must not connect to 'localhost'",false,true);
+                displayLogin("Must not connect to 'localhost'",false,true);
             }
             exit;
         }
@@ -462,7 +462,7 @@ function process_Login($username, $password, $serverUrl, $sessionId, $actionJump
     } catch (Exception $e) {
         $errors = null;
         $errors = $e->getMessage();
-        display_login($errors);
+        displayLogin($errors);
         exit;
     }
 

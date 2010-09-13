@@ -3,7 +3,7 @@ require_once 'soapclient/SforceMetadataClient.php';
 require_once 'session.php';
 require_once 'shared.php';
 if (!apiVersionIsAtLeast(10.0)) {
-    show_error("Metadata API not supported prior to version 10.0", true, true);
+    displayError("Metadata API not supported prior to version 10.0", true, true);
     exit;
 }
 
@@ -11,7 +11,7 @@ if (isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
     $retrieveRequestId = htmlentities($_POST["retrieveRequestId"]);
 
     if (!isset($_SESSION[$retrieveRequestId])) {
-        show_error("No retrieve request found. To re-retrieve, create a new retrieve request.", true, true);
+        displayError("No retrieve request found. To re-retrieve, create a new retrieve request.", true, true);
         exit;
     }
 
@@ -20,21 +20,21 @@ if (isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
         $retrieveAsyncResults = $metadataConnection->retrieve($_SESSION[$retrieveRequestId]);
 
         if (!isset($retrieveAsyncResults->id)) {
-            show_error("Unknown retrieval error.\n" . isset($retrieveAsyncResults->message) ? $retrieveAsyncResults->message : "", true, true);
+            displayError("Unknown retrieval error.\n" . isset($retrieveAsyncResults->message) ? $retrieveAsyncResults->message : "", true, true);
             exit;
         }
 
         unset($_SESSION[$retrieveRequestId]);
         header("Location: metadataStatus.php?asyncProcessId=" . $retrieveAsyncResults->id . "&op=R");
     } catch (Exception $e) {
-        show_error($e->getMessage(), true, true);
+        displayError($e->getMessage(), true, true);
         exit;
     }
 }
 
 else if (isset($_POST['stageForRetrieval'])) {
     if (isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] == "" && isset($_POST['packageNames']) && $_POST['packageNames'] == "") {
-        show_error("Must specify at least an unpackaged manifest file or a package name.", true, true);
+        displayError("Must specify at least an unpackaged manifest file or a package name.", true, true);
         exit;
     }
 
@@ -45,12 +45,12 @@ else if (isset($_POST['stageForRetrieval'])) {
     if (isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] != "") {
         $validationErrors = validateUploadedFile($_FILES["packageXmlFile"]);
         if ($validationErrors) {
-            show_error($validationErrors, true, true);
+            displayError($validationErrors, true, true);
             exit;
         }
 
         if ((!stristr($_FILES["packageXmlFile"]['type'],'octet-stream') && !stristr($_FILES["packageXmlFile"]['type'],'xml')) || !stristr($_FILES["packageXmlFile"]['name'],'.xml')) {
-            show_error("The file uploaded is not a valid XML file. Please try again.", true, true);
+            displayError("The file uploaded is not a valid XML file. Please try again.", true, true);
             exit;
         }
 
@@ -65,7 +65,7 @@ else if (isset($_POST['stageForRetrieval'])) {
     $_SESSION[$retrieveRequestId] = $retrieveRequest;
 
     require_once 'header.php';
-    show_info("Successfully staged retrieve request.");
+    displayInfo("Successfully staged retrieve request.");
     ?>
 <p class='instructions'>Confirm the following retrieve request:</p>
     <?php printTree("retrieveRequestTree", processResults($_SESSION[$retrieveRequestId]), true); ?>
@@ -131,7 +131,7 @@ function parseUnpackagedManifest($xmlFile) {
     libxml_use_internal_errors(true);
     $packageXml = simplexml_load_file($xmlFile);
     if (!isset($packageXml) || !$packageXml) {
-        show_error(libxml_get_errors(), true, true);
+        displayError(libxml_get_errors(), true, true);
         libxml_clear_errors();
         exit;
     }

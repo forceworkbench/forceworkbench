@@ -10,18 +10,18 @@ if (isset($_POST['actionJump']) && $_POST['actionJump'] != "") {
     header("Location: $_POST[actionJump]");
 } elseif (isset($_POST['select'])) {
     include_once 'header.php';
-    show_error("Choose an object and an action to which to jump.");
-    show_select_form();
+    displayError("Choose an object and an action to which to jump.");
+    displaySelechForm();
     include_once 'footer.php';
 }
 
 else {
     include_once 'header.php';
-    show_select_form();
+    displaySelechForm();
     include_once 'footer.php';
 }
 
-function show_select_form() {
+function displaySelechForm() {
     ?>
 <script>
     
@@ -74,7 +74,7 @@ function show_select_form() {
             print "<p/><input type='submit' name='select' value='Select' />";
             print "</form>\n";
         } catch (Exception $e) {
-            show_error($e->getMessage(),false,true);
+            displayError($e->getMessage(),false,true);
         }
 
         print "<script>toggleObjectSelectDisabled();</script>";

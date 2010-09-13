@@ -14,7 +14,7 @@ if (isset($_SESSION['resultsWithData'])) {
 
     fclose($csvFile) or die("Error closing php://output");
 } else {
-    show_error("No results found to download.\n\n".
+    displayError("No results found to download.\n\n".
         "Results are not saved after navigating away from results page. ".
         "Ensure that another instance of Workbench is not running in a separate window or tab.", true, true);
 }

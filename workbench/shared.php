@@ -42,7 +42,7 @@ function explodeCommaSeparated($css) {
 
 
 function handleAllExceptions($e) {
-    show_error("UNKNOWN ERROR: " . $e->getMessage(), true, true);
+    displayError("UNKNOWN ERROR: " . $e->getMessage(), true, true);
     exit;
 }
 
@@ -142,12 +142,12 @@ function clearSessionCache() {
     $_SESSION['describeSObjects_results'] = null;
 }
 
-function show_error($errors, $showHeader=false, $showFooter=false) {
+function displayError($errors, $showHeader=false, $showFooter=false) {
     if ($showHeader) {
         include_once("header.php");
         print "<p/>";
     }
-    print "<div class='show_errors'>\n";
+    print "<div class='displayErrors'>\n";
     print "<img src='images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
     if(!is_array($errors)) $errors = array($errors);
 
@@ -169,8 +169,8 @@ function show_error($errors, $showHeader=false, $showFooter=false) {
     }
 }
 
-function show_warnings($warnings) {
-    print "<div class='show_warnings'>\n";
+function displayWarning($warnings) {
+    print "<div class='displayWarning'>\n";
     print "<img src='images/warning24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($warnings)) {
         foreach ($warnings as $warning) {
@@ -183,8 +183,8 @@ function show_warnings($warnings) {
     print "</div>\n";
 }
 
-function show_info($infos) {
-    print "<div class='show_info'>\n";
+function displayInfo($infos) {
+    print "<div class='displayInfo'>\n";
     print "<img src='images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($infos)) {
         foreach ($infos as $info) {
@@ -258,7 +258,7 @@ function describeGlobal($filter1=null, $filter2=null) {
 
             $_SESSION['myGlobal'] = $describeGlobalResponse;
         } catch (Exception $e) {
-            show_error($e->getMessage(),false,true);
+            displayError($e->getMessage(),false,true);
         }
     }
 
@@ -323,7 +323,7 @@ function describeSObject($objectTypes) {
             global $partnerConnection;
             $describeSObjectsResults = $partnerConnection->describeSObjects($objectTypesToRetreive);
         } catch (Exception $e) {
-            show_error($e->getMessage(),false,true);
+            displayError($e->getMessage(),false,true);
         }
 
         if (!is_array($objectTypes)) {
@@ -335,7 +335,7 @@ function describeSObject($objectTypes) {
         }
 
     } else if (count($objectTypesToRetreive) > 100) {
-        show_error("Too many polymorphic object types: " . count($objectTypesToRetreive),false,true);
+        displayError("Too many polymorphic object types: " . count($objectTypesToRetreive),false,true);
     }
 
     // move the describe results to the session cache and then copy all the requested object descriptions from the cache
@@ -446,18 +446,18 @@ function addLinksToUi($startUrl) {
 }
 
 
-function arr_to_csv_line($arr) {
+function convertArrayToCsvLine($arr) {
     $line = array();
     foreach ($arr as $v) {
-        $line[] = is_array($v) ? arr_to_csv_line($v) : '"' . str_replace('"', '""', $v) . '"';
+        $line[] = is_array($v) ? convertArrayToCsvLine($v) : '"' . str_replace('"', '""', $v) . '"';
     }
     return implode(",", $line);
 }
 
-function arr_to_csv($arr) {
+function convertArrayToCsv($arr) {
     $lines = array();
     foreach ($arr as $v) {
-        $lines[] = arr_to_csv_line($v);
+        $lines[] = convertArrayToCsvLine($v);
     }
     return implode("\n", $lines);
 }
@@ -485,7 +485,7 @@ function getAsyncApiConnection() {
  * @param boolean $htmlOutput If the xml should be formatted for display on an html page
  * @return string The beautified xml
  */
-function xml_pretty_printer($xml, $htmlOutput=FALSE)
+function prettyPrintXml($xml, $htmlOutput=FALSE)
 {
     $xmlObj = new SimpleXMLElement($xml);
     $xmlLines = explode("
@@ -608,7 +608,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<hr/>";
 
                 print "<strong>LAST REQUEST</strong>\n";
-                print htmlspecialchars(xml_pretty_printer($partnerConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml($partnerConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE HEADER</strong>\n";
@@ -616,7 +616,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE</strong>\n";
-                print htmlspecialchars(xml_pretty_printer($partnerConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml($partnerConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "</div>";
@@ -638,7 +638,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<hr/>";
 
                 print "<strong>LAST REQUEST</strong>\n";
-                print htmlspecialchars(xml_pretty_printer($metadataConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml($metadataConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE HEADER</strong>\n";
@@ -646,7 +646,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE</strong>\n";
-                print htmlspecialchars(xml_pretty_printer($metadataConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml($metadataConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "</div>";
@@ -668,7 +668,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<hr/>";
 
                 print "<strong>LAST REQUEST</strong>\n";
-                print htmlspecialchars(xml_pretty_printer($apexConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml($apexConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE HEADER</strong>\n";
@@ -676,7 +676,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE</strong>\n";
-                print htmlspecialchars(xml_pretty_printer($apexConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml($apexConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "</div>";

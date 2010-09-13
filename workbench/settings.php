@@ -51,9 +51,9 @@ if (isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])) {
 require_once 'header.php';
 
 if (isset($errors)) {
-    show_error($errors);
+    displayError($errors);
 } else if (isset($_GET['saved'])) {
-    show_info(($_GET['saved'] == "D" ? "Defaults restored" : "Settings saved") . " successfully.");
+    displayInfo(($_GET['saved'] == "D" ? "Defaults restored" : "Settings saved") . " successfully.");
 }
 
 print "<p/><form id='settings_form' method='post' action='$_SERVER[PHP_SELF]'>\n";

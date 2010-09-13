@@ -6,7 +6,7 @@ require_once 'restclient/BulkApiClient.php';
 
 print "<p/>";
 if (!isset($_GET['jobId']) || $_GET['jobId'] == "") {
-    show_error("Parameter 'jobId' must be specified.",false,false);
+    displayError("Parameter 'jobId' must be specified.",false,false);
     print     "<p/>" .
             "<form action='$_SERVER[PHP_SELF]' method='GET'>" . 
             "Job Id: <input type='text' name='jobId'/> &nbsp;" .  
@@ -23,7 +23,7 @@ try {
     $jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);
     $batchInfos = $asyncConnection->getBatchInfos($_GET['jobId']);
 } catch (Exception $e) {
-    show_error($e->getMessage(), false, false);
+    displayError($e->getMessage(), false, false);
     if (stripos($e->getMessage(), 'InvalidVersion') > -1) {
         print "<p/><em>Quick Fix: <a href='sessionInfo.php' target='_blank'>Change API Version</a></em>";
         include_once 'footer.php';
@@ -44,7 +44,7 @@ foreach ($batchInfos as $batchInfo) {
 print "<h3>Job: " . addLinksToUiForIds($jobInfo->getId()) . "</h3>";
 
 if ($jobInfo->getStateMessage() != "") {
-    show_info($jobInfo->getStateMessage());
+    displayInfo($jobInfo->getStateMessage());
     print "<p/>";
 }
 

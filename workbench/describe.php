@@ -8,15 +8,15 @@ require_once 'header.php';
 //Note: The POSTed default object is passed to the SESSION default object
 //in the session.php include
 
-show_describeSObject_form();
+displayDescribeSObjectForm();
 if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']) {
-    show_describeSObject_result();
+    displayDescribeSObjectResults();
 }
 require_once 'footer.php';
 
 
 //Print a form with the global object types to choose for description
-function show_describeSObject_form() {
+function displayDescribeSObjectForm() {
     print "<form name='describeForm' method='POST' action='$_SERVER[PHP_SELF]'>" .
           "<p class='instructions'>Choose an object to describe:</p>\n";
     printObjectSelection($_SESSION['default_object'], 'default_object', 30, "onChange=\"document.getElementById('loadingMessage').style.visibility='visible'; document.describeForm.submit();\"");
@@ -27,13 +27,13 @@ function show_describeSObject_form() {
 
 
 //Print the description of selected/default object type in multiple tables
-function show_describeSObject_result() {
+function displayDescribeSObjectResults() {
     try {
         //Ping Apex API
         $describeSObjectResult = describeSObject($_SESSION['default_object']);
     } catch (Exception $e) {
 
-        show_error($e->getMessage(), false, true);
+        displayError($e->getMessage(), false, true);
     }
 
     if(isset($_SESSION['config']['colorBooleanValues']) && $_SESSION['config']['colorBooleanValues'] ||

@@ -107,8 +107,8 @@ function displayForm($infos=null, $errors=null) {
 </script>
 
     <?php
-    if(isset($infos)) show_info($infos);
-    if(isset($errors)) show_error($errors);
+    if(isset($infos)) displayInfo($infos);
+    if(isset($errors)) displayError($errors);
     ?>
 
 <form name='passwordChange' method='post'

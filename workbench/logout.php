@@ -19,9 +19,9 @@ if ($_SESSION) {
     session_destroy();
     print "<p/>";
     if ($sessionInvatidated == true) {
-        show_info('You have been successfully logged out of Workbench and Salesforce.');
+        displayInfo('You have been successfully logged out of Workbench and Salesforce.');
     } else {
-        show_info('You have been successfully logged out of Workbench.');
+        displayInfo('You have been successfully logged out of Workbench.');
     }
 
     print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\",2000);</script>";

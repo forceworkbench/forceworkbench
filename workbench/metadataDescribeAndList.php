@@ -4,7 +4,7 @@ require_once 'shared.php';
 require_once 'header.php';
 print "<p/>";
 if (!apiVersionIsAtLeast(10.0)) {
-    show_error("Metadata API not supported prior to version 10.0", false, true);
+    displayError("Metadata API not supported prior to version 10.0", false, true);
     exit;
 }
 
@@ -14,7 +14,7 @@ global $metadataConnection;
 try {
     $describeMetadataResult = $metadataConnection->describeMetadata(getApiVersion());
 } catch (Exception $e) {
-    show_error($e->getMessage(), false, true);
+    displayError($e->getMessage(), false, true);
 }
 
 $metadataTypesSelectOptions[""] = "";
@@ -71,7 +71,7 @@ components:</p>
     if (isset($typeString)) {
         if (!isset($metadataTypeMap[$typeString])) {
             if (isset($_REQUEST['type']) && $_REQUEST['type']) {
-                show_error("Invalid metadata type type: $typeString", false, true);
+                displayError("Invalid metadata type type: $typeString", false, true);
             }
             exit;
         }
@@ -114,7 +114,7 @@ components:</p>
 
             return $listMetadataResult;
         } catch (Exception $e) {
-            show_error($e->getMessage(), false, true);
+            displayError($e->getMessage(), false, true);
         }
     }
 

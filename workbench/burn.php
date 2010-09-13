@@ -22,13 +22,13 @@ if (isset($_GET['ajaxBurn'])) {
     if ($burnt > 0) {
         $successMessage = "Burnt " . $burnt . " API call";
         $successMessage .= $burnt > 1 ? 's' : '';
-        show_info($successMessage);
+        displayInfo($successMessage);
     } else {
         $burnErrors = array_merge(array("No API calls were burnt."),$burnErrors);
     }
 
     if (is_array($burnErrors) && count($burnErrors)>0) {
-        show_error($burnErrors);
+        displayError($burnErrors);
     }
 
     exit;
@@ -94,8 +94,8 @@ function ajaxBurn() {
 </script>
 
 <?php
-if(isset($infos)) show_info($infos);
-if(isset($errors)) show_error($errors);
+if(isset($infos)) displayInfo($infos);
+if(isset($errors)) displayError($errors);
 ?>
 <p />
 <form name='afterburner'>

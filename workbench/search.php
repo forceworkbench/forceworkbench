@@ -57,16 +57,16 @@ if (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST
 // just display the blank form.
 if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
     require_once 'header.php';
-    show_search_form($searchRequest);
+    displaySearchForm($searchRequest);
     $searchTimeStart = microtime(true);
     $records = search($searchRequest);
     $searchTimeEnd = microtime(true);
     $searchTimeElapsed = $searchTimeEnd - $searchTimeStart;
-    show_search_result($records,$searchTimeElapsed);
+    displatSearchResult($records,$searchTimeElapsed);
     include_once 'footer.php';
 } else {
     require_once 'header.php';
-    show_search_form($searchRequest);
+    displaySearchForm($searchRequest);
     include_once 'footer.php';
 }
 
@@ -74,7 +74,7 @@ if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
 
 //Show the main SOSL search form with default search or last submitted search and export action (screen or CSV)
 
-function show_search_form($searchRequest) {
+function displaySearchForm($searchRequest) {
 
 
     print "<script>\n";
@@ -138,7 +138,7 @@ function toggleFieldDisabled() {
     }
 }
 
-function build_search() {
+function buildSearch() {
     toggleFieldDisabled();
     
     var searchString = 'FIND {' + document.getElementById('SB_searchString').value + '}';
@@ -179,7 +179,7 @@ function addReturningObjectRow(rowNum, defaultObject, defaultFields) {
     //build the row inner html
     var row = "";
     
-    row +=     "<select id='SB_objSelect_" + rowNum + "' name='SB_objSelect_" + rowNum + "' style='width: 20em;' onChange='build_search();' onkeyup='build_search();'>" +
+    row +=     "<select id='SB_objSelect_" + rowNum + "' name='SB_objSelect_" + rowNum + "' style='width: 20em;' onChange='buildSearch();' onkeyup='buildSearch();'>" +
             "<option value=''></option>";
     
     for (var obj in searchable_objects) {
@@ -190,7 +190,7 @@ function addReturningObjectRow(rowNum, defaultObject, defaultFields) {
     
     defaultFields = defaultFields != null ? defaultFields : "";
     row +=  "</select>&nbsp;" +
-            "<input type='text' id='SB_objDetail_" + rowNum + "' size='51' name='SB_objDetail_" + rowNum + "' value='" + defaultFields + "' onkeyup='build_search();' />";
+            "<input type='text' id='SB_objDetail_" + rowNum + "' size='51' name='SB_objDetail_" + rowNum + "' value='" + defaultFields + "' onkeyup='buildSearch();' />";
             
 
     //add to the DOM
@@ -236,7 +236,7 @@ SEARCH_BUILDER_SCRIPT;
     print "<p class='instructions'>Enter a search string and optionally select the objects and fields to return to build a SOSL search below:</p>\n";
     print "<table id='search_form_table' border='0' width='1'>\n<tr>\n";
 
-    print "<td NOWRAP>Search for </td><td NOWRAP colspan='2'><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . htmlspecialchars($searchRequest->getSearchString(),ENT_QUOTES,'UTF-8') . "\" size='37' onKeyUp='build_search();' /> in ";
+    print "<td NOWRAP>Search for </td><td NOWRAP colspan='2'><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . htmlspecialchars($searchRequest->getSearchString(),ENT_QUOTES,'UTF-8') . "\" size='37' onKeyUp='buildSearch();' /> in ";
 
     $fieldTypeSelectOptions = array(
         'ALL FIELDS' => 'All Fields',
@@ -244,7 +244,7 @@ SEARCH_BUILDER_SCRIPT;
         'PHONE FIELDS' => 'Phone Fields',
         'EMAIL FIELDS' => 'Email Fields'            
         );
-        print "<select id='SB_fieldTypeSelect' name='SB_fieldTypeSelect' onChange='build_search();' onkeyup='build_search();'>\n";
+        print "<select id='SB_fieldTypeSelect' name='SB_fieldTypeSelect' onChange='buildSearch();' onkeyup='buildSearch();'>\n";
         foreach ($fieldTypeSelectOptions as $opKey => $op) {
             print "<option value='$opKey'";
             if ($opKey == $searchRequest->getFieldType()) print " selected='selected' ";
@@ -252,7 +252,7 @@ SEARCH_BUILDER_SCRIPT;
         }
         print "</select>";
 
-        print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . htmlspecialchars($searchRequest->getLimit(),ENT_QUOTES,'UTF-8') . "' size='5' onKeyUp='build_search();' /> maximum records</td></tr>\n";
+        print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . htmlspecialchars($searchRequest->getLimit(),ENT_QUOTES,'UTF-8') . "' size='5' onKeyUp='buildSearch();' /> maximum records</td></tr>\n";
 
         print "<tr id='sosl_search_textarea_row'><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
         "<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='100' rows='" . $_SESSION['config']['textareaRows'] . "' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($searchRequest->getSoslSearch(),ENT_QUOTES,'UTF-8') . "</textarea>" .
@@ -313,13 +313,13 @@ function search($searchRequest) {
         return $records;
 
     } catch (Exception $e) {
-        show_error($e->getMessage(),false, true);
+        displayError($e->getMessage(),false, true);
     }
 }
 
 
 //If the user selects to display the form on screen, they are routed to this function
-function show_search_result($records, $searchTimeElapsed) {
+function displatSearchResult($records, $searchTimeElapsed) {
     //Check if records were returned
     if ($records) {
         try {
@@ -393,11 +393,11 @@ function show_search_result($records, $searchTimeElapsed) {
             $errors = null;
             $errors = $e->getMessage();
             print "<p />";
-            show_error($errors,false,true);
+            displayError($errors,false,true);
         }
     } else {
         print "<p><a name='sr'>&nbsp;</a></p>";
-        show_error("Sorry, no records returned.");
+        displayError("Sorry, no records returned.");
     }
     include_once 'footer.php';
 }

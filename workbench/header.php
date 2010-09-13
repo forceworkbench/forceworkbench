@@ -97,7 +97,7 @@ print "</tr></table>";
 
 if (isset($errors)) {
     print "<p/>";
-    show_error($errors, false, true);
+    displayError($errors, false, true);
 }
 
 ?>
