@@ -467,8 +467,5 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
     }
 
 }
-
-
-
 ?>
 

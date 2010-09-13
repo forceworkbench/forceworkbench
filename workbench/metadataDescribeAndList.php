@@ -67,82 +67,82 @@ components:</p>
 </form>
 <p />
 
-    <?php
-    if (isset($typeString)) {
-        if (!isset($metadataTypeMap[$typeString])) {
-            if (isset($_REQUEST['type']) && $_REQUEST['type']) {
-                displayError("Invalid metadata type type: $typeString", false, true);
-            }
-            exit;
+<?php
+if (isset($typeString)) {
+    if (!isset($metadataTypeMap[$typeString])) {
+        if (isset($_REQUEST['type']) && $_REQUEST['type']) {
+            displayError("Invalid metadata type type: $typeString", false, true);
         }
-        $type = $metadataTypeMap[$typeString];
-        $_SESSION['defaultMetadataType'] = $typeString;
+        exit;
+    }
+    $type = $metadataTypeMap[$typeString];
+    $_SESSION['defaultMetadataType'] = $typeString;
 
-        $metadataComponents = listMetadata($type);
+    $metadataComponents = listMetadata($type);
 
-        printTree("listMetadataTree", array("Type Description"=>$type, "Components"=>$metadataComponents), $typeStringChanged);
+    printTree("listMetadataTree", array("Type Description"=>$type, "Components"=>$metadataComponents), $typeStringChanged);
+}
+
+require_once 'footer.php';
+
+
+function listMetadata($type) {
+    global $metadataConnection;
+    global $partnerConnection;
+
+    try {
+        if (isset($type->childXmlName)) {
+            return processListMetadataResult($metadataConnection->listMetadata($type->childXmlName, null, getApiVersion()));
+        }
+
+        if (!$type->inFolder) {
+            return processListMetadataResult($metadataConnection->listMetadata($type->xmlName, null, getApiVersion()));
+        }
+
+        $folderQueryResult = $partnerConnection->query("SELECT DeveloperName FROM Folder WHERE Type = '" . $type->xmlName . "' AND DeveloperName != null AND NamespacePrefix = null");
+
+        if ($folderQueryResult->size == 0) {
+            return array();
+        }
+
+        foreach ($folderQueryResult->records as $folderRecord) {
+            $folder = new SObject($folderRecord);
+            $folderName = $folder->fields->DeveloperName;
+
+            $listMetadataResult["$folderName"] = processListMetadataResult($metadataConnection->listMetadata($type->xmlName, $folder->fields->DeveloperName, getApiVersion()));
+        }
+
+        return $listMetadataResult;
+    } catch (Exception $e) {
+        displayError($e->getMessage(), false, true);
+    }
+}
+
+function processListMetadataResult($response) {
+    if (!is_array($response)) {
+        $response = array($response);
     }
 
-    require_once 'footer.php';
+    $processedResponse = array();
+    foreach ($response as $responseKey => $responseValue) {
+        if ($responseValue == null) {
+            continue;
+        }
 
-
-    function listMetadata($type) {
-        global $metadataConnection;
-        global $partnerConnection;
-
-        try {
-            if (isset($type->childXmlName)) {
-                return processListMetadataResult($metadataConnection->listMetadata($type->childXmlName, null, getApiVersion()));
-            }
-
-            if (!$type->inFolder) {
-                return processListMetadataResult($metadataConnection->listMetadata($type->xmlName, null, getApiVersion()));
-            }
-
-            $folderQueryResult = $partnerConnection->query("SELECT DeveloperName FROM Folder WHERE Type = '" . $type->xmlName . "' AND DeveloperName != null AND NamespacePrefix = null");
-
-            if ($folderQueryResult->size == 0) {
-                return array();
-            }
-
-            foreach ($folderQueryResult->records as $folderRecord) {
-                $folder = new SObject($folderRecord);
-                $folderName = $folder->fields->DeveloperName;
-
-                $listMetadataResult["$folderName"] = processListMetadataResult($metadataConnection->listMetadata($type->xmlName, $folder->fields->DeveloperName, getApiVersion()));
-            }
-
-            return $listMetadataResult;
-        } catch (Exception $e) {
-            displayError($e->getMessage(), false, true);
+        $name = isset($responseValue->fullName) ? $responseValue->fullName : $responseValue->fileName;
+        if (strrchr($name, "/")) {
+            $simpleName = substr(strrchr($name, "/"), 1);
+            $processedResponse[$simpleName] = $responseValue;
+        } else if (strpos($name, ".")) {
+            $parentName = substr($name, 0, strpos($name, "."));
+            $childName = substr($name, strpos($name, ".") + 1);
+            $processedResponse[$parentName][$childName] = $responseValue;
+        } else {
+            $processedResponse[$name] = $responseValue;
         }
     }
+    $processedResponse = natcaseksort($processedResponse);
 
-    function processListMetadataResult($response) {
-        if (!is_array($response)) {
-            $response = array($response);
-        }
-
-        $processedResponse = array();
-        foreach ($response as $responseKey => $responseValue) {
-            if ($responseValue == null) {
-                continue;
-            }
-
-            $name = isset($responseValue->fullName) ? $responseValue->fullName : $responseValue->fileName;
-            if (strrchr($name, "/")) {
-                $simpleName = substr(strrchr($name, "/"), 1);
-                $processedResponse[$simpleName] = $responseValue;
-            } else if (strpos($name, ".")) {
-                $parentName = substr($name, 0, strpos($name, "."));
-                $childName = substr($name, strpos($name, ".") + 1);
-                $processedResponse[$parentName][$childName] = $responseValue;
-            } else {
-                $processedResponse[$name] = $responseValue;
-            }
-        }
-        $processedResponse = natcaseksort($processedResponse);
-
-        return $processedResponse;
-    }
-    ?>
+    return $processedResponse;
+}
+?>

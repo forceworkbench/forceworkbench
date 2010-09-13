@@ -62,61 +62,60 @@ if (isset($_POST['execute'])) {
 </script>
 
 
-            <?php
-            if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != "") {
-                print "<h2>Results</h2>";
+<?php
+if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != "") {
+    print "<h2>Results</h2>";
 
-                $apexConnection = new SforceApexClient($_POST['LogCategory'],$_POST['LogCategoryLevel']);
+    $apexConnection = new SforceApexClient($_POST['LogCategory'],$_POST['LogCategoryLevel']);
 
-                try {
-                    $executeAnonymousResultWithDebugLog = $apexConnection->executeAnonymous($_POST['scriptInput']);
-                } catch(Exception $e) {
-                    displayError($e->getMessage(),false,true);
-                }
+    try {
+        $executeAnonymousResultWithDebugLog = $apexConnection->executeAnonymous($_POST['scriptInput']);
+    } catch(Exception $e) {
+        displayError($e->getMessage(),false,true);
+    }
 
-                if ($executeAnonymousResultWithDebugLog->executeAnonymousResult->success) {
-                    if (isset($executeAnonymousResultWithDebugLog->debugLog) && $executeAnonymousResultWithDebugLog->debugLog != "") {
-                        print("<pre>" . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
-                    } else {
-                        displayInfo("Execution was successful, but returned no results. Confirm log category and level.");
-                    }
+    if ($executeAnonymousResultWithDebugLog->executeAnonymousResult->success) {
+        if (isset($executeAnonymousResultWithDebugLog->debugLog) && $executeAnonymousResultWithDebugLog->debugLog != "") {
+            print("<pre>" . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
+        } else {
+            displayInfo("Execution was successful, but returned no results. Confirm log category and level.");
+        }
 
-                } else {
-                    $error = null;
+    } else {
+        $error = null;
 
-                    if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem)) {
-                        $error .=  "COMPILE ERROR: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem;
-                    }
+        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem)) {
+            $error .=  "COMPILE ERROR: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem;
+        }
 
-                    if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage)) {
-                        $error .= "\nEXCEPTION: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage;
-                    }
+        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage)) {
+            $error .= "\nEXCEPTION: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage;
+        }
 
-                    if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace)) {
-                        $error .= "\nSTACKTRACE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace;
-                    }
-
-
-                    if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->line)) {
-                        $error .=  "\nLINE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->line;
-                    }
-
-                    if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->column)) {
-                        $error .=  " COLUMN: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->column;
-                    }
-
-                    displayError($error);
-
-                    print('<pre style="color: red;">' . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
-                }
-
-                //    print('<pre>');
-                //    print_r($executeAnonymousResultWithDebugLog);
-                //    print('</pre>');
-            } else if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] == "") {
-                displayInfo("Anonymous block must not be blank.");
-            }
+        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace)) {
+            $error .= "\nSTACKTRACE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace;
+        }
 
 
-            require_once 'footer.php';
-            ?>
+        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->line)) {
+            $error .=  "\nLINE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->line;
+        }
+
+        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->column)) {
+            $error .=  " COLUMN: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->column;
+        }
+
+        displayError($error);
+
+        print('<pre style="color: red;">' . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
+    }
+
+    //    print('<pre>');
+    //    print_r($executeAnonymousResultWithDebugLog);
+    //    print('</pre>');
+} else if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] == "") {
+    displayInfo("Anonymous block must not be blank.");
+}
+
+require_once 'footer.php';
+?>

@@ -859,6 +859,4 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
     print "<th>&nbsp;</th> <th style='width: 30%'>Salesforce Id</th> <th style='width: 30%'>Result</th> <th style='width: 35%'>Status</th>\n";
     print "<p>$resultsTable</p>";
 }
-
-
 ?>

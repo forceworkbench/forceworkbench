@@ -42,6 +42,4 @@ if (strpos($batchData, "<exceptionCode>")) {
     header("Content-Disposition: attachment; filename=$csvFilename");
     print $batchData;
 }
-
-
 ?>

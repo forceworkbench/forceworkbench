@@ -1,27 +1,26 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
-<head>
-<meta http-equiv="Content-Language" content="UTF-8" />
-<meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
-<link rel="stylesheet" href="style/master.css" type="text/css" />
-<link rel="stylesheet" href="style/pro_dropdown.css" type="text/css" />
-<link rel="Shortcut Icon" href="images/bluecube-16x16.png" />
-<link rel="stylesheet" type="text/css" href="style/simpletree.css" />
-<script type="text/javascript" src="script/simpletreemenu.js">
-/***********************************************
-* Simple Tree Menu - Dynamic Drive DHTML code library (www.dynamicdrive.com)
-* This notice MUST stay intact for legal use
-* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
-***********************************************/
-</script>
-<?php
-$myPage = getMyPage();
-$title = $myPage->showTitle ? ": " . $myPage->title : "";
-print "<title>Workbench$title</title>"
-?>
+    <head>
+        <meta http-equiv="Content-Language" content="UTF-8" />
+        <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
+        <link rel="stylesheet" href="style/master.css" type="text/css" />
+        <link rel="stylesheet" href="style/pro_dropdown.css" type="text/css" />
+        <link rel="Shortcut Icon" href="images/bluecube-16x16.png" />
+        <link rel="stylesheet" type="text/css" href="style/simpletree.css" />
+        <script type="text/javascript" src="script/simpletreemenu.js">
+        /***********************************************
+        * Simple Tree Menu - Dynamic Drive DHTML code library (www.dynamicdrive.com)
+        * This notice MUST stay intact for legal use
+        * Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
+        ***********************************************/
+        </script>
+        <?php
+        $myPage = getMyPage();
+        $title = $myPage->showTitle ? ": " . $myPage->title : "";
+        print "<title>Workbench$title</title>"
+        ?>
 
-</head>
-
+    </head>
 <body>
 <script type="text/javascript" src="script/wz_tooltip.js"></script>
 <script type="text/javascript" src="script/pro_dropdown.js"></script>
@@ -55,34 +54,34 @@ if (!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basena
         //do nothing
     }
 }
-
 ?>
 
 
 <div id='main_block'>
 
-<div id='navmenu' style="clear: both;"><span class="preload1"></span> <span
-    class="preload2"></span>
-<ul id="nav">
-<?php
-foreach ($GLOBALS["MENUS"] as $menu => $pages) {
-    if (isReadOnlyMode() && $menu == "Data") { //special-case for Data menu, since all read-only
-        continue;
-    }
-    print "<li class='top'><a class='top_link'><span class='down'>" . strtolower($menu) ."</span></a>\n" .
-              "<ul class='sub'>";
-    foreach ($pages as $href => $page) {
-        if (!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || (isLoggedIn() && $page->title == 'Login') || (!$page->isReadOnly && isReadOnlyMode())) {
+<div id='navmenu' style="clear: both;">
+    <span class="preload1"></span>
+    <span class="preload2"></span>
+    <ul id="nav">
+    <?php
+    foreach ($GLOBALS["MENUS"] as $menu => $pages) {
+        if (isReadOnlyMode() && $menu == "Data") { //special-case for Data menu, since all read-only
             continue;
         }
-        print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\" target=\"" . $page->window . "\">$page->title</a></li>\n";
+        print "<li class='top'><a class='top_link'><span class='down'>" . strtolower($menu) ."</span></a>\n" .
+                  "<ul class='sub'>";
+        foreach ($pages as $href => $page) {
+            if (!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || (isLoggedIn() && $page->title == 'Login') || (!$page->isReadOnly && isReadOnlyMode())) {
+                continue;
+            }
+            print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\" target=\"" . $page->window . "\">$page->title</a></li>\n";
+        }
+        print "</ul></li>";
+    
+        if(!isLoggedIn()) break; //only show first "Workbench" menu if not logged in
     }
-    print "</ul></li>";
-
-    if(!isLoggedIn()) break; //only show first "Workbench" menu if not logged in
-}
-?>
-</ul>
+    ?>
+    </ul>
 </div>
 
 <?php
