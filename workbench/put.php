@@ -174,7 +174,7 @@ function convertCsvFileToArray($file) {
  * @param $csvArray
  */
 function displayCsvArray($csvArray) {
-    print "<table class='data_table'>\n";
+    print "<table class='dataTable'>\n";
     print "<tr><th>&nbsp;</th>";
     for ($col=0; $col < count($csvArray[0]); $col++) {
         print "<th>";
@@ -225,7 +225,7 @@ function setFieldMappings($action,$csvArray) {
 
     if ($action == 'upsert') {
         print "<p class='instructions'>Choose the Salesforce field to use as the External Id. Be sure to also map this field below:</p>\n";
-        print "<table class='field_mapping'><tr>\n";
+        print "<table class='fieldMapping'><tr>\n";
         print "<td style='color: red;'>External Id</td>";
         print "<td><select name='_ext_id' style='width: 100%;'>\n";
         //        print "    <option value=''></option>\n";
@@ -242,7 +242,7 @@ function setFieldMappings($action,$csvArray) {
     } //end if upsert
 
     print "<p class='instructions'>Map the Salesforce fields to the columns from the uploaded CSV:</p>\n";
-    print "<table class='field_mapping'>\n";
+    print "<table class='fieldMapping'>\n";
     print "<tr><th>Salesforce Field</th>";
     print "<th>CSV Field</th>";
     if ($_SESSION['config']['showReferenceBy'] && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
@@ -520,12 +520,12 @@ function confirmFieldMappings($action,$fieldMap,$csvArray,$extId) {
  */
 function displayFieldMappings($fieldMap,$extId,$showRefCol) {
     if ($extId) {
-        print "<table class='field_mapping'>\n";
+        print "<table class='fieldMapping'>\n";
         print "<tr><td>External Id</td> <td>$extId</td></tr>\n";
         print "</table><p/>\n";
     }
 
-    print "<table class='field_mapping'>\n";
+    print "<table class='fieldMapping'>\n";
     print "<tr><th>Salesforce Field</th>";
     print "<th>CSV Field</th>";
     if ($showRefCol && $_SESSION['config']['showReferenceBy']) print "<th>Smart Lookup</th>";
@@ -855,7 +855,7 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
 
     print "<br/><form action='downloadResultsWithData.php' method='GET'><input type='hidden' name='action' value='$apiCall'/><input type='submit' value='Download Full Results'/></form>";
 
-    print "<br/>\n<table class='data_table'>\n";
+    print "<br/>\n<table class='dataTable'>\n";
     print "<th>&nbsp;</th> <th style='width: 30%'>Salesforce Id</th> <th style='width: 30%'>Result</th> <th style='width: 35%'>Status</th>\n";
     print "<p>$resultsTable</p>";
 }

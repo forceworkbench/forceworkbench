@@ -15,7 +15,7 @@ body {
     text-align: center;
 }
 
-#main_block {
+#mainBlock {
     margin: 0 auto;
     width: 750px;
     text-align: left;
@@ -25,7 +25,7 @@ a {
     color: black;
 }
 
-#navmenu {
+#navMenu {
     text-align: center;
 }
 
@@ -37,7 +37,7 @@ a {
     font-size: 11px;
 }
 
-* a:hover,#navmenu a:hover,#setupMenu a:hover,#myuserinfo a:hover {
+* a:hover,#navMenu a:hover,#setupMenu a:hover,#myUserInfo a:hover {
     color: rgb(66, 150, 231);
     text-decoration: underline;
 }
@@ -72,7 +72,7 @@ h3 {
     color: rgb(66, 150, 231);
 }
 
-#pagetitle,#myuserinfo a {
+#pageTitle,#myUserInfo a {
     font-size: 8pt;
     text-align: left;
     color: #888;
@@ -91,40 +91,40 @@ h3 {
     font-weight: normal;
 }
 
-#pagetitle {
+#pageTitle {
     text-align: left;
     color: rgb(66, 150, 231);
     font-weight: bold;
     font-size: medium;
 }
 
-#myuserinfo,#myuserinfo a {
+#myUserInfo,#myUserInfo a {
     text-align: right;
     text-transform: uppercase;
     text-decoration: none;
 }
 
-#login_block {
+#loginBlock {
     float: left;
 }
 
-#login_block_container {
+#loginBlockContainer {
     width: 525px;
     margin-left: auto;
     margin-right: auto;
 }
 
-#login_block strong {
+#loginBlock strong {
     float: left;
     width: 100px;
     text-align: left;
 }
 
-#logo_block {
+#logoBlock {
     float: right;
 }
 
-#navmenu a {
+#navMenu a {
     color: black;
     text-decoration: none;
     font-weight: bold;
@@ -158,14 +158,14 @@ table.description TD {
     width: 50%;
 }
 
-table.data_table {
+table.dataTable {
     border-color: #888;
     border-style: solid;
     border-width: thin;
     border-collapse: collapse;
 }
 
-table.data_table TD,table.data_table TH {
+table.dataTable TD,table.dataTable TH {
     margin: 0;
     padding: 2;
     border-color: grey;
@@ -175,11 +175,11 @@ table.data_table TD,table.data_table TH {
     vertical-align: top;
 }
 
-table.data_table TD table.data_table {
+table.dataTable TD table.dataTable {
     width: 100%;
 }
 
-table.field_mapping {
+table.fieldMapping {
     border-color: #888;
     border-style: solid;
     border-width: thin;
@@ -187,7 +187,7 @@ table.field_mapping {
     width: 80%;
 }
 
-table.field_mapping TD,table.field_mapping TH {
+table.fieldMapping TD,table.fieldMapping TH {
     padding: 2;
     border-color: grey;
     border-style: solid;
@@ -206,7 +206,7 @@ table.field_mapping TD,table.field_mapping TH {
     text-align: left;
 }
 
-.matrix_item {
+.matrixItem {
     border: solid thin rgb(66, 150, 231);
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -214,7 +214,7 @@ table.field_mapping TD,table.field_mapping TH {
     padding: 5px;
 }
 
-.show_errors,.show_warnings,.show_info {
+.displayErrors,.displayWarning,.displayInfo {
     text-align: center;
     font-size: 12px;
     padding: 10px;
@@ -224,17 +224,17 @@ table.field_mapping TD,table.field_mapping TH {
     clear: both;
 }
 
-.show_errors {
+.displayErrors {
     color: red;
     border-color: red;
 }
 
-.show_warnings {
+.displayWarning {
     color: orange;
     border-color: orange;
 }
 
-.show_info {
+.displayInfo {
     color: rgb(66, 150, 231);
     border-color: rgb(66, 150, 231);
 }
@@ -309,7 +309,7 @@ table.sortable tr.even td {
     background-color: #fff;
 }
 
-table.sortable tr.sortbottom td {
+table.sortable tr.sortBottom td {
     border-top: 1px solid #444;
     background-color: #ccc;
     font-weight: bold;

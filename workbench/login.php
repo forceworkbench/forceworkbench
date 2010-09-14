@@ -77,9 +77,9 @@ if ((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])) {
 
 if (isset($_POST['login_type'])) {
     if ($_POST['login_type']=='std') {
-        process_login($_POST['usernameStd'], $_POST['passwordStd'], null, null, $_POST['actionJumpStd']);
+        processLogin($_POST['usernameStd'], $_POST['passwordStd'], null, null, $_POST['actionJumpStd']);
     } elseif ($_POST['login_type']=='adv') {
-        process_login(
+        processLogin(
         isset($_POST['usernameAdv']) ? $_POST['usernameAdv'] : null,
         isset($_POST['passwordAdv']) ? $_POST['passwordAdv'] : null,
         $_POST['serverUrl'],
@@ -245,8 +245,8 @@ function checkCaps( pwcapsDivId, e ) {
     login for other login options. Go to Settings for more login configurations.</p>-->
 </div>
 
-<div id='login_block_container'>
-<div id='login_block'>
+<div id='loginBlockContainer'>
+<div id='loginBlock'>
     <form id='login_form' action='$_SERVER[PHP_SELF]' method='post'>
         <div id='login_become_select' style='text-align: right;'>
             <input type='radio' id='login_become_std' name='login_type' value='std' onClick='toggleLoginFormToStd();' checked='true' /><label for='login_become_std'>Standard</label>

@@ -57,9 +57,9 @@ if (!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basena
 ?>
 
 
-<div id='main_block'>
+<div id='mainBlock'>
 
-<div id='navmenu' style="clear: both;">
+<div id='navMenu' style="clear: both;">
     <span class="preload1"></span>
     <span class="preload2"></span>
     <ul id="nav">
@@ -87,10 +87,10 @@ if (!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basena
 <?php
 print "<table width='100%' border='0'><tr>";
 if ($myPage->showTitle) {
-    print "<td id='pagetitle'>" . $myPage->title . "</td>";
+    print "<td id='pageTitle'>" . $myPage->title . "</td>";
 }
 if (isLoggedIn()) {
-    print "<td id='myuserinfo'><a href='sessionInfo.php'>" . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . " on API " . getApiVersion() . "</a></td>";
+    print "<td id='myUserInfo'><a href='sessionInfo.php'>" . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . " on API " . getApiVersion() . "</a></td>";
 }
 print "</tr></table>";
 

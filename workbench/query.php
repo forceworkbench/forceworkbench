@@ -781,7 +781,7 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
 
             if (isset($matrix["$rowName"]["$colName"])) {
                 foreach ($matrix["$rowName"]["$colName"] as $data) {
-                    $table .= "<div class='matrix_item'" . ($data == "" ? "style='width: 0px;'" : "") . ">$data</div>";
+                    $table .= "<div class='matrixItem'" . ($data == "" ? "style='width: 0px;'" : "") . ">$data</div>";
                 }
             }
              

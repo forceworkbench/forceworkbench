@@ -124,7 +124,7 @@ function getMyTitle() {
     return $myPage->title;
 }
 
-function getTableClass($defaultClass = 'data_table') {
+function getTableClass($defaultClass = 'dataTable') {
     return $_SESSION['config']['areTablesSortable'] ? "sortable" : $defaultClass;
 }
 

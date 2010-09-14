@@ -140,15 +140,15 @@ function ts_resortTable(lnk, clid) {
     } 
     // We appendChild rows that already exist to the tbody, so it moves them
     // rather than creating new ones
-    // don't do sortbottom rows
+    // don't do sortBottom rows
     for (i=0; i<newRows.length; i++) { 
-        if (!newRows[i].className || (newRows[i].className && (newRows[i].className.indexOf('sortbottom') == -1))) {
+        if (!newRows[i].className || (newRows[i].className && (newRows[i].className.indexOf('sortBottom') == -1))) {
             t.tBodies[0].appendChild(newRows[i]);
         }
     }
-    // do sortbottom rows only
+    // do sortBottom rows only
     for (i=0; i<newRows.length; i++) {
-        if (newRows[i].className && (newRows[i].className.indexOf('sortbottom') != -1)) 
+        if (newRows[i].className && (newRows[i].className.indexOf('sortBottom') != -1)) 
             t.tBodies[0].appendChild(newRows[i]);
     }
     // Delete any other arrows there may be showing
