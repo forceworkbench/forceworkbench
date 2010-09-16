@@ -45,13 +45,13 @@ require_once 'header.php';
      
      if (e && e.which) { //if which property of event object is supported (NN4)
          characterCode = e.which; //character code is contained in NN4's which property
-     } else{
+     } else {
          characterCode = event.keyCode; //character code is contained in IE's keyCode property
      }
      
      if (characterCode == 13) { //if generated character code is equal to ascii 13 (if enter key)
          return true;
-     } else{
+     } else {
          return false;
      }
      

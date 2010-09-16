@@ -206,7 +206,7 @@ function toggleFieldDisabled() {
                 document.getElementById('QB_filter_value_0').disabled = true;
                 document.getElementById('QB_filter_compOper_0').disabled = true;
             }
-    } else{
+    } else {
             document.getElementById('QB_filter_field_0').disabled = true;
             document.getElementById('QB_filter_compOper_0').disabled = true;
             document.getElementById('QB_filter_value_0').disabled = true;
@@ -802,7 +802,7 @@ function createQueryResultTable($records) {
     $table .= "<tr><th></th><th>";
     if ($records[0] instanceof SObject) {
         $table .= implode("</th><th>", getQueryResultHeaders($records[0]));
-    } else{
+    } else {
         $table .= implode("</th><th>", getQueryResultHeaders(new SObject($records[0])));
     }
     $table .= "</th></tr>\n";
@@ -816,7 +816,7 @@ function createQueryResultTable($records) {
 
         if ($record instanceof SObject) {
             $row = getQueryResultRow($record);
-        } else{
+        } else {
             $row = getQueryResultRow(new SObject($record));
         }
 

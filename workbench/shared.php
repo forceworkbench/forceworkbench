@@ -100,7 +100,7 @@ function validateUploadedFile($file) {
         return("The file was not uploaded from your computer. Please try again.");
     } elseif ($file['size'] == 0) {
         return("The file uploaded contains no data. Please try again.");
-    } else{
+    } else {
         return(0);
     }
 }

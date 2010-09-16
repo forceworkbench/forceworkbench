@@ -382,7 +382,7 @@ function displatSearchResult($records, $searchTimeElapsed) {
                             print "</td>";
                         }
                         print "</tr>\n";
-                    } else{
+                    } else {
                         print "</td></tr>\n";
                     }
                 }
