@@ -1,9 +1,9 @@
-PHP BULK API CLIENT 19.0
+PHP BULK API CLIENT 20.0
 Distributed under the Open Source BSD License.
 Developed By Ryan Brainard
 
 The files in this folder make up a client for PHP developers to interact with the
-REST-based Force.com Bulk API 19.0 to asynchronously insert, update, and
+REST-based Force.com Bulk API 20.0 to asynchronously insert, update, and
 upsert data to Salesforce. Please see the individual files below for more
 information:
 

@@ -1,10 +1,10 @@
 <?php
 /**
- * PHP BULK API CLIENT 19.0 SAMPLE CODE
+ * PHP BULK API CLIENT 20.0 SAMPLE CODE
  * @author Ryan Brainard
  *
  * BulkApiClientSample.php
- * Sample Code for the using the PHP Bulk API Client 19.0 to
+ * Sample Code for the using the PHP Bulk API Client to
  * bulk load records into Salesforce. See the comments inline
  * to understand what is happening and execute the code to
  * see it in action and see output.
@@ -52,7 +52,7 @@ try {
     //
     // Partner API Doc: http://www.salesforce.com/us/developer/docs/api/index.htm
     // PHP Toolkit: http://wiki.developerforce.com/index.php/PHP_Toolkit
-    $partnerApiEndpoint = "https://cs2-api.salesforce.com/services/Soap/u/19.0/00DR0000000EKXC";
+    $partnerApiEndpoint = "https://cs2-api.salesforce.com/services/Soap/u/20.0/00DR0000000EKXC";
     $sessionId = "00DR0000000EKXC!ARYAQDK7LkfkO0GJoxWxtRviprMspd2e2ooS9pAkewptBFMbvf6M1GUzD06RCFiuLpMDWMp6wGVLRP08HK2kldPIfbr31BqN";
 
 
@@ -110,7 +110,7 @@ try {
 
 // PRINT EVERYTHING THAT HAPPENED ABOVE
 print "<pre>" .
-      "PHP BULK API CLIENT 19.0 SAMPLE CODE OUTPUT\n" . 
+      "PHP BULK API CLIENT AMPLE CODE OUTPUT\n" . 
       "This is the output of the PHP Bulk API Client Sample Code. View the source code for step-by-step explanations.\n\n";
 print "== CSV DATA == \n" . $csvData . "\n\n";
 print "== BATCH RESULTS == \n" . $batchResults . "\n\n";

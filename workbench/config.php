@@ -183,6 +183,7 @@ $config["header_General"] = array(
         );
 
         $GLOBALS['API_VERSIONS'] = array(
+            "20.0" => "20.0",
             "19.0" => "19.0",
             "18.0" => "18.0",
             "17.0" => "17.0",
@@ -201,7 +202,7 @@ $config["header_General"] = array(
         $config["defaultApiVersion"]  = array(
             "label" => "Default API Version",
             "description" => "Default API version to be used for login. This setting does not affect the API version of the current session. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
-            "default" => "19.0",
+            "default" => "20.0",
             "overrideable" => true,
             "dataType" => "picklist",
             "valuesToLabels" => $GLOBALS['API_VERSIONS']

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * PHP BULK API CLIENT 19.0
+ * PHP BULK API CLIENT 20.0
  * @author Ryan Brainard
  *
  * BatchInfo.php
- * Represents a Force.com Bulk API 19.0 BatchInfo object.
+ * Represents a Force.com Bulk API 20.0 BatchInfo object.
  *
  * For reference, see:
  * http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_reference_batchinfo.htm

@@ -17,7 +17,7 @@ class SforceMockPartnerClient extends SforcePartnerClient  {
     public function login($username, $password) {
         $loginResult = new stdClass();
         $loginResult->sessionId = "xxx";
-        $loginResult->serverUrl = "https://mocked.salesforce.com/services/Soap/u/19.0";
+        $loginResult->serverUrl = "https://mocked.salesforce.com/services/Soap/u/20.0";
         $this->_setLoginHeader($loginResult);
         return $loginResult;
     }
