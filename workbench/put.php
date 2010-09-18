@@ -90,6 +90,13 @@ function put($action) {
 
     else {
         require_once 'header.php';
+        
+        if ($_SESSION['config']['allOrNoneHeader_allOrNone'] && !apiVersionIsAtLeast(20.0)) {
+            displayWarning(array("All-Or-None Transactional Processing Only Supported in API 20.0 and higher.",
+                                 "You may continue to use API " . getApiVersion() . 
+                                 " for this operation, but the default, partial save behavior will be used."));
+        }
+        
         print "<p class='instructions'>Select an object and upload a CSV file to $action:</p>\n";
         displayUploadFileWithObjectSelectionForm('file', $action);
         include_once 'footer.php';

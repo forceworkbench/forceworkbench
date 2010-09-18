@@ -55,6 +55,7 @@ class SforceBaseClient {
     protected $userTerritoryDeleteHeader;
     protected $sessionHeader;
     protected $allowFieldTruncationHeader;
+    protected $allOrNoneHeader;
 
     public function getNamespace() {
         return $this->namespace;
@@ -183,9 +184,9 @@ class SforceBaseClient {
         }
 
         if ($call == "create" ||
-        $call == "merge" ||
-        $call == "update" ||
-        $call == "upsert"
+            $call == "merge" ||
+            $call == "update" ||
+            $call == "upsert"
         ) {
             $header = $this->assignmentRuleHeader;
             if ($header != NULL) {
@@ -201,9 +202,9 @@ class SforceBaseClient {
         }
 
         if ($call == "create" ||
-        $call == "resetPassword" ||
-        $call == "update" ||
-        $call == "upsert"
+            $call == "resetPassword" ||
+            $call == "update" ||
+            $call == "upsert"
         ) {
             $header = $this->emailHeader;
             if ($header != NULL) {
@@ -212,11 +213,11 @@ class SforceBaseClient {
         }
 
         if ($call == "create" ||
-        $call == "merge" ||
-        $call == "query" ||
-        $call == "retrieve" ||
-        $call == "update" ||
-        $call == "upsert"
+            $call == "merge" ||
+            $call == "query" ||
+            $call == "retrieve" ||
+            $call == "update" ||
+            $call == "upsert"
         ) {
             $header = $this->mruHeader;
             if ($header != NULL) {
@@ -225,12 +226,12 @@ class SforceBaseClient {
         }
 
         if ($call == "create" ||
-        $call == "update" ||
-        $call == "upsert" ||
-        $call == "undelete" ||
-        $call == "createLead" ||
-        $call == "merge" ||
-        $call == "process"
+            $call == "update" ||
+            $call == "upsert" ||
+            $call == "undelete" ||
+            $call == "createLead" ||
+            $call == "merge" ||
+            $call == "process"
         ) {
             $header = $this->allowFieldTruncationHeader;
             if ($header != NULL) {
@@ -246,13 +247,26 @@ class SforceBaseClient {
         }
 
         if ($call == "query" ||
-        $call == "queryMore" ||
-        $call == "retrieve") {
+            $call == "queryMore" ||
+            $call == "retrieve") {
             $header = $this->queryHeader;
             if ($header != NULL) {
                 array_push($headerArray, $header);
             }
         }
+        
+        if ($call == "create" ||
+            $call == "update" ||
+            $call == "upsert" ||
+            $call == "undelete" ||
+            $call == "delete"
+        ) {
+            $header = $this->allOrNoneHeader;
+            if ($header != NULL) {
+                array_push($headerArray, $header);
+            }
+        }
+        
         $this->sforce->__setSoapHeaders($headerArray);
     }
 
@@ -343,6 +357,16 @@ class SforceBaseClient {
         }
     }
 
+    public function setAllOrNoneHeader($header) {
+        if ($header != NULL) {
+            $this->allOrNoneHeader = new SoapHeader($this->namespace, 'AllOrNoneHeader', array (
+             'allOrNone' => $header->allOrNone
+            ));
+        } else {
+            $this->allOrNoneHeader = NULL;
+        }
+    }
+    
     public function getSessionId() {
         return $this->sessionId;
     }

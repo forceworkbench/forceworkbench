@@ -148,4 +148,12 @@ class AllowFieldTruncationHeader {
         $this->allowFieldTruncation = $allowFieldTruncation;
     }
 }
+
+class AllOrNoneHeader {
+    public $allOrNone;
+
+    public function __construct($allOrNone) {
+        $this->allOrNone = $allOrNone;
+    }
+}
 ?>

@@ -302,6 +302,14 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
+    $config["allOrNoneHeader_allOrNone"] = array(
+        "label" => "All-Or-None Transactional Processing",
+        "description" => "Forces operations to rollback all changes in one batch unless all records in that batch are processed successfully. If unchecked, records without errors are committed, while records with errors are marked as failed in the results. Warning, Workbench may automatically divides a CSV file into mutiple batches, each of which is considered a separate API transaction.",
+        "default" => false,
+        "overrideable" => true,
+        "dataType" => "boolean"
+    );
+    
     $config["emailHeader_triggerAutoResponseEmail"] = array(
         "label" => "Trigger Auto-Response Emails",
         "description" => "Send Auto-Response e-mails when inserting Leads and Cases",
@@ -658,8 +666,8 @@ $config["header_General"] = array(
     
         'Data' => array(
             'insert.php'    => new Page('Insert','Creates new records from a CSV file',true,false,true,'usesObject',true,''),
-            'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,false,true,'usesObject',true,''),
             'update.php'    => new Page('Update','Updates existing records from a CSV file',true,false,true,'usesObject',true,''),
+            'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,false,true,'usesObject',true,''),
             'delete.php'    => new Page('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted',true,false,true,true,true,''),
             'undelete.php'  => new Page('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.',true,false,true,true,true,''),
             'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,false,true,true,true,'')

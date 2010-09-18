@@ -128,6 +128,11 @@ if (isLoggedIn()) {
             $partnerConnection->setAllowFieldTruncationHeader($header);
         }
 
+        if ($_SESSION['config']['allOrNoneHeader_allOrNone'] && apiVersionIsAtLeast(20.0)) {
+            $header = new AllOrNoneHeader($_SESSION['config']['allOrNoneHeader_allOrNone']);
+            $partnerConnection->setAllOrNoneHeader($header);
+        }
+        
         if (!isset($_SESSION['getUserInfo']) || !$_SESSION['config']['cacheGetUserInfo']) {
             $_SESSION['getUserInfo'] = $partnerConnection->getUserInfo();
         }
