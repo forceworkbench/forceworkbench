@@ -25,10 +25,7 @@ if (isset($_POST['execute'])) {
 <table border="0">
     <tr>
         <td>
-        <p class='instructions'>Enter Apex code to be executed as an
-        anonymous block:
-        <p />
-        
+        <p class='instructions'>Enter Apex code to be executed as an anonymous block:</p>
         </td>
     </tr>
     <tr>
