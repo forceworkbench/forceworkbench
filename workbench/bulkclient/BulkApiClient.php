@@ -108,6 +108,10 @@ class BulkApiClient {
         if ($job->getOpertion() == "hardDelete" && !$this->apiVersionIsAtLeast($this->endpoint, 19.0)) {
             throw new Exception("Bulk API 'Hard Delete' operation only supported in API 19.0 and higher.");
         }
+
+        if (stristr($job->getContentType(), "ZIP_") && !$this->apiVersionIsAtLeast($this->endpoint, 20.0)) {
+            throw new Exception("Zipped Content Types only supported in API 20.0 and higher.");
+        }
     }
 
     public function updateJobState($jobId, $state) {
@@ -126,6 +130,12 @@ class BulkApiClient {
             $contentType = "text/csv";
         } else if ($job->getContentType() == "XML") {
             $contentType = "application/xml";
+        } else if ($job->getContentType() == "ZIP_CSV") {
+            $contentType = "zip/csv";
+        } else if ($job->getContentType() == "ZIP_XML") {
+            $contentType = "zip/xml";
+        } else {
+            throw new Exception("Invalid content type specified for batch");
         }
 
         return new BatchInfo($this->post($this->endpoint . "/job/" . $job->getId() . "/batch", $contentType, $data));
@@ -181,7 +191,7 @@ class BulkApiClient {
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);                                //TODO: use ca-bundle instead
-            if($this->compressionEnabled) curl_setopt($ch, CURLOPT_ENCODING, "gzip");  //TODO: add  outbound compression support
+            if($this->compressionEnabled) curl_setopt($ch, CURLOPT_ENCODING, "gzip");   //TODO: add  outbound compression support
 
             $this->log("REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlentities($data));
 
