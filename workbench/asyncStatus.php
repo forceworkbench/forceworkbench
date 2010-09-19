@@ -26,9 +26,9 @@ try {
     displayError($e->getMessage(), false, false);
     if (stripos($e->getMessage(), 'InvalidVersion') > -1) {
         print "<p/><em>Quick Fix: <a href='sessionInfo.php' target='_blank'>Change API Version</a></em>";
-        include_once 'footer.php';
-        exit;
     }
+    include_once 'footer.php';
+    exit;
 }
 
 print "<p class='instructions'>Records have been uploaded to Salesforce via the Bulk API and are processed asynchronously as resources are available. " .
