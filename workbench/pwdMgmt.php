@@ -26,6 +26,7 @@ function changePassword($passwordChangeType) {
             $infos[] = "Successfully reset password for " . $_POST['userId'];
         }
     } catch(Exception $e) {
+        $infos = null;
         $errors[] = $e->getMessage();
     }
 
