@@ -1,3 +1,8 @@
+# The following setting are optional, additional configurations for an Apache Web Server.
+# This file may be deleted if Workbench is hosted in an environment that does not allow .htaccess overrides.
+
+php_flag register_globals off
+
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/css text/html application/x-javascript application/javascript application/csv
     BrowserMatch ^Mozilla/4 gzip-only-text/html
