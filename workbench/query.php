@@ -112,6 +112,10 @@ if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
 //Show the main SOQL query form with default query or last submitted query and export action (screen or CSV)
 
 function displayQueryForm($queryRequest) {
+    
+   registerShortcut("Ctrl+=",
+                    "addFilterRow(document.getElementById('numFilters').value++);".
+                    "toggleFieldDisabled();");
 
     if ($queryRequest->getObject()) {
         $describeSObjectResult = describeSObject($queryRequest->getObject(), true);

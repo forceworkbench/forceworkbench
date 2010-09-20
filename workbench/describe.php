@@ -12,6 +12,8 @@ displayDescribeSObjectForm();
 if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']) {
     displayDescribeSObjectResults();
 }
+addFooterScript("<script type='text/javascript' src='script/simpletreemenu.js'></script>");
+
 addFooterScript("<script type='text/javascript'>ddtreemenu.createTree('describeTree', true);</script>");
 
 if (isset($_REQUEST['default_object_changed']) && $_REQUEST['default_object_changed']) {

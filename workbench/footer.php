@@ -40,18 +40,10 @@ print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKB
 
 <script type="text/javascript" src="script/wz_tooltip.js"></script>
 
-<script type="text/javascript" src="script/simpletreemenu.js">
-/***********************************************
-* Simple Tree Menu - Dynamic Drive DHTML code library (www.dynamicdrive.com)
-* This notice MUST stay intact for legal use
-* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
-***********************************************/
-</script>
-
 <?php
 if (isset($_REQUEST["footerScripts"])) {
     foreach ($_REQUEST["footerScripts"] as $script) {
-        print "$script";
+        print $script . "\n";
     }
 }
 ?>

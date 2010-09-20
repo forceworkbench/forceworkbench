@@ -1,6 +1,18 @@
 <?php
+function registerShortcut($key, $jsCommand) {
+    addFooterScript("<script type='text/javascript' src='script/shortcut.js'></script>");
+    
+    addFooterScript("<script type='text/javascript'>".
+                        "shortcut.add(".
+                            "'$key',".
+                            "function() {\n$jsCommand\n}".
+                        ");".
+                    "</script>");
+}
+
 function addFooterScript($script) {
-    $_REQUEST["footerScripts"][] = $script;
+    $scriptHash = hash('md5', $script); //de-duping
+    $_REQUEST["footerScripts"][$scriptHash] = $script;
 }
 
 function getConfig($configKey) {
@@ -387,6 +399,8 @@ function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = 
     
     print "</ul>\n";
     
+    addFooterScript("<script type='text/javascript' src='script/simpletreemenu.js'></script>");
+                        
     addFooterScript("<script type='text/javascript'>" . 
                        "ddtreemenu.createTree('$tableId', true);" . 
                         ($forceCollapse ? "ddtreemenu.flatten('$tableId', 'collapse');" : "") .

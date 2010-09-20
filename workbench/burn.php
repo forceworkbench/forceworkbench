@@ -35,27 +35,43 @@ if (isset($_GET['ajaxBurn'])) {
 }
 
 require_once 'header.php';
-?>
+registerShortcut("Enter", "ajaxBurn();");
 
+if(isset($infos)) displayInfo($infos);
+if(isset($errors)) displayError($errors);
+?>
+<p />
+<form name='afterburner'>
+<table border='0'>
+
+
+    <tr>
+        <td align='right'><label for='burnNumOfCalls'>Number of Calls to
+        Burn: &nbsp;</label></td>
+        <td colspan='2'><input type='text' id='burnNumOfCalls'
+            name='burnNumOfCalls' size='45' /></td>
+    </tr>
+
+    <tr>
+        <td>&nbsp;</td>
+        <td id='burnStatus'></td>
+        <td align='right'>
+        <p><input type='button' value='Burn' onclick="ajaxBurn();" /></p>
+        </td>
+    </tr>
+    <!--
+    <tr>
+        <td>&nbsp;</td>
+         <td id='burnResults' colspan='2' align='center'></td> 
+    </tr>
+    -->
+</table>
+<div id='burnResults'></div>
+
+</form>
 
 <script type="text/javascript">
 <!--
- function checkEnter(e) { //e is event object passed from function invocation
-     var characterCode; //literal character code will be stored in this variable
-     
-     if (e && e.which) { //if which property of event object is supported (NN4)
-         characterCode = e.which; //character code is contained in NN4's which property
-     } else {
-         characterCode = event.keyCode; //character code is contained in IE's keyCode property
-     }
-     
-     if (characterCode == 13) { //if generated character code is equal to ascii 13 (if enter key)
-         return true;
-     } else {
-         return false;
-     }
-     
- }
 
  // Get the HTTP Object
  function getHTTPObject() {
@@ -92,42 +108,6 @@ function ajaxBurn() {
     
 //-->
 </script>
-
-<?php
-if(isset($infos)) displayInfo($infos);
-if(isset($errors)) displayError($errors);
-?>
-<p />
-<form name='afterburner'>
-<table border='0'>
-
-
-    <tr>
-        <td align='right'><label for='burnNumOfCalls'>Number of Calls to
-        Burn: &nbsp;</label></td>
-        <td colspan='2'><input type='text' id='burnNumOfCalls'
-            name='burnNumOfCalls' size='45'
-            onKeyPress='if (checkEnter(event)) {ajaxBurn(); return false;}' /></td>
-    </tr>
-
-    <tr>
-        <td>&nbsp;</td>
-        <td id='burnStatus'></td>
-        <td align='right'>
-        <p><input type='button' value='Burn' onclick="ajaxBurn();" /></p>
-        </td>
-    </tr>
-    <!--
-    <tr>
-        <td>&nbsp;</td>
-         <td id='burnResults' colspan='2' align='center'></td> 
-    </tr>
-    -->
-</table>
-<div id='burnResults'></div>
-
-</form>
-
 
 <?php
 require_once 'footer.php';

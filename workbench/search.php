@@ -75,7 +75,9 @@ if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
 //Show the main SOSL search form with default search or last submitted search and export action (screen or CSV)
 
 function displaySearchForm($searchRequest) {
-
+   registerShortcut("Ctrl+=",
+                    "addReturningObjectRow(document.getElementById('numReturningObjects').value++);".
+                    "toggleFieldDisabled();");
 
     print "<script>\n";
 
