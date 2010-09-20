@@ -58,7 +58,11 @@ else if (isset($_POST['stageForRetrieval'])) {
     }
 
     if (isset($_POST['packageNames']) && $_POST['packageNames'] != "") {
-        $retrieveRequest->packageNames = explodeCommaSeparated(htmlentities($_POST['packageNames']));
+        $encodedPackageNames = array();
+        foreach(explodeCommaSeparated(htmlentities($_POST['packageNames'])) as $p) {
+            $encodedPackageNames[] = urlencode($p);
+        }
+        $retrieveRequest->packageNames = $encodedPackageNames;
     }
 
     $retrieveRequestId = "RR-" . time();
