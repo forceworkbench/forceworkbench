@@ -33,14 +33,30 @@ if (isset($GLOBALS['requestTimeStart']) && isset($_SESSION["config"]["displayReq
 
 print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKBENCH_VERSION"] : "") . "<br/>\n";
 
-
-//    if (stristr($GLOBALS["WORKBENCH_VERSION"],'beta') || stristr($GLOBALS["WORKBENCH_VERSION"],'alpha')) {
-//        print "<br/><a href='http://groups.google.com/group/forceworkbench' target='_blank'>THANK YOU FOR BETA TESTING - PLEASE PROVIDE FEEDBACK</a>";
-//    }
-
 ?></div>
 
 </body>
+
+<script type="text/javascript" src="script/simpletreemenu.js">
+/***********************************************
+* Simple Tree Menu - Dynamic Drive DHTML code library (www.dynamicdrive.com)
+* This notice MUST stay intact for legal use
+* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
+***********************************************/
+</script>
+
+<script type="text/javascript" src="script/wz_tooltip.js"></script>
+
+<script type="text/javascript" src="script/pro_dropdown.js"></script>
+
+<?php
+if (isset($_REQUEST["footerScripts"])) {
+    foreach ($_REQUEST["footerScripts"] as $script) {
+        print "$script";
+    }
+}
+?>
+
 </html>
 
 <?php

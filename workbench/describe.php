@@ -12,6 +12,11 @@ displayDescribeSObjectForm();
 if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']) {
     displayDescribeSObjectResults();
 }
+addFooterScript("<script type='text/javascript'>ddtreemenu.createTree('describeTree', true);</script>");
+
+if (isset($_REQUEST['default_object_changed']) && $_REQUEST['default_object_changed']) {
+    addFooterScript("<script type='text/javascript'>ddtreemenu.flatten('describeTree', 'collapse');</script>");
+}
 require_once 'footer.php';
 
 
@@ -200,14 +205,5 @@ function highlightSpecialField( $value ) {
 
 function stringDisplay($key, $value) {
     print "<li>$key: <span class='describeValue'>$value</span></li> \n";
-}
-?>
-<script type="text/javascript">
-//ddtreemenu.createTree(treeid, enablepersist, opt_persist_in_days (default is 1))
-ddtreemenu.createTree("describeTree", true);
-</script>
-<?php
-if (isset($_REQUEST['default_object_changed']) && $_REQUEST['default_object_changed']) {
-    print "<script type='text/javascript'>ddtreemenu.flatten('describeTree', 'collapse');</script>";
 }
 ?>

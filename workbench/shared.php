@@ -1,4 +1,8 @@
 <?php
+function addFooterScript($script) {
+    $_REQUEST["footerScripts"][] = $script;
+}
+
 function getConfig($configKey) {
     if (!isset($_SESSION["config"][$configKey])) {
         global $config;
@@ -380,12 +384,13 @@ function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = 
     print "<ul id='$tableId' class='treeview'>";
 
     printNode($nodes);
-
-    print "</ul>\n" .
-          "<script type='text/javascript'>" . 
-          "ddtreemenu.createTree('$tableId', true);" . 
-    ($forceCollapse ? "ddtreemenu.flatten('$tableId', 'collapse');" : "") .
-          "</script>";
+    
+    print "</ul>\n";
+    
+    addFooterScript("<script type='text/javascript'>" . 
+                       "ddtreemenu.createTree('$tableId', true);" . 
+                        ($forceCollapse ? "ddtreemenu.flatten('$tableId', 'collapse');" : "") .
+                    "</script>");
 }
 
 function printNode($node) {
