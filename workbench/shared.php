@@ -71,10 +71,10 @@ function processResults($raw) {
 
                 if (isset($rawValue->name) && $rawValue->name != "") {
                     $processed[$rawValue->name] = processResults($rawValue);
-                } else if (isset($rawValue->fullName) && $rawValue->fullName != "") {
-                    $processed[$rawValue->fullName] = processResults($rawValue);
                 } else if (isset($rawValue->fileName) && $rawValue->fileName != "") {
                     $processed[$rawValue->fileName] = processResults($rawValue);
+                } else if (isset($rawValue->fullName) && $rawValue->fullName != "") {
+                    $processed[$rawValue->fullName] = processResults($rawValue);
                 } else if (isset($rawValue->column) && isset($rawValue->line)) {
                     $processed[$rawValue->column . ":" . $rawValue->line] = processResults($rawValue);
                     krsort($processed);
