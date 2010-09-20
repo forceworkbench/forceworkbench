@@ -851,6 +851,10 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
 
     //Check if records were returned
     if ($records) {
+        if (getConfig("areTablesSortable")) {
+            addFooterScript("<script type='text/javascript' src='script/sortable.js'></script>");
+        }
+        
         try {
             $rowNum = 0;
             print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";

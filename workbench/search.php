@@ -62,7 +62,7 @@ if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
     $records = search($searchRequest);
     $searchTimeEnd = microtime(true);
     $searchTimeElapsed = $searchTimeEnd - $searchTimeStart;
-    displatSearchResult($records,$searchTimeElapsed);
+    displaySearchResult($records,$searchTimeElapsed);
     include_once 'footer.php';
 } else {
     require_once 'header.php';
@@ -319,9 +319,13 @@ function search($searchRequest) {
 
 
 //If the user selects to display the form on screen, they are routed to this function
-function displatSearchResult($records, $searchTimeElapsed) {
+function displaySearchResult($records, $searchTimeElapsed) {
     //Check if records were returned
     if ($records) {
+        if (getConfig("areTablesSortable")) {
+            addFooterScript("<script type='text/javascript' src='script/sortable.js'></script>");
+        }
+        
         try {
             print "<a name='sr'></a><div style='clear: both;'><br/><h2>Search Results</h2>\n";
             print "<p>Returned " . count($records) . " total record";
