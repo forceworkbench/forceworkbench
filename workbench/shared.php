@@ -17,8 +17,7 @@ function addFooterScript($script) {
 
 function getConfig($configKey) {
     if (!isset($_SESSION["config"][$configKey])) {
-        global $config;
-        if ($config[$configKey]->dataType == "boolean") {
+        if ($GLOBALS["config"][$configKey]["dataType"] == "boolean") {
             return false;
         } else {
             return null;
@@ -220,25 +219,34 @@ function getWorkbenchUserAgent() {
 }
 
 /**
- * Converts standard Salesforce UTC/GMT time into a configurable timezone
+ * Finds and replces standard Salesforce UTC/GMT dateTimes in a string into a configurable timezone and format
  *
- * @param string $sfdcDate  The Salesforce date/timestamp to convert
- * @param string $timezone  The PHP timezone setting, ie: America/Chicago
- * @param string $format  The format to use when converting the date/time
+ * @param string inputStr       Abitrary string possibly containing a Salesforce date/timestamp to convert
+ * @param string defaultFormat  Output format of datetime 
  * @return string Converted date/time in selected format, or normal field
  */
-function convertDateTimezone($inputStr, $format = 'Y-m-d\\TH:i:s.000P') {
-    if (getConfig("convertTimezone") != '' && preg_match('|\d\d\d\d\-\d\d\-\d\dT\d\d\:\d\d:\d\d\.\d\d\dZ|', $inputStr)) {
-        $timezone = getConfig("convertTimezone");
-
-        $utcDate = new DateTime($inputStr);
-        $utcDate->setTimezone(new DateTimeZone($timezone));
-
-        return $utcDate->format($format);
-    } else {
+function localizeDateTimes($inputStr, $formatOverride = null) {
+    // TODO: Enhance with conditional to allow users to choose a format (Issue 357). 
+    //       Remember to deal with short-circuiting below as well.
+    $format = ($formatOverride != null) ? $formatOverride : 'Y-m-d\\TH:i:s.000P';  
+    $timezone = getConfig("convertTimezone");
+    
+    // Short-circuit if we aren't actually doing anything useful.
+    if ($formatOverride == null && $timezone == '') {
         return $inputStr;
     }
-
+         
+    return preg_replace_callback('|\d\d\d\d\-\d\d\-\d\dT\d\d\:\d\d:\d\d\.\d\d\dZ|', 
+                                 create_function(
+                                    '$matches',
+                                       
+                                    '$utcDate = new DateTime($matches[0]);' .
+                                    'if (\'' . $timezone . '\'!= \'\') { ' . 
+                                        '$utcDate->setTimezone(new DateTimeZone(\'' . $timezone . '\'));'.
+                                    '}' .
+                                    'return $utcDate->format(\'' . $format . '\');'
+                                 ),
+                                 $inputStr);
 }
 
 function printSelectOptions($valuesToLabelsArray,$defaultValue) {
@@ -419,7 +427,7 @@ function printNode($node) {
             if (is_bool($nodeValue)) {
                 $nodeValue = $nodeValue == 1 ? "<span class='trueColor'>true</span>" : "<span class='falseColor'>false</span>";
             }
-            print "<li>". (!is_numeric($nodeKey) ? $nodeKey . ": " : "") . "<span style='font-weight:bold;'>" . addLinksToUiForIds($nodeValue) . "</span></li>\n";
+            print "<li>". (!is_numeric($nodeKey) ? $nodeKey . ": " : "") . "<span style='font-weight:bold;'>" . addLinksToUiForIds(localizeDateTimes($nodeValue)) . "</span></li>\n";
         }
     }
 }
@@ -453,7 +461,7 @@ function natcaseksort($array) {
 
 
 function addLinksToUiForIds($inputStr) {
-    if (isset($_SESSION['config']['linkIdToUi']) && $_SESSION['config']['linkIdToUi'] == true) {
+    if (getConfig('linkIdToUi')) {
         preg_match("@(https?://.*)/services@", $_SESSION['location'], $instUIDomain);
         return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$1' target='sfdcUi'>$1</a>",$inputStr);
     } else {
@@ -481,11 +489,6 @@ function convertArrayToCsv($arr) {
         $lines[] = convertArrayToCsvLine($v);
     }
     return implode("\n", $lines);
-}
-
-function simpleFormattedTime($timestamp) {
-    $dateTime = new DateTime($timestamp);
-    return date("h:i:s A",$dateTime->format("U"));
 }
 
 function getAsyncApiConnection() {
@@ -711,7 +714,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
         if (isset($_SESSION['restDebugLog']) && $_SESSION['restDebugLog'] != "") {
             print "<h1 onclick=\"toggleDebugSection(this,'rest_debug_container')\" class=\"debugHeader\">+ REST/BULK API LOGS</h1>\n";
             print "<div id='rest_debug_container' class='debugContainer'>";
-            print "<pre>" . addLinksToUiForIds($_SESSION['restDebugLog']) . "</pre>";
+            print "<pre>" . htmlspecialchars($_SESSION['restDebugLog'],ENT_QUOTES,'UTF-8') . "</pre>";
             print "<hr/>";
             print "</div>";
 

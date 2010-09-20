@@ -112,7 +112,7 @@ $config["header_General"] = array(
         "maxValue" => 100
     );
 
-    $GLOBALS['TIMEZONES'] = array(''=>'-None-');
+    $GLOBALS['TIMEZONES'] = array(''=>'UTF');
         foreach (timezone_identifiers_list() as $timezone) {
             $tz = explode('/',$timezone);
             if (isset($tz[1])) {
@@ -375,7 +375,7 @@ $config["header_General"] = array(
         "valuesToLabels" => array(
             "Parallel" => "Parallel",
             "Serial" => "Serial"
-            )
+         )
     );
 
     $config["header_queryAndSearchOptions"] = array(

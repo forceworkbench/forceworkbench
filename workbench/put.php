@@ -553,7 +553,7 @@ function confirmFieldMappings($action,$fieldMap,$csvArray,$extId) {
             // find this user's settings that are in the unsupported config list
             $bulkUnsupportedSettings = array();
             foreach ($bulkUnsupportedConfigs as $c) {
-                if ($GLOBALS["config"][$c]["default"] != $_SESSION["config"][$c]["value"]) {
+                if ($GLOBALS["config"][$c]["default"] != getConfig($c)) {
                     $bulkUnsupportedSettings[] = $c;
                 }
             }
@@ -767,7 +767,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray) {
     if (!($fieldMap && $csvArray && $_SESSION['default_object'])) {
         displayError("CSV file and field mapping not initialized or object not selected. Upload a new file and map fields.",true,true);
     } else {
-        require_once 'restclient/BulkApiClient.php';
+        require_once 'bulkclient/BulkApiClient.php';
         try {
             $job = new JobInfo();
             $job->setObject($_SESSION['default_object']);

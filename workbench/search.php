@@ -381,7 +381,7 @@ function displaySearchResult($records, $searchTimeElapsed) {
                         foreach ($record->fields as $datum) {
                             print "<td>";
                             if ($datum) {
-                                print convertDateTimezone(addLinksToUiForIds(htmlspecialchars($datum,ENT_QUOTES,'UTF-8')));
+                                print localizeDateTimes(addLinksToUiForIds(htmlspecialchars($datum,ENT_QUOTES,'UTF-8')));
                             } else {
                                 print "&nbsp;";
                             }

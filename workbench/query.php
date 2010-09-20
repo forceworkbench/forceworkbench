@@ -711,7 +711,7 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true) {
 
     if (isset($sobject->fields)) {
         foreach ($sobject->fields as $datum) {
-            $rowBuffer[] = convertDateTimezone($escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES,'UTF-8') : $datum);
+            $rowBuffer[] = localizeDateTimes($escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES,'UTF-8') : $datum);
         }
     }
 
@@ -884,9 +884,9 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
             }
 
-            print addLinksToUiForIds($queryRequest->getExportTo() == 'matrix' ?
+            print addLinksToUiForIds(localizeDateTimes($queryRequest->getExportTo() == 'matrix' ?
             createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
-            createQueryResultTable($records));
+            createQueryResultTable($records)));
 
             if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']) {
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";

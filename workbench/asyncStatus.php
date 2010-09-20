@@ -2,7 +2,7 @@
 require_once 'session.php';
 require_once 'shared.php';
 require_once 'header.php';
-require_once 'restclient/BulkApiClient.php';
+require_once 'bulkclient/BulkApiClient.php';
 
 print "<p/>";
 if (!isset($_GET['jobId']) || $_GET['jobId'] == "") {
@@ -86,8 +86,8 @@ if (apiVersionIsAtLeast(19.0)) {
 }
 
 print "<tr>" .
-        "<td class='dataLabel'>Created</td><td class='dataValue'>" . simpleFormattedTime($jobInfo->getCreatedDate()) . "</td>" .
-        "<td class='dataLabel'>Last Modified</td><td class='dataValue'>" . simpleFormattedTime($jobInfo->getSystemModstamp()) . "</td>" .
+        "<td class='dataLabel'>Created</td><td class='dataValue'>" . localizeDateTimes($jobInfo->getCreatedDate(),"h:i:s A") . "</td>" .
+        "<td class='dataLabel'>Last Modified</td><td class='dataValue'>" . localizeDateTimes($jobInfo->getSystemModstamp(),"h:i:s A") . "</td>" .
         "<td class='dataLabel'>Retries</td><td class='dataValue'>" . $jobInfo->getNumberRetries() . "</td>" .
        "</tr>";
 
@@ -142,8 +142,8 @@ if (count($batchInfos) > 0) {
                         ? " record" 
                         : " records") . "</td>" 
                   : "").
-              "<td class='dataValue'>" . simpleFormattedTime($batchInfo->getCreatedDate()) . "</td>" .
-              "<td class='dataValue'>" . simpleFormattedTime($batchInfo->getSystemModstamp()) . "</td>";
+              "<td class='dataValue'>" . localizeDateTimes($batchInfo->getCreatedDate(),"h:i:s A") . "</td>" .
+              "<td class='dataValue'>" . localizeDateTimes($batchInfo->getSystemModstamp(),"h:i:s A") . "</td>";
 
         print "</tr>";
     }

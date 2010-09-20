@@ -1,7 +1,7 @@
 <?php
 require_once 'session.php';
 require_once 'shared.php';
-require_once 'restclient/BulkApiClient.php';
+require_once 'bulkclient/BulkApiClient.php';
 
 if (!isset($_GET['jobId']) || !isset($_GET['batchId']) || !isset($_GET['op'])) {
     displayError("'jobId', 'batchId', and 'op' parameters must be specified", true, true);
