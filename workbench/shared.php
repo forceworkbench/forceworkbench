@@ -189,6 +189,7 @@ function displayWarning($warnings) {
     print "<div class='displayWarning'>\n";
     print "<img src='images/warning24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($warnings)) {
+        $warningString = "";
         foreach ($warnings as $warning) {
             $warningString .= "<p>" . htmlspecialchars($warning) . "</p>";
         }
@@ -203,6 +204,7 @@ function displayInfo($infos) {
     print "<div class='displayInfo'>\n";
     print "<img src='images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($infos)) {
+        $infoString = "";
         foreach ($infos as $info) {
             $infoString .= "<p>" . htmlspecialchars($info) . "</p>";
         }

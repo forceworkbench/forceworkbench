@@ -13,6 +13,9 @@ if (isset($_POST['passwordChangeType'])) {
 function changePassword($passwordChangeType) {
     global $partnerConnection;
 
+    $infos  = null;
+    $errors = null;
+    
     try {
         if ($passwordChangeType == 'set' && isset($_POST['userId']) && isset($_POST['passwordOne'])) {
             if ($_POST['passwordOne'] == $_POST['passwordConfirm']) {
@@ -26,7 +29,6 @@ function changePassword($passwordChangeType) {
             $infos[] = "Successfully reset password for " . $_POST['userId'];
         }
     } catch(Exception $e) {
-        $infos = null;
         $errors[] = $e->getMessage();
     }
 
