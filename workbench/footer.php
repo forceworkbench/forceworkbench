@@ -36,6 +36,9 @@ print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKB
 ?></div>
 
 </body>
+<script type="text/javascript" src="script/pro_dropdown.js"></script>
+
+<script type="text/javascript" src="script/wz_tooltip.js"></script>
 
 <script type="text/javascript" src="script/simpletreemenu.js">
 /***********************************************
@@ -44,10 +47,6 @@ print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKB
 * Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
 ***********************************************/
 </script>
-
-<script type="text/javascript" src="script/wz_tooltip.js"></script>
-
-<script type="text/javascript" src="script/pro_dropdown.js"></script>
 
 <?php
 if (isset($_REQUEST["footerScripts"])) {

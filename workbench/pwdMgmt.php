@@ -35,81 +35,9 @@ function changePassword($passwordChangeType) {
 
 
 function displayForm($infos=null, $errors=null) {
-    ?>
-<script type="text/javascript">
-<!--
- 
- function togglePasswordFields(changeType) {
- 
-     if (changeType == 'set') {
-         document.getElementById('passwordOne').disabled = false;
-         document.getElementById('passwordConfirm').disabled = false;
-         
-         //document.getElementById('changePasswordAction').value = 'Set Password';
-      } else if (changeType == 'reset') {
-         document.getElementById('passwordOne').value = null;
-         document.getElementById('passwordConfirm').value = null;
-         
-         document.getElementById('passwordOne').disabled = true;
-         document.getElementById('passwordConfirm').disabled = true;
-         
-         document.getElementById('passwordOne').style.background = 'white';
-         document.getElementById('passwordConfirm').style.background = 'white';
-         
-         //document.getElementById('changePasswordAction').value = 'Reset Password';
-     }
-     
- }
- 
- 
- function doPasswordsMatch(doAlert) {
-      if (document.getElementById('passwordOne').value.length < document.getElementById('passwordConfirm').value.length) {     
-          document.getElementById('passwordConfirm').style.background = 'LightPink';
-      }
-      
-      if (doAlert && document.getElementById('passwordOne').value.length == 0 && document.getElementById('passwordOne').disabled == false) {     
-           document.getElementById('passwordOne').style.background = 'LightPink';
-            alert('Must provide a password if setting password; otherwise, choose reset');
-            document.getElementById('passwordOne').focus();
-           return false;
-      } else {
-          document.getElementById('passwordOne').style.background = 'white';
-      }
-      
- 
-      if (document.getElementById('passwordOne').value == document.getElementById('passwordConfirm').value) {
-          document.getElementById('passwordConfirm').style.background = 'white';
-        return true;
-      } else {
-           if (doAlert) {
-               document.getElementById('passwordConfirm').style.background = 'LightPink';
-               alert('Passwords do not match');
-           }
-          
-          if (document.getElementById('passwordOne').value.length == document.getElementById('passwordConfirm').value.length) {     
-              document.getElementById('passwordConfirm').style.background = 'LightPink';
-          }
-           
-          return false;
-      }
- }
- 
- function clearForm() {
-    document.getElementById('userId').value = null;
-     document.getElementById('passwordOne').value = null;
-     document.getElementById('passwordConfirm').value = null;
-     document.getElementById('passwordOne').style.background = 'white';
-     document.getElementById('passwordConfirm').style.background = 'white';
- }
-
-
-//-->
-</script>
-
-    <?php
     if(isset($infos)) displayInfo($infos);
     if(isset($errors)) displayError($errors);
-    ?>
+?>
 
 <form name='passwordChange' method='post'
     action='<?php $_SERVER['PHP_SELF'] ?>'>
@@ -154,7 +82,73 @@ function displayForm($infos=null, $errors=null) {
 </table>
 </form>
 
-    <?php
+<script type="text/javascript">
+<!--
+ 
+ function togglePasswordFields(changeType) {
+ 
+     if (changeType == 'set') {
+         document.getElementById('passwordOne').disabled = false;
+         document.getElementById('passwordConfirm').disabled = false;
+      } else if (changeType == 'reset') {
+         document.getElementById('passwordOne').value = null;
+         document.getElementById('passwordConfirm').value = null;
+         
+         document.getElementById('passwordOne').disabled = true;
+         document.getElementById('passwordConfirm').disabled = true;
+         
+         document.getElementById('passwordOne').style.background = 'white';
+         document.getElementById('passwordConfirm').style.background = 'white';
+     }
+     
+ }
+ 
+ 
+ function doPasswordsMatch(doAlert) {
+      if (document.getElementById('passwordOne').value.length < document.getElementById('passwordConfirm').value.length) {     
+          document.getElementById('passwordConfirm').style.background = 'LightPink';
+      }
+      
+      if (doAlert && document.getElementById('passwordOne').value.length == 0 && document.getElementById('passwordOne').disabled == false) {     
+           document.getElementById('passwordOne').style.background = 'LightPink';
+            alert('Must provide a password if setting password; otherwise, choose reset');
+            document.getElementById('passwordOne').focus();
+           return false;
+      } else {
+          document.getElementById('passwordOne').style.background = 'white';
+      }
+      
+ 
+      if (document.getElementById('passwordOne').value == document.getElementById('passwordConfirm').value) {
+          document.getElementById('passwordConfirm').style.background = 'white';
+        return true;
+      } else {
+           if (doAlert) {
+               document.getElementById('passwordConfirm').style.background = 'LightPink';
+               alert('Passwords do not match');
+           }
+          
+          if (document.getElementById('passwordOne').value.length == document.getElementById('passwordConfirm').value.length) {     
+              document.getElementById('passwordConfirm').style.background = 'LightPink';
+          }
+           
+          return false;
+      }
+ }
+ 
+ function clearForm() {
+     document.getElementById('userId').value = null;
+     document.getElementById('passwordOne').value = null;
+     document.getElementById('passwordConfirm').value = null;
+     document.getElementById('passwordOne').style.background = 'white';
+     document.getElementById('passwordConfirm').style.background = 'white';
+ }
+
+
+//-->
+</script>
+
+<?php
 }
 require_once 'footer.php';
 ?>
