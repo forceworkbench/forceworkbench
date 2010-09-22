@@ -13,8 +13,8 @@ function put($action) {
     $confirmAction = 'Confirm ' . ucwords($action);
 
     if (isset($_POST['action']) && $_POST['action'] == $confirmAction) {
-        if ($action == 'upsert' && isset($_SESSION['_ext_id'])) {
-            $extId = $_SESSION['_ext_id'];
+        if ($action == 'upsert' && (isset($_SESSION['_ext_id']) || isset($_POST['_ext_id']))) {
+            $extId = isset($_SESSION['_ext_id']) ? $_SESSION['_ext_id'] : $_POST['_ext_id'];
         } else {
             $extId = NULL;
         }
@@ -25,14 +25,15 @@ function put($action) {
 
         if (isset($_POST['doAsync'])) {
             putAsync(
-            $action,
-            $extId,
-            isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null,
-            isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] :  null);
+                $action,
+                $extId,
+                isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null,
+                isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] :  null,
+                isset($_SESSION['tempZipFile']) ? $_SESSION['tempZipFile'] :  null);
         } else {
             require_once 'header.php';
             print "<h1>" . ucwords($action) . " Results</h1>";
-            if ($action == 'insert') $apiCall = 'create'; else $apiCall = $action;
+            $apiCall = ($action == 'insert') ? 'create' : $action;
             if ($action == "insert" || $action == "update" || $action == "upsert") {
                 putSync(
                 $apiCall,
@@ -45,7 +46,7 @@ function put($action) {
             }
             include_once 'footer.php';
         }
-        unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name']);
+        unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name'],$_SESSION['tempZipFile']);
     } elseif (isset($_POST['action']) && $_POST['action'] == 'Map Fields') {
         require_once 'header.php';
         array_pop($_POST); //remove header row
@@ -55,21 +56,25 @@ function put($action) {
         }
         $_SESSION['field_map'] = convertFieldMapToArray($_POST);
         confirmFieldMappings(
-        $confirmAction,
-        $_SESSION['field_map'],
-        isset($_SESSION['csv_array'])?$_SESSION['csv_array']:null,
-        isset($_SESSION['_ext_id'])?$_SESSION['_ext_id']:null
+            $confirmAction,
+            $_SESSION['field_map'],
+            isset($_SESSION['csv_array'])?$_SESSION['csv_array']:null,
+            isset($_SESSION['_ext_id'])?$_SESSION['_ext_id']:null
         );
         include_once 'footer.php';
     } elseif (isset($_FILES['file'])) {
         require_once 'header.php';
-        if (validateCsvUpload($_FILES['file'])) {
+                
+        $validationResult = validateUploadedFile($_FILES['file']);
+        $fileType = resolveFileType($_FILES['file']);
+        
+        if ($validationResult || ($fileType != "csv" && $fileType != "zip")) {
             displayUploadFileWithObjectSelectionForm('file',TRUE);
-            displayError(validateCsvUpload($_FILES['file']));
+            displayError($validationResult);
         } else if (($action == "insert" || $action == "update" || $action == "upsert") && $_POST['default_object'] == "") {
             displayUploadFileWithObjectSelectionForm('file',$action);
             displayError("Must select an object to $action.");
-        } else {
+        } else if ($fileType == "csv") {
             $csvFileName = basename($_FILES['file']['name']);
             $_SESSION['file_tmp_name'] = $_FILES['file']['tmp_name'];
             $_SESSION['csv_array'] = convertCsvFileToArray($_SESSION['file_tmp_name']);
@@ -84,11 +89,37 @@ function put($action) {
             displayInfo($info);
             print "<br/>";
             setFieldMappings($action,$_SESSION['csv_array']);
+        } else if ($fileType == "zip") {
+            $_SESSION['tempZipFile'] = file_get_contents($_FILES['file']['tmp_name']);
+            displayInfo("Successfully staged " . ceil(($_FILES["file"]["size"] / 1024)) . " KB zip file " . $_FILES["file"]["name"] . " for $action via the Bulk API.");
+            print "<br/>";
+            print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
+            
+            if ($action == 'upsert') {
+                print "<p><label>External Id: ";
+                print "<select name='_ext_id'>\n";
+                foreach (describeSObject($_POST['default_object'])->fields as $fields => $field) {
+                    if ($field->idLookup) { 
+                        print   " <option value='$field->name'";
+                        if($field->name == 'Id') print " selected='true'";
+                        print ">$field->name</option>\n";
+                    }
+                }
+                print "</select></label></p>";
+            }
+            
+            print "<input name='doAsync' type='hidden' value='true'/>"; // workaround for disabled checkbox
+            //print "<p><input type='checkbox' checked='checked' disabled='disabled'>Process records asynchronously via Bulk API</p>";
+            displayUnsupportedBulkConfigList("inline");
+    
+            print "<p>&nbsp;</p><p><input type='submit' name='action' value='$confirmAction' /></p>\n";
+            print "</form>\n";
+        
+        } else {
+            throw new Exception("Illegal State");
         }
         include_once 'footer.php';
-    }
-
-    else {
+    } else {
         require_once 'header.php';
         
         if ($_SESSION['config']['allOrNoneHeader_allOrNone'] && !apiVersionIsAtLeast(20.0)) {
@@ -97,7 +128,7 @@ function put($action) {
                                  " for this operation, but the default, partial save behavior will be used."));
         }
         
-        print "<p class='instructions'>Select an object and upload a CSV file to $action:</p>\n";
+        print "<p class='instructions'>Select an object and upload a CSV or ZIP file to $action:</p>\n";
         displayUploadFileWithObjectSelectionForm('file', $action);
         include_once 'footer.php';
     }
@@ -132,6 +163,21 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
     }
     print "<p><input type='submit' name='action' value='$submitLabel' /></p>\n";
     print "</form>\n";
+}
+
+/**
+ * Determines if the specified file is CSV or ZIP file
+ *
+ * @param unknown_type $file
+ */
+function resolveFileType($file) {
+    if (stristr($file['name'],'.csv') && (stristr($file['type'],'csv') || $file['type'] !== "application//vnd.ms-excel")) {
+        return "csv";
+    } else if (stristr($file['name'],'.zip') && (stristr($file['type'],'zip') || stristr($file['type'],'octet-stream'))) {
+        return "zip";
+    } else {
+        throw new Exception("Unknown file type. Only CSV and ZIP files are allowed.");
+    }
 }
 
 /**
@@ -539,46 +585,50 @@ function confirmFieldMappings($action,$fieldMap,$csvArray,$extId) {
                 print "</div>";
             }
             
-            // all configs not supported by Bulk API
-            $bulkUnsupportedConfigs = array(
-                "mruHeader_updateMru",
-                "allOrNoneHeader_allOrNone",
-                "emailHeader_triggerAutoResponseEmail",
-                "emailHeader_triggertriggerUserEmail",
-                "emailHeader_triggerOtherEmail",
-                "allowFieldTruncationHeader_allowFieldTruncation",
-                "UserTerritoryDeleteHeader_transferToUserId"
-            );
-
-            // find this user's settings that are in the unsupported config list
-            $bulkUnsupportedSettings = array();
-            foreach ($bulkUnsupportedConfigs as $c) {
-                if ($GLOBALS["config"][$c]["default"] != getConfig($c)) {
-                    $bulkUnsupportedSettings[] = $c;
-                }
-            }
-            
-            // print out a warning if any settings were found
-            if (count($bulkUnsupportedSettings) > 0) {
-                print "<div id='unsupportedBulkConfigList' style='display: none; color: orange;'>" .
-                          "<p style='margin-left: 3em;'>" .  
-                              "<img src='images/warning24.png' style='margin-right: 5px;'/>" .
-                              "The follow settings are not supported by the Bulk API and will be ignored:" . 
-                              "<ul style='margin-left: 3em;'>";
-                
-                foreach ($bulkUnsupportedSettings as $s) {
-                    print "<li>" . $GLOBALS['config'][$s]['label'] . "</li>";
-                }
-                
-                print "</ul>" . 
-                      "</p>" . 
-                      "</div>";
-            }
+            displayUnsupportedBulkConfigList("none");
         }
 
         print "<p>&nbsp;</p><p><input type='submit' name='action' value='$action' /></p>\n";
         print "</form>\n";
     }
+}
+
+function displayUnsupportedBulkConfigList($display) {
+    // all configs not supported by Bulk API
+    $bulkUnsupportedConfigs = array(
+        "mruHeader_updateMru",
+        "allOrNoneHeader_allOrNone",
+        "emailHeader_triggerAutoResponseEmail",
+        "emailHeader_triggertriggerUserEmail",
+        "emailHeader_triggerOtherEmail",
+        "allowFieldTruncationHeader_allowFieldTruncation",
+        "UserTerritoryDeleteHeader_transferToUserId"
+    );
+
+    // find this user's settings that are in the unsupported config list
+    $bulkUnsupportedSettings = array();
+    foreach ($bulkUnsupportedConfigs as $c) {
+        if ($GLOBALS["config"][$c]["default"] != getConfig($c)) {
+            $bulkUnsupportedSettings[] = $c;
+        }
+    }
+    
+    // print out a warning if any settings were found
+    if (count($bulkUnsupportedSettings) > 0) {
+        print "<div id='unsupportedBulkConfigList' style='display: $display; color: orange;'>" .
+                  "<p style='margin-left: 3em;'>" .  
+                      "<img src='images/warning24.png' style='margin-right: 5px;'/>" .
+                      "The follow settings are not supported by the Bulk API and will be ignored:" . 
+                      "<ul style='margin-left: 3em;'>";
+        
+        foreach ($bulkUnsupportedSettings as $s) {
+            print "<li>" . $GLOBALS['config'][$s]['label'] . "</li>";
+        }
+        
+        print "</ul>" . 
+              "</p>" . 
+              "</div>";
+    } 
 }
 
 /**
@@ -763,8 +813,10 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
  * @param unknown_type $fieldMap
  * @param unknown_type $csvArray
  */
-function putAsync($apiCall,$extId,$fieldMap,$csvArray) {
-    if (!($fieldMap && $csvArray && $_SESSION['default_object'])) {
+function putAsync($apiCall,$extId,$fieldMap,$csvArray,$zipFile) {    
+    $doingZip = isset($zipFile);
+    
+    if (!$doingZip && !($fieldMap && $csvArray && $_SESSION['default_object'])) {
         displayError("CSV file and field mapping not initialized or object not selected. Upload a new file and map fields.",true,true);
     } else {
         require_once 'bulkclient/BulkApiClient.php';
@@ -772,7 +824,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray) {
             $job = new JobInfo();
             $job->setObject($_SESSION['default_object']);
             $job->setOpertion($apiCall);
-            $job->setContentType("CSV");
+            $job->setContentType($doingZip ? "ZIP_CSV" : "CSV");
             $job->setConcurrencyMode($_SESSION['config']['asyncConcurrencyMode']);
             if(isset($_SESSION['config']['assignmentRuleHeader_assignmentRuleId'])) $job->setAssignmentRuleId($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']);
             if($apiCall == "upsert" && isset($extId)) $job->setExternalIdFieldName($extId);
@@ -787,51 +839,59 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray) {
             displayError("No job id found. Aborting Bulk API operation.", true, true);
         }
 
-        $csvHeader = array_shift($csvArray);
-        $results = array();
-
-        while($csvArray) {
-            $sObjects = array();
-            $csvArrayBatch = array_splice($csvArray,0,$_SESSION['config']['asyncBatchSize']);
-
-            $asyncCsv = array();
-
-            $asyncCsvHeaderRow = array();
-            foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
-                if (isset($fieldMapArray['csvField'])) {
-                    if (isset($fieldMapArray['relationshipName']) && isset($fieldMapArray['relatedFieldName'])) {
-                        $asyncCsvHeaderRow[] = ($fieldMapArray['isPolymorphic'] ? ($fieldMapArray['relatedObjectName'] . ":") : "") .
-                        $fieldMapArray['relationshipName'] . "." .
-                        $fieldMapArray['relatedFieldName'];
-                    } elseif (isset($salesforceField)) {
-                        $asyncCsvHeaderRow[] = $salesforceField;
-                    }
-                }
+        if ($doingZip) {
+            try {
+               $asyncConnection->createBatch($job, $zipFile);
+            } catch (Exception $e) {
+                displayError($e->getMessage(), true, true);
             }
-            $asyncCsv[] = $asyncCsvHeaderRow;
-
-            for ($row=0; $row < count($csvArrayBatch); $row++) {
-                //create new row
-                $asyncCsvRow = array();
+        } else {
+            $csvHeader = array_shift($csvArray);
+            $results = array();
+    
+            while($csvArray) {
+                $sObjects = array();
+                $csvArrayBatch = array_splice($csvArray,0,$_SESSION['config']['asyncBatchSize']);
+    
+                $asyncCsv = array();
+    
+                $asyncCsvHeaderRow = array();
                 foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
-                    $col = array_search($fieldMapArray['csvField'],$csvHeader);
-                    if (isset($salesforceField) && isset($fieldMapArray['csvField'])) {
-                        if ($csvArrayBatch[$row][$col] == "" && $_SESSION['config']['fieldsToNull']) {
-                            $asyncCsvRow[] = "#N/A";
-                        } else {
-                            $asyncCsvRow[] = htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8');
+                    if (isset($fieldMapArray['csvField'])) {
+                        if (isset($fieldMapArray['relationshipName']) && isset($fieldMapArray['relatedFieldName'])) {
+                            $asyncCsvHeaderRow[] = ($fieldMapArray['isPolymorphic'] ? ($fieldMapArray['relatedObjectName'] . ":") : "") .
+                            $fieldMapArray['relationshipName'] . "." .
+                            $fieldMapArray['relatedFieldName'];
+                        } elseif (isset($salesforceField)) {
+                            $asyncCsvHeaderRow[] = $salesforceField;
                         }
                     }
                 }
-
-                //add row to the array
-                $asyncCsv[] = $asyncCsvRow;
-            }
-
-            try {
-                $batch = $asyncConnection->createBatch($job, convertArrayToCsv($asyncCsv));
-            } catch (Exception $e) {
-                displayError($e->getMessage(), true, true);
+                $asyncCsv[] = $asyncCsvHeaderRow;
+    
+                for ($row=0; $row < count($csvArrayBatch); $row++) {
+                    //create new row
+                    $asyncCsvRow = array();
+                    foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
+                        $col = array_search($fieldMapArray['csvField'],$csvHeader);
+                        if (isset($salesforceField) && isset($fieldMapArray['csvField'])) {
+                            if ($csvArrayBatch[$row][$col] == "" && $_SESSION['config']['fieldsToNull']) {
+                                $asyncCsvRow[] = "#N/A";
+                            } else {
+                                $asyncCsvRow[] = htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8');
+                            }
+                        }
+                    }
+    
+                    //add row to the array
+                    $asyncCsv[] = $asyncCsvRow;
+                }
+    
+                try {
+                    $batch = $asyncConnection->createBatch($job, convertArrayToCsv($asyncCsv));
+                } catch (Exception $e) {
+                    displayError($e->getMessage(), true, true);
+                }
             }
         }
 
