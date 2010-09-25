@@ -9,7 +9,6 @@
  * @param unknown_type $action
  */
 function put($action) {
-
     $confirmAction = 'Confirm ' . ucwords($action);
 
     if (isset($_POST['action']) && $_POST['action'] == $confirmAction) {
@@ -90,6 +89,16 @@ function put($action) {
             print "<br/>";
             setFieldMappings($action,$_SESSION['csv_array']);
         } else if ($fileType == "zip") {
+            if (!supportsBulk($action)) {
+                displayError("ZIP-based "  . $action . "s not supported.", false, true);
+                exit;                
+            }
+            
+            if (!apiVersionIsAtLeast(20.0)) {
+                displayError("ZIP-based "  . $action . "s not supported until API 20.0", false, true);
+                exit;
+            }
+            
             $_SESSION['tempZipFile'] = file_get_contents($_FILES['file']['tmp_name']);
             displayInfo("Successfully staged " . ceil(($_FILES["file"]["size"] / 1024)) . " KB zip file " . $_FILES["file"]["name"] . " for $action via the Bulk API.");
             print "<br/>";
@@ -120,17 +129,7 @@ function put($action) {
         }
         include_once 'footer.php';
     } else {
-        require_once 'header.php';
-        
-        if ($_SESSION['config']['allOrNoneHeader_allOrNone'] && !apiVersionIsAtLeast(20.0)) {
-            displayWarning(array("All-Or-None Transactional Processing Only Supported in API 20.0 and higher.",
-                                 "You may continue to use API " . getApiVersion() . 
-                                 " for this operation, but the default, partial save behavior will be used."));
-        }
-        
-        print "<p class='instructions'>Select an object and upload a CSV or ZIP file to $action:</p>\n";
         displayUploadFileWithObjectSelectionForm('file', $action);
-        include_once 'footer.php';
     }
 }
 
@@ -145,10 +144,26 @@ function put($action) {
  * @param $action
  */
 function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
+    require_once 'header.php';
+    
+    if ($_SESSION['config']['allOrNoneHeader_allOrNone'] && !apiVersionIsAtLeast(20.0)) {
+        displayWarning(array("All-Or-None Transactional Processing Only Supported in API 20.0 and higher.",
+                             "You may continue to use API " . getApiVersion() . 
+                             " for this operation, but the default, partial save behavior will be used."));
+    }
+    
+    print "<p class='instructions'>" . 
+          "Select " . 
+          (requiresObject($action) ? "an object and " : "") .
+          "  a CSV " .
+          (supportsBulk($action) && apiVersionIsAtLeast(20.0) ? "or ZIP "  : "") . 
+          " file containing records to $action:" . 
+          "</p>\n";
+    
     print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n";
     print "<input type='hidden' name='MAX_FILE_SIZE' value='" . $_SESSION['config']['maxFileSize'] . "' />\n";
     print "<p><input type='file' name='$fileInputName' size=44 /></p>\n";
-    if ($action == "insert" || $action == "update" || $action == "upsert") {
+    if (requiresObject($action)) {
         $filter1 = null;
         $filter2 = null;
         if($action == "insert") $filter1 = "createable";
@@ -163,6 +178,8 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
     }
     print "<p><input type='submit' name='action' value='$submitLabel' /></p>\n";
     print "</form>\n";
+    
+    include_once 'footer.php';
 }
 
 /**
@@ -988,5 +1005,13 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
     print "<br/>\n<table class='dataTable'>\n";
     print "<th>&nbsp;</th> <th style='width: 30%'>Salesforce Id</th> <th style='width: 30%'>Result</th> <th style='width: 35%'>Status</th>\n";
     print "<p>$resultsTable</p>";
+}
+
+function supportsBulk($action) {
+    return in_array($action, array("insert", "update", "upsert", "delete"));    
+}
+
+function requiresObject($action) {
+    return in_array($action, array("insert", "update", "upsert"));    
 }
 ?>
