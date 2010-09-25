@@ -86,7 +86,7 @@ if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
     $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
     displayQueryResults($records,$queryTimeElapsed,$queryRequest);
     include_once 'footer.php';
-} elseif (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
+} else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
     if (!substr_count($_POST['soql_query'],"count()")) {
         $records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction(),null,true);
         exportQueryAsCsv($records,$queryRequest->getExportTo());

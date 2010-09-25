@@ -10,7 +10,7 @@ require_once 'put.php';
         <meta http-equiv="Content-Language" content="UTF-8" />
         <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
         <link rel="stylesheet" href="style/master.css" type="text/css" />
-        <link rel="Shortcut Icon" href="images/blueBox.bmp" />
+        <link rel="Shortcut Icon" type="image/png" href="images/bluecube-16x16.png" />
         <title>Workbench - CSV Preview</title>
     </head>
 <body>

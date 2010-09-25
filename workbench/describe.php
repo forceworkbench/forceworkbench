@@ -75,7 +75,7 @@ function displayDescribeSObjectResults() {
             print "<li>$key: ";
             booleanDisplay($value);
             print "</li> \n";
-        } elseif (is_string($value) || is_numeric($value)) {
+        } else if (is_string($value) || is_numeric($value)) {
             stringDisplay($key, $value);
         }
     }
@@ -90,7 +90,7 @@ function displayDescribeSObjectResults() {
                 print "<li>$subkey: ";
                 booleanDisplay($subvalue);
                 print "</li> \n";
-            } elseif ($subkey == 'picklistValues') {
+            } else if ($subkey == 'picklistValues') {
                 //Because picklist are deeper in the SOAP message,
                 //it requires more nested foreach loops
                 if(!is_array($subvalue)) $subvalue = array($subvalue);
@@ -103,24 +103,24 @@ function displayDescribeSObjectResults() {
                             print "<li>$subsubsubkey: ";
                             booleanDisplay($subsubsubvalue);
                             print "</li> \n";
-                        } elseif (is_string($subsubsubvalue) || is_numeric($subsubsubvalue)) {
+                        } else if (is_string($subsubsubvalue) || is_numeric($subsubsubvalue)) {
                             stringDisplay( $subsubsubkey, $subsubsubvalue);
                         }
                     }
                     print "</ul></li>\n"; //end one picklist node
                 }
                 print "</ul></li>\n"; //end picklist node
-            } elseif ($subkey == 'referenceTo') { //do this for referenceTo arrays
+            } else if ($subkey == 'referenceTo') { //do this for referenceTo arrays
                 if (is_array($subvalue)) {
                     print "<li>$subkey<ul style='display:none;'>\n";
                     foreach ($subvalue as $subsubkey => $subsubvalue) {
                         print  "<li><strong>$subsubvalue</strong></li>\n";
                     }
                     print "</ul></li>\n"; //end referenceTo node
-                } elseif (is_string($subvalue) || is_numeric($subvalue)) {
+                } else if (is_string($subvalue) || is_numeric($subvalue)) {
                     stringDisplay($subkey, $subvalue);
                 }
-            } elseif (is_string($subvalue) || is_numeric($subvalue)) {
+            } else if (is_string($subvalue) || is_numeric($subvalue)) {
                 stringDisplay($subkey, $subvalue);
             }
         }
@@ -140,7 +140,7 @@ function displayDescribeSObjectResults() {
                 foreach ($value as $subkey => $subvalue) {
                     if (is_string($subvalue) || is_numeric($subvalue)) {
                         stringDisplay( $subkey, $subvalue);
-                    } elseif (is_bool($subvalue)) {
+                    } else if (is_bool($subvalue)) {
                         print "<li>$subkey: ";
                         booleanDisplay($subvalue);
                         print "</li> \n";
@@ -162,7 +162,7 @@ function displayDescribeSObjectResults() {
             foreach ($value as $subkey => $subvalue) {
                 if (is_string($subvalue) || is_numeric($subvalue)) {
                     stringDisplay( $subkey, $subvalue);
-                } elseif (is_bool($subvalue)) {
+                } else if (is_bool($subvalue)) {
                     print "<li>$subkey: ";
                     booleanDisplay($subvalue);
                     print "</li> \n";
@@ -198,7 +198,7 @@ function highlightSpecialField( $value ) {
 
     if ($_SESSION['config']['highlightSystemFields'] && in_array($value->name,$systemFields)) {
         print "<li><span class='highlightSystemField'>$value->name</span><ul style='display:none;'>\n";
-    } elseif ($_SESSION['config']['highlightCustomFields'] && $value->custom) {
+    } else if ($_SESSION['config']['highlightCustomFields'] && $value->custom) {
         print "<li><span class='highlightCustomField'>$value->name</span><ul style='display:none;'>\n";
     } else {
         print "<li>$value->name<ul style='display:none;'>\n";

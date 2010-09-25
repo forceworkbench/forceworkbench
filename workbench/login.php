@@ -78,7 +78,7 @@ if ((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])) {
 if (isset($_POST['login_type'])) {
     if ($_POST['login_type']=='std') {
         processLogin($_POST['usernameStd'], $_POST['passwordStd'], null, null, $_POST['actionJumpStd']);
-    } elseif ($_POST['login_type']=='adv') {
+    } else if ($_POST['login_type']=='adv') {
         processLogin(
         isset($_POST['usernameAdv']) ? $_POST['usernameAdv'] : null,
         isset($_POST['passwordAdv']) ? $_POST['passwordAdv'] : null,
@@ -104,7 +104,7 @@ function displayLogin($errors) {
         $user = $_COOKIE['user'];
         $isRemembered = "checked='checked'";
         $jsFocus = 'password';
-    } elseif (isset($_POST['user'])) {
+    } else if (isset($_POST['user'])) {
         $user = $_POST['user'];
         $jsFocus = 'user';
     } else {
@@ -414,7 +414,7 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         if ($username && $password && !$sessionId) {
             $partnerConnection->setEndpoint($serverUrl);
             $partnerConnection->login($username, $password);
-        } elseif ($sessionId && $serverUrl && !($username && $password)) {
+        } else if ($sessionId && $serverUrl && !($username && $password)) {
             if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
                 displayLogin('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. Choose your specific Salesforce instance on the QuickSelect menu when using a session id; otherwise, provide a username and password and choose the appropriate a login server.');
                 exit;

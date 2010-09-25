@@ -8,7 +8,7 @@ require_once 'shared.php';
 
 if (isset($_POST['actionJump']) && $_POST['actionJump'] != "") {
     header("Location: $_POST[actionJump]");
-} elseif (isset($_POST['select'])) {
+} else if (isset($_POST['select'])) {
     include_once 'header.php';
     displayError("Choose an object and an action to which to jump.");
     displaySelechForm();

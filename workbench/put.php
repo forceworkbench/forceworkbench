@@ -46,7 +46,7 @@ function put($action) {
             include_once 'footer.php';
         }
         unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name'],$_SESSION['tempZipFile']);
-    } elseif (isset($_POST['action']) && $_POST['action'] == 'Map Fields') {
+    } else if (isset($_POST['action']) && $_POST['action'] == 'Map Fields') {
         require_once 'header.php';
         array_pop($_POST); //remove header row
         if (isset($_POST['_ext_id'])) {
@@ -61,17 +61,15 @@ function put($action) {
             isset($_SESSION['_ext_id'])?$_SESSION['_ext_id']:null
         );
         include_once 'footer.php';
-    } elseif (isset($_FILES['file'])) {
+    } else if (isset($_FILES['file'])) {
         require_once 'header.php';
                 
         $validationResult = validateUploadedFile($_FILES['file']);
         $fileType = resolveFileType($_FILES['file']);
         
         if ($validationResult || ($fileType != "csv" && $fileType != "zip")) {
-            displayUploadFileWithObjectSelectionForm('file',TRUE);
             displayError($validationResult);
-        } else if (($action == "insert" || $action == "update" || $action == "upsert") && $_POST['default_object'] == "") {
-            displayUploadFileWithObjectSelectionForm('file',$action);
+        } else if (requiresObject($action) && $_POST['default_object'] == "") {
             displayError("Must select an object to $action.");
         } else if ($fileType == "csv") {
             $csvFileName = basename($_FILES['file']['name']);
@@ -79,8 +77,8 @@ function put($action) {
             $_SESSION['csv_array'] = convertCsvFileToArray($_SESSION['file_tmp_name']);
             $csvArrayCount = count($_SESSION['csv_array']) - 1;
             if (!$csvArrayCount) {
-                displayError("The file uploaded contains no records. Please try again.",false,true);
-            } elseif ($csvArrayCount > $_SESSION['config']['maxFileLengthRows']) {
+                displayError("The file uploaded contains no records. Please try again.", false, true);
+            } else if ($csvArrayCount > $_SESSION['config']['maxFileLengthRows']) {
                 displayError ("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.", false, true);
             }
             $info = "The file $csvFileName was uploaded successfully and contains $csvArrayCount row";
@@ -100,13 +98,15 @@ function put($action) {
             }
             
             $_SESSION['tempZipFile'] = file_get_contents($_FILES['file']['tmp_name']);
-            displayInfo("Successfully staged " . ceil(($_FILES["file"]["size"] / 1024)) . " KB zip file " . $_FILES["file"]["name"] . " for $action via the Bulk API.");
+            displayInfo("Successfully staged " . ceil(($_FILES["file"]["size"] / 1024)) . " KB zip file " . $_FILES["file"]["name"] . " for $action via the Bulk API. " . 
+                        "Note, custom field mappings are not available for ZIP-based requests.");
             print "<br/>";
             print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
             
             if ($action == 'upsert') {
-                print "<p><label>External Id: ";
-                print "<select name='_ext_id'>\n";
+                print "<div class='instructions'>Choose the options below and confirm the $action:</div>" . 
+                      "<p><label>External Id: " .
+                      "<select name='_ext_id'>\n";
                 foreach (describeSObject($_POST['default_object'])->fields as $fields => $field) {
                     if ($field->idLookup) { 
                         print   " <option value='$field->name'";
@@ -117,11 +117,9 @@ function put($action) {
                 print "</select></label></p>";
             }
             
-            print "<input name='doAsync' type='hidden' value='true'/>"; // workaround for disabled checkbox
-            //print "<p><input type='checkbox' checked='checked' disabled='disabled'>Process records asynchronously via Bulk API</p>";
-            displayUnsupportedBulkConfigList("inline");
+            displayBulkApiOptions($confirmAction, true);
     
-            print "<p>&nbsp;</p><p><input type='submit' name='action' value='$confirmAction' /></p>\n";
+            print "<br/><p><input type='submit' name='action' value='$confirmAction' /></p>\n";
             print "</form>\n";
         
         } else {
@@ -129,6 +127,7 @@ function put($action) {
         }
         include_once 'footer.php';
     } else {
+        unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name'],$_SESSION['tempZipFile']);
         displayUploadFileWithObjectSelectionForm('file', $action);
     }
 }
@@ -140,7 +139,6 @@ function put($action) {
  * Form to upload CSV for all PUT functions
  *
  * @param $fileInputName
- * @param $showObjectSelect
  * @param $action
  */
 function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
@@ -156,8 +154,9 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
           "Select " . 
           (requiresObject($action) ? "an object and " : "") .
           "  a CSV " .
-          (supportsBulk($action) && apiVersionIsAtLeast(20.0) ? "or ZIP "  : "") . 
-          " file containing records to $action:" . 
+          (supportsZips($action) ? "or ZIP "  : "") . 
+          " file containing records to $action." . 
+          (supportsZips($action) ? " Zipped requests must contain a CSV-formatted manifest called request.txt, which may reference included binary files."  : "") . 
           "</p>\n";
     
     print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n";
@@ -167,8 +166,8 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
         $filter1 = null;
         $filter2 = null;
         if($action == "insert") $filter1 = "createable";
-        elseif($action == "update") $filter1 = "updateable";
-        elseif ($action == "upsert") {$filter1 = "createable"; $filter2 = "updateable";}
+        else if($action == "update") $filter1 = "updateable";
+        else if ($action == "upsert") {$filter1 = "createable"; $filter2 = "updateable";}
 
         printObjectSelection($_SESSION['default_object'], 'default_object', "20", null, $filter1, $filter2);
          
@@ -188,7 +187,7 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
  * @param unknown_type $file
  */
 function resolveFileType($file) {
-    if (stristr($file['name'],'.csv') && (stristr($file['type'],'csv') || $file['type'] !== "application//vnd.ms-excel")) {
+    if (stristr($file['name'],'.csv') && (stristr($file['type'],'csv') || $file['type'] == "application//vnd.ms-excel")) {
         return "csv";
     } else if (stristr($file['name'],'.zip') && (stristr($file['type'],'zip') || stristr($file['type'],'octet-stream'))) {
         return "zip";
@@ -197,21 +196,6 @@ function resolveFileType($file) {
     }
 }
 
-/**
- * Make sure the uploaded CSV is valid
- *
- * @param csvfile $file
- * @return error codes or 0 if ok
- */
-function validateCsvUpload($file) {
-    $validationResult = validateUploadedFile($file);
-
-    if ((!stristr($file['type'],'csv') || $file['type'] !== "application//vnd.ms-excel") && !stristr($file['name'],'.csv')) {
-        return("The file uploaded is not a valid CSV file. Please try again.");
-    }
-
-    return $validationResult;
-}
 
 /**
  * Read a CSV file and return a PHP array
@@ -518,134 +502,46 @@ function convertFieldMapToArray($fieldMap) {
  * @param $csvArray
  * @param $extId
  */
-function confirmFieldMappings($action,$fieldMap,$csvArray,$extId) {
+function confirmFieldMappings($action, $fieldMap, $csvArray, $extId) {
     if (!($fieldMap && $csvArray)) {
         displayError("CSV file and field mapping not initialized successfully. Upload a new file and map fields.",true,true);
-    } else {
-
-        if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
-            if (!isset($fieldMap['Id'])) {
-                displayError("Salesforce ID not selected. Please try again.",false,true);
-            } else {
-                ob_start();
-
-                if (($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
-                    displayFieldMappings($fieldMap, null, false);
-                } else {
-                    displayFieldMappings($fieldMap, null, true);
-                }
-
-                $idCol = array_search($fieldMap['Id'],$csvArray[0]);
-                for ($row=1,$idCount = 0; $row < count($csvArray); $row++) {
-                    if ($csvArray[$row][$idCol]) {
-                        $idCount++;
-                    }
-                }
-                $fieldMappingTable = ob_get_clean();
-                displayInfo ("The file uploaded contains $idCount records with Salesforce IDs with the field mapping below.");
-                print "<p class='instructions'>Confirm the mappings below:</p>";
-                print "<p>$fieldMappingTable</p>";
-            }
-        } else {
-            $recordCount = count($csvArray) - 1;
-            displayInfo ("The file uploaded contains $recordCount records to be added to " . $_SESSION['default_object']);
-            print "<p class='instructions'>Confirm the mappings below:</p>";
-            displayFieldMappings($fieldMap, $extId, true);
-        }
-
-        print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
-
-        //Hard Delete option
-        if (apiVersionIsAtLeast(19.0) && $action == 'Confirm Delete') {
-            print "<p><label><input type='checkbox' id='doHardDelete' name='doHardDelete' onChange=\"".
-                  "if (this.checked) {" .
-                  "    document.getElementById('doAsync').checked = true;" . 
-                  "    document.getElementById('asyncDeleteObjectSelection').style.display = 'inline';" .
-                  "    document.getElementById('unsupportedBulkConfigList').style.display = 'inline';" .
-                  "}\"/> " . 
-                  "Permanently hard delete records</label>" .
-                  "&nbsp;<img onmouseover=\"Tip('When specified, the deleted records are not stored in the Recycle Bin. " . 
-                  "Instead, the records become immediately eligible for deletion, don\'t count toward the storage space used " . 
-                  "by your organization, and may improve performance. The Administrative permission for this operation, " .
-                  "\'Bulk API Hard Delete\', is disabled by default and must be enabled by an administrator. " . 
-                  "A Salesforce user license is required for hard delete. Hard Delete is only available via Bulk API.')\" ".
-                  "align='absmiddle' src='images/help16.png'/>" . 
-                  "</p>";
-        }
-
-        //Async Options
-        if((apiVersionIsAtLeast(17.0) && in_array($action, array('Confirm Insert', 'Confirm Update', 'Confirm Upsert')))
-           || (apiVersionIsAtLeast(18.0) && $action == 'Confirm Delete')) {
-            print "<p><label><input id='doAsync' name='doAsync' type='checkbox' onChange=\"".
-                   "var doHardDelete = document.getElementById('doHardDelete');" .
-                   "var asyncDeleteObjectSelection = document.getElementById('asyncDeleteObjectSelection');" .
-                   "var unsupportedBulkConfigList = document.getElementById('unsupportedBulkConfigList');" .
-                   "if (this.checked) {" .  
-                   "     if (asyncDeleteObjectSelection != null) asyncDeleteObjectSelection.style.display = 'inline';" .
-                   "     if (unsupportedBulkConfigList != null) unsupportedBulkConfigList.style.display = 'inline';" .
-                   "} else {" .
-                   "     if (doHardDelete != null) doHardDelete.checked = false;" .
-                   "     if (asyncDeleteObjectSelection != null) asyncDeleteObjectSelection.style.display = 'none';" .
-                   "     if (unsupportedBulkConfigList != null) unsupportedBulkConfigList.style.display = 'none';" .
-                   "}\"/> " .
-                  "Process records asynchronously via Bulk API</label>" .
-                  "&nbsp;<img onmouseover=\"Tip('Processing records asynchronously is recommended for large data loads. " .
-                  "The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. " . 
-                  "After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" ".
-                  "align='absmiddle' src='images/help16.png'/>" . 
-                  "</p>";
-
-            // object selection for Bulk API Delete
-            if ($action == 'Confirm Delete') {
-                print "<div id='asyncDeleteObjectSelection' style='display: none; margin-left: 3em;'>Object Type: ";
-                printObjectSelection($_SESSION['default_object']);
-                print "</div>";
-            }
-            
-            displayUnsupportedBulkConfigList("none");
-        }
-
-        print "<p>&nbsp;</p><p><input type='submit' name='action' value='$action' /></p>\n";
-        print "</form>\n";
-    }
-}
-
-function displayUnsupportedBulkConfigList($display) {
-    // all configs not supported by Bulk API
-    $bulkUnsupportedConfigs = array(
-        "mruHeader_updateMru",
-        "allOrNoneHeader_allOrNone",
-        "emailHeader_triggerAutoResponseEmail",
-        "emailHeader_triggertriggerUserEmail",
-        "emailHeader_triggerOtherEmail",
-        "allowFieldTruncationHeader_allowFieldTruncation",
-        "UserTerritoryDeleteHeader_transferToUserId"
-    );
-
-    // find this user's settings that are in the unsupported config list
-    $bulkUnsupportedSettings = array();
-    foreach ($bulkUnsupportedConfigs as $c) {
-        if ($GLOBALS["config"][$c]["default"] != getConfig($c)) {
-            $bulkUnsupportedSettings[] = $c;
-        }
-    }
-    
-    // print out a warning if any settings were found
-    if (count($bulkUnsupportedSettings) > 0) {
-        print "<div id='unsupportedBulkConfigList' style='display: $display; color: orange;'>" .
-                  "<p style='margin-left: 3em;'>" .  
-                      "<img src='images/warning24.png' style='margin-right: 5px;'/>" .
-                      "The follow settings are not supported by the Bulk API and will be ignored:" . 
-                      "<ul style='margin-left: 3em;'>";
-        
-        foreach ($bulkUnsupportedSettings as $s) {
-            print "<li>" . $GLOBALS['config'][$s]['label'] . "</li>";
-        }
-        
-        print "</ul>" . 
-              "</p>" . 
-              "</div>";
+        exit;
     } 
+
+    if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
+        if (!isset($fieldMap['Id'])) {
+            displayError("Salesforce ID not selected. Please try again.",false,true);
+        } else {
+            ob_start();
+
+            if (($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
+                displayFieldMappings($fieldMap, null, false);
+            } else {
+                displayFieldMappings($fieldMap, null, true);
+            }
+
+            $idCol = array_search($fieldMap['Id'],$csvArray[0]);
+            for ($row=1,$idCount = 0; $row < count($csvArray); $row++) {
+                if ($csvArray[$row][$idCol]) {
+                    $idCount++;
+                }
+            }
+            $fieldMappingTable = ob_get_clean();
+            displayInfo ("The file uploaded contains $idCount records with Salesforce IDs with the field mapping below.");
+            print "<p class='instructions'>Confirm the mappings below:</p>";
+            print "<p>$fieldMappingTable</p>";
+        }
+    } else {
+        $recordCount = count($csvArray) - 1;
+        displayInfo ("The file uploaded contains $recordCount records to be added to " . $_SESSION['default_object']);
+        print "<p class='instructions'>Confirm the mappings below:</p>";
+        displayFieldMappings($fieldMap, $extId, true);
+    }
+
+    print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
+    displayBulkApiOptions($action, false);
+    print "<p>&nbsp;</p><p><input type='submit' name='action' value='$action' /></p>\n";
+    print "</form>\n";
 }
 
 /**
@@ -777,7 +673,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
                         $col = array_search($fieldMapArray['csvField'],$csvHeader);
                         if ($csvArrayBatch[$row][$col] != "") {
                             $field = array($salesforceField => htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
-                        } elseif ($_SESSION['config']['fieldsToNull']) {
+                        } else if ($_SESSION['config']['fieldsToNull']) {
                             $sObject->fieldsToNull[] = $salesforceField;
                         }
                     }
@@ -879,7 +775,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray,$zipFile) {
                             $asyncCsvHeaderRow[] = ($fieldMapArray['isPolymorphic'] ? ($fieldMapArray['relatedObjectName'] . ":") : "") .
                             $fieldMapArray['relationshipName'] . "." .
                             $fieldMapArray['relatedFieldName'];
-                        } elseif (isset($salesforceField)) {
+                        } else if (isset($salesforceField)) {
                             $asyncCsvHeaderRow[] = $salesforceField;
                         }
                     }
@@ -961,13 +857,13 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
             if (($apiCall == 'upsert' && $results[$row]->created) || $apiCall == 'create') {
                 print "<td>Created</td>";
                 $_SESSION['resultsWithData'][$row+1][2] = "Created";
-            } elseif (($apiCall == 'upsert' && !$results[$row]->created) || $apiCall == 'update') {
+            } else if (($apiCall == 'upsert' && !$results[$row]->created) || $apiCall == 'update') {
                 print "<td>Updated</td>";
                 $_SESSION['resultsWithData'][$row+1][2] = "Updated";
-            } elseif (($apiCall == 'delete') || ($apiCall == 'undelete')) {
+            } else if (($apiCall == 'delete') || ($apiCall == 'undelete')) {
                 print "<td>" . ucwords($apiCall) . "d </td>";
                 $_SESSION['resultsWithData'][$row+1][2] = ucwords($apiCall) . "d";
-            } elseif ($apiCall == 'emptyRecycleBin') {
+            } else if ($apiCall == 'emptyRecycleBin') {
                 print "<td>Purged</td>";
                 $_SESSION['resultsWithData'][$row+1][2] = "Purged";
             }
@@ -1013,5 +909,101 @@ function supportsBulk($action) {
 
 function requiresObject($action) {
     return in_array($action, array("insert", "update", "upsert"));    
+}
+
+function supportsZips($action) {
+    return supportsBulk($action) && apiVersionIsAtLeast(20.0);
+}
+
+function displayBulkApiOptions($action, $forceDoAsync) {
+    //Hard Delete option
+    if (apiVersionIsAtLeast(19.0) && $action == 'Confirm Delete') {
+        print "<p><label><input type='checkbox' id='doHardDelete' name='doHardDelete' onChange=\"".
+              "if (this.checked && " . ($forceDoAsync ? "false" : "true") . ") {" .
+              "    document.getElementById('doAsync').checked = true;" . 
+              "    document.getElementById('asyncDeleteObjectSelection').style.display = 'inline';" .
+              "    document.getElementById('unsupportedBulkConfigList').style.display = 'inline';" .
+              "}\"/> " . 
+              "Permanently hard delete records</label>" .
+              "&nbsp;<img onmouseover=\"Tip('When specified, the deleted records are not stored in the Recycle Bin. " . 
+              "Instead, the records become immediately eligible for deletion, don\'t count toward the storage space used " . 
+              "by your organization, and may improve performance. The Administrative permission for this operation, " .
+              "\'Bulk API Hard Delete\', is disabled by default and must be enabled by an administrator. " . 
+              "A Salesforce user license is required for hard delete. Hard Delete is only available via Bulk API.')\" ".
+              "align='absmiddle' src='images/help16.png'/>" . 
+              "</p>";
+    }
+
+    //Async Options
+    if((apiVersionIsAtLeast(17.0) && in_array($action, array('Confirm Insert', 'Confirm Update', 'Confirm Upsert')))
+       || (apiVersionIsAtLeast(18.0) && $action == 'Confirm Delete')) {
+        if ($forceDoAsync) {
+            print "<input name='doAsync' type='hidden' value='true'/>";
+        } else {
+           print "<p><label><input id='doAsync' name='doAsync' type='checkbox' onChange=\"".
+               "var doHardDelete = document.getElementById('doHardDelete');" .
+               "var asyncDeleteObjectSelection = document.getElementById('asyncDeleteObjectSelection');" .
+               "var unsupportedBulkConfigList = document.getElementById('unsupportedBulkConfigList');" .
+               "if (this.checked) {" .  
+               "     if (asyncDeleteObjectSelection != null) asyncDeleteObjectSelection.style.display = 'inline';" .
+               "     if (unsupportedBulkConfigList != null) unsupportedBulkConfigList.style.display = 'inline';" .
+               "} else {" .
+               "     if (doHardDelete != null) doHardDelete.checked = false;" .
+               "     if (asyncDeleteObjectSelection != null) asyncDeleteObjectSelection.style.display = 'none';" .
+               "     if (unsupportedBulkConfigList != null) unsupportedBulkConfigList.style.display = 'none';" .
+               "}\"/> " .
+              "Process records asynchronously via Bulk API</label>" .
+              "&nbsp;<img onmouseover=\"Tip('Processing records asynchronously is recommended for large data loads. " .
+              "The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. " . 
+              "After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" ".
+              "align='absmiddle' src='images/help16.png'/>" . 
+              "</p>";
+        }
+
+        // object selection for Bulk API Delete
+        if ($action == 'Confirm Delete') {
+            print "<div id='asyncDeleteObjectSelection' style='display: " .
+                   ($forceDoAsync ? "inline" : "none; margin-left: 3em;") . 
+                   "'>Object Type: ";
+            printObjectSelection($_SESSION['default_object']);
+            print "</div>";
+        }
+
+        // all configs not supported by Bulk API
+        $bulkUnsupportedConfigs = array(
+            "mruHeader_updateMru",
+            "allOrNoneHeader_allOrNone",
+            "emailHeader_triggerAutoResponseEmail",
+            "emailHeader_triggertriggerUserEmail",
+            "emailHeader_triggerOtherEmail",
+            "allowFieldTruncationHeader_allowFieldTruncation",
+            "UserTerritoryDeleteHeader_transferToUserId"
+        );
+    
+        // find this user's settings that are in the unsupported config list
+        $bulkUnsupportedSettings = array();
+        foreach ($bulkUnsupportedConfigs as $c) {
+            if ($GLOBALS["config"][$c]["default"] != getConfig($c)) {
+                $bulkUnsupportedSettings[] = $c;
+            }
+        }
+        
+        // print out a warning if any settings were found
+        if (count($bulkUnsupportedSettings) > 0) {
+            print "<div id='unsupportedBulkConfigList' style='display: " . ($forceDoAsync ? "inline" : "none") . "; color: orange;'>" .
+                      "<p " . ($forceDoAsync ? "" : "style='margin-left: 3em;'") . ">" .  
+                          "<img src='images/warning24.png' /> " .
+                          "The follow settings are not supported by the Bulk API and will be ignored:" . 
+                          "<ul " . ($forceDoAsync ? "" : "style='margin-left: 5em;'") . ">";
+            
+            foreach ($bulkUnsupportedSettings as $s) {
+                print "<li>" . $GLOBALS['config'][$s]['label'] . "</li>";
+            }
+            
+            print "</ul>" . 
+                  "</p>" . 
+                  "</div>";
+        } 
+    }
 }
 ?>

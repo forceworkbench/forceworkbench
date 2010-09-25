@@ -13,7 +13,7 @@ try {
     $jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);
     if ($_GET['op'] == 'result') {
         $batchData = $asyncConnection->getBatchResults($_GET['jobId'], $_GET['batchId']);
-    } elseif ($_GET['op'] == 'request') {
+    } else if ($_GET['op'] == 'request') {
         if (!apiVersionIsAtLeast(19.0)) {
             displayError("Downloading batch requests only supported in API 19.0 and higher", true, true);
             exit;

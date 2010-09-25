@@ -679,13 +679,15 @@ $config["header_General"] = array(
             ),
     
         'Utilities' => array(
-            'execute.php'            => new Page('Apex Execute','Execute Apex code as an anonymous block',true,false,true,true,true,''),
-            'runAllApexTests.php'    => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,true,false,true,'runAllApexTests'),
-            'pwdMgmt.php'            => new Page('Password Management','Set and Reset Passwords',true,false,true,false,true,''),
-            'asyncStatus.php'        => new Page('Bulk API Job Status','Asynchronous Data Load Status and Results',true,true,true,false,true,''),
-            'metadataStatus.php'     => new Page('Metadata API Process Status','Metadata API Status and Results',true,true,true,false,true,''),
-            'burn.php'               => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,false,true,''),
-            'downloadAsyncBatch.php' => new Page('Download Bulk API Batch','Downlads Bulk API requests and results',true,true,false,false,true,'')
+            'execute.php'                 => new Page('Apex Execute','Execute Apex code as an anonymous block',true,false,true,true,true,''),
+            'runAllApexTests.php'         => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,true,false,true,'runAllApexTests'),
+            'pwdMgmt.php'                 => new Page('Password Management','Set and Reset Passwords',true,false,true,false,true,''),
+            'asyncStatus.php'             => new Page('Bulk API Job Status','Asynchronous Data Load Status and Results',true,true,true,false,true,''),
+            'metadataStatus.php'          => new Page('Metadata API Process Status','Metadata API Status and Results',true,true,true,false,true,''),
+            'burn.php'                    => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,false,true,''),
+            'downloadAsyncBatch.php'      => new Page('Download Bulk API Batch','Downloads Bulk API requests and results',true,true,false,false,true,''),
+            'downloadResultsWithData.php' => new Page('Download DML Results','Downloads DML results',true,true,false,false,true,''),
+            'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload',true,true,false,false,true,'')
             )
     );
 

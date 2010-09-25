@@ -111,9 +111,9 @@ function validateUploadedFile($file) {
         }
 
         return($uploadErrorCodes[$file['error']]);
-    } elseif (!is_uploaded_file($file['tmp_name'])) {
+    } else if (!is_uploaded_file($file['tmp_name'])) {
         return("The file was not uploaded from your computer. Please try again.");
-    } elseif ($file['size'] == 0) {
+    } else if ($file['size'] == 0) {
         return("The file uploaded contains no data. Please try again.");
     } else {
         return(0);
@@ -522,11 +522,11 @@ function prettyPrintXml($xml, $htmlOutput=FALSE)
         if (preg_match('#^(<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?>.*<s*/s*[^>]+>)|(<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?s*/s*>)#i', ltrim($xmlLine))) {
             $newLine = str_pad('', $indentLevel*4) . ltrim($xmlLine);
             $newXmlLines[] = $newLine;
-        } elseif (preg_match('#^<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?>#i', ltrim($xmlLine))) {
+        } else if (preg_match('#^<[a-z0-9_:-]+((s+[a-z0-9_:-]+="[^"]+")*)?>#i', ltrim($xmlLine))) {
             $newLine = str_pad('', $indentLevel*4) . ltrim($xmlLine);
             $indentLevel++;
             $newXmlLines[] = $newLine;
-        } elseif (preg_match('#<s*/s*[^>/]+>#i', $xmlLine)) {
+        } else if (preg_match('#<s*/s*[^>/]+>#i', $xmlLine)) {
             $indentLevel--;
             if (trim($newXmlLines[sizeof($newXmlLines)-1]) == trim(str_replace("/", "", $xmlLine))) {
                 $newXmlLines[sizeof($newXmlLines)-1] .= $xmlLine;

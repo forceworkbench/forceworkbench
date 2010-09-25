@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Language" content="UTF-8" />
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 
         <link rel="Shortcut Icon" type="image/png" href="images/bluecube-16x16.png" />
 
