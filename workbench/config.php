@@ -130,90 +130,90 @@ $config["header_General"] = array(
                 "valuesToLabels" => $GLOBALS['TIMEZONES']
     );
 
-    $config["header_LoginOptions"] = array(
-        "label" => "Login Options",
-        "display" => true,
-        "isHeader" => true
+$config["header_LoginOptions"] = array(
+    "label" => "Login Options",
+    "display" => true,
+    "isHeader" => true
+);
+   $config["defaultLoginType"]  = array(
+        "label" => "Default Login Type",
+        "description" => "Determines default login type that is loaded on startup.",
+        "default" => "Standard",
+        "overrideable" => true,
+        "dataType" => "picklist",
+        "valuesToLabels" => array(
+            "Standard" => "Standard",
+            "Advanced" => "Advanced"
+        )
     );
-            $config["defaultLoginType"]  = array(
-            "label" => "Default Login Type",
-            "description" => "Determines default login type that is loaded on startup.",
-            "default" => "Standard",
-            "overrideable" => true,
-            "dataType" => "picklist",
-            "valuesToLabels" => array(
-                "Standard" => "Standard",
-                "Advanced" => "Advanced"
-            )
-        );
 
-        $config["defaultInstance"]  = array(
-            "label" => "Default Instance",
-            "description" => "Default instance to be used for login.",
-            "default" => "login",
-            "overrideable" => true,
-            "dataType" => "picklist",
-            "labelKey" => "0",
-            "valuesToLabels" => array(
-                "login" => array("Production Login",""),
-                "na0-api" => array("NA0 (SSL)","0"),
-                "na1-api" => array("NA1","3"),
-                "na2-api" => array("NA2","4"),
-                "na3-api" => array("NA3","5"),
-                "na4-api" => array("NA4","6"),
-                "na5-api" => array("NA5","7"),
-                "na6-api" => array("NA6","8"),
-                "na7-api" => array("NA7","A"),
-                "na8-api" => array("NA8","B"),
-                "ap0-api" => array("AP","1"),
-                "ap1-api" => array("AP1","9"),
-                "eu0-api" => array("EMEA","2"),
-                "test" => array("Sandbox Login (test)",""),
-                "tapp0-api" => array("Sandbox CS0 (tapp0)","T"),
-                "cs1-api" => array("Sandbox CS1","S"),
-                "cs2-api" => array("Sandbox CS2","R"),
-                "cs3-api" => array("Sandbox CS3","Q"),
-                "cs4-api" => array("Sandbox CS4","P"),
-                "cs5-api" => array("Sandbox CS5","O"),
-                "cs6-api" => array("Sandbox CS6","N"),
-                "cs7-api" => array("Sandbox CS7","M"),
-                "cs8-api" => array("Sandbox CS8","L"),
-                "prerelna1.pre" => array("Pre-Release","t")
-            )
-        );
+    $config["defaultInstance"]  = array(
+        "label" => "Default Instance",
+        "description" => "Default instance to be used for login.",
+        "default" => "login",
+        "overrideable" => true,
+        "dataType" => "picklist",
+        "labelKey" => "0",
+        "valuesToLabels" => array(
+            "login" => array("Production Login",""),
+            "na0-api" => array("NA0 (SSL)","0"),
+            "na1-api" => array("NA1","3"),
+            "na2-api" => array("NA2","4"),
+            "na3-api" => array("NA3","5"),
+            "na4-api" => array("NA4","6"),
+            "na5-api" => array("NA5","7"),
+            "na6-api" => array("NA6","8"),
+            "na7-api" => array("NA7","A"),
+            "na8-api" => array("NA8","B"),
+            "ap0-api" => array("AP","1"),
+            "ap1-api" => array("AP1","9"),
+            "eu0-api" => array("EMEA","2"),
+            "test" => array("Sandbox Login (test)",""),
+            "tapp0-api" => array("Sandbox CS0 (tapp0)","T"),
+            "cs1-api" => array("Sandbox CS1","S"),
+            "cs2-api" => array("Sandbox CS2","R"),
+            "cs3-api" => array("Sandbox CS3","Q"),
+            "cs4-api" => array("Sandbox CS4","P"),
+            "cs5-api" => array("Sandbox CS5","O"),
+            "cs6-api" => array("Sandbox CS6","N"),
+            "cs7-api" => array("Sandbox CS7","M"),
+            "cs8-api" => array("Sandbox CS8","L"),
+            "prerelna1.pre" => array("Pre-Release","t")
+        )
+    );
 
-        $GLOBALS['API_VERSIONS'] = array(
-            "20.0" => "20.0",
-            "19.0" => "19.0",
-            "18.0" => "18.0",
-            "17.0" => "17.0",
-            "16.0" => "16.0",
-            "15.0" => "15.0",
-            "14.0" => "14.0",
-            "13.0" => "13.0",
-            "12.0" => "12.0",
-            "11.1" => "11.1",
-            "11.0" => "11.0",
-            "10.0" => "10.0",
-            "9.0" => "9.0",
-            "8.0" => "8.0"
-        );
+    $GLOBALS['API_VERSIONS'] = array(
+        "20.0" => "20.0",
+        "19.0" => "19.0",
+        "18.0" => "18.0",
+        "17.0" => "17.0",
+        "16.0" => "16.0",
+        "15.0" => "15.0",
+        "14.0" => "14.0",
+        "13.0" => "13.0",
+        "12.0" => "12.0",
+        "11.1" => "11.1",
+        "11.0" => "11.0",
+        "10.0" => "10.0",
+        "9.0" => "9.0",
+        "8.0" => "8.0"
+    );
 
-        $config["defaultApiVersion"]  = array(
-            "label" => "Default API Version",
-            "description" => "Default API version to be used for login. This setting does not affect the API version of the current session. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
-            "default" => "20.0",
-            "overrideable" => true,
-            "dataType" => "picklist",
-            "valuesToLabels" => $GLOBALS['API_VERSIONS']
-        );
+    $config["defaultApiVersion"]  = array(
+        "label" => "Default API Version",
+        "description" => "Default API version to be used for login. This setting does not affect the API version of the current session. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
+        "default" => "20.0",
+        "overrideable" => true,
+        "dataType" => "picklist",
+        "valuesToLabels" => $GLOBALS['API_VERSIONS']
+    );
 
-        $config["useHTTPS"] = array(
-            "label" => "Connect to Salesforce over HTTPS",
-            "description" => "Use HTTPS to connect to Salesforce API from Workbench server. Does not guarantee HTTPS will be used from this computer to Workbench server. Disabling this setting will also change redirect Server URLs returned from Salesforce to use HTTP. Must login again for changes to take effect.",
-            "default" => true,
-            "overrideable" => true,
-            "dataType" => "boolean"
+    $config["useHTTPS"] = array(
+        "label" => "Connect to Salesforce over HTTPS",
+        "description" => "Use HTTPS to connect to Salesforce API from Workbench server. Does not guarantee HTTPS will be used from this computer to Workbench server. Disabling this setting will also change redirect Server URLs returned from Salesforce to use HTTP. Must login again for changes to take effect.",
+        "default" => true,
+        "overrideable" => true,
+        "dataType" => "boolean"
     );
 
     $config["fuzzyServerUrlLookup"] = array(
@@ -248,12 +248,20 @@ $config["header_General"] = array(
         "dataType" => "string"
     );
 
-    $config["header_Describe"] = array(
-        "label" => "Describe Results Color Coding",
-        "display" => true,
-        "isHeader" => true
+$config["header_Describe"] = array(
+    "label" => "Describe Results Color Coding",
+    "display" => true,
+    "isHeader" => true
+);
+
+    $config["localOptions_language"] = array(
+        "label" => "Language",
+        "description" => "Specifies the language of the labels returned in Describe results.",
+        "default" => null,
+        "overrideable" => true,
+        "dataType" => "string"
     );
-    
+
     $config["highightBooleanValues"] = array(
         "label" => "Boolean Values",
         "description" => "Color code true and false values in Describe results",
@@ -279,11 +287,11 @@ $config["header_General"] = array(
     );
 
 
-    $config["header_DataManagement"] = array(
-        "label" => "Data Management Options",
-        "display" => true,
-        "isHeader" => true
-    );
+$config["header_DataManagement"] = array(
+    "label" => "Data Management Options",
+    "display" => true,
+    "isHeader" => true
+);
 
 
     $config["showReferenceBy"] = array(
@@ -342,6 +350,15 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
+
+    $config["disableFeedTrackingHeader_disableFeedTracking"] = array(
+        "label" => "Disable Feed Tracking",
+        "description" => "Specifies whether the changes made in the current call are tracked in feeds",
+        "default" => false,
+        "overrideable" => true,
+        "dataType" => "boolean"
+    );    
+    
     $config["assignmentRuleHeader_useDefaultRule"] = array(
         "label" => "Use Default Assignment Rule",
         "description" => "Apply default Assignment Rule to apply to insert, update, and upsert operations. May not be used in conjunction with Assignment Rule Id option.",
@@ -378,11 +395,11 @@ $config["header_General"] = array(
          )
     );
 
-    $config["header_queryAndSearchOptions"] = array(
-        "label" => "Query & Search Options",
-        "display" => true,
-        "isHeader" => true
-    );
+$config["header_queryAndSearchOptions"] = array(
+    "label" => "Query & Search Options",
+    "display" => true,
+    "isHeader" => true
+);
 
     $config["autoJumpToResults"] = array(
         "label" => "Automatically Jump to Results",
@@ -432,11 +449,49 @@ $config["header_General"] = array(
         )
     );
 
-    $config["header_Execute"] = array(
-        "label" => "Apex Execute Logging Options",
-        "display" => true,
-        "isHeader" => true
+$config["header_PackageVersion"] = array(
+    "label" => "Package Version",
+    "display" => true,
+    "isHeader" => true
+);
+
+    $config["packageVersionHeader_include"] = array(
+        "label" => "Use Package Version Header",
+        "description" => "Incidates whether Workbench should use the following package version infomation.",
+        "default" => false,
+        "overrideable" => true,
+        "dataType" => "boolean"
     );
+
+    $config["packageVersion_namespace"] = array(
+        "label" => "Namespace",
+        "description" => "The unique namespace of the managed package.",
+        "default" => null,
+        "overrideable" => true,
+        "dataType" => "string"
+    );
+    
+    $config["packageVersion_majorNumber"] = array(
+        "label" => "Major Number",
+        "description" => "The major version number of a package version. A package version is denoted by majorNumber.minorNumber, for example 2.1.",
+        "default" => null,
+        "overrideable" => true,
+        "dataType" => "int"
+    );
+
+    $config["packageVersion_minorNumber"] = array(
+        "label" => "Major Number",
+        "description" => "The major version number of a package version. A package version is denoted by majorNumber.minorNumber, for example 2.1.",
+        "default" => null,
+        "overrideable" => true,
+        "dataType" => "int"
+    );    
+    
+$config["header_Execute"] = array(
+    "label" => "Apex Execute Logging Options",
+    "display" => true,
+    "isHeader" => true
+);
 
     $config["defaultLogCategory"]  = array(
         "label" => "Default Log Category",
@@ -546,11 +601,11 @@ $config["header_General"] = array(
         "minValue" => 1
     );
 
-    $config["header_proxyOptions"] = array(
-        "label" => "Proxy Options",
-        "display" => false,
-        "isHeader" => true
-    );
+$config["header_proxyOptions"] = array(
+    "label" => "Proxy Options",
+    "display" => false,
+    "isHeader" => true
+);
 
     $config["proxyEnabled"] = array(
         "label" => "Connect with Proxy",
@@ -611,84 +666,84 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
-    //////////////////////////////////////////////////////////////////////////////////////////
-    //
-    //
-    //  CONSTANTS. DO NOT CHANGE.
-    //
-    //
-    //////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+//
+//  CONSTANTS. DO NOT CHANGE.
+//
+//
+//////////////////////////////////////////////////////////////////////////////////////////
 
-    $GLOBALS["WORKBENCH_VERSION"] = "trunk";
+$GLOBALS["WORKBENCH_VERSION"] = "trunk";
 
-    class Page {
-        public $title;
-        public $desc;
-        public $requiresSfdcSession;
-        public $isReadOnly;
-        public $onNavBar;
-        public $onMenuSelect;
-        public $showTitle;
-        public $window;
+class Page {
+    public $title;
+    public $desc;
+    public $requiresSfdcSession;
+    public $isReadOnly;
+    public $onNavBar;
+    public $onMenuSelect;
+    public $showTitle;
+    public $window;
 
-        public function __construct($title, $desc, $requiresSfdcSession=true, $isReadOnly=false, $onNavBar=false, $onMenuSelect=false, $showTitle=true, $window='') {
-            $this->title = $title;
-            $this->desc = $desc;
-            $this->requiresSfdcSession = $requiresSfdcSession;
-            $this->isReadOnly = $isReadOnly;
-            $this->onNavBar = $onNavBar;
-            $this->onMenuSelect = $onMenuSelect;
-            $this->showTitle = $showTitle;
-            $this->window = $window;
-        }
+    public function __construct($title, $desc, $requiresSfdcSession=true, $isReadOnly=false, $onNavBar=false, $onMenuSelect=false, $showTitle=true, $window='') {
+        $this->title = $title;
+        $this->desc = $desc;
+        $this->requiresSfdcSession = $requiresSfdcSession;
+        $this->isReadOnly = $isReadOnly;
+        $this->onNavBar = $onNavBar;
+        $this->onMenuSelect = $onMenuSelect;
+        $this->showTitle = $showTitle;
+        $this->window = $window;
     }
+}
 
-    $GLOBALS["MENUS"] = array(
-        '&nbsp;<img src=\'images/workbench-3-cubed-white-small.png\'/>' => array(
-            'login.php'     => new Page('Login','Logs into your Salesforce organization',false,true,true,false,false,''),
-            'select.php'    => new Page('Select','Select action to which to jump',true,true,false,false,false,''),
-            'settings.php'  => new Page('Settings','Configure Workbench',false,true,true,false,true,''),
-            'logout.php'    => new Page('Logout','Logs out of your Salesforce organization',true,true,true,false,false,''),
-            'help.php'      => new Page('Help','Get help about using Workbench',false,true,true,false,true,''),
-            'about.php'     => new Page('About','Learn about Workbench',false,true,true,false,true,'')
+$GLOBALS["MENUS"] = array(
+    '&nbsp;<img src=\'images/workbench-3-cubed-white-small.png\'/>' => array(
+        'login.php'     => new Page('Login','Logs into your Salesforce organization',false,true,true,false,false,''),
+        'select.php'    => new Page('Select','Select action to which to jump',true,true,false,false,false,''),
+        'settings.php'  => new Page('Settings','Configure Workbench',false,true,true,false,true,''),
+        'logout.php'    => new Page('Logout','Logs out of your Salesforce organization',true,true,true,false,false,''),
+        'help.php'      => new Page('Help','Get help about using Workbench',false,true,true,false,true,''),
+        'about.php'     => new Page('About','Learn about Workbench',false,true,true,false,true,'')
+    ),
+
+    'Info' => array(
+        'describe.php'          => new Page('Standard & Custom Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,'usesObject',true,''),
+        'metadataDescribeAndList.php'      => new Page('Metadata Types & Components','Describes and lists the metadata components in this organization.',true,true,true,true,true,''),
+        'sessionInfo.php'       => new Page('Session Information','Information about the current session.',true,true,true,false,true,''),
         ),
 
-        'Info' => array(
-            'describe.php'          => new Page('Standard & Custom Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,'usesObject',true,''),
-            'metadataDescribeAndList.php'      => new Page('Metadata Types & Components','Describes and lists the metadata components in this organization.',true,true,true,true,true,''),
-            'sessionInfo.php'       => new Page('Session Information','Information about the current session.',true,true,true,false,true,''),
-            ),
-    
-        'Queries' => array(
-            'query.php'     => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,'usesObject',true,''),
-            'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,'usesObject',true,'')
-            ),
-    
-        'Data' => array(
-            'insert.php'    => new Page('Insert','Creates new records from a CSV file',true,false,true,'usesObject',true,''),
-            'update.php'    => new Page('Update','Updates existing records from a CSV file',true,false,true,'usesObject',true,''),
-            'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,false,true,'usesObject',true,''),
-            'delete.php'    => new Page('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted',true,false,true,true,true,''),
-            'undelete.php'  => new Page('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.',true,false,true,true,true,''),
-            'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,false,true,true,true,'')
-            ),
-    
-        'Migration' => array(
-            'metadataDeploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,false,true,true,true,''),
-            'metadataRetrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,true,true,true,''),
-            ),
-    
-        'Utilities' => array(
-            'execute.php'                 => new Page('Apex Execute','Execute Apex code as an anonymous block',true,false,true,true,true,''),
-            'runAllApexTests.php'         => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,true,false,true,'runAllApexTests'),
-            'pwdMgmt.php'                 => new Page('Password Management','Set and Reset Passwords',true,false,true,false,true,''),
-            'asyncStatus.php'             => new Page('Bulk API Job Status','Asynchronous Data Load Status and Results',true,true,true,false,true,''),
-            'metadataStatus.php'          => new Page('Metadata API Process Status','Metadata API Status and Results',true,true,true,false,true,''),
-            'burn.php'                    => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,false,true,''),
-            'downloadAsyncBatch.php'      => new Page('Download Bulk API Batch','Downloads Bulk API requests and results',true,true,false,false,true,''),
-            'downloadResultsWithData.php' => new Page('Download DML Results','Downloads DML results',true,true,false,false,true,''),
-            'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload',true,true,false,false,true,'')
-            )
-    );
+    'Queries' => array(
+        'query.php'     => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,'usesObject',true,''),
+        'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,'usesObject',true,'')
+        ),
+
+    'Data' => array(
+        'insert.php'    => new Page('Insert','Creates new records from a CSV file',true,false,true,'usesObject',true,''),
+        'update.php'    => new Page('Update','Updates existing records from a CSV file',true,false,true,'usesObject',true,''),
+        'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,false,true,'usesObject',true,''),
+        'delete.php'    => new Page('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted',true,false,true,true,true,''),
+        'undelete.php'  => new Page('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.',true,false,true,true,true,''),
+        'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,false,true,true,true,'')
+        ),
+
+    'Migration' => array(
+        'metadataDeploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,false,true,true,true,''),
+        'metadataRetrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,true,true,true,''),
+        ),
+
+    'Utilities' => array(
+        'execute.php'                 => new Page('Apex Execute','Execute Apex code as an anonymous block',true,false,true,true,true,''),
+        'runAllApexTests.php'         => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,true,false,true,'runAllApexTests'),
+        'pwdMgmt.php'                 => new Page('Password Management','Set and Reset Passwords',true,false,true,false,true,''),
+        'asyncStatus.php'             => new Page('Bulk API Job Status','Asynchronous Data Load Status and Results',true,true,true,false,true,''),
+        'metadataStatus.php'          => new Page('Metadata API Process Status','Metadata API Status and Results',true,true,true,false,true,''),
+        'burn.php'                    => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,false,true,''),
+        'downloadAsyncBatch.php'      => new Page('Download Bulk API Batch','Downloads Bulk API requests and results',true,true,false,false,true,''),
+        'downloadResultsWithData.php' => new Page('Download DML Results','Downloads DML results',true,true,false,false,true,''),
+        'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload',true,true,false,false,true,'')
+        )
+);
 
 ?>

@@ -56,6 +56,9 @@ class SforceBaseClient {
     protected $sessionHeader;
     protected $allowFieldTruncationHeader;
     protected $allOrNoneHeader;
+    protected $disableFeedTrackingHeader;
+    protected $localeOptions;
+    protected $packageVersionHeader;
 
     public function getNamespace() {
         return $this->namespace;
@@ -265,6 +268,26 @@ class SforceBaseClient {
             if ($header != NULL) {
                 array_push($headerArray, $header);
             }
+
+            $header = $this->disableFeedTrackingHeader;
+            if ($header != NULL) {
+                array_push($headerArray, $header);
+            }
+        }
+
+        if ($call == "describeSObject" ||
+            $call == "describeSObjects"
+        ) {
+            $header = $this->localeOptions;
+            if ($header != NULL) {
+                array_push($headerArray, $header);
+            }
+        }
+        
+        // available for everything
+        $header = $this->packageVersionHeader;
+        if ($header != NULL) {
+            array_push($headerArray, $header);
         }
         
         $this->sforce->__setSoapHeaders($headerArray);
@@ -364,6 +387,36 @@ class SforceBaseClient {
             ));
         } else {
             $this->allOrNoneHeader = NULL;
+        }
+    }
+
+    public function setDisableFeedTrackingHeader($header) {
+        if ($header != NULL) {
+            $this->disableFeedTrackingHeader = new SoapHeader($this->namespace, 'DisableFeedTrackingHeader', array (
+             'disableFeedTracking' => $header->disableFeedTracking
+            ));
+        } else {
+            $this->disableFeedTrackingHeader = NULL;
+        }
+    }
+
+    public function setLocaleOptions($header) {
+        if ($header != NULL) {
+            $this->localeOptions = new SoapHeader($this->namespace, 'LocaleOptions', array (
+             'language' => $header->language
+            ));
+        } else {
+            $this->localeOptions = NULL;
+        }
+    }
+
+    public function setPackageVersionHeader($header) {
+        if ($header != NULL) {
+            $this->packageVersionHeader = new SoapHeader($this->namespace, 'PackageVersionHeader', array (
+             'packageVersions' => $header->packageVersions
+            ));
+        } else {
+            $this->packageVersionHeader = NULL;
         }
     }
     

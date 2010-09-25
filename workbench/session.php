@@ -132,8 +132,29 @@ if (isLoggedIn()) {
             $header = new AllOrNoneHeader($_SESSION['config']['allOrNoneHeader_allOrNone']);
             $partnerConnection->setAllOrNoneHeader($header);
         }
+    
+        if (getConfig('disableFeedTrackingHeader_disableFeedTracking')) {
+            $header = new DisableFeedTrackingHeader($_SESSION['config']['disableFeedTrackingHeader_disableFeedTracking']);
+            $partnerConnection->setDisableFeedTrackingHeader($header);
+        }
+
+        if (getConfig('localOptions_language')) {
+            $header = new LocaleOptions($_SESSION['config']['localOptions_language']);
+            $partnerConnection->setLocaleOptions($header);
+        }
+    
+        if (getConfig('packageVersionHeader_include') && 
+            getConfig('packageVersion_namespace') &&
+            getConfig('packageVersion_majorNumber') &&
+            getConfig('packageVersion_minorNumber')) {
+            $header = new PackageVersionHeader(new PackageVersion(
+                $_SESSION['config']['packageVersion_namespace'], 
+                $_SESSION['config']['packageVersion_majorNumber'], 
+                $_SESSION['config']['packageVersion_minorNumber']));
+            $partnerConnection->setPackageVersionHeader($header);
+        }
         
-        if (!isset($_SESSION['getUserInfo']) || !$_SESSION['config']['cacheGetUserInfo']) {
+        if (!isset($_SESSION['getUserInfo']) || !getConfig('cacheGetUserInfo')) {
             $_SESSION['getUserInfo'] = $partnerConnection->getUserInfo();
         }
 

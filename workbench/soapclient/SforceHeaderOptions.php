@@ -156,4 +156,43 @@ class AllOrNoneHeader {
         $this->allOrNone = $allOrNone;
     }
 }
+
+class DisableFeedTrackingHeader {
+    public $disableFeedTracking;
+
+    public function __construct($disableFeedTracking) {
+        $this->disableFeedTracking = $disableFeedTracking;
+    }
+}
+
+class LocaleOptions {
+    public $language;
+
+    public function __construct($language) {
+        $this->language = $language;
+    }
+}
+
+/**
+ * Only supports one Package Version object because that's all the Workbencg currently supports
+ */
+class PackageVersionHeader {
+    public $packageVersions;
+
+    public function __construct($packageVersion) {
+        $this->$packageVersions = array($packageVersion);
+    }
+}
+
+class PackageVersion {
+    public $namespace;
+    public $majorVersion;
+    public $minorVersion;
+    
+    public function __construct($namespace, $majorVersion, $minorVersion) {
+        $this->namespace    = $namespace;
+        $this->majorVersion = $majorVersion;
+        $this->minorVersion = $minorVersion;
+    }
+}
 ?>
