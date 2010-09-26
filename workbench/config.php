@@ -255,11 +255,30 @@ $config["header_Describe"] = array(
 );
 
     $config["localOptions_language"] = array(
-        "label" => "Language",
+        "label" => "Label Language",
         "description" => "Specifies the language of the labels returned in Describe results.",
         "default" => null,
         "overrideable" => true,
-        "dataType" => "string"
+        "dataType" => "picklist",
+        "minApiVersion" => 12.0,
+        "valuesToLabels" => array(
+            "en_US" => "English",
+            "de"    => "Dutch",
+            "es"    => "Spanish",
+            "fr"    => "French",
+            "it"    => "Italian",
+            "ja"    => "Japanese",
+            "sv"    => "Swedish",
+            "ko"    => "Korean",
+            "zh_TW" => "Chinese (Traditional)",
+            "zh_CN" => "Chinese (Simplified)",
+            "pt_BR" => "Portugese (Brazilian)",
+            "nl_NL" => "Dutch",
+            "da"    => "Danish",
+            "th"    => "Thai",
+            "fi"    => "Finnisch",
+            "ru"    => "Russian"   
+        )
     );
 
     $config["highightBooleanValues"] = array(

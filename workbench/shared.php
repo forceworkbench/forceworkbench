@@ -1,4 +1,12 @@
 <?php
+function apiVersionSupports($configKey) {
+    if (isset($GLOBALS["config"][$configKey]["minApiVersion"])) {
+        return apiVersionIsAtLeast($GLOBALS["config"][$configKey]["minApiVersion"]);
+    } else {
+        return true;
+    }
+}
+
 function registerShortcut($key, $jsCommand) {
     addFooterScript("<script type='text/javascript' src='script/shortcut.js'></script>");
     

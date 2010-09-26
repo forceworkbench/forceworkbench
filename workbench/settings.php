@@ -23,6 +23,8 @@ if (isset($_POST['submitConfigSetter'])) {
 }
 
 if (isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])) {
+    clearSessionCache();
+    
     if (!isset($errors)) {
         foreach ($config as $configKey => $configValue) {
             if (isset($_POST['restoreDefaults'])) {

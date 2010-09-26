@@ -138,8 +138,8 @@ if (isLoggedIn()) {
             $partnerConnection->setDisableFeedTrackingHeader($header);
         }
 
-        if (getConfig('localOptions_language')) {
-            $header = new LocaleOptions($_SESSION['config']['localOptions_language']);
+        if (getConfig('localOptions_language') && apiVersionSupports('localOptions_language')) {
+            $header = new LocaleOptions(getConfig('localOptions_language'));
             $partnerConnection->setLocaleOptions($header);
         }
     
