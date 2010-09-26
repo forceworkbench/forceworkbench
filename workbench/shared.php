@@ -1,12 +1,4 @@
 <?php
-function apiVersionSupports($configKey) {
-    if (isset($GLOBALS["config"][$configKey]["minApiVersion"])) {
-        return apiVersionIsAtLeast($GLOBALS["config"][$configKey]["minApiVersion"]);
-    } else {
-        return true;
-    }
-}
-
 function registerShortcut($key, $jsCommand) {
     addFooterScript("<script type='text/javascript' src='script/shortcut.js'></script>");
     
@@ -24,13 +16,17 @@ function addFooterScript($script) {
 }
 
 function getConfig($configKey) {
-    if (!isset($_SESSION["config"][$configKey])) {
+    if (!isset($_SESSION["config"][$configKey]) || 
+        (isset($GLOBALS["config"][$configKey]["minApiVersion"])) &&
+         !apiVersionIsAtLeast($GLOBALS["config"][$configKey]["minApiVersion"])) {
+        
         if ($GLOBALS["config"][$configKey]["dataType"] == "boolean") {
             return false;
         } else {
             return null;
         }
     }
+    
     return $_SESSION["config"][$configKey];
 }
 

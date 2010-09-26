@@ -58,6 +58,24 @@ if (isset($errors)) {
     displayInfo(($_GET['saved'] == "D" ? "Defaults restored" : "Settings saved") . " successfully.");
 }
 
+if (isLoggedIn()) {
+    $unsupportedConfigs = array();
+    foreach ($config as $configKey => $configValue) {
+         if (isset($configValue['minApiVersion']) && !apiVersionIsAtLeast($configValue['minApiVersion'])) {
+             $unsupportedConfigs[] = $configValue['label'] . sprintf(" (Requires %01.1f)", $configValue['minApiVersion']);
+         }
+    }
+    
+    if (count($unsupportedConfigs) > 0) {
+        print "<p/>";
+        displayWarning(array_merge(array(
+                       "The following settings will be ignored for your current API version " . getApiVersion() . ":"),
+                       $unsupportedConfigs));
+                       
+        print "<p/><em style='color: orange;'>Quick Fix: <a style='color: orange;' href='sessionInfo.php' target='_blank'>Change API Version</a></em>";
+    }
+}
+
 print "<p/><form id='settings_form' method='post' action='$_SERVER[PHP_SELF]'>\n";
 
 print "<table border='0' cellspacing='5' style='border-width-top: 1'>\n";
@@ -72,8 +90,12 @@ foreach ($config as $configKey => $configValue) {
     if (isset($configValue['isHeader']) && $configValue['display']) {
         print "\t<tr><th align='left' colspan='3'><br/>" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</th></tr>\n";
     } else if (isset($configValue['overrideable']) && $configValue['overrideable']==true) {
-        print "\t<tr onmouseover=\"Tip('" . htmlspecialchars(addslashes($configValue['description']),ENT_NOQUOTES,'UTF-8') . "')\">\n";
-        print "\t\t<td align='right'><label for='$configKey'>" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</label></td><td>&nbsp;&nbsp;</td>\n";
+        $tip = htmlspecialchars(addslashes($configValue['description']),ENT_NOQUOTES,'UTF-8');
+        $tip .= isset($configValue['minApiVersion']) ? "<br/><br/>Minimum API Version: " . sprintf("%01.1f", $configValue['minApiVersion']) : "";
+        print "\t<tr onmouseover=\"Tip('$tip')\">\n";
+        print "\t\t<td align='right'><label for='$configKey'" . 
+              (isLoggedIn() && isset($configValue['minApiVersion']) && !apiVersionIsAtLeast($configValue['minApiVersion']) ? " style='color:orange;'" : "") .
+              ">" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</label></td><td>&nbsp;&nbsp;</td>\n";
         print "\t\t<td align='left'>";
         if ($configValue['dataType'] == "boolean") {
             print "<input name='$configKey' id='$configKey' type='checkbox' ";

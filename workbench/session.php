@@ -88,70 +88,71 @@ if (isLoggedIn()) {
             $_SESSION['default_object'] = $_REQUEST['default_object'];
         }
 
-        $defaultNamespace = isset($_SESSION['config']['callOptions_defaultNamespace']) ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
         if (isset($_SESSION['tempClientId'])) {
-            $header = new CallOptions($_SESSION['tempClientId'], $defaultNamespace);
-            $partnerConnection->setCallOptions($header);
-        } else if ($_SESSION['config']['callOptions_client'] || $defaultNamespace) {
-            $header = new CallOptions($_SESSION['config']['callOptions_client'], $defaultNamespace);
-            $partnerConnection->setCallOptions($header);
+            $partnerConnection->setCallOptions(new CallOptions($_SESSION['tempClientId'], getConfig('callOptions_defaultNamespace')));
+        } else if (getConfig('callOptions_client') || getConfig('callOptions_defaultNamespace')) {
+            $partnerConnection->setCallOptions(new CallOptions(getConfig('callOptions_client'), getConfig('callOptions_defaultNamespace')));
         }
 
-        $assignmentRuleId = isset($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']) ? $_SESSION['config']['assignmentRuleHeader_assignmentRuleId'] : null;
-        if ($assignmentRuleId || $_SESSION['config']['assignmentRuleHeader_useDefaultRule']) {
-            $header = new AssignmentRuleHeader($assignmentRuleId, $_SESSION['config']['assignmentRuleHeader_useDefaultRule']);
-            $partnerConnection->setAssignmentRuleHeader($header);
+        if (getConfig('assignmentRuleHeader_assignmentRuleId') || getConfig('assignmentRuleHeader_useDefaultRule')) {
+            $partnerConnection->setAssignmentRuleHeader(
+                new AssignmentRuleHeader(
+                    getConfig('assignmentRuleHeader_assignmentRuleId'), 
+                    getConfig('assignmentRuleHeader_useDefaultRule')
+                )
+            );
         }
 
-        if ($_SESSION['config']['mruHeader_updateMru']) {
-            $header = new MruHeader($_SESSION['config']['mruHeader_updateMru']);
-            $partnerConnection->setMruHeader($header);
+        if (getConfig('mruHeader_updateMru')) {
+            $partnerConnection->setMruHeader(new MruHeader(getConfig('mruHeader_updateMru')));
         }
 
-        if ($_SESSION['config']['queryOptions_batchSize']) {
-            $header = new QueryOptions($_SESSION['config']['queryOptions_batchSize']);
-            $partnerConnection->setQueryOptions($header);
+        if (getConfig('queryOptions_batchSize')) {
+            $partnerConnection->setQueryOptions(new QueryOptions(getConfig('queryOptions_batchSize')));
         }
 
-        if ($_SESSION['config']['emailHeader_triggerAutoResponseEmail'] || $_SESSION['config']['emailHeader_triggerOtherEmail'] || $_SESSION['config']['emailHeader_triggertriggerUserEmail']) {
-            $header = new EmailHeader($_SESSION['config']['emailHeader_triggerAutoResponseEmail'], $_SESSION['config']['emailHeader_triggerOtherEmail'], $_SESSION['config']['emailHeader_triggertriggerUserEmail']);
-            $partnerConnection->setEmailHeader($header);
+        if (getConfig('emailHeader_triggerAutoResponseEmail') || 
+            getConfig('emailHeader_triggerOtherEmail') || 
+            getConfig('emailHeader_triggertriggerUserEmail')) {
+            
+            $partnerConnection->setEmailHeader(new EmailHeader(
+                    getConfig('emailHeader_triggerAutoResponseEmail'), 
+                    getConfig('emailHeader_triggerOtherEmail'), 
+                    getConfig('emailHeader_triggertriggerUserEmail')
+                )
+            );
         }
 
-        if (isset($_SESSION['config']['UserTerritoryDeleteHeader_transferToUserId'])) {
-            $header = new UserTerritoryDeleteHeader($_SESSION['config']['UserTerritoryDeleteHeader_transferToUserId']);
-            $partnerConnection->setUserTerritoryDeleteHeader($header);
+        if (getConfig('UserTerritoryDeleteHeader_transferToUserId')) {
+            $partnerConnection->setUserTerritoryDeleteHeader(
+                new UserTerritoryDeleteHeader(getConfig('UserTerritoryDeleteHeader_transferToUserId')));
         }
 
-        if ($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation']) {
-            $header = new AllowFieldTruncationHeader($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation']);
-            $partnerConnection->setAllowFieldTruncationHeader($header);
+        if (getConfig('allowFieldTruncationHeader_allowFieldTruncation')) {
+            $partnerConnection->setAllowFieldTruncationHeader(
+                new AllowFieldTruncationHeader(getConfig('allowFieldTruncationHeader_allowFieldTruncation')));
         }
 
-        if ($_SESSION['config']['allOrNoneHeader_allOrNone'] && apiVersionIsAtLeast(20.0)) {
-            $header = new AllOrNoneHeader($_SESSION['config']['allOrNoneHeader_allOrNone']);
-            $partnerConnection->setAllOrNoneHeader($header);
+        if (getConfig('allOrNoneHeader_allOrNone')) {
+            $partnerConnection->setAllOrNoneHeader(new AllOrNoneHeader(getConfig('allOrNoneHeader_allOrNone')));
         }
     
         if (getConfig('disableFeedTrackingHeader_disableFeedTracking')) {
-            $header = new DisableFeedTrackingHeader($_SESSION['config']['disableFeedTrackingHeader_disableFeedTracking']);
-            $partnerConnection->setDisableFeedTrackingHeader($header);
+            $partnerConnection->setDisableFeedTrackingHeader(getConfig('disableFeedTrackingHeader_disableFeedTracking'));
         }
 
-        if (getConfig('localOptions_language') && apiVersionSupports('localOptions_language')) {
-            $header = new LocaleOptions(getConfig('localOptions_language'));
-            $partnerConnection->setLocaleOptions($header);
+        if (getConfig('localOptions_language')) {
+            $partnerConnection->setLocaleOptions(new LocaleOptions(getConfig('localOptions_language')));
         }
     
         if (getConfig('packageVersionHeader_include') && 
             getConfig('packageVersion_namespace') &&
             getConfig('packageVersion_majorNumber') &&
             getConfig('packageVersion_minorNumber')) {
-            $header = new PackageVersionHeader(new PackageVersion(
+            $partnerConnection->setPackageVersionHeader(new PackageVersionHeader(new PackageVersion(
                 $_SESSION['config']['packageVersion_namespace'], 
                 $_SESSION['config']['packageVersion_majorNumber'], 
-                $_SESSION['config']['packageVersion_minorNumber']));
-            $partnerConnection->setPackageVersionHeader($header);
+                $_SESSION['config']['packageVersion_minorNumber'])));
         }
         
         if (!isset($_SESSION['getUserInfo']) || !getConfig('cacheGetUserInfo')) {

@@ -56,10 +56,11 @@ $config["header_General"] = array(
 
     $config["invalidateSessionOnLogout"] = array(
         "label" => "Invalidate Session on Logout",
-        "description" => "Invalidates the current API session when logging out of Workbench. This option is only available when logging in with API version 13.0 and higher; otherwise it is ignored.",
+        "description" => "Invalidates the current API session when logging out of Workbench.",
         "default" => true,
         "overrideable" => true,
-        "dataType" => "boolean"
+        "dataType" => "boolean",
+        "minApiVersion" => 13.0
     );
 
     $config["displayRequestTime"] = array(
@@ -94,6 +95,24 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
+    $GLOBALS['TIMEZONES'] = array(''=>'UTF');
+        foreach (timezone_identifiers_list() as $timezone) {
+            $tz = explode('/',$timezone);
+            if (isset($tz[1])) {
+                $GLOBALS['TIMEZONES'][$timezone] = $tz[0].'/'.str_replace('_',' ',$tz[1]);
+            }
+    }
+
+    $GLOBALS['TIMEZONES'] = array_unique($GLOBALS['TIMEZONES']);
+    $config["convertTimezone"] = array(
+                "label" => "Timezone",
+                "description" => "Modifies returned date time fields and data from UTC to selected timezone",
+                "default" => "",
+                "overrideable" => true,
+                "dataType" => "picklist",
+                "valuesToLabels" => $GLOBALS['TIMEZONES']
+    );
+
     $config["callOptions_defaultNamespace"] = array(
         "label" => "Default Namespace",
         "description" => " A string that identifies a developer namespace prefix",
@@ -111,25 +130,7 @@ $config["header_General"] = array(
         "minValue" => 1,
         "maxValue" => 100
     );
-
-    $GLOBALS['TIMEZONES'] = array(''=>'UTF');
-        foreach (timezone_identifiers_list() as $timezone) {
-            $tz = explode('/',$timezone);
-            if (isset($tz[1])) {
-                $GLOBALS['TIMEZONES'][$timezone] = $tz[0].'/'.str_replace('_',' ',$tz[1]);
-            }
-    }
-
-    $GLOBALS['TIMEZONES'] = array_unique($GLOBALS['TIMEZONES']);
-    $config["convertTimezone"] = array(
-                "label" => "Convert DateTime Fields to Chosen Timezone",
-                "description" => "Modifies returned data from UTC to selected timezone",
-                "default" => "",
-                "overrideable" => true,
-                "dataType" => "picklist",
-                "valuesToLabels" => $GLOBALS['TIMEZONES']
-    );
-
+    
 $config["header_LoginOptions"] = array(
     "label" => "Login Options",
     "display" => true,
@@ -237,7 +238,8 @@ $config["header_LoginOptions"] = array(
         "description" => "Specify an portal id for Customer Portal, and Partner Portal Users. Leave blank for standard Salesforce users.",
         "default" => null,
         "overrideable" => true,
-        "dataType" => "string"
+        "dataType" => "string",
+        "minApiVersion" => 10.0
     );
 
     $config["callOptions_client"] = array(
@@ -334,7 +336,8 @@ $config["header_DataManagement"] = array(
         "description" => "Forces operations to rollback all changes in one batch unless all records in that batch are processed successfully. If unchecked, records without errors are committed, while records with errors are marked as failed in the results. Warning, Workbench may automatically divides a CSV file into mutiple batches, each of which is considered a separate API transaction.",
         "default" => false,
         "overrideable" => true,
-        "dataType" => "boolean"
+        "dataType" => "boolean",
+        "minApiVersion" => 20.0
     );
     
     $config["emailHeader_triggerAutoResponseEmail"] = array(
@@ -363,19 +366,21 @@ $config["header_DataManagement"] = array(
 
     $config["allowFieldTruncationHeader_allowFieldTruncation"] = array(
         "label" => "Allow Field Truncation",
-        "description" => "For API 15.0 and higher, specifies to automatically truncatrate string values that are too long when performing Insert, Update, Upsert, Updelete, or Execute; otherwise a STRING_TOO_LONG error is returned. This is ignored in all previous API versions.",
+        "description" => "Specifies to automatically truncatrate string values that are too long when performing Insert, Update, Upsert, Updelete, or Execute; otherwise a STRING_TOO_LONG error is returned. This is ignored in all previous API versions.",
         "default" => false,
         "overrideable" => true,
-        "dataType" => "boolean"
+        "dataType" => "boolean",
+        "minApiVersion" => 15.0        
     );
 
 
     $config["disableFeedTrackingHeader_disableFeedTracking"] = array(
         "label" => "Disable Feed Tracking",
-        "description" => "Specifies whether the changes made in the current call are tracked in feeds",
+        "description" => "Specifies whether the changes made in the current call are tracked in feeds.",
         "default" => false,
         "overrideable" => true,
-        "dataType" => "boolean"
+        "dataType" => "boolean",
+        "minApiVersion" => 17.0
     );    
     
     $config["assignmentRuleHeader_useDefaultRule"] = array(
@@ -479,7 +484,8 @@ $config["header_PackageVersion"] = array(
         "description" => "Incidates whether Workbench should use the following package version infomation.",
         "default" => false,
         "overrideable" => true,
-        "dataType" => "boolean"
+        "dataType" => "boolean",
+        "minApiVersion" => 16.0
     );
 
     $config["packageVersion_namespace"] = array(
@@ -487,7 +493,8 @@ $config["header_PackageVersion"] = array(
         "description" => "The unique namespace of the managed package.",
         "default" => null,
         "overrideable" => true,
-        "dataType" => "string"
+        "dataType" => "string",
+        "minApiVersion" => 16.0
     );
     
     $config["packageVersion_majorNumber"] = array(
@@ -495,7 +502,8 @@ $config["header_PackageVersion"] = array(
         "description" => "The major version number of a package version. A package version is denoted by majorNumber.minorNumber, for example 2.1.",
         "default" => null,
         "overrideable" => true,
-        "dataType" => "int"
+        "dataType" => "int",
+        "minApiVersion" => 16.0
     );
 
     $config["packageVersion_minorNumber"] = array(
@@ -503,7 +511,8 @@ $config["header_PackageVersion"] = array(
         "description" => "The major version number of a package version. A package version is denoted by majorNumber.minorNumber, for example 2.1.",
         "default" => null,
         "overrideable" => true,
-        "dataType" => "int"
+        "dataType" => "int",
+        "minApiVersion" => 16.0
     );    
     
 $config["header_Execute"] = array(
@@ -731,12 +740,12 @@ $GLOBALS["MENUS"] = array(
         'describe.php'          => new Page('Standard & Custom Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format',true,true,true,'usesObject',true,''),
         'metadataDescribeAndList.php'      => new Page('Metadata Types & Components','Describes and lists the metadata components in this organization.',true,true,true,true,true,''),
         'sessionInfo.php'       => new Page('Session Information','Information about the current session.',true,true,true,false,true,''),
-        ),
+    ),
 
     'Queries' => array(
         'query.php'     => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,'usesObject',true,''),
         'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,'usesObject',true,'')
-        ),
+    ),
 
     'Data' => array(
         'insert.php'    => new Page('Insert','Creates new records from a CSV file',true,false,true,'usesObject',true,''),
@@ -745,12 +754,12 @@ $GLOBALS["MENUS"] = array(
         'delete.php'    => new Page('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted',true,false,true,true,true,''),
         'undelete.php'  => new Page('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.',true,false,true,true,true,''),
         'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,false,true,true,true,'')
-        ),
+     ),
 
     'Migration' => array(
         'metadataDeploy.php'    => new Page('Deploy','Deploys metadata components to this organization',true,false,true,true,true,''),
         'metadataRetrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization',true,true,true,true,true,''),
-        ),
+    ),
 
     'Utilities' => array(
         'execute.php'                 => new Page('Apex Execute','Execute Apex code as an anonymous block',true,false,true,true,true,''),
@@ -762,7 +771,7 @@ $GLOBALS["MENUS"] = array(
         'downloadAsyncBatch.php'      => new Page('Download Bulk API Batch','Downloads Bulk API requests and results',true,true,false,false,true,''),
         'downloadResultsWithData.php' => new Page('Download DML Results','Downloads DML results',true,true,false,false,true,''),
         'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload',true,true,false,false,true,'')
-        )
+     )
 );
 
 ?>
