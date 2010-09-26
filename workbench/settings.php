@@ -22,31 +22,43 @@ if (isset($_POST['submitConfigSetter'])) {
     }
 }
 
-if (isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])) {
+if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])) {
     clearSessionCache();
-    
-    if (!isset($errors)) {
-        foreach ($config as $configKey => $configValue) {
-            if (isset($_POST['restoreDefaults'])) {
-                setcookie($configKey,NULL,time()-3600);        //clear all config cookies if restoreDefaults selected
-            } else if (isset($_POST[$configKey]) && $configValue['dataType'] == "boolean") {        //for boolean trues
-                setcookie($configKey,1,time()+60*60*24*365*10);
-            } else if (isset($configValue['dataType']) && $configValue['dataType'] == "boolean") {                            //for boolean falses
-                setcookie($configKey,0,time()+60*60*24*365*10);
-            } else if (isset($_POST[$configKey])) {
-                setcookie($configKey,$_POST[$configKey],time()+60*60*24*365*10);        //for non-null strings and numbers
-            } else {
-                setcookie($configKey,NULL,time()-3600);                                    //for null strings and numbers (remove cookie)
-            }
+
+    foreach ($config as $configKey => $configValue) {
+        // ignore headers
+        if (isset($configValue['isHeader'])) {
+            continue;
         }
-         
-        //special case for default clientId so that it doesnt persist after upgrading if not customized
-        if (isset($_POST['callOptions_client']) && $_POST['callOptions_client'] == getWorkbenchUserAgent()) {
-            setcookie('callOptions_client',NULL,time()-3600);
+        
+        //clear all config cookies if restoreDefaults selected
+        if (isset($_POST['restoreDefaults'])) {
+            setcookie($configKey,NULL,time()-3600);
+            continue;
+        } 
+        
+       
+        if (($configValue['dataType'] == "boolean") && 
+            !(($configValue['default'] == true  && isset($_POST[$configKey]) || 
+               $configValue['default'] == false && !isset($_POST[$configKey])))) {
+            
+            //for overriden booleans
+            setcookie($configKey,(isset($_POST[$configKey]) ? 1 : 0),time()+60*60*24*365*10);
+        } else if (isset($_POST[$configKey]) && $configValue['default'] != $_POST[$configKey]) {
+            //for non-null strings and numbers
+            setcookie($configKey,$_POST[$configKey],time()+60*60*24*365*10);
+        } else {
+            //for null or non-overriding strings and numbers (remove cookie)
+            setcookie($configKey,NULL,time()-3600);
         }
-         
-        header("Location: $_SERVER[PHP_SELF]?saved=" . (isset($_POST['restoreDefaults']) ? "D" : "S"));
     }
+     
+    //special case for default clientId so that it doesnt persist after upgrading if not customized
+    if (isset($_POST['callOptions_client']) && $_POST['callOptions_client'] == getWorkbenchUserAgent()) {
+        setcookie('callOptions_client',NULL,time()-3600);
+    }
+     
+    header("Location: $_SERVER[PHP_SELF]?saved=" . (isset($_POST['restoreDefaults']) ? "D" : "S"));
 }
 
 
