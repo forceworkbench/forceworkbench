@@ -4,7 +4,7 @@ require_once 'shared.php';
 
 if ($_SESSION) {
     require_once 'header.php';
-    if ($_SESSION['config']['invalidateSessionOnLogout']) {
+    if (getConfig("invalidateSessionOnLogout")) {
         try {
             $partnerConnection->logout();
             $sessionInvatidated = true;

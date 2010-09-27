@@ -144,7 +144,7 @@ function getMyTitle() {
 }
 
 function getTableClass($defaultClass = 'dataTable') {
-    return $_SESSION['config']['areTablesSortable'] ? "sortable" : $defaultClass;
+    return getConfig("areTablesSortable") ? "sortable" : $defaultClass;
 }
 
 function apiVersionIsAtLeast($minVersion) {
@@ -271,7 +271,7 @@ function printSelectOptions($valuesToLabelsArray,$defaultValue) {
 function describeGlobal($filter1=null, $filter2=null) {
     $processedDescribeGlobalResponse = array();
 
-    if (!isset($_SESSION['myGlobal']) || !$_SESSION['config']['cacheDescribeGlobal']) {
+    if (!isset($_SESSION['myGlobal']) || !getConfig("cacheDescribeGlobal")) {
         try {
             global $partnerConnection;
             $describeGlobalResponse = $partnerConnection->describeGlobal();
@@ -335,7 +335,7 @@ function describeSObject($objectTypes) {
     // ones uncached ones. if caching is disabled, just retreive everything and
     // clear the cache.
     $objectTypesToRetreive = array();
-    if ($_SESSION['config']['cacheDescribeSObject']) {
+    if (getConfig("cacheDescribeSObject")) {
         foreach ($objectTypeArray as $objectType) {
             if (!isset($_SESSION['describeSObjects_results'][$objectType])) {
                 $objectTypesToRetreive[] = $objectType;
@@ -370,7 +370,7 @@ function describeSObject($objectTypes) {
 
     // move the describe results to the session cache and then copy all the requested object descriptions from the cache
     // if caching is disaled, the results will just be returned directly
-    if ($_SESSION['config']['cacheDescribeSObject']) {
+    if (getConfig("cacheDescribeSObject")) {
         if (isset($describeSObjectsResultsArray)) {
             foreach ($describeSObjectsResultsArray as $describeSObjectResultKey => $describeSObjectResult) {
                 $_SESSION['describeSObjects_results'][$describeSObjectResult->name] = $describeSObjectsResultsArray[$describeSObjectResult->name];
@@ -385,7 +385,7 @@ function describeSObject($objectTypes) {
     }
 
     // if alphabetize fields is enabled, alphabetize the describe results
-    if ($_SESSION['config']['abcOrder']) {
+    if (getConfig("abcOrder")) {
         foreach ($describeSObjectsResultsToReturn as $describeSObjectResultKey => $describeSObjectResult) {
             $describeSObjectsResultsToReturn[$describeSObjectResultKey] = alphaOrderFields($describeSObjectResult);
         }
@@ -497,7 +497,7 @@ function convertArrayToCsv($arr) {
 
 function getAsyncApiConnection() {
     $asyncConnection = new BulkApiClient($_SESSION['location'], $_SESSION['sessionId']);
-    $asyncConnection->setCompressionEnabled($_SESSION['config']['enableGzip']);
+    $asyncConnection->setCompressionEnabled(getConfig("enableGzip"));
     $asyncConnection->setUserAgent(getWorkbenchUserAgent());
     $asyncConnection->setExternalLogReference($_SESSION['restDebugLog']);
     $asyncConnection->setLoggingEnabled(getConfig("debug") == true);

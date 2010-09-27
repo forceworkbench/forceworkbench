@@ -19,11 +19,11 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     }
 
     $persistedSavedQueryRequestsKey = "PSQR@";
-    if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'USER') {
+    if (getConfig("savedQueriesAndSearchesPersistanceLevel") == 'USER') {
         $persistedSavedQueryRequestsKey .= $_SESSION['getUserInfo']->userId . "@" . $_SESSION['getUserInfo']->organizationId;
-    } else if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == "ORG") {
+    } else if (getConfig("savedQueriesAndSearchesPersistanceLevel") == "ORG") {
         $persistedSavedQueryRequestsKey .= $_SESSION['getUserInfo']->organizationId;
-    } else if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] == 'ALL') {
+    } else if (getConfig("savedQueriesAndSearchesPersistanceLevel") == 'ALL') {
         $persistedSavedQueryRequestsKey .= "ALL";
     }
 
@@ -37,7 +37,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     } else {
         $queryRequest = new QueryRequest($defaultSettings);
         $queryRequest->setObject($_SESSION['default_object']);
-        if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE' && !isset($_SESSION['savedQueryRequests']) && isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
+        if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE' && !isset($_SESSION['savedQueryRequests']) && isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
             $_SESSION['savedQueryRequests'] = unserialize($_COOKIE[$persistedSavedQueryRequestsKey]);
         }
     }
@@ -45,7 +45,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     //clear  all saved queries in scope if user requests
     if (isset($_POST['clearAllQr']) && $_POST['clearAllQr'] == 'Clear All') {
         $_SESSION['savedQueryRequests'] = null;
-        if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE') {
+        if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
             setcookie($persistedSavedQueryRequestsKey,null,time()-3600);
         }
     }
@@ -53,7 +53,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     //save as named query
     if (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' && isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0) {
         $_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES,'UTF-8')] = $lastQr;
-        if ($_SESSION['config']['savedQueriesAndSearchesPersistanceLevel'] != 'NONE') {
+        if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
             setcookie($persistedSavedQueryRequestsKey,serialize($_SESSION['savedQueryRequests']),time()+60*60*24*7);
         }
     }
@@ -446,7 +446,7 @@ function toggleMatrixSortSelectors(hasChanged) {
 QUERY_BUILDER_SCRIPT;
 
 
-        if ($_SESSION['config']['autoJumpToResults']) {
+        if (getConfig("autoJumpToResults")) {
             print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
         } else {
             print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]'>\n";
@@ -577,7 +577,7 @@ QUERY_BUILDER_SCRIPT;
 
 
     print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-        "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . $_SESSION['config']['textareaRows'] . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES,'UTF-8') . "</textarea>\n" .
+        "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . getConfig("textareaRows") . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES,'UTF-8') . "</textarea>\n" .
       "</td></tr>\n";
 
 
@@ -649,7 +649,7 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
             $records = array($records);
         }
 
-        while(($suppressScreenOutput || $_SESSION['config']['autoRunQueryMore']) && !$queryResponse->done) {
+        while(($suppressScreenOutput || getConfig("autoRunQueryMore")) && !$queryResponse->done) {
             $queryResponse = $partnerConnection->queryMore($queryResponse->queryLocator);
 
             if (!is_array($queryResponse->records)) {
@@ -862,11 +862,11 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
         try {
             $rowNum = 0;
             print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
-            if (isset($_SESSION['queryLocator']) && !$_SESSION['config']['autoRunQueryMore']) {
+            if (isset($_SESSION['queryLocator']) && !getConfig("autoRunQueryMore")) {
                 preg_match("/-(\d+)/",$_SESSION['queryLocator'],$lastRecord);
                 $rowNum = ($lastRecord[1] - count($records) + 1);
                 print "<p>Returned records $rowNum - " . $lastRecord[1] . " of ";
-            } else if (!$_SESSION['config']['autoRunQueryMore']) {
+            } else if (!getConfig("autoRunQueryMore")) {
                 $rowNum = ($_SESSION['totalQuerySize'] - count($records) + 1);
                 print "<p>Returned records $rowNum - " . $_SESSION['totalQuerySize'] . " of ";
             } else {
@@ -880,7 +880,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
             printf ("%01.3f", $queryTimeElapsed);
             print " seconds:</p>\n";
 
-            if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']) {
+            if (!getConfig("autoRunQueryMore") && $_SESSION['queryLocator']) {
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
             }
 
@@ -888,7 +888,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
             createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
             createQueryResultTable($records)));
 
-            if (!$_SESSION['config']['autoRunQueryMore'] && $_SESSION['queryLocator']) {
+            if (!getConfig("autoRunQueryMore") && $_SESSION['queryLocator']) {
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
             }
 

@@ -9,7 +9,7 @@ function getDefaultServerUrl() {
     if (isset($_GET['serverUrlPrefix'])) {
         $serverUrl .= $_GET['serverUrlPrefix'];
     } else {
-        if ($_SESSION['config']['useHTTPS'] && !stristr($_SESSION['config']['defaultInstance'],'localhost')) {
+        if (getConfig("useHTTPS") && !stristr(getConfig("defaultInstance"),'localhost')) {
             $serverUrl .= "https://";
         } else {
             $serverUrl .= "http://";
@@ -18,7 +18,7 @@ function getDefaultServerUrl() {
         if (isset($_GET['inst'])) {
             $serverUrl .= $_GET['inst'];
         } else {
-            $serverUrl .= $_SESSION['config']['defaultInstance'];
+            $serverUrl .= getConfig("defaultInstance");
         }
 
         $serverUrl .= ".salesforce.com";
@@ -33,7 +33,7 @@ function getDefaultServerUrl() {
     if (isset($_GET['api'])) {
         $serverUrl .= $_GET['api'];
     } else {
-        $serverUrl .= $_SESSION['config']['defaultApiVersion'];
+        $serverUrl .= getConfig("defaultApiVersion");
     }
 
     return $serverUrl;
@@ -116,15 +116,15 @@ function displayLogin($errors) {
     //Display main login form body
 
     //move PHP session vars to simple vars for use in JS
-    $useHTTPS = $_SESSION['config']['useHTTPS'];
-    $defaultApiVersion = $_SESSION['config']['defaultApiVersion'];
-    $defaultInstance = $_SESSION['config']['defaultInstance'];
+    $useHTTPS = getConfig("useHTTPS");
+    $defaultApiVersion = getConfig("defaultApiVersion");
+    $defaultInstance = getConfig("defaultInstance");
     $defaultServerUrl = getDefaultServerUrl();
 
     print "<script type='text/javascript' language='JavaScript'>\n";
 
     print "var instNumDomainMap = [];\n";
-    if ($_SESSION['config']['fuzzyServerUrlLookup']) {
+    if (getConfig("fuzzyServerUrlLookup")) {
         foreach ($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo) {
             if (isset($instInfo[1]) && $instInfo[1] != "") {
                 print "\t" . "instNumDomainMap['$instInfo[1]'] = '$subdomain';" . "\n";
@@ -290,12 +290,12 @@ LOGIN_FORM_PART_2;
     foreach ($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $instInfo) {
         $instanceNames[$subdomain] = $instInfo[0];
     }
-    printSelectOptions($instanceNames,$_SESSION['config']['defaultInstance']);
+    printSelectOptions($instanceNames,getConfig("defaultInstance"));
     print "</select>&nbsp;";
 
     //endpoint
     print "<select name='endp' id='endp' onChange='buildLocation();' onkeyup='buildLocation();'>";
-    printSelectOptions($GLOBALS['config']['defaultApiVersion']['valuesToLabels'],$_SESSION['config']['defaultApiVersion']);
+    printSelectOptions($GLOBALS['config']['defaultApiVersion']['valuesToLabels'],getConfig("defaultApiVersion"));
     print "</select></p>";
 
     //advanced jumpTo
@@ -393,11 +393,11 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
 
         //set call options header for login before a session exists
         if (isset($_GET['clientId'])) {
-            $partnerConnection->setCallOptions(new CallOptions($_GET['clientId'], $_SESSION['config']['callOptions_defaultNamespace']));
+            $partnerConnection->setCallOptions(new CallOptions($_GET['clientId'], getConfig("callOptions_defaultNamespace")));
 
         } else if (getConfig("callOptions_client") || getConfig("callOptions_defaultNamespace")) {
-            $clientId = getConfig("callOptions_client") ? $_SESSION['config']['callOptions_client'] : null;
-            $defaultNamespace = getConfig("callOptions_defaultNamespace") ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
+            $clientId = getConfig("callOptions_client") ? getConfig("callOptions_client") : null;
+            $defaultNamespace = getConfig("callOptions_defaultNamespace") ? getConfig("callOptions_defaultNamespace") : null;
             $partnerConnection->setCallOptions(new CallOptions($clientId, $defaultNamespace));
         }
 
@@ -406,8 +406,8 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
             $partnerConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));
 
         } else if (getConfig("loginScopeHeader_organizationId") || getConfig("loginScopeHeader_portalId")) {
-            $loginScopeHeaderOrganizationId = getConfig("loginScopeHeader_organizationId") ? $_SESSION['config']['loginScopeHeader_organizationId'] : null;
-            $loginScopeHeaderPortalId = getConfig("loginScopeHeader_portalId") ? $_SESSION['config']['loginScopeHeader_portalId'] : null;
+            $loginScopeHeaderOrganizationId = getConfig("loginScopeHeader_organizationId") ? getConfig("loginScopeHeader_organizationId") : null;
+            $loginScopeHeaderPortalId = getConfig("loginScopeHeader_portalId") ? getConfig("loginScopeHeader_portalId") : null;
             $partnerConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeaderOrganizationId, $loginScopeHeaderPortalId));
         }
 
@@ -434,7 +434,7 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         }
 
         //replace HTTPS w/ HTTP if useHTTP config is false
-        $location = $_SESSION['config']['useHTTPS'] ? $partnerConnection->getLocation() : str_replace("https","http",$partnerConnection->getLocation());
+        $location = getConfig("useHTTPS") ? $partnerConnection->getLocation() : str_replace("https","http",$partnerConnection->getLocation());
 
         session_unset();
         session_destroy();

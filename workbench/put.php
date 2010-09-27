@@ -78,8 +78,8 @@ function put($action) {
             $csvArrayCount = count($_SESSION['csv_array']) - 1;
             if (!$csvArrayCount) {
                 displayError("The file uploaded contains no records. Please try again.", false, true);
-            } else if ($csvArrayCount > $_SESSION['config']['maxFileLengthRows']) {
-                displayError ("The file uploaded contains more than " . $_SESSION['config']['maxFileLengthRows'] . " records. Please try again.", false, true);
+            } else if ($csvArrayCount > getConfig("maxFileLengthRows")) {
+                displayError ("The file uploaded contains more than " . getConfig("maxFileLengthRows") . " records. Please try again.", false, true);
             }
             $info = "The file $csvFileName was uploaded successfully and contains $csvArrayCount row";
             if ($csvArrayCount !== 1) $info .= 's';
@@ -153,7 +153,7 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
           "</p>\n";
     
     print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n";
-    print "<input type='hidden' name='MAX_FILE_SIZE' value='" . $_SESSION['config']['maxFileSize'] . "' />\n";
+    print "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' />\n";
     print "<p><input type='file' name='$fileInputName' size=44 /></p>\n";
     if (requiresObject($action)) {
         $filter1 = null;
@@ -292,7 +292,7 @@ function setFieldMappings($action,$csvArray) {
     print "<table class='fieldMapping'>\n";
     print "<tr><th>Salesforce Field</th>";
     print "<th>CSV Field</th>";
-    if ($_SESSION['config']['showReferenceBy'] && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
+    if (getConfig("showReferenceBy") && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
     print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided in the CSV file and can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='images/help16.png'/></th>";
     print "</tr>\n";
 
@@ -366,7 +366,7 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol) {
     }
     print "</select></td>";
 
-    if ($showRefCol && $_SESSION['config']['showReferenceBy']) {
+    if ($showRefCol && getConfig("showReferenceBy")) {
         if (isset($field->referenceTo) && isset($field->relationshipName)) {
             $describeRefObjResult = describeSObject($field->referenceTo);
             printRefField($field, $describeRefObjResult);
@@ -554,13 +554,13 @@ function displayFieldMappings($fieldMap,$extId,$showRefCol) {
     print "<table class='fieldMapping'>\n";
     print "<tr><th>Salesforce Field</th>";
     print "<th>CSV Field</th>";
-    if ($showRefCol && $_SESSION['config']['showReferenceBy']) print "<th>Smart Lookup</th>";
+    if ($showRefCol && getConfig("showReferenceBy")) print "<th>Smart Lookup</th>";
     print "</tr>\n";
 
     foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
         print "<tr><td>$salesforceField</td>";
         print "<td>" . $fieldMapArray['csvField'] . "</td>";
-        if ($showRefCol && $_SESSION['config']['showReferenceBy']) {
+        if ($showRefCol && getConfig("showReferenceBy")) {
             print "<td>";
             if (isset($fieldMapArray['relatedObjectName']) && isset($fieldMapArray['relatedFieldName'])) {
                 print $fieldMapArray['relatedObjectName'] . "." . $fieldMapArray['relatedFieldName'];
@@ -605,7 +605,7 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults) {
         $idArrayAll = $idArray;
 
         while($idArray) {
-            $idArrayBatch = array_splice($idArray,0,$_SESSION['config']['batchSize']);
+            $idArrayBatch = array_splice($idArray,0,getConfig("batchSize"));
             try {
                 global $partnerConnection;
                 if($apiCall == 'purge') $apiCall = 'emptyRecycleBin';
@@ -645,12 +645,12 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
 
         while($csvArray) {
             $sObjects = array();
-            $csvArrayBatch = array_splice($csvArray,0,$_SESSION['config']['batchSize']);
+            $csvArrayBatch = array_splice($csvArray,0,getConfig("batchSize"));
 
             for ($row=0; $row < count($csvArrayBatch); $row++) {
                 $sObject = new SObject;
                 $sObject->type = $_SESSION['default_object'];
-                if($_SESSION['config']['fieldsToNull']) $sObject->fieldsToNull = array();
+                if(getConfig("fieldsToNull")) $sObject->fieldsToNull = array();
                 $fields = array();
 
                 foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
@@ -666,7 +666,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
                         $col = array_search($fieldMapArray['csvField'],$csvHeader);
                         if ($csvArrayBatch[$row][$col] != "") {
                             $field = array($salesforceField => htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
-                        } else if ($_SESSION['config']['fieldsToNull']) {
+                        } else if (getConfig("fieldsToNull")) {
                             $sObject->fieldsToNull[] = $salesforceField;
                         }
                     }
@@ -731,8 +731,8 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray,$zipFile) {
             $job->setObject($_SESSION['default_object']);
             $job->setOpertion($apiCall);
             $job->setContentType($doingZip ? "ZIP_CSV" : "CSV");
-            $job->setConcurrencyMode($_SESSION['config']['asyncConcurrencyMode']);
-            if(getConfig("assignmentRuleHeader_assignmentRuleId")) $job->setAssignmentRuleId($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']);
+            $job->setConcurrencyMode(getConfig("asyncConcurrencyMode"));
+            if(getConfig("assignmentRuleHeader_assignmentRuleId")) $job->setAssignmentRuleId(getConfig("assignmentRuleHeader_assignmentRuleId"));
             if($apiCall == "upsert" && isset($extId)) $job->setExternalIdFieldName($extId);
 
             $asyncConnection = getAsyncApiConnection();
@@ -757,7 +757,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray,$zipFile) {
     
             while($csvArray) {
                 $sObjects = array();
-                $csvArrayBatch = array_splice($csvArray,0,$_SESSION['config']['asyncBatchSize']);
+                $csvArrayBatch = array_splice($csvArray,0,getConfig("asyncBatchSize"));
     
                 $asyncCsv = array();
     
@@ -781,7 +781,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray,$zipFile) {
                     foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
                         $col = array_search($fieldMapArray['csvField'],$csvHeader);
                         if (isset($salesforceField) && isset($fieldMapArray['csvField'])) {
-                            if ($csvArrayBatch[$row][$col] == "" && $_SESSION['config']['fieldsToNull']) {
+                            if ($csvArrayBatch[$row][$col] == "" && getConfig("fieldsToNull")) {
                                 $asyncCsvRow[] = "#N/A";
                             } else {
                                 $asyncCsvRow[] = htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8');

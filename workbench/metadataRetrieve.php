@@ -90,7 +90,7 @@ to define a retrieve request along with any applicable options:</p>
     action='<?php print $_SERVER['PHP_SELF']; ?>'
     enctype='multipart/form-data'><input type='hidden'
     name='MAX_FILE_SIZE'
-    value='<?php print $_SESSION['config']['maxFileSize']; ?>' />
+    value='<?php print getConfig("maxFileSize"); ?>' />
 <table>
     <tr>
         <td style='padding-right: 20px;'>Unpackaged Manifest:</td>

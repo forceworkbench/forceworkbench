@@ -14,8 +14,8 @@ if (isset($_POST['execute'])) {
     $_SESSION['LogCategory'] = $_POST['LogCategory'];
     $_SESSION['LogCategoryLevel'] = $_POST['LogCategoryLevel'];
 } else if (!isset($_SESSION['LogCategory']) && !isset($_SESSION['LogCategoryLevel'])) {
-    $_SESSION['LogCategory'] = $_SESSION['config']['defaultLogCategory'];
-    $_SESSION['LogCategoryLevel'] = $_SESSION['config']['defaultLogCategoryLevel'];
+    $_SESSION['LogCategory'] = getConfig("defaultLogCategory");
+    $_SESSION['LogCategoryLevel'] = getConfig("defaultLogCategoryLevel");
 }
 
 
@@ -44,7 +44,7 @@ if (isset($_POST['execute'])) {
     <tr>
         <td colspan="2"><textarea id='scriptInput' name='scriptInput'
             cols='100'
-            rows='<?php print $_SESSION['config']['textareaRows'] ?>'
+            rows='<?php print getConfig("textareaRows") ?>'
             style='overflow: auto; font-family: monospace, courier;'><?php echo htmlspecialchars(isset($_SESSION['scriptInput'])?$_SESSION['scriptInput']:null,ENT_QUOTES,'UTF-8'); ?></textarea>
         <p />
         <input type='submit' name="execute" value='Execute' /> <input

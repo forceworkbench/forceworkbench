@@ -48,14 +48,14 @@ function displayDescribeSObjectResults() {
         print "<div style='float: right; border:1px solid #bbb; padding:0.5em; margin-right:1em;'>" .
                      "<strong>Legend:</strong>" . 
                   "<ul style='margin:0; padding-left: 2em'>";
-        if ($_SESSION['config']['highightBooleanValues']) {
+        if (getConfig("highightBooleanValues")) {
             print "<li class=\"trueColor\">True</li>\n";
             print "<li class=\"falseColor\">False</li>\n";
         }
-        if ($_SESSION['config']['highlightCustomFields']) {
+        if (getConfig("highlightCustomFields")) {
             print "<li class=\"highlightCustomField\">Custom Field</li>\n";
         }
-        if ($_SESSION['config']['highlightSystemFields']) {
+        if (getConfig("highlightSystemFields")) {
             print "<li class=\"highlightSystemField\">System Field</li>\n";
         }
         print "</ul>" .
@@ -174,7 +174,7 @@ function displayDescribeSObjectResults() {
 }
 
 function booleanDisplay($value) {
-    if ($_SESSION['config']['highightBooleanValues']) {
+    if (getConfig("highightBooleanValues")) {
         if ($value) {
             print "<span class='describeValue trueColor'>True</span>";
         } else {
@@ -194,9 +194,9 @@ function highlightSpecialField( $value ) {
     // Define system fields array
     $systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp");
 
-    if ($_SESSION['config']['highlightSystemFields'] && in_array($value->name,$systemFields)) {
+    if (getConfig("highlightSystemFields") && in_array($value->name,$systemFields)) {
         print "<li><span class='highlightSystemField'>$value->name</span><ul style='display:none;'>\n";
-    } else if ($_SESSION['config']['highlightCustomFields'] && $value->custom) {
+    } else if (getConfig("highlightCustomFields") && $value->custom) {
         print "<li><span class='highlightCustomField'>$value->name</span><ul style='display:none;'>\n";
     } else {
         print "<li>$value->name<ul style='display:none;'>\n";

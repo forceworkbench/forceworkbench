@@ -13,17 +13,17 @@ abstract class SoapBaseClient {
         $soapClientArray['encoding'] = 'utf-8';
 
         //set compression settings
-        if ($_SESSION['config']['enableGzip'] && phpversion() > '5.1.2') {
+        if (getConfig("enableGzip") && phpversion() > '5.1.2') {
             $soapClientArray['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | 1;
         }
 
         //set proxy settings
-        if ($_SESSION['config']['proxyEnabled'] == true) {
+        if (getConfig("proxyEnabled") == true) {
             $proxySettings = array();
-            $proxySettings['proxy_host'] = $_SESSION['config']['proxyHost'];
-            $proxySettings['proxy_port'] = (int)$_SESSION['config']['proxyPort']; // Use an integer, not a string
-            $proxySettings['proxy_login'] = $_SESSION['config']['proxyUsername'];
-            $proxySettings['proxy_password'] = $_SESSION['config']['proxyPassword'];
+            $proxySettings['proxy_host'] = getConfig("proxyHost");
+            $proxySettings['proxy_port'] = (int)getConfig("proxyPort"); // Use an integer, not a string
+            $proxySettings['proxy_login'] = getConfig("proxyUsername");
+            $proxySettings['proxy_password'] = getConfig("proxyPassword");
 
             $soapClientArray = array_merge($soapClientArray, $proxySettings);
         }
@@ -56,14 +56,14 @@ abstract class SoapBaseClient {
 
         //set call options header
         if (getConfig("callOptions_client")) {
-            $clientBody = array('client' => new SoapVar($_SESSION['config']['callOptions_client'], XSD_STRING));
+            $clientBody = array('client' => new SoapVar(getConfig("callOptions_client"), XSD_STRING));
             $callOptionsHeader = new SoapHeader($this->getNamespace(), 'CallOptions', $clientBody, false);
             $headerArray[] = $callOptionsHeader;
         }
 
         //set allowFieldTruncationHeader header
         if (getConfig("allowFieldTruncationHeader_allowFieldTruncation")) {
-            $allowFieldTruncationBody = array('allowFieldTruncation' => new SoapVar($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation'], XSD_BOOLEAN));
+            $allowFieldTruncationBody = array('allowFieldTruncation' => new SoapVar(getConfig("allowFieldTruncationHeader_allowFieldTruncation"), XSD_BOOLEAN));
             $allowFieldTruncationHeader = new SoapHeader($this->getNamespace(), 'AllowFieldTruncationHeader', $allowFieldTruncationBody, false);
             $headerArray[] = $allowFieldTruncationHeader;
         }
