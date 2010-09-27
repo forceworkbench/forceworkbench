@@ -55,14 +55,14 @@ abstract class SoapBaseClient {
         }
 
         //set call options header
-        if (isset($_SESSION['config']['callOptions_client'])) {
+        if (getConfig("callOptions_client")) {
             $clientBody = array('client' => new SoapVar($_SESSION['config']['callOptions_client'], XSD_STRING));
             $callOptionsHeader = new SoapHeader($this->getNamespace(), 'CallOptions', $clientBody, false);
             $headerArray[] = $callOptionsHeader;
         }
 
         //set allowFieldTruncationHeader header
-        if (isset($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation'])) {
+        if (getConfig("allowFieldTruncationHeader_allowFieldTruncation")) {
             $allowFieldTruncationBody = array('allowFieldTruncation' => new SoapVar($_SESSION['config']['allowFieldTruncationHeader_allowFieldTruncation'], XSD_BOOLEAN));
             $allowFieldTruncationHeader = new SoapHeader($this->getNamespace(), 'AllowFieldTruncationHeader', $allowFieldTruncationBody, false);
             $headerArray[] = $allowFieldTruncationHeader;

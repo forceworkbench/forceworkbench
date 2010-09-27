@@ -732,7 +732,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray,$zipFile) {
             $job->setOpertion($apiCall);
             $job->setContentType($doingZip ? "ZIP_CSV" : "CSV");
             $job->setConcurrencyMode($_SESSION['config']['asyncConcurrencyMode']);
-            if(isset($_SESSION['config']['assignmentRuleHeader_assignmentRuleId'])) $job->setAssignmentRuleId($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']);
+            if(getConfig("assignmentRuleHeader_assignmentRuleId")) $job->setAssignmentRuleId($_SESSION['config']['assignmentRuleHeader_assignmentRuleId']);
             if($apiCall == "upsert" && isset($extId)) $job->setExternalIdFieldName($extId);
 
             $asyncConnection = getAsyncApiConnection();

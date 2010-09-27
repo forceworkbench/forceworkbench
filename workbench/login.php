@@ -395,9 +395,9 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         if (isset($_GET['clientId'])) {
             $partnerConnection->setCallOptions(new CallOptions($_GET['clientId'], $_SESSION['config']['callOptions_defaultNamespace']));
 
-        } else if (isset($_SESSION['config']['callOptions_client']) || isset($_SESSION['config']['callOptions_defaultNamespace'])) {
-            $clientId = isset($_SESSION['config']['callOptions_client']) ? $_SESSION['config']['callOptions_client'] : null;
-            $defaultNamespace = isset($_SESSION['config']['callOptions_defaultNamespace']) ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
+        } else if (getConfig("callOptions_client") || getConfig("callOptions_defaultNamespace")) {
+            $clientId = getConfig("callOptions_client") ? $_SESSION['config']['callOptions_client'] : null;
+            $defaultNamespace = getConfig("callOptions_defaultNamespace") ? $_SESSION['config']['callOptions_defaultNamespace'] : null;
             $partnerConnection->setCallOptions(new CallOptions($clientId, $defaultNamespace));
         }
 
@@ -405,9 +405,9 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         if (isset($_GET['orgId']) || isset($_GET['portalId'])) {
             $partnerConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));
 
-        } else if (isset($_SESSION['config']['loginScopeHeader_organizationId']) || isset($_SESSION['config']['loginScopeHeader_portalId'])) {
-            $loginScopeHeaderOrganizationId = isset($_SESSION['config']['loginScopeHeader_organizationId']) ? $_SESSION['config']['loginScopeHeader_organizationId'] : null;
-            $loginScopeHeaderPortalId = isset($_SESSION['config']['loginScopeHeader_portalId']) ? $_SESSION['config']['loginScopeHeader_portalId'] : null;
+        } else if (getConfig("loginScopeHeader_organizationId") || getConfig("loginScopeHeader_portalId")) {
+            $loginScopeHeaderOrganizationId = getConfig("loginScopeHeader_organizationId") ? $_SESSION['config']['loginScopeHeader_organizationId'] : null;
+            $loginScopeHeaderPortalId = getConfig("loginScopeHeader_portalId") ? $_SESSION['config']['loginScopeHeader_portalId'] : null;
             $partnerConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeaderOrganizationId, $loginScopeHeaderPortalId));
         }
 
