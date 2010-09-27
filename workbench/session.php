@@ -26,14 +26,14 @@ foreach ($config as $configKey => $configValue) {
     if (!isset($configValue['isHeader'])) {
         //check if the setting is NOT overrideable and if so clear the cookie
         //this is done to clear previously set cookeies
-        if (!$configValue['overrideable']) {
+        if (!$configValue['overrideable'] && isset($_COOKIE[$configKey])) {
             setcookie($configKey,NULL,time()-3600);
         }
 
         //check if user has cookies that override defaults
         if (isset($_COOKIE[$configKey])) {
             $_SESSION['config'][$configKey] = $_COOKIE[$configKey];
-        } else if (isset($configValue['default'])) {
+        } else {
             $_SESSION['config'][$configKey] = $configValue['default'];
         }
     }

@@ -23,8 +23,6 @@ if (isset($_POST['submitConfigSetter'])) {
 }
 
 if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])) {
-    clearSessionCache();
-
     foreach ($config as $configKey => $configValue) {
         // ignore headers
         if (isset($configValue['isHeader'])) {
@@ -36,7 +34,12 @@ if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['rest
             setcookie($configKey,NULL,time()-3600);
             continue;
         } 
-        
+
+        //special case for default clientId so that it doesnt persist after upgrading if not customized
+        if ($configKey == 'callOptions_client' && $_POST[$configKey] == getWorkbenchUserAgent()) {
+            setcookie($configKey,NULL,time()-3600);
+            continue;
+        }
        
         if (($configValue['dataType'] == "boolean") && 
             !(($configValue['default'] == true  && isset($_POST[$configKey]) || 
@@ -53,11 +56,7 @@ if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['rest
         }
     }
      
-    //special case for default clientId so that it doesnt persist after upgrading if not customized
-    if (isset($_POST['callOptions_client']) && $_POST['callOptions_client'] == getWorkbenchUserAgent()) {
-        setcookie('callOptions_client',NULL,time()-3600);
-    }
-     
+    clearSessionCache();
     header("Location: $_SERVER[PHP_SELF]?saved=" . (isset($_POST['restoreDefaults']) ? "D" : "S"));
 }
 
