@@ -253,7 +253,7 @@ $config["header_LoginOptions"] = array(
     );
 
 $config["header_Describe"] = array(
-    "label" => "Describe Results Color Coding",
+    "label" => "Describe Results",
     "display" => true,
     "isHeader" => true
 );

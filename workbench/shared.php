@@ -500,7 +500,7 @@ function getAsyncApiConnection() {
     $asyncConnection->setCompressionEnabled($_SESSION['config']['enableGzip']);
     $asyncConnection->setUserAgent(getWorkbenchUserAgent());
     $asyncConnection->setExternalLogReference($_SESSION['restDebugLog']);
-    $asyncConnection->setLoggingEnabled(isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true);
+    $asyncConnection->setLoggingEnabled(getConfig("debug") == true);
 
     return $asyncConnection;
 }
@@ -551,7 +551,7 @@ function prettyPrintXml($xml, $htmlOutput=FALSE)
 
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {
-    if (isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true) {
+    if (getConfig("debug") == true) {
 
         print "<script>
             function toggleDebugSection(title, sectionId) {

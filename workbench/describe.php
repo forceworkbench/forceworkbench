@@ -43,9 +43,7 @@ function displayDescribeSObjectResults() {
         displayError($e->getMessage(), false, true);
     }
 
-    if(isset($_SESSION['config']['colorBooleanValues']) && $_SESSION['config']['colorBooleanValues'] ||
-    isset($_SESSION['config']['highlightCustomFields']) && $_SESSION['config']['highlightCustomFields'] ||
-    isset($_SESSION['config']['highlightSystemFields']) && $_SESSION['config']['highlightSystemFields']) {
+    if(getConfig("highightBooleanValues") || getConfig("highlightCustomFields") || getConfig("highlightSystemFields")) {
          
         print "<div style='float: right; border:1px solid #bbb; padding:0.5em; margin-right:1em;'>" .
                      "<strong>Legend:</strong>" . 

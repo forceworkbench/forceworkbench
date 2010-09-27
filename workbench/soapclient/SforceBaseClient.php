@@ -99,7 +99,7 @@ class SforceBaseClient {
         $_SERVER['HTTP_USER_AGENT'] = 'Salesforce/PHPToolkit/1.0';
 
         $soapClientArray = array();
-        if (isset($_SESSION['config']['debug']) && $_SESSION['config']['debug'] == true) {
+        if (getConfig("debug") == true) {
             $soapClientArray['trace'] = 1;
         }
         $soapClientArray['encoding'] = 'utf-8';

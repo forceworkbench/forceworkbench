@@ -320,7 +320,7 @@ LOGIN_FORM_PART_2;
 
     //if 'adv' is added to the login url and is not 0, default to advanced login
     if ((isset($_GET['adv']) && $_GET['adv'] != 0) ||
-    (isset($_SESSION['config']['defaultLoginType']) && $_SESSION['config']['defaultLoginType']=='Advanced')) {
+    (getConfig("defaultLoginType")=='Advanced')) {
         print "<script>
                 document.getElementById('login_become_adv').checked=true; 
                 toggleLoginFormToAdv(); 
