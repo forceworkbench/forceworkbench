@@ -158,6 +158,8 @@ function displayQueryForm($queryRequest) {
         foreach ($ops as $opValue => $opLabel) {
             print " compOper_array[\"$opValue\"]=[\"$opLabel\"];\n";
         }
+        
+        print "var staticFolder = '" . getStaticFolder() ."'";
 
         print <<<QUERY_BUILDER_SCRIPT
 
@@ -406,7 +408,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
     var newPlusCell = document.createElement('td');
     newPlusCell.setAttribute('id','filter_plus_cell_' + filterRowNum);
     newPlusCell.setAttribute('vAlign','bottom');
-    newPlusCell.innerHTML = "<img id='filter_plus_button' src='images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='this.style.cursor=\"pointer\";'  style='padding-top: 4px;'/>";
+    newPlusCell.innerHTML = "<img id='filter_plus_button' src='" + staticFoler + "/images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='this.style.cursor=\"pointer\";'  style='padding-top: 4px;'/>";
     
     var newFilterRow = document.createElement('tr');
     newFilterRow.setAttribute('id','filter_row_' + filterRowNum);
@@ -518,7 +520,7 @@ QUERY_BUILDER_SCRIPT;
         if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixCols());
         print "</select></td> <td><select id='matrix_rows' name='matrix_rows' style='width: 15em;' onChange='toggleFieldDisabled();buildQuery();' onkeyup='toggleFieldDisabled();buildQuery();'>";
         if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixRows());
-        print "</select></td> <td><img onmouseover=\"Tip('Matrix view groups records into columns and rows of common field values.')\" align='absmiddle' src='images/help16.png'/></td></tr>\n";
+        print "</select></td> <td><img onmouseover=\"Tip('Matrix view groups records into columns and rows of common field values.')\" align='absmiddle' src='" . getStaticFolder() ."/images/help16.png'/></td></tr>\n";
 
         print "<tr id='sort_selection_headers'><td colspan='2'><br/>Sort results by:</td> <td><br/>Max Records:</td></tr>\n";
         print "<tr id='sort_selection_row'>";
@@ -605,7 +607,7 @@ QUERY_BUILDER_SCRIPT;
     print "<input type='submit' name='clearAllQr' value='Clear All'/>\n";
 
     print "&nbsp;&nbsp;" .
-          "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='images/help16.png'/>";
+          "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getStaticFolder() ."/images/help16.png'/>";
 
     print "</td></tr></table><p/>\n";
 
@@ -856,7 +858,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
     //Check if records were returned
     if ($records) {
         if (getConfig("areTablesSortable")) {
-            addFooterScript("<script type='text/javascript' src='script/sortable.js'></script>");
+            addFooterScript("<script type='text/javascript' src='" . getStaticFolder() . "/script/sortable.js'></script>");
         }
         
         try {

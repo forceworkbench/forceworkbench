@@ -113,7 +113,7 @@ if (count($batchInfos) > 0) {
         print "<tr><td class='dataValue'>";
         if ($batchInfo->getState() == "Completed" || $batchInfo->getState() == "Failed") {
             print "<a href='downloadAsyncBatch.php?op=result&jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "'>" .
-                  "<img src='images/downloadIcon" . $batchInfo->getState() . ".gif' border='0' onmouseover=\"Tip('Download " . $batchInfo->getState() . " Batch Results')\"/>" . 
+                  "<img src='" . getStaticFolder() . "/images/downloadIcon" . $batchInfo->getState() . ".gif' border='0' onmouseover=\"Tip('Download " . $batchInfo->getState() . " Batch Results')\"/>" . 
                   "</a>";
         } else {
             print "&nbsp;";

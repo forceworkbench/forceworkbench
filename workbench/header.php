@@ -4,11 +4,11 @@
         <meta http-equiv="Content-Language" content="UTF-8" />
         <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 
-        <link rel="Shortcut Icon" type="image/png" href="images/bluecube-16x16.png" />
+        <link rel="Shortcut Icon" type="image/png" href="<?php echo getStaticFolder(); ?>/images/bluecube-16x16.png" />
 
-        <link rel="stylesheet" type="text/css" href="style/master.css" />
-        <link rel="stylesheet" type="text/css" href="style/pro_dropdown.css" />
-        <link rel="stylesheet" type="text/css" href="style/simpletree.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo getStaticFolder(); ?>/style/master.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo getStaticFolder(); ?>/style/pro_dropdown.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo getStaticFolder(); ?>/style/simpletree.css" />
 
         <?php
         $myPage = getMyPage();
@@ -58,7 +58,8 @@ if (!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basena
         if (isReadOnlyMode() && $menu == "Data") { //special-case for Data menu, since all read-only
             continue;
         }
-        print "<li class='top'><a class='top_link'><span class='down'>" . strtolower($menu) ."</span></a>\n" .
+        $menuLabel = ($menu == "WORKBENCH") ? "&nbsp;<img src='" . getStaticFolder() . "/images/workbench-3-cubed-white-small.png'/>" : strtolower($menu);
+        print "<li class='top'><a class='top_link'><span class='down'>" . $menuLabel ."</span></a>\n" .
                   "<ul class='sub'>";
         foreach ($pages as $href => $page) {
             if (!$page->onNavBar || (!isLoggedIn() && $page->requiresSfdcSession) || (isLoggedIn() && $page->title == 'Login') || (!$page->isReadOnly && isReadOnlyMode())) {

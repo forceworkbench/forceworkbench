@@ -264,7 +264,7 @@ function setFieldMappings($action,$csvArray) {
         }
     }
 
-    print "<div id='setFieldMappingster_block_loading' style='display:block; color:#888;'><img src='images/wait16trans.gif' align='absmiddle'/> Loading...</div>";
+    print "<div id='setFieldMappingster_block_loading' style='display:block; color:#888;'><img src='" . getStaticFolder() ."/images/wait16trans.gif' align='absmiddle'/> Loading...</div>";
 
     print "<div id='setFieldMappingster_block' style='display:none;'>";
 
@@ -293,7 +293,7 @@ function setFieldMappings($action,$csvArray) {
     print "<tr><th>Salesforce Field</th>";
     print "<th>CSV Field</th>";
     if (getConfig("showReferenceBy") && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
-    print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided in the CSV file and can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='images/help16.png'/></th>";
+    print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided in the CSV file and can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='" . getStaticFolder() ."/images/help16.png'/></th>";
     print "</tr>\n";
 
     if ($action == 'insert') {
@@ -923,7 +923,7 @@ function displayBulkApiOptions($action, $forceDoAsync) {
               "by your organization, and may improve performance. The Administrative permission for this operation, " .
               "\'Bulk API Hard Delete\', is disabled by default and must be enabled by an administrator. " . 
               "A Salesforce user license is required for hard delete. Hard Delete is only available via Bulk API.')\" ".
-              "align='absmiddle' src='images/help16.png'/>" . 
+              "align='absmiddle' src='" . getStaticFolder() ."/images/help16.png'/>" . 
               "</p>";
     }
 
@@ -949,7 +949,7 @@ function displayBulkApiOptions($action, $forceDoAsync) {
               "&nbsp;<img onmouseover=\"Tip('Processing records asynchronously is recommended for large data loads. " .
               "The data will be uploaded to Salesforce via the Bulk API in batches and processed when server resources are available. " . 
               "After batches have completed, results can be downloaded. Batch size and concurrency options are available in Settings.')\" ".
-              "align='absmiddle' src='images/help16.png'/>" . 
+              "align='absmiddle' src='" . getStaticFolder() ."/images/help16.png'/>" . 
               "</p>";
         }
 
@@ -985,7 +985,7 @@ function displayBulkApiOptions($action, $forceDoAsync) {
         if (count($bulkUnsupportedSettings) > 0) {
             print "<div id='unsupportedBulkConfigList' style='display: " . ($forceDoAsync ? "inline" : "none") . "; color: orange;'>" .
                       "<p " . ($forceDoAsync ? "" : "style='margin-left: 3em;'") . ">" .  
-                          "<img src='images/warning24.png' /> " .
+                          "<img src='" . getStaticFolder() ."/images/warning24.png' /> " .
                           "The follow settings are not supported by the Bulk API and will be ignored:" . 
                           "<ul " . ($forceDoAsync ? "" : "style='margin-left: 5em;'") . ">";
             

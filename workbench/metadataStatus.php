@@ -87,7 +87,7 @@ try {
             print "<p/>";
 
             $zipLink = " | <a id='zipLink' href='$_SERVER[PHP_SELF]?asyncProcessId=$asyncResults->id&downloadZip' onclick='undownloadedZip=false;' style='text-decoration:none;'>" .
-                       "<span style='text-decoration:underline;'>Download ZIP File</span> <img src='images/downloadIconCompleted.gif' border='0'/>" . 
+                       "<span style='text-decoration:underline;'>Download ZIP File</span> <img src='" . getStaticFolder() ."/images/downloadIconCompleted.gif' border='0'/>" . 
                        "</a></p>";
             $_SESSION['retrievedZips'][$asyncResults->id] = $results->zipFile;
             unset($results->zipFile);

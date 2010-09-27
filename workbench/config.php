@@ -714,6 +714,8 @@ $config["header_proxyOptions"] = array(
 
 $GLOBALS["WORKBENCH_VERSION"] = "trunk";
 
+$GLOBALS["STATICS"] = "static/20101026";
+
 class Page {
     public $title;
     public $desc;
@@ -737,7 +739,7 @@ class Page {
 }
 
 $GLOBALS["MENUS"] = array(
-    '&nbsp;<img src=\'images/workbench-3-cubed-white-small.png\'/>' => array(
+    'WORKBENCH' => array(
         'login.php'     => new Page('Login','Logs into your Salesforce organization',false,true,true,false,false,''),
         'select.php'    => new Page('Select','Select action to which to jump',true,true,false,false,false,''),
         'settings.php'  => new Page('Settings','Configure Workbench',false,true,true,false,true,''),
@@ -783,5 +785,4 @@ $GLOBALS["MENUS"] = array(
         'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload',true,true,false,false,true,'')
      )
 );
-
 ?>

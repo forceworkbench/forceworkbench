@@ -92,7 +92,7 @@ function ajaxBurn() {
         ajax.open("GET", "<?php $_SERVER['PHP_SELF'] ?>?ajaxBurn=" + document.getElementById('burnNumOfCalls').value, true);
         ajax.send(null);
         document.getElementById('burnResults').innerHTML = "";
-        document.getElementById('burnStatus').innerHTML = "<img src='images/wait16trans.gif'/>&nbsp; Burning...";
+        document.getElementById('burnStatus').innerHTML = "<img src='" . getStaticFolder() . "/images/wait16trans.gif'/>&nbsp; Burning...";
         ajax.onreadystatechange = function handleAjaxBurnResponse() {
             if (ajax.readyState == 4) {
                 document.getElementById('burnStatus').innerHTML = "";

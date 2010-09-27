@@ -86,6 +86,8 @@ function displaySearchForm($searchRequest) {
         print "searchable_objects[\"$obj\"]=\"$obj\";\n";
     }
 
+    print "var staticFolder = '" . getStaticFolder() ."'";
+    
     print <<<SEARCH_BUILDER_SCRIPT
 
 function doesSearchHaveName() {
@@ -207,7 +209,7 @@ function addReturningObjectRow(rowNum, defaultObject, defaultFields) {
     var newPlusCell = document.createElement('td');
     newPlusCell.setAttribute('id','add_row_plus_cell_' + rowNum);
     newPlusCell.setAttribute('vAlign','bottom');
-    newPlusCell.innerHTML = "<img id='row_plus_button' src='images/plus_icon.jpg' onclick='addReturningObjectRow(document.getElementById(\"numReturningObjects\").value++);toggleFieldDisabled();' onmouseover='this.style.cursor=\"pointer\";'  style='padding-top: 4px;'/>";
+    newPlusCell.innerHTML = "<img id='row_plus_button' src='" + staticFoler + "/images/plus_icon.jpg' onclick='addReturningObjectRow(document.getElementById(\"numReturningObjects\").value++);toggleFieldDisabled();' onmouseover='this.style.cursor=\"pointer\";'  style='padding-top: 4px;'/>";
     
     var newRow = document.createElement('tr');
     newRow.setAttribute('id','returning_objects_row_' + rowNum);
@@ -325,7 +327,7 @@ function displaySearchResult($records, $searchTimeElapsed) {
     //Check if records were returned
     if ($records) {
         if (getConfig("areTablesSortable")) {
-            addFooterScript("<script type='text/javascript' src='script/sortable.js'></script>");
+            addFooterScript("<script type='text/javascript' src='" . getStaticFolder() . "/script/sortable.js'></script>");
         }
         
         try {
