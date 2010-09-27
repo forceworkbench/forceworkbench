@@ -227,6 +227,14 @@ $config["header_LoginOptions"] = array(
         "dataType" => "boolean"
     );
 
+    $config["displayJumpTo"] = array(
+        "label" => "Display Jump To Menu",
+        "description" => "Display menu on login screen to choose landing page after login.",
+        "default" => false,
+        "overrideable" => true,
+        "dataType" => "boolean"
+    );
+    
     $config["loginScopeHeader_organizationId"] = array(
         "label" => "Portal Organization Id",
         "description" => "Specify an org id for Self-Service, Customer Portal, and Partner Portal Users. Leave blank for standard Salesforce users.",

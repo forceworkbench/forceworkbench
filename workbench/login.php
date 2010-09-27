@@ -259,16 +259,20 @@ function checkCaps( pwcapsDivId, e ) {
 LOGIN_FORM;
 
     //std jumpTo
-    print "<p><strong>Jump to: </strong>" .
-      "<select name='actionJumpStd' style='width: 18em;'>" .     
-          "<option value='select.php'></option>";
-
-    foreach ($GLOBALS["MENUS"] as $menu => $pages) {
-        foreach ($pages as $href => $page) {
-            if ($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
+    if (getConfig("displayJumpTo")) {
+        print "<p><strong>Jump to: </strong>" .
+          "<select name='actionJumpStd' style='width: 18em;'>" .     
+              "<option value='select.php'></option>";
+    
+        foreach ($GLOBALS["MENUS"] as $menu => $pages) {
+            foreach ($pages as $href => $page) {
+                if ($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
+            }
         }
+        print "</select></p>";
+    } else {
+        print "<input name='actionJumpStd' type='hidden' value='select.php'/>";
     }
-    print "</select></p>";
 
     print <<<LOGIN_FORM_PART_2
             <p  style='text-align: right;'><span id='pwcapsStd' style='visibility: hidden; color: red; font-weight: bold; margin-right: 80px;'>Caps lock is on!</span><label><input type='checkbox' name='rememberUser' $isRemembered />Remember username</label></p>
@@ -299,18 +303,22 @@ LOGIN_FORM_PART_2;
     print "</select></p>";
 
     //advanced jumpTo
-    print "<p><strong>Jump to: </strong>" .
-      "<select name='actionJumpAdv' style='width: 18em;'>" .     
-      "<option value='select.php'></option>";
-    foreach ($GLOBALS["MENUS"] as $menu => $pages) {
-        foreach ($pages as $href => $page) {
-            if ($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
+    if (getConfig("displayJumpTo")) {
+        print "<p><strong>Jump to: </strong>" .
+          "<select name='actionJumpAdv' style='width: 18em;'>" .     
+          "<option value='select.php'></option>";
+        foreach ($GLOBALS["MENUS"] as $menu => $pages) {
+            foreach ($pages as $href => $page) {
+                if ($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
+            }
         }
+        print "</select></p>";
+    } else {
+        print "<input name='actionJumpAdv' type='hidden' value='select.php'/>";
     }
-    print "</select></p></div>";
 
     //submit button
-    print "<div id='login_submit' style='text-align: right;'>" .
+    print "</div><div id='login_submit' style='text-align: right;'>" .
             "<input type='submit' name='loginClick' value='Login'>" . 
         "</div>" . 
 
