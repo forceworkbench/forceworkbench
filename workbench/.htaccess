@@ -1,4 +1,4 @@
-# The following setting are optional, additional configurations for an Apache Web Server.
+# The following settings are optional, additional configurations for an Apache Web Server.
 # This file may be deleted if Workbench is hosted in an environment that does not allow .htaccess overrides.
 
 php_flag register_globals off
