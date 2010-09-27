@@ -28,7 +28,8 @@ function put($action) {
                 $extId,
                 isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null,
                 isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] :  null,
-                isset($_SESSION['tempZipFile']) ? $_SESSION['tempZipFile'] :  null);
+                isset($_SESSION['tempZipFile']) ? $_SESSION['tempZipFile'] :  null,
+                isset($_POST['contentType']) ? $_POST['contentType'] :  null);
         } else {
             require_once 'header.php';
             print "<h1>" . ucwords($action) . " Results</h1>";
@@ -98,15 +99,16 @@ function put($action) {
             }
             
             $_SESSION['tempZipFile'] = file_get_contents($_FILES['file']['tmp_name']);
-            displayInfo("Successfully staged " . ceil(($_FILES["file"]["size"] / 1024)) . " KB zip file " . $_FILES["file"]["name"] . " for $action via the Bulk API. " . 
-                        "Note, custom field mappings are not available for ZIP-based requests.");
+            displayInfo(array("Successfully staged " . ceil(($_FILES["file"]["size"] / 1024)) . " KB zip file " . $_FILES["file"]["name"] . " for $action via the Bulk API. ", 
+                        "Note, custom field mappings are not available for ZIP-based requests."));
             print "<br/>";
-            print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
+            print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>" . 
+                  "<div class='instructions'>Choose the options below and confirm the $action:<p/></div>" . 
+                  "<table border='0'>"; 
             
             if ($action == 'upsert') {
-                print "<div class='instructions'>Choose the options below and confirm the $action:</div>" . 
-                      "<p><label>External Id: " .
-                      "<select name='_ext_id'>\n";
+                print "<tr><td align='right'><label><strong>External Id:</strong> </label></td>" .
+                      "<td><select name='_ext_id'>\n";
                 foreach (describeSObject($_POST['default_object'])->fields as $fields => $field) {
                     if ($field->idLookup) { 
                         print   " <option value='$field->name'";
@@ -114,8 +116,16 @@ function put($action) {
                         print ">$field->name</option>\n";
                     }
                 }
-                print "</select></label></p>";
+                print "</select></td></tr>";
             }
+            
+            print "<tr><td align='right'><label><strong>Manifest Format:</strong> </label></td>" .
+                  "<td><select name='contentType'>\n" . 
+                    "<option value='ZIP_CSV'>CSV</option>\n" . 
+                    "<option value='ZIP_XML'>XML</option>\n" . 
+                 "</select></td></tr>";
+            
+            print "</table>";
             
             displayBulkApiOptions($confirmAction, true);
     
@@ -149,7 +159,7 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
           "  a CSV " .
           (supportsZips($action) ? "or ZIP "  : "") . 
           " file containing records to $action." . 
-          (supportsZips($action) ? " Zipped requests must contain a CSV-formatted manifest called request.txt, which may reference included binary files."  : "") . 
+          (supportsZips($action) ? " Zipped requests must contain a CSV or XML-formatted manifest called request.txt, which may reference included binary files."  : "") . 
           "</p>\n";
     
     print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n";
@@ -719,7 +729,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
  * @param unknown_type $fieldMap
  * @param unknown_type $csvArray
  */
-function putAsync($apiCall,$extId,$fieldMap,$csvArray,$zipFile) {    
+function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType) {    
     $doingZip = isset($zipFile);
     
     if (!$doingZip && !($fieldMap && $csvArray && $_SESSION['default_object'])) {
@@ -730,7 +740,7 @@ function putAsync($apiCall,$extId,$fieldMap,$csvArray,$zipFile) {
             $job = new JobInfo();
             $job->setObject($_SESSION['default_object']);
             $job->setOpertion($apiCall);
-            $job->setContentType($doingZip ? "ZIP_CSV" : "CSV");
+            $job->setContentType(isset($contentType) ? $contentType : ($doingZip ? "ZIP_CSV" : "CSV"));
             $job->setConcurrencyMode(getConfig("asyncConcurrencyMode"));
             if(getConfig("assignmentRuleHeader_assignmentRuleId")) $job->setAssignmentRuleId(getConfig("assignmentRuleHeader_assignmentRuleId"));
             if($apiCall == "upsert" && isset($extId)) $job->setExternalIdFieldName($extId);

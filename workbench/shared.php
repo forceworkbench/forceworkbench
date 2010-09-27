@@ -360,12 +360,14 @@ function describeSObject($objectTypes) {
             displayError($e->getMessage(),false,true);
         }
 
-        if (!is_array($objectTypes)) {
+        if ($describeSObjectsResults instanceof stdClass) {
             $describeSObjectsResultsArray = array($describeSObjectsResults->name => $describeSObjectsResults);
-        } else {
+        } else if (is_array($objectTypes)) {
             foreach ($describeSObjectsResults as $describeSObjectResultKey => $describeSObjectResultValue) {
                 $describeSObjectsResultsArray[$describeSObjectResultValue->name] = $describeSObjectResultValue;
             }
+        } else {
+            throw new Exception("Unknown Describe SObject results");
         }
 
     } else if (count($objectTypesToRetreive) > 100) {

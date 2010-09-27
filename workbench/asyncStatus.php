@@ -112,7 +112,7 @@ if (count($batchInfos) > 0) {
     foreach ($batchInfos as $batchInfo) {
         print "<tr><td class='dataValue'>";
         if ($batchInfo->getState() == "Completed" || $batchInfo->getState() == "Failed") {
-            print "<a href='downloadAsyncBatch.php?op=result&jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "'>" .
+            print "<a href='downloadAsyncBatch.php?op=result&jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "&contentType=" . $jobInfo->getContentType() . "'>" .
                   "<img src='" . getStaticFolder() . "/images/downloadIcon" . $batchInfo->getState() . ".gif' border='0' onmouseover=\"Tip('Download " . $batchInfo->getState() . " Batch Results')\"/>" . 
                   "</a>";
         } else {

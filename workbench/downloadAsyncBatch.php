@@ -3,8 +3,8 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'bulkclient/BulkApiClient.php';
 
-if (!isset($_GET['jobId']) || !isset($_GET['batchId']) || !isset($_GET['op'])) {
-    displayError("'jobId', 'batchId', and 'op' parameters must be specified", true, true);
+if (!isset($_GET['jobId']) || !isset($_GET['batchId']) || !isset($_GET['op']) || !isset($_GET['contentType'])) {
+    displayError("'jobId', 'batchId', 'op', and 'contentType' parameters must be specified", true, true);
     exit;
 }
 
@@ -37,7 +37,16 @@ if (strpos($batchData, "<exceptionCode>")) {
     displayError("No results found. Confirm job or batch has not expired.", true, true);
     exit;
 } else {
-    $csvFilename = "bulk" . ucwords($jobInfo->getOpertion()). "_" . $_GET['op'] . "_" . $_GET['jobId'] . "_" . $_GET['batchId'] . ".csv";
+    if (stristr($_GET['contentType'], "CSV")) {
+        $fileExt = "csv";
+    } else if (stristr($_GET['contentType'], "XML")) {
+        $fileExt = "xml";
+    } else {
+        throw new Exception("Unknown content type");
+    }
+    
+    
+    $csvFilename = "bulk" . ucwords($jobInfo->getOpertion()). "_" . $_GET['op'] . "_" . $_GET['jobId'] . "_" . $_GET['batchId'] . "." . $fileExt;
     header("Content-Type: application/csv");
     header("Content-Disposition: attachment; filename=$csvFilename");
     print $batchData;
