@@ -408,7 +408,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
     var newPlusCell = document.createElement('td');
     newPlusCell.setAttribute('id','filter_plus_cell_' + filterRowNum);
     newPlusCell.setAttribute('vAlign','bottom');
-    newPlusCell.innerHTML = "<img id='filter_plus_button' src='" + staticFoler + "/images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='this.style.cursor=\"pointer\";'  style='padding-top: 4px;'/>";
+    newPlusCell.innerHTML = "<img id='filter_plus_button' src='" + staticFolder + "/images/plus_icon.jpg' onclick='addFilterRow(document.getElementById(\"numFilters\").value++);toggleFieldDisabled();' onmouseover='this.style.cursor=\"pointer\";'  style='padding-top: 4px;'/>";
     
     var newFilterRow = document.createElement('tr');
     newFilterRow.setAttribute('id','filter_row_' + filterRowNum);
