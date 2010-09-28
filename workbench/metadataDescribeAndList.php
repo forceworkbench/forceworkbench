@@ -63,7 +63,7 @@ components:</p>
     <?php printSelectOptions($metadataTypesSelectOptions, $typeString); ?>
 </select> <span id='loadingMessage'
     style='visibility: hidden; color: #888;'>&nbsp;&nbsp;<img
-    src='<?php echo getStaticFolder(); ?>/images/wait16trans.gif' align='absmiddle' /> Loading...</span>
+    src='<?php echo getStaticResourcesPath(); ?>/images/wait16trans.gif' align='absmiddle' /> Loading...</span>
 </form>
 <p />
 

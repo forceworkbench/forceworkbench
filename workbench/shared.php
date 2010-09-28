@@ -1,10 +1,10 @@
 <?php
-function getStaticFolder() {
-    return $GLOBALS["STATICS"];
+function getStaticResourcesPath() {
+    return $GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"];
 }
 
 function registerShortcut($key, $jsCommand) {
-    addFooterScript("<script type='text/javascript' src='" . getStaticFolder() . "/script/shortcut.js'></script>");
+    addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/shortcut.js'></script>");
     
     addFooterScript("<script type='text/javascript'>".
                         "shortcut.add(".
@@ -45,7 +45,7 @@ function printAsyncRefreshBlock() {
         $newUrl = isset($_GET['rn']) ? str_replace("rn=$lastRefreshNum", "rn=$nextRefreshNum", $_SERVER["REQUEST_URI"]) : ($_SERVER["REQUEST_URI"] . "&rn=1");
         $refreshInterval = ceil(pow($nextRefreshNum, 0.75));
         print "<div style='float:right; color: #888;'>Auto Refreshing " .
-                 "<span id='refreshSpinner' style='display:none;'>&nbsp;<img src='" . getStaticFolder() ."/images/wait16trans.gif' align='absmiddle'/></span>" . 
+                 "<span id='refreshSpinner' style='display:none;'>&nbsp;<img src='" . getStaticResourcesPath() ."/images/wait16trans.gif' align='absmiddle'/></span>" . 
                  "<span id='refreshInTimer' style='display:inline;'>in $refreshInterval seconds" .
                  "</span></div>";
         print "<script>setTimeout('document.getElementById(\'refreshInTimer\').style.display=\'none\'; document.getElementById(\'refreshSpinner\').style.display=\'inline\'; window.location.href=\'$newUrl\'', $refreshInterval * 1000);</script>";
@@ -156,7 +156,7 @@ function apiVersionIsAtLeast($minVersion) {
 }
 
 function getApiVersion() {
-    preg_match('!/(\d{1,2}\.\d)!',$_SESSION['location'],$apiVersionMatches);
+    preg_match('!services/Soap/\w/(\d{1,2}\.\d)!',$_SESSION['location'],$apiVersionMatches);
     return $apiVersionMatches[1];
 }
 
@@ -171,7 +171,7 @@ function displayError($errors, $showHeader=false, $showFooter=false) {
         print "<p/>";
     }
     print "<div class='displayErrors'>\n";
-    print "<img src='" . getStaticFolder() ."/images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
+    print "<img src='" . getStaticResourcesPath() ."/images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
     if(!is_array($errors)) $errors = array($errors);
 
     $errorString = null;
@@ -194,7 +194,7 @@ function displayError($errors, $showHeader=false, $showFooter=false) {
 
 function displayWarning($warnings) {
     print "<div class='displayWarning'>\n";
-    print "<img src='" . getStaticFolder() ."/images/warning24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
+    print "<img src='" . getStaticResourcesPath() ."/images/warning24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($warnings)) {
         $warningString = "";
         foreach ($warnings as $warning) {
@@ -209,7 +209,7 @@ function displayWarning($warnings) {
 
 function displayInfo($infos) {
     print "<div class='displayInfo'>\n";
-    print "<img src='" . getStaticFolder() ."/images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
+    print "<img src='" . getStaticResourcesPath() ."/images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($infos)) {
         $infoString = "";
         foreach ($infos as $info) {
@@ -419,7 +419,7 @@ function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = 
     
     print "</ul>\n";
     
-    addFooterScript("<script type='text/javascript' src='" . getStaticFolder() . "/script/simpletreemenu.js'></script>");
+    addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/simpletreemenu.js'></script>");
                         
     addFooterScript("<script type='text/javascript'>" . 
                        "ddtreemenu.createTree('$tableId', true);" . 

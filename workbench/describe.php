@@ -12,7 +12,7 @@ displayDescribeSObjectForm();
 if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']) {
     displayDescribeSObjectResults();
 }
-addFooterScript("<script type='text/javascript' src='" . getStaticFolder() . "/script/simpletreemenu.js'></script>");
+addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/simpletreemenu.js'></script>");
 
 addFooterScript("<script type='text/javascript'>ddtreemenu.createTree('describeTree', true);</script>");
 
@@ -27,7 +27,7 @@ function displayDescribeSObjectForm() {
     print "<form name='describeForm' method='POST' action='$_SERVER[PHP_SELF]'>" .
           "<p class='instructions'>Choose an object to describe:</p>\n";
     printObjectSelection($_SESSION['default_object'], 'default_object', 30, "onChange=\"document.getElementById('loadingMessage').style.visibility='visible'; document.describeForm.submit();\"");
-    print "<span id='loadingMessage' style='visibility:hidden; color:#888;'>&nbsp;&nbsp;<img src='" . getStaticFolder() . "/images/wait16trans.gif' align='absmiddle'/> Loading...</span>\n";
+    print "<span id='loadingMessage' style='visibility:hidden; color:#888;'>&nbsp;&nbsp;<img src='" . getStaticResourcesPath() . "/images/wait16trans.gif' align='absmiddle'/> Loading...</span>\n";
     print  "</form><br/>\n";
 }
 

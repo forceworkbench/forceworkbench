@@ -4,13 +4,15 @@
         <meta http-equiv="Content-Language" content="UTF-8" />
         <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 
-        <link rel="Shortcut Icon" type="image/png" href="<?php echo getStaticFolder(); ?>/images/bluecube-16x16.png" />
+        <link rel="Shortcut Icon" type="image/png" href="<?php echo getStaticResourcesPath(); ?>/images/bluecube-16x16.png" />
 
-        <link rel="stylesheet" type="text/css" href="<?php echo getStaticFolder(); ?>/style/master.css" />
-        <link rel="stylesheet" type="text/css" href="<?php echo getStaticFolder(); ?>/style/pro_dropdown.css" />
-        <link rel="stylesheet" type="text/css" href="<?php echo getStaticFolder(); ?>/style/simpletree.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo getStaticResourcesPath(); ?>/style/master.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo getStaticResourcesPath(); ?>/style/pro_dropdown.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo getStaticResourcesPath(); ?>/style/simpletree.css" />
 
         <?php
+        print "<script type='text/javascript'>const WORKBENCH_STATIC_RESOURCES_PATH = '" . getStaticResourcesPath() . "';</script>";
+
         $myPage = getMyPage();
         $title = $myPage->showTitle ? ": " . $myPage->title : "";
         print "<title>Workbench$title</title>"
@@ -58,7 +60,7 @@ if (!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basena
         if (isReadOnlyMode() && $menu == "Data") { //special-case for Data menu, since all read-only
             continue;
         }
-        $menuLabel = ($menu == "WORKBENCH") ? "&nbsp;<img src='" . getStaticFolder() . "/images/workbench-3-cubed-white-small.png'/>" : strtolower($menu);
+        $menuLabel = ($menu == "WORKBENCH") ? "&nbsp;<img src='" . getStaticResourcesPath() . "/images/workbench-3-cubed-white-small.png'/>" : strtolower($menu);
         print "<li class='top'><a class='top_link'><span class='down'>" . $menuLabel ."</span></a>\n" .
                   "<ul class='sub'>";
         foreach ($pages as $href => $page) {

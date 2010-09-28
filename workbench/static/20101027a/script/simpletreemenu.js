@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Simple Tree Menu- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
+ * Simple Tree Menu- ï¿½ Dynamic Drive DHTML code library (www.dynamicdrive.com)
  * This notice MUST stay intact for legal use Visit Dynamic Drive at
  * http://www.dynamicdrive.com/ for full source code
  ******************************************************************************/
@@ -7,12 +7,10 @@
 var persisteduls = new Object()
 var ddtreemenu = new Object()
 
-ddtreemenu.closefolder = "images/closed.gif" // set image path to "closed"
-    // folder image
-    ddtreemenu.openfolder = "images/open.gif" // set image path to "open" folder
-        // image
+ddtreemenu.closefolder = WORKBENCH_STATIC_RESOURCES_PATH + "/images/closed.gif" // set image path to "closed"
+ddtreemenu.openfolder  = WORKBENCH_STATIC_RESOURCES_PATH + "/images/open.gif" // set image path to "open" folder
 
-//      ////////No need to edit beyond here///////////////////////////
+////////No need to edit beyond here///////////////////////////
 
         ddtreemenu.createTree = function(treeid, enablepersist, persistdays) {
     var ultags = document.getElementById(treeid).getElementsByTagName("ul")

@@ -98,7 +98,7 @@ to define a retrieve request along with any applicable options:</p>
             size='44' /></td>
         <td><img
             onmouseover="Tip('XML file defining types (name and members) and version to be retreived. See Salesforce.com Metadata API Developers guide for an example of a package.xml file.')"
-            align='absmiddle' src='<?php echo getStaticFolder(); ?>/images/help16.png' /></td>
+            align='absmiddle' src='<?php echo getStaticResourcesPath(); ?>/images/help16.png' /></td>
     </tr>
     <tr>
         <td>Package Names:</td>
@@ -106,7 +106,7 @@ to define a retrieve request along with any applicable options:</p>
             size='44' /></td>
         <td><img
             onmouseover="Tip('Comma separated list of package names to be retrieved.')"
-            align='absmiddle' src='<?php echo getStaticFolder(); ?>/images/help16.png' /></td>
+            align='absmiddle' src='<?php echo getStaticResourcesPath(); ?>/images/help16.png' /></td>
     </tr>
     <tr>
         <td>Single Package:</td>
@@ -114,7 +114,7 @@ to define a retrieve request along with any applicable options:</p>
             name='singlePackage' /></td>
         <td><img
             onmouseover="Tip('Specifies whether only a single package is being retrieved. If false, then more than one package is being retrieved.')"
-            align='absmiddle' src='<?php echo getStaticFolder(); ?>/images/help16.png' /></td>
+            align='absmiddle' src='<?php echo getStaticResourcesPath(); ?>/images/help16.png' /></td>
     </tr>
     <tr>
         <td colspan='2'></td>

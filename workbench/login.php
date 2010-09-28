@@ -390,7 +390,7 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
             exit;
         }
 
-        if (preg_match('!/(\d{1,2})\.(\d)!',$serverUrl,$serverUrlMatches) && $serverUrlMatches[1] >= 8) {
+        if (preg_match('!services/Soap/\w/(\d{1,2})\.(\d)!',$serverUrl,$serverUrlMatches) && $serverUrlMatches[1] >= 8) {
             $wsdl = 'soapclient/sforce.' . $serverUrlMatches[1] . $serverUrlMatches[2] . '.partner.wsdl';
         } else {
             displayLogin("Could not find WSDL for this API version. Please try logging in again.");
