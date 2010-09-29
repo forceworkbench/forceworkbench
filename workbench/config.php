@@ -95,7 +95,7 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
-    $GLOBALS['TIMEZONES'] = array(''=>'UTF');
+    $GLOBALS['TIMEZONES'] = array(''=>'UTC');
         foreach (timezone_identifiers_list() as $timezone) {
             $tz = explode('/',$timezone);
             if (isset($tz[1])) {
