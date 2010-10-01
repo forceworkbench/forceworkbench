@@ -227,20 +227,22 @@ function getWorkbenchUserAgent() {
 }
 
 /**
- * Finds and replces standard Salesforce UTC/GMT dateTimes in a string into a configurable timezone and format
+ * Finds and replaces standard Salesforce UTC/GMT dateTimes in a string into a configurable timezone and format
  *
  * @param string inputStr       Abitrary string possibly containing a Salesforce date/timestamp to convert
  * @param string defaultFormat  Output format of datetime 
  * @return string Converted date/time in selected format, or normal field
  */
 function localizeDateTimes($inputStr, $formatOverride = null) {
-    // TODO: Enhance with conditional to allow users to choose a format (Issue 357). 
-    //       Remember to deal with short-circuiting below as well.
-    $format = ($formatOverride != null) ? $formatOverride : 'Y-m-d\\TH:i:s.000P';  
+    // Grab the format from the override if it exists, if not check
+    //   for the config option, otherwise default format
+    $format = ($formatOverride != null) ? $formatOverride :
+            (getConfig("localeDateTimeFormat") !=  null) ? getConfig("localeDateTimeFormat") : 'Y-m-d\\TH:i:s.000P';
+
     $timezone = getConfig("convertTimezone");
     
     // Short-circuit if we aren't actually doing anything useful.
-    if ($formatOverride == null && $timezone == '') {
+    if ($formatOverride == null && $timezone == '' && getConfig("localeDateTimeFormat") == null) {
         return $inputStr;
     }
          
