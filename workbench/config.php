@@ -113,6 +113,27 @@ $config["header_General"] = array(
                 "valuesToLabels" => $GLOBALS['TIMEZONES']
     );
 
+    $GLOBALS['DATETIMEFORMATS'] = array(
+        ""=>"Use default format",
+        "c"=>"2010-04-30T17:30:00Z",
+        "F jS, Y g:i A"=>"April 30th, 2010 5:30 PM",
+        "jS F Y g:i A"=>"30th April 2010 5:30 PM",
+        "m/d/Y H:i:s"=>"04/30/2010 17:30:00",
+        "m/d/Y g:i:s A"=>"04/30/2010 5:30:00 PM",
+        "d/m/Y H:i:s"=>"30/04/2010 17:30:00",
+        "d/m/Y g:i:s A"=>"30/04/2010 5:30:00 PM",
+        "Y/m/d H:i:s"=>"2010/04/30 17:30:00",
+        "Y/m/d g:i:s A"=>"2010/04/30 5:30:00 PM"
+    );
+    $config["localeDateTimeFormat"] = array(
+                "label" => "Date/Time Format",
+                "description" => "Date/Time format to convert the date/time",
+                "default" => "",
+                "overrideable" => true,
+                "dataType" => "picklist",
+                "valuesToLabels" => $GLOBALS['DATETIMEFORMATS']
+    );
+
     $config["callOptions_defaultNamespace"] = array(
         "label" => "Default Namespace",
         "description" => " A string that identifies a developer namespace prefix",
