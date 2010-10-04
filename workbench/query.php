@@ -884,9 +884,9 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
             }
 
-            print addLinksToUiForIds(localizeDateTimes($queryRequest->getExportTo() == 'matrix' ?
+            print addLinksToUiForIds($queryRequest->getExportTo() == 'matrix' ?
             createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
-            createQueryResultTable($records)));
+            createQueryResultTable($records));
 
             if (!getConfig("autoRunQueryMore") && $_SESSION['queryLocator']) {
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";

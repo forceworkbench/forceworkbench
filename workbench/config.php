@@ -95,43 +95,41 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
-    $GLOBALS['TIMEZONES'] = array(''=>'UTC');
-        foreach (timezone_identifiers_list() as $timezone) {
+    $timezones = array(''=>'UTC');
+    foreach (timezone_identifiers_list() as $timezone) {
             $tz = explode('/',$timezone);
             if (isset($tz[1])) {
-                $GLOBALS['TIMEZONES'][$timezone] = $tz[0].'/'.str_replace('_',' ',$tz[1]);
+                $timezones[$timezone] = $tz[0].'/'.str_replace('_',' ',$tz[1]);
             }
     }
+    $timezones = array_unique($timezones);
 
-    $GLOBALS['TIMEZONES'] = array_unique($GLOBALS['TIMEZONES']);
     $config["convertTimezone"] = array(
                 "label" => "Timezone",
                 "description" => "Modifies returned date time fields and data from UTC to selected timezone",
                 "default" => "",
                 "overrideable" => true,
                 "dataType" => "picklist",
-                "valuesToLabels" => $GLOBALS['TIMEZONES']
+                "valuesToLabels" => $timezones
     );
 
-    $GLOBALS['DATETIMEFORMATS'] = array(
-        ""=>"Use default format",
-        "c"=>"2010-04-30T17:30:00Z",
-        "F jS, Y g:i A"=>"April 30th, 2010 5:30 PM",
-        "jS F Y g:i A"=>"30th April 2010 5:30 PM",
-        "m/d/Y H:i:s"=>"04/30/2010 17:30:00",
-        "m/d/Y g:i:s A"=>"04/30/2010 5:30:00 PM",
-        "d/m/Y H:i:s"=>"30/04/2010 17:30:00",
-        "d/m/Y g:i:s A"=>"30/04/2010 5:30:00 PM",
-        "Y/m/d H:i:s"=>"2010/04/30 17:30:00",
-        "Y/m/d g:i:s A"=>"2010/04/30 5:30:00 PM"
-    );
     $config["localeDateTimeFormat"] = array(
                 "label" => "Date/Time Format",
                 "description" => "Date/Time format to convert the date/time",
                 "default" => "",
                 "overrideable" => true,
                 "dataType" => "picklist",
-                "valuesToLabels" => $GLOBALS['DATETIMEFORMATS']
+                "valuesToLabels" => array(
+			        ""               => "Default",
+			        "F jS, Y g:i A"  => "April 30th, 2010 5:30 PM",
+			        "jS F Y g:i A"   => "30th April 2010 5:30 PM",
+			        "m/d/Y H:i:s"    => "04/30/2010 17:30:00",
+			        "m/d/Y g:i:s A"  => "04/30/2010 5:30:00 PM",
+			        "d/m/Y H:i:s"    => "30/04/2010 17:30:00",
+			        "d/m/Y g:i:s A"  => "30/04/2010 5:30:00 PM",
+			        "Y/m/d H:i:s"    => "2010/04/30 17:30:00",
+			        "Y/m/d g:i:s A"  => "2010/04/30 5:30:00 PM"
+			    )
     );
 
     $config["callOptions_defaultNamespace"] = array(
