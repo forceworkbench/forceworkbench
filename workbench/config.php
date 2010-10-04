@@ -536,7 +536,7 @@ $config["header_PackageVersion"] = array(
     );
 
     $config["packageVersion_minorNumber"] = array(
-        "label" => "Major Number",
+        "label" => "Minor Number",
         "description" => "The major version number of a package version. A package version is denoted by majorNumber.minorNumber, for example 2.1.",
         "default" => null,
         "overrideable" => true,
