@@ -36,7 +36,6 @@ print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKB
 ?></div>
 
 </body>
-<script type="text/javascript" src="<?php echo getStaticResourcesPath(); ?>/script/pro_dropdown.js"></script>
 
 <script type="text/javascript" src="<?php echo getStaticResourcesPath(); ?>/script/wz_tooltip.js"></script>
 
