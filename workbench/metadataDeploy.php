@@ -80,13 +80,16 @@ else if (isset($_POST['stageForDeployment'])) {
 else {
     require_once 'header.php';
     ?>
-<p class='instructions'>Choose a file to deploy and any applicable
+<p class='instructions'>Choose a ZIP file to deploy and any applicable
 options:</p>
+
 <form id='deployForm' name='deployForm' method='POST'
     action='<?php print $_SERVER['PHP_SELF']; ?>'
     enctype='multipart/form-data'><input type='file' name='deployFile'
     size='44' /> <input type='hidden' name='MAX_FILE_SIZE'
     value='<?php print getConfig("maxFileSize"); ?>' />
+    <img onmouseover="Tip('Choose a ZIP file containing a project manifest, a file named package.xml, and a set of directories that contain the components to deploy.  See Salesforce.com Metadata API Developers guide more information about working with ZIP files for deployment.')"
+     align='absmiddle' src='<?php echo getStaticResourcesPath(); ?>/images/help16.png' />
 <p />
     <?php printDeployOptions(new DeployOptions(), true); ?>
 <p />
