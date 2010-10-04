@@ -48,6 +48,8 @@ if ($jobInfo->getStateMessage() != "") {
     print "<p/>";
 }
 
+$timeOnlyFormat = "h:i:s A";
+
 print "<table width='100%' cellpadding='5' class='lightlyBoxed'>";
 
 print "<tr>" .
@@ -86,8 +88,8 @@ if (apiVersionIsAtLeast(19.0)) {
 }
 
 print "<tr>" .
-        "<td class='dataLabel'>Created</td><td class='dataValue'>" . localizeDateTimes($jobInfo->getCreatedDate(),"h:i:s A") . "</td>" .
-        "<td class='dataLabel'>Last Modified</td><td class='dataValue'>" . localizeDateTimes($jobInfo->getSystemModstamp(),"h:i:s A") . "</td>" .
+        "<td class='dataLabel'>Created</td><td class='dataValue'>" . localizeDateTimes($jobInfo->getCreatedDate(),$timeOnlyFormat) . "</td>" .
+        "<td class='dataLabel'>Last Modified</td><td class='dataValue'>" . localizeDateTimes($jobInfo->getSystemModstamp(),$timeOnlyFormat) . "</td>" .
         "<td class='dataLabel'>Retries</td><td class='dataValue'>" . $jobInfo->getNumberRetries() . "</td>" .
        "</tr>";
 
@@ -142,8 +144,8 @@ if (count($batchInfos) > 0) {
                         ? " record" 
                         : " records") . "</td>" 
                   : "").
-              "<td class='dataValue'>" . localizeDateTimes($batchInfo->getCreatedDate(),"h:i:s A") . "</td>" .
-              "<td class='dataValue'>" . localizeDateTimes($batchInfo->getSystemModstamp(),"h:i:s A") . "</td>";
+              "<td class='dataValue'>" . localizeDateTimes($batchInfo->getCreatedDate(),$timeOnlyFormat) . "</td>" .
+              "<td class='dataValue'>" . localizeDateTimes($batchInfo->getSystemModstamp(),$timeOnlyFormat) . "</td>";
 
         print "</tr>";
     }

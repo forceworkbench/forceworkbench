@@ -236,12 +236,12 @@ function getWorkbenchUserAgent() {
 function localizeDateTimes($inputStr, $formatOverride = null) {
     // Grab the format from the override if it exists, if not check
     // for the config option, otherwise default format
-    $format = ($formatOverride != null) 
+    $format = (($formatOverride != null) 
 	              ? $formatOverride 
-	              : (getConfig("localeDateTimeFormat") !=  null) 
+	              : ((getConfig("localeDateTimeFormat") !=  null) 
 	                  ? getConfig("localeDateTimeFormat") 
-	                  : 'Y-m-d\\TH:i:s.000P';
-
+	                  : 'Y-m-d\\TH:i:s.000P'));
+	                  
     $timezone = getConfig("convertTimezone");
     
     // Short-circuit if we aren't actually doing anything useful.

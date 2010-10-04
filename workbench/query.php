@@ -711,7 +711,7 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true) {
 
     if (isset($sobject->fields)) {
         foreach ($sobject->fields as $datum) {
-            $rowBuffer[] = localizeDateTimes($escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES,'UTF-8') : $datum);
+            $rowBuffer[] = ($escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES,'UTF-8') : $datum);
         }
     }
 
@@ -725,7 +725,7 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true) {
         $rowBuffer[] = $sobject->queryResult;
     }
 
-    return $rowBuffer;
+    return localizeDateTimes($rowBuffer);
 }
 
 function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
@@ -796,7 +796,7 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
 
     $table .= "</table>";
 
-    return $table;
+    return localizeDateTimes($table);
 }
 
 function createQueryResultTable($records) {

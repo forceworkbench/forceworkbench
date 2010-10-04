@@ -50,7 +50,7 @@ function displaySelechForm() {
 
         try {
             print "<form method='post' action='$_SERVER[PHP_SELF]'>\n";
-            print "<p><strong>Select a default object and action:</strong></p>\n";
+            print "<p>Select a default object and action:</p>\n";
 
             //Display a list of actions as submit buttons. Jump to the selected
             //action's page on refresh (see IF statement at top)
