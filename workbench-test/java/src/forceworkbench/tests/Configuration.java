@@ -3,6 +3,7 @@ package forceworkbench.tests;
 import java.util.List;
 
 public class Configuration {
+	
 	private String baseUrl;
 	private String browser;
 	

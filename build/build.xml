@@ -6,7 +6,19 @@
 	<property name="dir.build" value="build"/>
 	<property name="dir.build.lib" value="${dir.build}/lib"/>
 	<property name="dir.dist" value="dist"/>
-		
+	
+	<property name="dir.test.java" value="workbench-test/java"/>
+	<property name="dir.test.java.src" value="${dir.test.java}/src"/>
+	<property name="dir.test.java.bin" value="${dir.test.java}/bin"/>
+	<property name="dir.test.java.lib" value="${dir.test.java}/lib"/>
+	<property name="dir.test.java.results" value="${dir.test.java}/results"/>
+
+	<path id="classpath.test.java">
+        <pathelement location="${dir.test.java.bin}"/>
+        <pathelement location="${dir.test.java.lib}/junit.jar"/>
+        <pathelement location="${dir.test.java.lib}/selenium-java-client-driver.jar"/>
+    </path>
+	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
   		<classpath>
     		<pathelement location="${dir.build.lib}/ant-contrib-1.0b3.jar"/>
@@ -35,6 +47,7 @@
 	
 	<target name="clean">
 		<delete dir="${dir.dist}"/>
+		<delete dir="${dir.test.java.bin}"/>
 	</target>
 	
 	<target name="dist" depends="init, clean">
@@ -105,4 +118,37 @@
 	</target>
 
 	<target name="deploy" depends="upload, update"/>
+	
+	<target name="compileTests">
+		<mkdir dir="${dir.test.java.bin}"/>
+		
+        <javac destdir="${dir.test.java.bin}" source="1.6" target="1.6">
+            <src path="${dir.test.java.src}"/>
+            <classpath refid="classpath.test.java"/>
+        </javac>
+	</target>
+	
+	<target name="startSeleniumServer">
+		<java jar="${dir.test.java.lib}/selenium-server.jar" fork="true"/>
+	</target>
+	
+	<target name="test" depends="compileTests">
+		<mkdir dir="${dir.test.java.results}"/>
+		
+		<junit printsummary="yes">
+		  <classpath refid="classpath.test.java"/>
+
+     	  <sysproperty key="baseUrl" value="http://localhost:8888/workbench-20.0.0/workbench/"/>
+		  <sysproperty key="browser" value="*firefox"/>
+			
+		  <formatter type="plain"/>
+
+		  <batchtest fork="yes" todir="${dir.test.java.results}">
+		    <fileset dir="${dir.test.java.src}">
+		      <include name="**/*Tests.java"/>
+		      <exclude name="**/BaseTest.java"/>
+		    </fileset>
+		  </batchtest>
+		</junit>
+	</target>	
 </project>

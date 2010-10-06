@@ -1,11 +1,9 @@
 package forceworkbench.tests;
 
-import org.apache.log4j.Logger;
 
-public class DescribeTests extends WorkbenchSeleneseTestCase {
-	
-	private static Logger logger = Logger.getLogger(DescribeTests.class);
-	
+
+public class DescribeTests extends WorkbenchSeleneseBaseTest {
+		
 	public void setUp() throws Exception{
 		super.setUp();
 		loginWithConfig();
@@ -16,9 +14,7 @@ public class DescribeTests extends WorkbenchSeleneseTestCase {
 		selenium.waitForPageToLoad(WAIT_TIMEOUT);
 		verifyFalse(selenium.isTextPresent("Object Description"));
 		
-		for(String type : selenium.getSelectOptions("default_object")){
-			logger.info("Testing describe of: " + type);
-			
+		for(String type : selenium.getSelectOptions("default_object")){			
 			if(type.equalsIgnoreCase("")) continue;
 			
 			selenium.click("link=Describe");

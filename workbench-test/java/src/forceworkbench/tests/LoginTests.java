@@ -1,10 +1,8 @@
 package forceworkbench.tests;
 
-import org.apache.log4j.Logger;
 
-public class LoginTests extends WorkbenchSeleneseTestCase {
-	
-	private static Logger logger = Logger.getLogger(LoginTests.class);
+
+public class LoginTests extends WorkbenchSeleneseBaseTest {
 	
 	public void setUp() throws Exception{
 		super.setUp();
@@ -28,10 +26,10 @@ public class LoginTests extends WorkbenchSeleneseTestCase {
 		selenium.open("login.php");
 		selenium.click("login_become_adv");
 		for(String ep : selenium.getSelectOptions("endp")){
-			logger.info("Starting to Test API Version: " + ep);
+
 
 			if(Double.valueOf(ep) > Double.valueOf(config.getApiVersion())){
-				logger.info("API Version too high. Skipping: " + ep);
+
 				continue;
 			}
 			
@@ -92,10 +90,10 @@ public class LoginTests extends WorkbenchSeleneseTestCase {
 		selenium.open("login.php");
 		selenium.click("login_become_adv");
 		for(String ep : selenium.getSelectOptions("endp")){
-			logger.info("Starting to Test API Version: " + ep);
+
 
 			if(Double.valueOf(ep) > Double.valueOf(config.getApiVersion())) {
-				logger.info("API Version too high. Skipping: " + ep);
+
 				continue;
 			}
 				
@@ -120,11 +118,11 @@ public class LoginTests extends WorkbenchSeleneseTestCase {
 		selenium.open("login.php");
 		selenium.click("login_become_adv");
 		for(String inst : selenium.getSelectOptions("inst")){
-			logger.info("Starting to Test Instance: " + inst);
+
 			
 			//skip future instances
 			if(config.getIgnoredInstances().contains(inst)){
-				logger.info("Skipping: " + inst);
+
 				continue;
 			}
 			

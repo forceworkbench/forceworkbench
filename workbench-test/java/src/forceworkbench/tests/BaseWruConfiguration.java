@@ -3,9 +3,11 @@ package forceworkbench.tests;
 public class BaseWruConfiguration extends Configuration {
 
 	public BaseWruConfiguration() {
-		setUsername("admin.test.rbrainard@salesforce.com");
+		super();
+		
+		setUsername("rbrainard@ee.com");
 		setPassword("123456");
-		setApiVersion("18.0");
+		setApiVersion("19.0");
 		setInstance("NA4");
 		setLoginInstance("Production Login");
 				

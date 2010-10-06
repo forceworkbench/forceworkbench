@@ -3,11 +3,9 @@ package forceworkbench.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 
-public class QueryTests extends WorkbenchSeleneseTestCase {
-	
-	private static Logger logger = Logger.getLogger(QueryTests.class);
+
+public class QueryTests extends WorkbenchSeleneseBaseTest {
 
 	public void setUp() throws Exception{
 		super.setUp();
@@ -69,7 +67,7 @@ public class QueryTests extends WorkbenchSeleneseTestCase {
 	}
 	
 	public void testSampleQueries() throws Exception {
-		logger.info("Starting testSampleQueries()");
+
 		
 		final List<String> SAMPLE_QUERIES = new ArrayList<String>();
 			//simple
@@ -103,7 +101,7 @@ public class QueryTests extends WorkbenchSeleneseTestCase {
 			SAMPLE_QUERIES.add("SELECT OwnerId FROM Account GROUP BY OwnerId HAVING count(id) > 1");
 	
 		for(String query : SAMPLE_QUERIES){
-			logger.info("Testing SOQL: " + query);
+
 			
 			selenium.open("query.php");
 			selenium.waitForPageToLoad(WAIT_TIMEOUT);
