@@ -17,8 +17,6 @@ public class DescribeTests extends WorkbenchSeleneseBaseTest {
 		for(String type : selenium.getSelectOptions("default_object")){			
 			if(type.equalsIgnoreCase("")) continue;
 			
-			selenium.click("link=Describe");
-			selenium.waitForPageToLoad(WAIT_TIMEOUT);
 			selenium.select("default_object", "label=" + type);
 			selenium.waitForPageToLoad(WAIT_TIMEOUT);
 			

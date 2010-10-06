@@ -21,7 +21,7 @@ public abstract class WorkbenchSeleneseBaseTest extends SeleneseTestCase {
 	
 	void simpleLogin(String username, String password, String instance, String apiVersion){
 		selenium.open("login.php?&un=" + username + "&pw=" + password + "&inst=" + instance + "&api=" + apiVersion);
-		assertEquals("Workbench - Select", selenium.getTitle());			
+		assertTrue(selenium.getLocation().contains("select.php"));			
 	}
 
     void setApiVersion(String version){
@@ -36,6 +36,7 @@ public abstract class WorkbenchSeleneseBaseTest extends SeleneseTestCase {
     public void tearDown() throws Exception {
     	assertNoPhpErrors();
     	super.tearDown();
+    	selenium.stop();
     }
     
     void assertNoPhpErrors() {

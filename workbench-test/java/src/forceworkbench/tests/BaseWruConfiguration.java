@@ -5,11 +5,11 @@ public class BaseWruConfiguration extends Configuration {
 	public BaseWruConfiguration() {
 		super();
 		
-		setUsername("rbrainard@ee.com");
+		setUsername("rbrainard@ee.org");
 		setPassword("123456");
 		setApiVersion("19.0");
 		setInstance("NA4");
-		setLoginInstance("Production Login");
+		setLoginInstance("Login: Production/Developer");
 				
 		setIgnoredInstances(new java.util.ArrayList<String>());
 		getIgnoredInstances().add("NA8");
