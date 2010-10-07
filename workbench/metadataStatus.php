@@ -10,7 +10,7 @@ if (!apiVersionIsAtLeast(10.0)) {
 if (!isset($_GET['asyncProcessId'])) {
     require_once 'header.php';
     print "<p/>";
-    displayError("Parameter 'asyncProcessId' must be specified.",false,false);
+    displayInfo("Parameter 'asyncProcessId' must be specified.",false,false);
     print     "<p/>" .
             "<form action='$_SERVER[PHP_SELF]' method='GET'>" . 
             "Async Process Id: <input type='text' name='asyncProcessId'/> &nbsp;" .  
@@ -125,7 +125,7 @@ function printStatusCell($resultName, $resultValue) {
     if (is_bool($resultValue)) {
         print $resultValue ? "true" : "false";
     } else {
-        print $resultValue;
+        print localizeDateTimes($resultValue);
     }
     print "</td>";
 }

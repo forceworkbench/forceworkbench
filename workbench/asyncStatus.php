@@ -6,7 +6,7 @@ require_once 'bulkclient/BulkApiClient.php';
 
 print "<p/>";
 if (!isset($_GET['jobId']) || $_GET['jobId'] == "") {
-    displayError("Parameter 'jobId' must be specified.",false,false);
+    displayInfo("Parameter 'jobId' must be specified.",false,false);
     print     "<p/>" .
             "<form action='$_SERVER[PHP_SELF]' method='GET'>" . 
             "Job Id: <input type='text' name='jobId'/> &nbsp;" .  
