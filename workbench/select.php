@@ -11,17 +11,17 @@ if (isset($_POST['actionJump']) && $_POST['actionJump'] != "") {
 } else if (isset($_POST['select'])) {
     include_once 'header.php';
     displayError("Choose an object and an action to which to jump.");
-    displaySelechForm();
+    displaySelectForm();
     include_once 'footer.php';
 }
 
 else {
     include_once 'header.php';
-    displaySelechForm();
+    displaySelectForm();
     include_once 'footer.php';
 }
 
-function displaySelechForm() {
+function displaySelectForm() {
     ?>
 <script>
     
@@ -50,7 +50,7 @@ function displaySelechForm() {
 
         try {
             print "<form method='post' action='$_SERVER[PHP_SELF]'>\n";
-            print "<p>Select a default object and action:</p>\n";
+            print "<p class='instructions'>Select a default object and action:</p>\n";
 
             //Display a list of actions as submit buttons. Jump to the selected
             //action's page on refresh (see IF statement at top)
