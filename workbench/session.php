@@ -134,15 +134,18 @@ if (isLoggedIn()) {
         }
 
         if (getConfig('allOrNoneHeader_allOrNone')) {
-            $partnerConnection->setAllOrNoneHeader(new AllOrNoneHeader(getConfig('allOrNoneHeader_allOrNone')));
+            $partnerConnection->setAllOrNoneHeader(
+			    new AllOrNoneHeader(getConfig('allOrNoneHeader_allOrNone')));
         }
     
         if (getConfig('disableFeedTrackingHeader_disableFeedTracking')) {
-            $partnerConnection->setDisableFeedTrackingHeader(getConfig('disableFeedTrackingHeader_disableFeedTracking'));
+            $partnerConnection->setDisableFeedTrackingHeader(
+			    new DisableFeedTrackingHeader(getConfig('disableFeedTrackingHeader_disableFeedTracking')));
         }
 
         if (getConfig('localOptions_language')) {
-            $partnerConnection->setLocaleOptions(new LocaleOptions(getConfig('localOptions_language')));
+            $partnerConnection->setLocaleOptions(
+			    new LocaleOptions(getConfig('localOptions_language')));
         }
     
         if (getConfig('packageVersionHeader_include') && 
