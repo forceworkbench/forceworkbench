@@ -113,7 +113,7 @@ if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
 
 function displayQueryForm($queryRequest) {
     
-   registerShortcut("Ctrl+=",
+   registerShortcut("Ctrl+Alt+W",
                     "addFilterRow(document.getElementById('numFilters').value++);".
                     "toggleFieldDisabled();");
 
