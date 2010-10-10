@@ -250,8 +250,8 @@ function updateObject() {
 
 function exportActionIs(type) {
     var exportActions = document.getElementById('query_form')['export_action'];
-    for (node in exportActions) {
-        if (exportActions[node].checked && exportActions[node].value == type) {
+    for (var i = 0; i < exportActions.length; i++) {
+        if (exportActions[i].checked && exportActions[i].value == type) {
             return true;
         }
     }
@@ -491,15 +491,15 @@ QUERY_BUILDER_SCRIPT;
         print "<tr><td valign='top' colspan=2>View as:<br/>" .
             "<label><input type='radio' id='export_action_screen' name='export_action' value='screen' ";
         if ($queryRequest->getExportTo() == 'screen') print "checked='true'";
-        print " onChange='toggleMatrixSortSelectors(true);'>List</label>&nbsp;";
+        print " onClick='toggleMatrixSortSelectors(true);'>List</label>&nbsp;";
 
         print "<label><input type='radio' id='export_action_matrix' name='export_action' value='matrix' ";
         if ($queryRequest->getExportTo() == 'matrix') print "checked='true'";
-        print " onChange='toggleMatrixSortSelectors(true);'>Matrix</label>";
+        print " onClick='toggleMatrixSortSelectors(true);'>Matrix</label>";
 
         print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
         if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
-        print " onChange='toggleMatrixSortSelectors(true);'>CSV File</label>&nbsp;";
+        print " onClick='toggleMatrixSortSelectors(true);'>CSV File</label>&nbsp;";
 
         print "<td valign='top' colspan=2>Deleted and archived records:<br/>" .
             "<label><input type='radio' name='query_action' value='Query' ";
