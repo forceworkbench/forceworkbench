@@ -938,7 +938,7 @@ function displayBulkApiOptions($action, $forceDoAsync) {
     }
 
     //Async Options
-    if((apiVersionIsAtLeast(17.0) && in_array($action, array('Confirm Insert', 'Confirm Update', 'Confirm Upsert')))
+    if((apiVersionIsAtLeast(16.0) && in_array($action, array('Confirm Insert', 'Confirm Update', 'Confirm Upsert')))
        || (apiVersionIsAtLeast(18.0) && $action == 'Confirm Delete')) {
         if ($forceDoAsync) {
             print "<input name='doAsync' type='hidden' value='true'/>";
