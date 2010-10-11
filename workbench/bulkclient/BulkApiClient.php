@@ -44,6 +44,10 @@ class BulkApiClient {
     private $loggingEnabled = false;
 
     public function __construct($partnerEndpoint, $sessionId) {
+		if (!extension_loaded('curl')) {
+			throw new Exception('Missing required cURL extension.');
+		}
+	
         $this->endpoint = $this->convertEndpointFromPartner($partnerEndpoint);
         $this->sessionId = $sessionId;
     }
