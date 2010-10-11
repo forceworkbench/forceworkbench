@@ -192,7 +192,7 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
 function resolveFileType($file) {
     if (stristr($file['name'],'.csv') && (stristr($file['type'],'csv') || $file['type'] == "application/vnd.ms-excel")) {
         return "csv";
-    } else if (stristr($file['name'],'.zip') && (stristr($file['type'],'zip') || stristr($file['type'],'octet-stream'))) {
+    } else if (stristr($file['name'],'.zip') && (stristr($file['type'],'zip') || stristr($file['type'],'application/empty') || stristr($file['type'],'octet-stream'))) {
         return "zip";
     } else {
         throw new Exception("Unknown file type. Only CSV and ZIP files are allowed.");
