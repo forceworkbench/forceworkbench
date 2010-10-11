@@ -195,7 +195,7 @@ function resolveFileType($file) {
     } else if (stristr($file['name'],'.zip') && (stristr($file['type'],'zip') || stristr($file['type'],'octet-stream'))) {
         return "zip";
     } else {
-        throw new Exception("Unknown file type. Only CSV and ZIP files are allowed." . print_r($file,true));
+        throw new Exception("Unknown file type. Only CSV and ZIP files are allowed.");
     }
 }
 
