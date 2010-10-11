@@ -152,10 +152,11 @@ if (isLoggedIn()) {
             getConfig('packageVersion_namespace') &&
             getConfig('packageVersion_majorNumber') &&
             getConfig('packageVersion_minorNumber')) {
-            $partnerConnection->setPackageVersionHeader(new PackageVersionHeader(new PackageVersion(
+            $partnerConnection->setPackageVersionHeader(
                 getConfig("packageVersion_namespace"), 
                 getConfig("packageVersion_majorNumber"), 
-                getConfig("packageVersion_minorNumber"))));
+                getConfig("packageVersion_minorNumber")
+		    );
         }
         
         if (!isset($_SESSION['getUserInfo']) || !getConfig('cacheGetUserInfo')) {

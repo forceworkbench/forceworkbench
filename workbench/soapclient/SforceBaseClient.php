@@ -410,14 +410,20 @@ class SforceBaseClient {
         }
     }
 
-    public function setPackageVersionHeader($header) {
-        if ($header != NULL) {
-            $this->packageVersionHeader = new SoapHeader($this->namespace, 'PackageVersionHeader', array (
-             'packageVersions' => $header->packageVersions
-            ));
-        } else {
-            $this->packageVersionHeader = NULL;
-        }
+    public function setPackageVersionHeader($namespace, $majorVersion, $minorVersion) {
+		$packageVersionComp = array(
+				'namespace'    => new SoapVar($namespace, XSD_STRING),
+				'majorNumber' => new SoapVar($majorVersion, XSD_INT),
+				'minorNumber' => new SoapVar($minorVersion, XSD_INT)
+		);
+
+		$packageVersionVar = array(
+				'packageVersions' => new SoapVar($packageVersionComp, SOAP_ENC_OBJECT)
+		);
+
+		$packageVersionBody = new SoapVar($packageVersionVar, SOAP_ENC_OBJECT);
+
+		$this->packageVersionHeader = new SoapHeader($this->getNamespace(), 'PackageVersionHeader', $packageVersionBody, false);
     }
     
     public function getSessionId() {
