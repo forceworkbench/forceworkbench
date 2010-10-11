@@ -47,17 +47,19 @@
                       
         <property name="dist.zip.workbench" value="${dir.dist}/workbench-${app.version.stripped}.zip"/>
         
-		<zip destfile="${dist.zip.workbench}" basedir="${dir.src}" excludes="**/*Mock*"/>
+		<zip destfile="${dist.zip.workbench}" basedir="." includes="${dir.src}/**" excludes="**/*Mock*"/>
 				
-		<condition 
-		        property="dist.txt.latestVersionAvailble" 
-		        value="${dir.dist}/latestVersionAvailableBeta.txt" 
-		        else="${dir.dist}/latestVersionAvailable.txt">
-			<istrue value="${app.beta}"/>
-		</condition>
+		<!-- Always update the latest beta version checker, but only the prod one if not a beta version -->
+		<echo message="Writing latest app version (${app.version}) to latestVersionAvailableBeta.txt"/>
+		<concat destfile="${dir.dist}/latestVersionAvailableBeta.txt">${app.version}</concat>
+		<if>
+			<isfalse value="${app.beta}"/>
+			<then>
+				<echo message="Writing latest app version (${app.version}) to latestVersionAvailable.txt"/>
+				<concat destfile="${dir.dist}/latestVersionAvailable.txt">${app.version}</concat>	
+			</then>
+		</if>
 		
-		<concat destfile="${dist.txt.latestVersionAvailble}">${app.version}</concat>
-
 		<property name="dist.zip.bulkclient" value="${dir.dist}/PHP_BulkApiClient-${app.version.stripped}.zip"/>
 
 		<zip destfile="${dist.zip.bulkclient}" basedir="${dir.src.bulkclient}"/>
@@ -93,7 +95,11 @@
 	</target>
 	
 	<target name="update" depends="dist">		
-		<scp sftp="false" file="${dist.txt.latestVersionAvailble}" todir="${sf.username},forceworkbench:${sf.password}@web.sourceforge.net:/home/groups/f/fo/forceworkbench/htdocs/"/>
+		<scp todir="${sf.username},forceworkbench:${sf.password}@web.sourceforge.net:/home/groups/f/fo/forceworkbench/htdocs/" verbose="true">
+			<fileset dir="${dir.dist}">
+				<include name="latestVersionAvailable*.txt"/>
+			</fileset>
+		</scp>
 	</target>
 
 	<target name="deploy" depends="upload, update"/>
