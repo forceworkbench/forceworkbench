@@ -921,7 +921,7 @@ function supportsZips($action) {
 function displayBulkApiOptions($action, $forceDoAsync) {
     //Hard Delete option
     if (apiVersionIsAtLeast(19.0) && $action == 'Confirm Delete') {
-        print "<p><label><input type='checkbox' id='doHardDelete' name='doHardDelete' onChange=\"".
+        print "<p><label><input type='checkbox' id='doHardDelete' name='doHardDelete' onClick=\"".
               "if (this.checked && " . ($forceDoAsync ? "false" : "true") . ") {" .
               "    document.getElementById('doAsync').checked = true;" . 
               "    document.getElementById('asyncDeleteObjectSelection').style.display = 'inline';" .
@@ -943,7 +943,7 @@ function displayBulkApiOptions($action, $forceDoAsync) {
         if ($forceDoAsync) {
             print "<input name='doAsync' type='hidden' value='true'/>";
         } else {
-           print "<p><label><input id='doAsync' name='doAsync' type='checkbox' onChange=\"".
+           print "<p><label><input id='doAsync' name='doAsync' type='checkbox' onClick=\"".
                "var doHardDelete = document.getElementById('doHardDelete');" .
                "var asyncDeleteObjectSelection = document.getElementById('asyncDeleteObjectSelection');" .
                "var unsupportedBulkConfigList = document.getElementById('unsupportedBulkConfigList');" .
@@ -996,7 +996,7 @@ function displayBulkApiOptions($action, $forceDoAsync) {
             print "<div id='unsupportedBulkConfigList' style='display: " . ($forceDoAsync ? "inline" : "none") . "; color: orange;'>" .
                       "<p " . ($forceDoAsync ? "" : "style='margin-left: 3em;'") . ">" .  
                           "<img src='" . getStaticResourcesPath() ."/images/warning24.png' /> " .
-                          "The follow settings are not supported by the Bulk API and will be ignored:" . 
+                          "The following settings are not supported by the Bulk API and will be ignored:" . 
                           "<ul " . ($forceDoAsync ? "" : "style='margin-left: 5em;'") . ">";
             
             foreach ($bulkUnsupportedSettings as $s) {
