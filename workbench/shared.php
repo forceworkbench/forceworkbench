@@ -510,12 +510,21 @@ function getAsyncApiConnection() {
     $asyncConnection = new BulkApiClient($_SESSION['location'], $_SESSION['sessionId']);
     $asyncConnection->setCompressionEnabled(getConfig("enableGzip"));
     $asyncConnection->setUserAgent(getWorkbenchUserAgent());
-    $asyncConnection->setExternalLogReference($_SESSION['restDebugLog']);
+    $asyncConnection->setExternalLogReference($_SESSION['restDebugLog']); //TODO: maybe replace w/ its own log??
     $asyncConnection->setLoggingEnabled(getConfig("debug") == true);
 
     return $asyncConnection;
 }
 
+function getRestApiConnection() {
+    $asyncConnection = new RestApiClient($_SESSION['location'], $_SESSION['sessionId']);
+    $asyncConnection->setCompressionEnabled(getConfig("enableGzip"));
+    $asyncConnection->setUserAgent(getWorkbenchUserAgent());
+    $asyncConnection->setExternalLogReference($_SESSION['restDebugLog']);
+    $asyncConnection->setLoggingEnabled(getConfig("debug") == true);
+
+    return $asyncConnection;
+}
 
 /**
  * Takes xml as a string and returns it nicely indented

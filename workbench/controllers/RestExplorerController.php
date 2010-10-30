@@ -10,9 +10,7 @@ class RestExplorerController {
     public $rawResponseHeaders;
     public $rawResponse;
     public $response;
-    public $autoExec;
-    
-    private $client;
+    public $autoExec;    
     private $insturmenter;
     
     public function __construct() {
@@ -22,9 +20,15 @@ class RestExplorerController {
     }
     
     public function onPageLoad() {
+        $this->errors = null;
+        
         $this->requestMethod = isset($_REQUEST['requestMethod']) ? $_REQUEST['requestMethod'] : $this->requestMethod;
         $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->url;
-        $this->requestBody = isset($_REQUEST['requestBody']) ? $_REQUEST['requestBody'] : $this->requestBody;
+        $this->requestBody = isset($_REQUEST['requestBody']) 
+                                ? (get_magic_quotes_gpc() 
+                                    ? stripslashes($_REQUEST['requestBody']) 
+                                    : $_REQUEST['requestBody']) 
+                                : $this->requestBody;
     	$this->autoExec = isset($_REQUEST['autoExec']) ? $_REQUEST['autoExec'] : $this->autoExec;
     	$doExecute = isset($_REQUEST['doExecute']) ? $_REQUEST['doExecute'] : null;
     	
@@ -51,18 +55,13 @@ class RestExplorerController {
             
             //TODO: remove mocking!
             $this->rawResponseHeaders = "some headers\n";
-            $this->rawResponse = "[{\"label\":\"Winter '11\",\"version\":\"20.0\",\"url\":\"/services/data/v20.0\"}]";
+            
+            $this->rawResponse = getRestApiConnection()->send($this->requestMethod, 
+                                                              $this->url, "application/json",
+                                                              $this->requestMethod == 'POST' ? $this->requestBody : null);
+            
             $this->response = $this->rawResponse;
             
-            // send the resonse    
-// TODO!
-//            HttpResponse httpResponse = client.send(requestMethod,
-//                                        url, 
-//                                        RequestMethods.POST.name().equals(requestMethod) 
-//                                            ? requestBody 
-//                                            : null
-//                                       );
-//            
 //            // process the headers
 //            $this->rawResponseHeaders = '';                 
 //            for ($headerKey : $httpResponse.getHeaderKeys()) {
@@ -74,7 +73,7 @@ class RestExplorerController {
 //            $this->rawResponse = httpResponse.getBody();
 //            $this->response = insturmenter.instrument($this->rawResponse);
         } catch (Exception $e) {
-            $this->errors = $e.getMessage();
+            $this->errors = $e->getMessage();
         }
     }
 }

@@ -50,7 +50,7 @@ if ($c->errors != null) {
     </p>
     
     <input name="url" value="<?php echo $c->url; ?>"
-    	   style="width: 35em; height: 1em; font-size: 18px; font-weight: bold;"
+    	   style="width: 35em; height: 1.2em; font-size: 18px; font-weight: bold;"
     	   onKeyPress="if (checkEnter(event)) {document.getElementById('execBtn').click(); return false;}" />
     &nbsp; 
     <input id="execBtn" name="doExecute" type="submit" value="Execute" style="font-size: 18px;"/>
@@ -89,10 +89,11 @@ if (isset($c->autoExec) && !$c->autoExec) {
     ?>
 </div>
 
-<div id="rawJson" class="codeViewPortContainer" style="float: right;">
+<!--<div id="rawJson" class="codeViewPortContainer" style="float: right;">
     <strong>Raw Response</strong>
     <p class="codeViewPort"><?php echo $c->rawResponseHeaders; ?><br /><?php echo $c->rawResponse; ?></p>
 </div>
+-->
 <?php } ?>
 
 <?php if ($c->response != null) echo "<script type='text/javascript'>convert($c->response);</script>"; ?>
