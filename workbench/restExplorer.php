@@ -74,13 +74,15 @@ if (isset($c->autoExec) && !$c->autoExec) {
 
 <p />
 
-<?php if ($c->response != null) { ?>
+<?php if ($c->showResponse) { ?>
 <div style="float: left;">
     <?php if ($c->requestMethod != "HEAD") { ?>
             <a href="javascript:ddtreemenu.flatten('responseList', 'expand')">Expand All</a> | 
             <a href="javascript:ddtreemenu.flatten('responseList', 'contact')">Collapse All</a>
             
             <div id="responseListContainer" class="results"></div>
+            
+            <script type='text/javascript'>convert(<?php echo $c->response ?>);</script>
     <?php
         } else {
             displayInfo("The HEAD method does not return a body to display.");
@@ -89,14 +91,14 @@ if (isset($c->autoExec) && !$c->autoExec) {
     ?>
 </div>
 
-<!--<div id="rawJson" class="codeViewPortContainer" style="float: right;">
+<div id="rawJson" class="codeViewPortContainer">
     <strong>Raw Response</strong>
     <p class="codeViewPort"><?php echo $c->rawResponseHeaders; ?><br /><?php echo $c->rawResponse; ?></p>
 </div>
--->
+
+
 <?php } ?>
 
-<?php if ($c->response != null) echo "<script type='text/javascript'>convert($c->response);</script>"; ?>
 
 <?php
 require_once 'footer.php';

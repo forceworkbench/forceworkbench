@@ -1,5 +1,6 @@
 <?php
 require_once 'restclient/RestClient.php';
+require_once 'controllers/RestResponseInstrumenter.php';
 
 class RestExplorerController {  
     private $BASE_REST_URL_PREFIX = '/services/data';
@@ -10,20 +11,25 @@ class RestExplorerController {
     public $rawResponseHeaders;
     public $rawResponse;
     public $response;
+    public $showResponse;
     public $autoExec;    
     private $insturmenter;
     
     public function __construct() {
         $this->requestMethod = 'GET';
-//TODO        insturmenter = new RestResponseInstrumenter(ApexPages.currentPage().getUrl());
+        $this->insturmenter = new RestResponseInstrumenter($_SERVER['PHP_SELF']);
         $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->BASE_REST_URL_PREFIX;
     }
     
     public function onPageLoad() {
         $this->errors = null;
-        
+        $this->showResponse = false;
         $this->requestMethod = isset($_REQUEST['requestMethod']) ? $_REQUEST['requestMethod'] : $this->requestMethod;
-        $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->url;
+        $this->url = isset($_REQUEST['url']) 
+                                ? (get_magic_quotes_gpc() 
+                                    ? stripslashes($_REQUEST['url']) 
+                                    : $_REQUEST['url']) 
+                                : $this->url;
         $this->requestBody = isset($_REQUEST['requestBody']) 
                                 ? (get_magic_quotes_gpc() 
                                     ? stripslashes($_REQUEST['requestBody']) 
@@ -71,7 +77,8 @@ class RestExplorerController {
 //            
 //            // process the body
 //            $this->rawResponse = httpResponse.getBody();
-//            $this->response = insturmenter.instrument($this->rawResponse);
+            $this->response = $this->insturmenter->instrument($this->rawResponse);
+            $this->showResponse = true;
         } catch (Exception $e) {
             $this->errors = $e->getMessage();
         }
