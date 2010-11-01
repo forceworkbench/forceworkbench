@@ -42,7 +42,7 @@ class RestApiClient {
         return $matches[1];
     }
 
-    public function send($method, $url, $contentType, $data) {
+    public function send($method, $url, $contentType, $data, $expectBinary) {
         $this->log("INITIALIZING cURL \n" . print_r(curl_version(), true));
 
         $ch = curl_init();
@@ -83,8 +83,9 @@ class RestApiClient {
         
         curl_setopt($ch, CURLOPT_URL, $this->baseUrl . $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $httpHeaders);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, $expectBinary ? 0 : 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_BINARYTRANSFER, $expectBinary ? 1 : 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);                                //TODO: use ca-bundle instead
         
@@ -104,7 +105,7 @@ class RestApiClient {
 
         curl_close($ch);
 
-        return new HttpResponse($chResponse);
+        return new HttpResponse($chResponse, $expectBinary);
     }
 
     //LOGGING FUNCTIONS
@@ -141,10 +142,14 @@ class HttpResponse {
     public $header;
     public $body;
     
-    public function __construct($curlResponse) {
-        $exprResponse = explode("\n\r", $curlResponse, 2);
-        $this->header = $exprResponse[0];
-        $this->body = $exprResponse[1];
+    public function __construct($curlResponse, $expectBinary) {
+        if ($expectBinary) {
+            $this->body = $curlResponse;
+        } else {
+            $exprResponse = explode("\n\r", $curlResponse, 2);
+            $this->header = $exprResponse[0];
+            $this->body = $exprResponse[1];
+        }
     }
 }
 ?>

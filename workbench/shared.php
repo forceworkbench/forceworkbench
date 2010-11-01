@@ -526,6 +526,14 @@ function getRestApiConnection() {
     return $asyncConnection;
 }
 
+function in_arrayi($needle, $haystack) {
+    foreach($haystack as $value) {
+        if(strtolower($value) == strtolower($needle)) {
+            return true;
+        }
+    }   
+} 
+
 /**
  * Takes xml as a string and returns it nicely indented
  *
