@@ -57,11 +57,26 @@
 	
 	<target name="dist" depends="init, clean">
 		<mkdir dir="${dir.dist}"/>
-                      
+		<delete dir="${dir.dist}/staging"/>
+		<mkdir dir="${dir.dist}/staging"/>
+
+		<copy todir="${dir.dist}/staging">
+		    <fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*, ${dir.src}/static/**"/>
+
+			<filterset begintoken="{{" endtoken="}}">
+		      <filter token="WORKBENCH_VERSION" value="${app.version.stripped}"/>
+		    </filterset>
+		</copy>
+		
+		<copy todir="${dir.dist}/staging">
+		    <fileset dir="." includes="${dir.src}/static/**"/>
+			<mapper type="glob" from="${dir.src}/static/{{WORKBENCH_VERSION}}/*" to="${dir.src}/static/${app.version.stripped}/*"/>
+		</copy>
+		
         <property name="dist.zip.workbench" value="${dir.dist}/workbench-${app.version.stripped}.zip"/>
         
-		<zip destfile="${dist.zip.workbench}" basedir="." includes="${dir.src}/**" excludes="**/*Mock*"/>
-				
+		<zip destfile="${dist.zip.workbench}" basedir="${dir.dist}/staging"/>
+		
 		<!-- Always update the latest beta version checker, but only the prod one if not a beta version -->
 		<echo message="Writing latest app version (${app.version}) to latestVersionAvailableBeta.txt"/>
 		<concat destfile="${dir.dist}/latestVersionAvailableBeta.txt">${app.version}</concat>

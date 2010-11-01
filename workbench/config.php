@@ -733,7 +733,7 @@ $config["header_proxyOptions"] = array(
 
 $GLOBALS["WORKBENCH_VERSION"] = "trunk";
 
-$GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"] = "static/20101027a";
+$GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"] = "static/" . "{{WORKBENCH_VERSION}}";
 
 class Page {
     public $title;
