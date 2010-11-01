@@ -1,18 +1,14 @@
-.results, .results * {
-	font-size: small;
-}
-
-.codeViewPortContainer {
+#codeViewPortContainer {
 	position:absolute; 
 	right:10px;
 	background-color:rgb(206,239,255); 
 	padding: 10px; 
-	width:30%;
+	width: 40%;
 	-moz-border-radius: 10px; 
 	border-radius: 10px;
 }
 
-.codeViewPort {
+#codeViewPort {
 	white-space: pre-wrap; 
 	font-family: courier, monotype;
 }

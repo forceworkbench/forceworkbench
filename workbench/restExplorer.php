@@ -16,15 +16,7 @@ $c->onPageLoad();
 <script
 	type="text/javascript"
 	src="<?php echo getStaticResourcesPath() . "/script/restexplorer.js"; ?>"></script>
-<script type="text/javascript">
-      function toggleRequestBodyDisplay(radio) {
-          if (radio.checked && radio.value == 'POST') {
-              document.getElementById('requestBodyContainer').style.display = 'inline';
-          } else {
-              document.getElementById('requestBodyContainer').style.display = 'none';
-          }
-      }
-  </script>
+
 <script
 	type="text/javascript"
 	src="<?php echo getStaticResourcesPath() . "/script/simpletreemenu.js"; ?>"></script>
@@ -41,7 +33,7 @@ if ($c->errors != null) {
     
     <p>
     <?php 
-    foreach (array("GET", "POST", "HEAD") as $method) {
+    foreach (array("GET", "POST", "PATCH", "DELETE", "HEAD") as $method) {
         echo "<label><input type='radio' name='requestMethod' value='$method'" . 
                 ($c->requestMethod == $method ? "checked='checked'" : "")  . 
                 " onclick='toggleRequestBodyDisplay(this);'/> $method </label>&nbsp;";
@@ -49,18 +41,18 @@ if ($c->errors != null) {
     ?>
     </p>
     
-    <input name="url" value="<?php echo $c->url; ?>"
+    <input name="url" value="<?php echo htmlentities($c->url); ?>"
     	   style="width: 35em; height: 1.2em; font-size: 18px; font-weight: bold;"
     	   onKeyPress="if (checkEnter(event)) {document.getElementById('execBtn').click(); return false;}" />
     &nbsp; 
     <input id="execBtn" name="doExecute" type="submit" value="Execute" style="font-size: 18px;"/>
     
-    <div id="requestBodyContainer" style="display: <?php echo $c->requestMethod == 'POST' ? 'inline' : 'none';?>;">
+    <div id="requestBodyContainer" style="display: <?php echo in_array($c->requestMethod, array('POST', 'PATCH')) ? 'inline' : 'none';?>;">
         <p>
             <br />
             <strong>Request Body</strong>
         </p>
-        <textarea name="requestBody" style="width: 100%; height: 10em; font-family: courier, monotype;"><?php echo $c->requestBody; ?></textarea>
+        <textarea name="requestBody" style="width: 100%; height: 10em; font-family: courier, monotype;"><?php echo htmlentities($c->requestBody); ?></textarea>
     </div>
 </form>
 
@@ -72,28 +64,29 @@ if (isset($c->autoExec) && !$c->autoExec) {
 }
 ?>
 
-<p />
+<p/>
 
 <?php if ($c->showResponse) { ?>
 <div style="float: left;">
-    <?php if ($c->requestMethod != "HEAD") { ?>
+    <?php if (trim($c->instResponse) != "") { ?>
             <a href="javascript:ddtreemenu.flatten('responseList', 'expand')">Expand All</a> | 
-            <a href="javascript:ddtreemenu.flatten('responseList', 'contact')">Collapse All</a>
+            <a href="javascript:ddtreemenu.flatten('responseList', 'contact')">Collapse All</a> |
+            <a id="codeViewPortToggler" href="javascript:toggleCodeViewPort();">Show Raw Response</a>
             
             <div id="responseListContainer" class="results"></div>
             
-            <script type='text/javascript'>convert(<?php echo $c->response ?>);</script>
+            <script type='text/javascript'>convert(<?php echo $c->instResponse ?>);</script>
     <?php
         } else {
-            displayInfo("The HEAD method does not return a body to display.");
-            echo "<p/>";
+            displayInfo("No Body Returned. Dislaying Headers Only.");
+            echo "<pre>" . htmlentities($c->rawResponse->header) . "</pre>";
         }
     ?>
 </div>
 
-<div id="rawJson" class="codeViewPortContainer">
-    <strong>Raw Response</strong>
-    <p class="codeViewPort"><?php echo $c->rawResponseHeaders; ?><br /><?php echo $c->rawResponse; ?></p>
+<div id="codeViewPortContainer" style="display: none;">
+    <strong>Raw Response</strong> 
+    <p id="codeViewPort"><?php echo htmlentities($c->rawResponse->header); ?><br /><?php echo htmlentities($c->rawResponse->body); ?></p>
 </div>
 
 

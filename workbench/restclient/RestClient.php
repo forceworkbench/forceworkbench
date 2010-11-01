@@ -59,13 +59,31 @@ class RestApiClient {
             $httpHeaders[] = "Content-Type: $contentType; charset=UTF-8";
         }
 
-        if ($method == 'POST') {
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        switch ($method) {
+            case 'HEAD':
+                curl_setopt($ch, CURLOPT_NOBODY, 1);
+                break;
+            case 'GET': 
+                // do nothing
+                break;
+            case 'DELETE': 
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method); 
+                break;
+            case 'POST':
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                break;
+            case 'PATCH':
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method); 
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                break;
+            default:
+                throw new Exception($method . ' method not supported.');
         }
         
         curl_setopt($ch, CURLOPT_URL, $this->baseUrl . $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $httpHeaders);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);                                //TODO: use ca-bundle instead
@@ -78,7 +96,7 @@ class RestApiClient {
 
         $chResponse = curl_exec($ch);
         $this->log("RESPONSE \n" . htmlentities($chResponse));
-
+        
         if (curl_error($ch) != null) {
             $this->log("ERROR \n" . htmlentities(curl_error($ch)));
             throw new Exception(curl_error($ch));
@@ -86,7 +104,7 @@ class RestApiClient {
 
         curl_close($ch);
 
-        return $chResponse;
+        return new HttpResponse($chResponse);
     }
 
     //LOGGING FUNCTIONS
@@ -116,6 +134,17 @@ class RestApiClient {
 
     public function clearLogs() {
         $this->logs = null;
+    }
+}
+
+class HttpResponse {
+    public $header;
+    public $body;
+    
+    public function __construct($curlResponse) {
+        $exprResponse = explode("\n\r", $curlResponse, 2);
+        $this->header = $exprResponse[0];
+        $this->body = $exprResponse[1];
     }
 }
 ?>

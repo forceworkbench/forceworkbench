@@ -16,11 +16,11 @@ class RestResponseInstrumenter {
 
         // query url                                                         
         $this->insturmentations[] = new Insturmentation('(' . $restBasePattern . '/query)<',
-                                                         '$1</a>&nbsp;<a class=\'miniLink RestLinkable\' href=' . $baseUrl . '?url=$1?q=SELECT%2Bid,name,profile.name%2BFROM%2Buser%2BWHERE%2Busername=\'' . $_SESSION['getUserInfo']->userName . '\'&autoExec=1>SAMPLE<');  
+                                                         '$1</a>&nbsp;<a class=\'miniLink RestLinkable\' href=' . $baseUrl . '?url=$1?q=SELECT%2Bid,name,profile.name%2BFROM%2Buser%2BWHERE%2Busername=\'' . $_SESSION['getUserInfo']->userName . '\'&autoExec=1>[SAMPLE]<');  
 
         // search url                                                         
         $this->insturmentations[] = new Insturmentation('(' . $restBasePattern . '/search)<',
-                                                         '$1</a>&nbsp;<a class=\'miniLink RestLinkable\' href=' . $baseUrl . '?url=$1?q=FIND%2B%7B' . $_SESSION['getUserInfo']->userName . '%7D%2BIN%2BALL%2BFIELDS&autoExec=1>SAMPLE<');  
+                                                         '$1</a>&nbsp;<a class=\'miniLink RestLinkable\' href=' . $baseUrl . '?url=$1?q=FIND%2B%7B' . $_SESSION['getUserInfo']->userName . '%7D%2BIN%2BALL%2BFIELDS&autoExec=1>[SAMPLE]<');  
 
     }
 

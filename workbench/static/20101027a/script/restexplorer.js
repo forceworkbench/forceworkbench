@@ -53,11 +53,11 @@ function buildList(nodes, parent) {
 		var li = document.createElement("li");
 		
 		if (nodes[key] instanceof Object) {		
-			li.innerHTML = "<strong>" + getKeyLabel(key, nodes) + "</strong>";
+			li.innerHTML = getKeyLabel(key, nodes);
 			li.appendChild(buildList(nodes[key], document.createElement("ul")));
 		} else {
-			li.innerHTML = "<strong>" + key + ": </strong>";
-			li.innerHTML += nodes[key];
+			li.innerHTML = key + ": ";
+			li.innerHTML += "<strong>" + nodes[key] + "</strong>"
 		}
 	
 		parent.appendChild(li);
@@ -95,4 +95,17 @@ function toggleRequestBodyDisplay(radio) {
   } else {
 	  document.getElementById('requestBodyContainer').style.display = 'none';
   }
+}
+
+function toggleCodeViewPort() {
+	var codeViewPort = document.getElementById('codeViewPortContainer');
+	var codeViewPortToggler = document.getElementById('codeViewPortToggler');
+	
+	if (codeViewPort.style.display == 'none') {
+		codeViewPort.style.display = 'block';
+		codeViewPortToggler.innerHTML = 'Hide Raw Response';	
+	} else {
+		codeViewPort.style.display = 'none';
+		codeViewPortToggler.innerHTML = 'Show Raw Response';	
+	}
 }

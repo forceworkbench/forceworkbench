@@ -8,16 +8,13 @@ class RestExplorerController {
     public $url;
     public $requestBody;
     public $requestMethod;
-    public $rawResponseHeaders;
     public $rawResponse;
-    public $response;
+    public $instResponse;
     public $showResponse;
     public $autoExec;    
-    private $insturmenter;
     
     public function __construct() {
         $this->requestMethod = 'GET';
-        $this->insturmenter = new RestResponseInstrumenter($_SERVER['PHP_SELF']);
         $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->BASE_REST_URL_PREFIX;
     }
     
@@ -46,7 +43,6 @@ class RestExplorerController {
     private function execute() {
         try {
             // clear any old values, in case we don't populate them on this request
-            $this->rawResponseHeaders = null;
             $this->rawResponse = null;
             $this->response = null;
             $this->autoExec = null;
@@ -59,25 +55,18 @@ class RestExplorerController {
                 throw new Exception('Invalid REST API Service URI. Must begin with \'' + $this->BASE_REST_URL_PREFIX + '\'.');
             }
             
-            //TODO: remove mocking!
-            $this->rawResponseHeaders = "some headers\n";
+            if (in_array($this->requestMethod, array('POST', 'PATCH')) && trim($this->requestBody) == "") {
+                throw new Exception("POST and PATCH must include a Request Body.");
+            }
             
             $this->rawResponse = getRestApiConnection()->send($this->requestMethod, 
                                                               $this->url, "application/json",
-                                                              $this->requestMethod == 'POST' ? $this->requestBody : null);
+                                                              $this->requestBody);
+                        
             
-            $this->response = $this->rawResponse;
+            $insturmenter = new RestResponseInstrumenter($_SERVER['PHP_SELF']);
+            $this->instResponse = $insturmenter->instrument($this->rawResponse->body);
             
-//            // process the headers
-//            $this->rawResponseHeaders = '';                 
-//            for ($headerKey : $httpResponse.getHeaderKeys()) {
-//                if (headerKey == null) continue;
-//                rawResponseHeaders += headerKey + ': ' + httpResponse.getHeader(headerKey) + '\n';
-//            }
-//            
-//            // process the body
-//            $this->rawResponse = httpResponse.getBody();
-            $this->response = $this->insturmenter->instrument($this->rawResponse);
             $this->showResponse = true;
         } catch (Exception $e) {
             $this->errors = $e->getMessage();
