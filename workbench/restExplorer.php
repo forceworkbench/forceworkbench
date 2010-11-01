@@ -40,9 +40,16 @@ if ($c->errors != null) {
                 " onclick='toggleRequestBodyDisplay(this);'/> $method </label>&nbsp;";
     }
     ?>
+	&nbsp;
+	<input  id="upButton"
+	        type="button" 
+			src="<?php echo getStaticResourcesPath() . "/images/up.png"; ?>" 
+			value="Up" 
+			onclick="upUrl();"/>
     </p>
     
-    <input name="url" value="<?php echo htmlentities($c->url); ?>"
+    <input id="urlInput" 
+           name="url" value="<?php echo htmlentities($c->url); ?>"
     	   style="width: 35em; height: 1.2em; font-size: 18px; font-weight: bold;"
     	   onKeyPress="if (checkEnter(event)) {document.getElementById('execBtn').click(); return false;}" />
     &nbsp; 

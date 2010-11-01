@@ -1,4 +1,11 @@
- function checkEnter(e) { //e is event object passed from function invocation
+function upUrl() {
+	var urlInput = document.getElementById("urlInput");
+	if (urlInput.value.indexOf('/services/data/') == 0) {
+		urlInput.value = urlInput.value.substring(0, urlInput.value.lastIndexOf('/'));
+	} 
+}
+
+function checkEnter(e) { //e is event object passed from function invocation
 	 var characterCode; //literal character code will be stored in this variable
 	 
 	 if (e && e.which) { //if which property of event object is supported (NN4)

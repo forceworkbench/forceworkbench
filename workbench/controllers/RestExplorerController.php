@@ -51,8 +51,8 @@ class RestExplorerController {
             $this->url = str_replace(' ', '+', trim($this->url));
             
             // validate URL
-            if (strpos($this->url, $this->BASE_REST_URL_PREFIX) != 0) {
-                throw new Exception('Invalid REST API Service URI. Must begin with \'' + $this->BASE_REST_URL_PREFIX + '\'.');
+            if (strpos($this->url, $this->BASE_REST_URL_PREFIX) !== 0) {
+                throw new Exception('Invalid REST API Service URI. Must begin with \'' . $this->BASE_REST_URL_PREFIX . '\'.');
             }
             
             if (in_array($this->requestMethod, array('POST', 'PATCH')) && trim($this->requestBody) == "") {
