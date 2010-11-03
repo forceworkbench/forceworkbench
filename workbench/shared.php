@@ -1,4 +1,8 @@
 <?php
+function endsWith($haystack, $needle, $ignoreCase){
+    return substr_compare($haystack, $needle, -strlen($needle), strlen($needle), $ignoreCase) === 0;
+}
+
 function getStaticResourcesPath() {
     return $GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"];
 }
