@@ -33,7 +33,7 @@ class RestApiClient {
     }
 
     private function getBaseUrlFromPartnerEndpoint($partnerEndpoint) {
-        preg_match("!(https?://.*)/services/Soap/u/(\d{1,2}\.\d)/.*!", $partnerEndpoint, $matches);
+        preg_match("!(https?://.*)/services/Soap/u/(\d{1,2}\.\d)(/.*)?!", $partnerEndpoint, $matches);
         
         if ($matches[2] < 20.0) {
             throw new Exception("REST API operations only supported in API 20.0 and higher.");
