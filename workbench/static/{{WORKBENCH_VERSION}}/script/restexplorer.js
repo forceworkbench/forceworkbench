@@ -1,7 +1,14 @@
 function upUrl() {
 	var urlInput = document.getElementById("urlInput");
+	
 	if (urlInput.value.indexOf('/services/data/') == 0) {
-		urlInput.value = urlInput.value.substring(0, urlInput.value.lastIndexOf('/'));
+		var delims = ["&","?","/"];
+		for (var i in delims) {
+			if (urlInput.value.indexOf(delims[i]) > -1) {
+				urlInput.value = urlInput.value.substring(0, urlInput.value.lastIndexOf(delims[i]));
+				return;
+			}			
+		}
 	} 
 }
 

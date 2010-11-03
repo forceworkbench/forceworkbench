@@ -59,7 +59,7 @@ class RestExplorerController {
                 throw new Exception("POST and PATCH must include a Request Body.");
             }
 
-            $expectBinary = $this->requestMethod == 'GET' && preg_match("@\w{4}000\w{11}/\w+$@", $this->url) > 0;
+            $expectBinary = $this->requestMethod == 'GET' && preg_match("@\w{4}0{3}\w{8}([A-Z]{3})?/(Body|VersionData|ContentData|Document|Binary)$@", $this->url) > 0;
             $this->rawResponse = getRestApiConnection()->send($this->requestMethod, 
                                                               $this->url, "application/json",
                                                               in_array($this->requestMethod, array('POST', 'PATCH')) ? $this->requestBody : null,
