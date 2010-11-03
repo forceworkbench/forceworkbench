@@ -247,8 +247,10 @@ function localizeDateTimes($inputStr, $formatOverride = null) {
     // Short-circuit if we aren't actually doing anything useful.
     if ($formatOverride == null && $timezone == "" && getConfig("localeDateTimeFormat") == "") {
         return $inputStr;
-    }
-         
+    } 
+
+    date_default_timezone_set("UTC");
+    
     return preg_replace_callback('|\d\d\d\d\-\d\d\-\d\dT\d\d\:\d\d:\d\d\.\d\d\dZ|', 
                                  create_function(
                                     '$matches',
