@@ -2,7 +2,7 @@
 class RestApiClient {
     private $baseUrl;
     private $sessionId;
-    private $userAgent = "PHP-RestApiClient/20.0";
+    private $userAgent = "PHP-RestApiClient/21.0";
     private $compressionEnabled = true;
     private $logs;
     private $loggingEnabled = false;

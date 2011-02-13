@@ -1,11 +1,11 @@
 <?php
 
 /**
- * PHP BULK API CLIENT 20.0
+ * PHP BULK API CLIENT 21.0
  * @author Ryan Brainard
  *
  * JobInfo.php
- * Represents a Force.com Bulk API 20.0 JobInfo object.
+ * Represents a Force.com Bulk API 21.0 JobInfo object.
  *
  * For reference, see:
  * http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_reference_jobinfo.htm

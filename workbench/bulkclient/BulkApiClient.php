@@ -3,11 +3,11 @@ require_once 'JobInfo.php';
 require_once 'BatchInfo.php';
 
 /**
- * PHP BULK API CLIENT 20.0
+ * PHP BULK API CLIENT 21.0
  * @author Ryan Brainard
  *
  * BulkApiClient.php
- * Main client for interacting with the REST-based Force.com Bulk API 20.0
+ * Main client for interacting with the REST-based Force.com Bulk API 21.0
  * to asynchronously insert, update, and upsert data to Salesforce.
  * Requires PHP cURL library to be installed.
  *
@@ -38,7 +38,7 @@ require_once 'BatchInfo.php';
 class BulkApiClient {
     private $endpoint;
     private $sessionId;
-    private $userAgent = "PHP-BulkApiClient/20.0";
+    private $userAgent = "PHP-BulkApiClient/21.0";
     private $compressionEnabled = true;
     private $logs;
     private $loggingEnabled = false;

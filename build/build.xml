@@ -151,7 +151,7 @@
 		<junit printsummary="yes">
 		  <classpath refid="classpath.test.java"/>
 
-     	  <sysproperty key="baseUrl" value="http://localhost:8888/workbench-20.0.0/workbench/"/>
+     	  <sysproperty key="baseUrl" value="http://localhost:8888/workbench-trunk/workbench/"/>
 		  <sysproperty key="browser" value="*firefox"/>
 			
 		  <formatter type="plain"/>
