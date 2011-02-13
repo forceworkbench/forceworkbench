@@ -43,6 +43,12 @@ class BulkApiClient {
     private $logs;
     private $loggingEnabled = false;
 
+    /**
+     * Create a new Bulk API Client from an existing Partner API enpoint and session id
+     *
+     * @param  $partnerEndpoint endpoint from Partner API
+     * @param  $sessionId active Salesforce session id
+     */
     public function __construct($partnerEndpoint, $sessionId) {
 		if (!extension_loaded('curl')) {
 			throw new Exception('Missing required cURL extension.');
@@ -52,18 +58,30 @@ class BulkApiClient {
         $this->sessionId = $sessionId;
     }
 
+    /**
+     * @return string the user agent for this client
+     */
     public function getUserAgent() {
         return $this->userAgent;
     }
 
+    /**
+     * @param $userAgent customized user agent for this client
+     */
     public function setUserAgent($userAgent) {
         $this->userAgent = $userAgent;
     }
 
-    public function getCompressionEnabled() {
+    /**
+     * @return bool true if GZIP compression is enabled
+     */
+    public function isCompressionEnabled() {
         return $this->compressionEnabled;
     }
 
+    /**
+     * @param  $compressionEnabled true to enable compression
+     */
     public function setCompressionEnabled($compressionEnabled) {
         $this->compressionEnabled = $compressionEnabled;
     }
@@ -90,11 +108,27 @@ class BulkApiClient {
         return $apiVersionMatches[1] >= $minVersion;
     }
 
+    /**
+     * Creates a new job from a given in-memory JobInfo object and returns
+     * a new JobInfo object populated with additional information
+     * from the Bulk API
+     *
+     * @param JobInfo $job
+     * @return JobInfo
+     */
     public function createJob(JobInfo $job) {
         $this->validateJob($job);
         return new JobInfo($this->post($this->endpoint . "/job", "application/xml", $job->asXml()));
     }
 
+    /**
+     * Updates job from a given in-memory JobInfo object and returns
+     * a new JobInfo object populated with additional information
+     * from the Bulk API
+     *
+     * @param JobInfo $job
+     * @return JobInfo updated
+     */
     public function updateJob(JobInfo $job) {
         $this->validateJob($job);
         return new JobInfo($this->post($this->endpoint . "/job/" . $job->getId(), "application/xml", $job->asXml()));
@@ -118,6 +152,13 @@ class BulkApiClient {
         }
     }
 
+    /**
+     * Convenience function for changing the state of a job identified by a given jobId
+     *
+     * @param  $jobId
+     * @param  $state
+     * @return JobInfo
+     */
     public function updateJobState($jobId, $state) {
         $job = new JobInfo();
         $job->setId($jobId);
@@ -125,10 +166,23 @@ class BulkApiClient {
         return $this->updateJob($job);
     }
 
+    /**
+     * Query for the JobInfo of a given jobId
+     *
+     * @param  $jobId
+     * @return JobInfo
+     */
     public function getJobInfo($jobId) {
         return new JobInfo($this->get($this->endpoint . "/job/" . $jobId));
     }
 
+    /**
+     * Create a new Batch with the given data and associate with the given job
+     *
+     * @param JobInfo $job
+     * @param  $data
+     * @return BatchInfo
+     */
     public function createBatch(JobInfo $job, $data) {
         if ($job->getContentType() == "CSV") {
             $contentType = "text/csv";
@@ -145,10 +199,23 @@ class BulkApiClient {
         return new BatchInfo($this->post($this->endpoint . "/job/" . $job->getId() . "/batch", $contentType, $data));
     }
 
+    /**
+     * Retrieves the BatchInfo for a given jobId and batchId
+     *
+     * @param  $jobId
+     * @param  $batchId
+     * @return BatchInfo
+     */
     public function getBatchInfo($jobId, $batchId) {
         return new BatchInfo($this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId));
     }
 
+    /**
+     * Finds all the BatchInfos associated with a given jobId
+     *
+     * @param  $jobId
+     * @return array of BatchInfos
+     */
     public function getBatchInfos($jobId) {
         $batchInfos = array();
 
@@ -160,6 +227,13 @@ class BulkApiClient {
         return $batchInfos;
     }
 
+    /**
+     * Returns a copy of the sent request for a given jobId and batchId
+     *
+     * @param  $jobId
+     * @param  $batchId
+     * @return mixed
+     */
     public function getBatchRequest($jobId, $batchId) {
         if (!$this->apiVersionIsAtLeast($this->endpoint, 19.0)) {
             throw new Exception("Gettiing a batch request is only supported in API 19.0 and higher.");
@@ -168,8 +242,52 @@ class BulkApiClient {
         return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/request");
     }
 
+    /**
+     * Returns either the actual result (DML) or result-list (queries) for a given batch.
+     *
+     * @param  $jobId
+     * @param  $batchId
+     * @return mixed
+     */
     public function getBatchResults($jobId, $batchId) {
         return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/result");
+    }
+
+    /**
+     * Returns an array of resultIds for a given batch wih a result-list.
+     * Currently, only applies to Query operations.
+     *
+     * @param  $jobId
+     * @param  $batchId
+     * @return array
+     */
+    public function getBatchResultList($jobId, $batchId) {
+        $resultListRaw = $this->getBatchResults($jobId, $batchId);
+        $resultListXml = new SimpleXMLElement($resultListRaw);
+        $resultListArray = array();
+
+        if (!isset($resultListXml->result)) {
+            throw new Exception("No result-list found in the results for Batch " . $batchId);
+        }
+
+        foreach ($resultListXml->result as $resultId) {
+            $resultListArray[] = (String) $resultId;
+        }
+
+        return $resultListArray;
+    }
+
+    /**
+     * Returns an individual result for a given resultId in a batch wih a result-list.
+     * Currently, only applies to Query operations.
+     *
+     * @param  $jobId
+     * @param  $batchId
+     * @param  $resultId
+     * @return mixed
+     */
+    public function getBatchResult($jobId, $batchId, $resultId) {
+        return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/result/" . $resultId);
     }
 
     private function http($isPost, $url, $contentType, $data) {
@@ -223,14 +341,24 @@ class BulkApiClient {
 
     //LOGGING FUNCTIONS
 
+    /**
+     * @return bool true if logging is enabled
+     */
     public function isLoggingEnabled() {
         return $this->loggingEnabled;
     }
 
+    /**
+     * @param  $loggingEnabled enables logging if true
+     */
     public function setLoggingEnabled($loggingEnabled) {
         $this->loggingEnabled = $loggingEnabled;
     }
 
+    /**
+     * @param  $txt text to log
+     * @return pass through the input
+     */
     protected function log($txt) {
         if ($this->loggingEnabled) {
             $this->logs .= $txt .= "\n\n";
@@ -238,14 +366,24 @@ class BulkApiClient {
         return $txt;
     }
 
+    /**
+     * @param  $extLogs a log buffer external to this client
+     * @return void
+     */
     public function setExternalLogReference(&$extLogs) {
         $this->logs = &$extLogs;
     }
 
+    /**
+     * @return the log buffer
+     */
     public function getLogs() {
         return $this->logs;
     }
 
+    /**
+     * clears log buffer
+     */
     public function clearLogs() {
         $this->logs = null;
     }

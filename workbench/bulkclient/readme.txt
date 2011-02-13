@@ -3,8 +3,8 @@ Distributed under the Open Source BSD License.
 Developed By Ryan Brainard
 
 The files in this folder make up a client for PHP developers to interact with the
-REST-based Force.com Bulk API 21.0 to asynchronously insert, update, and
-upsert data to Salesforce. Please see the individual files below for more
+REST-based Force.com Bulk API 21.0 to asynchronously insert, update, upsert, and
+query data to Salesforce. Please see the individual files below for more
 information:
 
 * BulkApiClientSample.php -- START HERE: sample code and explanations
