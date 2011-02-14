@@ -232,6 +232,19 @@ $config["header_LoginOptions"] = array(
         "valuesToLabels" => $GLOBALS['API_VERSIONS']
     );
 
+    $config["useSfdcFrontdoor"] = array(
+        "label" => "Pass Session to Salesforce",
+        "description" => "When jumping from Workbench to Salesforce, should Workbench pass its session id to Salesforce. Automatic will only use pass the session if the Salesforce session is not likely set.",
+        "default" => "AUTO",
+        "overrideable" => true,
+        "dataType" => "picklist",
+        "valuesToLabels" => array(
+            "AUTO"    => "Automatic",
+            "ALWAYS"  => "Always",
+            "NEVER "  => "Never"
+        )
+    );
+
     $config["useHTTPS"] = array(
         "label" => "Connect to Salesforce over HTTPS",
         "description" => "Use HTTPS to connect to Salesforce API from Workbench server. Does not guarantee HTTPS will be used from this computer to Workbench server. Disabling this setting will also change redirect Server URLs returned from Salesforce to use HTTP. Must login again for changes to take effect.",
@@ -804,7 +817,8 @@ $GLOBALS["MENUS"] = array(
         'burn.php'                    => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,false,true,''),
         'downloadAsyncBatch.php'      => new Page('Download Bulk API Batch','Downloads Bulk API requests and results',true,true,false,false,true,''),
         'downloadResultsWithData.php' => new Page('Download DML Results','Downloads DML results',true,true,false,false,true,''),
-        'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload',true,true,false,false,true,'')
+        'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload',true,true,false,false,true,''),
+        'jumpToSfdc.php'              => new Page('Jump to SFDC','Jumps to SFDC',true,true,false,false,true,'')
      )
 );
 ?>

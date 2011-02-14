@@ -451,6 +451,8 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         $_SESSION['location'] = $location;
         $_SESSION['sessionId'] = $partnerConnection->getSessionId();
         $_SESSION['wsdl'] = $wsdl;
+        $_SESSION['sfdcUiSidLikelySet'] = isset($_GET['sid']);
+
         if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'on') {
             setcookie('user',$username,time()+60*60*24*7,'','','',TRUE);
         } else {

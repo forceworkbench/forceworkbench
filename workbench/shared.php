@@ -483,18 +483,15 @@ function natcaseksort($array) {
 
 function addLinksToUiForIds($inputStr) {
     if (getConfig('linkIdToUi')) {
-        preg_match("@(https?://.*)/services@", $_SESSION['location'], $instUIDomain);
-        return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$1' target='sfdcUi'>$1</a>",$inputStr);
+        return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='" . getJumpToSfdcUrlPrefix() . "$1' target='sfdcUi'>$1</a>", $inputStr);
     } else {
         return $inputStr;
     }
 }
 
-function addLinksToUi($startUrl) {
-    preg_match("@(https?://.*)/services@", $_SESSION['location'], $instUIDomain);
-    return "$instUIDomain[1]/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F$startUrl";
+function getJumpToSfdcUrlPrefix() {
+    return "jumpToSfdc.php?startUrl=";
 }
-
 
 function convertArrayToCsvLine($arr) {
     $line = array();
