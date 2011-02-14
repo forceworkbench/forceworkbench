@@ -511,6 +511,8 @@ function confirmFieldMappings($action, $fieldMap, $csvArray, $extId) {
         exit;
     } 
 
+    $recommendDoAsync = count($csvArray) >= getConfig("asyncRecommendationThreshold");
+
     if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
         if (!isset($fieldMap['Id'])) {
             displayError("Salesforce ID not selected. Please try again.",false,true);
@@ -530,7 +532,9 @@ function confirmFieldMappings($action, $fieldMap, $csvArray, $extId) {
                 }
             }
             $fieldMappingTable = ob_get_clean();
-            displayInfo ("The file uploaded contains $idCount records with Salesforce IDs with the field mapping below.");
+            displayInfo ("The file uploaded contains $idCount records with Salesforce IDs with the field mapping below." .
+                         ($recommendDoAsync ? " Due to the number of records being processed, it is recommended to use the Bulk API." : "")
+                        );
             print "<p class='instructions'>Confirm the mappings below:</p>";
             print "<p>$fieldMappingTable</p>";
         }
@@ -542,7 +546,7 @@ function confirmFieldMappings($action, $fieldMap, $csvArray, $extId) {
     }
 
     print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
-    displayBulkApiOptions($action, false);
+    displayBulkApiOptions($action, false, $recommendDoAsync);
     print "<p>&nbsp;</p><p><input type='submit' name='action' value='$action' /></p>\n";
     print "</form>\n";
 }
@@ -918,7 +922,7 @@ function supportsZips($action) {
     return supportsBulk($action) && apiVersionIsAtLeast(20.0);
 }
 
-function displayBulkApiOptions($action, $forceDoAsync) {
+function displayBulkApiOptions($action, $forceDoAsync, $recommendDoAsync = false) {
     //Hard Delete option
     if (apiVersionIsAtLeast(19.0) && $action == 'Confirm Delete') {
         print "<p><label><input type='checkbox' id='doHardDelete' name='doHardDelete' onClick=\"".
@@ -943,7 +947,9 @@ function displayBulkApiOptions($action, $forceDoAsync) {
         if ($forceDoAsync) {
             print "<input name='doAsync' type='hidden' value='true'/>";
         } else {
-           print "<p><label><input id='doAsync' name='doAsync' type='checkbox' onClick=\"".
+           print "<p><label><input id='doAsync' name='doAsync' type='checkbox' " .
+               ($recommendDoAsync ? "checked='checked' " : "") . 
+               "onClick=\"".
                "var doHardDelete = document.getElementById('doHardDelete');" .
                "var asyncDeleteObjectSelection = document.getElementById('asyncDeleteObjectSelection');" .
                "var unsupportedBulkConfigList = document.getElementById('unsupportedBulkConfigList');" .
@@ -966,7 +972,7 @@ function displayBulkApiOptions($action, $forceDoAsync) {
         // object selection for Bulk API Delete
         if ($action == 'Confirm Delete') {
             print "<div id='asyncDeleteObjectSelection' style='display: " .
-                   ($forceDoAsync ? "inline" : "none; margin-left: 3em;") . 
+                   ($forceDoAsync || $recommendDoAsync ? "inline" : "none; margin-left: 3em;") . 
                    "'>Object Type: ";
             printObjectSelection($_SESSION['default_object']);
             print "</div>";
@@ -993,7 +999,7 @@ function displayBulkApiOptions($action, $forceDoAsync) {
         
         // print out a warning if any settings were found
         if (count($bulkUnsupportedSettings) > 0) {
-            print "<div id='unsupportedBulkConfigList' style='display: " . ($forceDoAsync ? "inline" : "none") . "; color: orange;'>" .
+            print "<div id='unsupportedBulkConfigList' style='display: " . ($forceDoAsync || $recommendDoAsync ? "inline" : "none") . "; color: orange;'>" .
                       "<p " . ($forceDoAsync ? "" : "style='margin-left: 3em;'") . ">" .  
                           "<img src='" . getStaticResourcesPath() ."/images/warning24.png' /> " .
                           "The following settings are not supported by the Bulk API and will be ignored:" . 

@@ -655,6 +655,15 @@ $config["header_Execute"] = array(
         "minValue" => 1
     );
 
+    $config["asyncRecommendationThreshold"] = array(
+        "label" => "Bulk API Recommendation Threshold",
+        "description" => "Recommend using the Bulk API if the number of records exceeds this number",
+        "default" => 1000,
+        "overrideable" => true,
+        "dataType" => "int",
+        "minValue" => 1
+    );
+
     $config["maxFileSize"] = array(
         "label" => "Maxiumum File Size (bytes)",
         "description" => "Maximum file size for upload in bytes.",
