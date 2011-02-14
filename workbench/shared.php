@@ -322,13 +322,14 @@ function describeGlobal($filter1=null, $filter2=null) {
 
 function printObjectSelection($defaultObject=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null) {
     $_SESSION['default_object'] = $defaultObject;
+    $describeGlobalResults = describeGlobal($filter1, $filter2);
 
     print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";
 
     print "<option value=''></option>";
 
     //Print the global object types in a dropdown select box, using the filter set and the API version supports it
-    foreach (describeGlobal($filter1, $filter2) as $type) {
+    foreach ($describeGlobalResults as $type) {
         print "    <option value='$type'";
         if ($defaultObject == $type) {
             print " selected='true'";
