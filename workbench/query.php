@@ -86,6 +86,8 @@ if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
     $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
     displayQueryResults($records,$queryTimeElapsed,$queryRequest);
     include_once 'footer.php';
+} else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && strpos($queryRequest->getExportTo(), 'async_') === 0) {
+    queryAsync($queryRequest);
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
     if (!substr_count($_POST['soql_query'],"count()")) {
         $records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction(),null,true);
@@ -499,7 +501,16 @@ QUERY_BUILDER_SCRIPT;
 
         print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
         if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
-        print " onClick='toggleMatrixSortSelectors(true);'>CSV File</label>&nbsp;";
+        print " onClick='toggleMatrixSortSelectors(true);'>CSV</label>&nbsp;";
+
+        print "<label><input type='radio' id='export_action_async_csv' name='export_action' value='async_CSV' ";
+        if ($queryRequest->getExportTo() == 'async_CSV') print "checked='true'";
+        print " onClick='toggleMatrixSortSelectors(true);'>Bulk CSV</label>&nbsp;";
+
+        print "<label><input type='radio' id='export_action_async_xml' name='export_action' value='async_XML' ";
+        if ($queryRequest->getExportTo() == 'async_XML') print "checked='true'";
+        print " onClick='toggleMatrixSortSelectors(true);'>Bulk XML</label>&nbsp;";
+
 
         print "<td valign='top' colspan=2>Deleted and archived records:<br/>" .
             "<label><input type='radio' name='query_action' value='Query' ";
@@ -936,6 +947,28 @@ function exportQueryAsCsv($records,$queryAction) {
         print "<p />";
         displayWarning("No records returned for CSV output.",false,true);
     }
+}
+
+function queryAsync($queryRequest) {
+    if ($queryRequest->getQueryAction() == "QueryAll") {
+        throw new Exception("Including deleted and archived records not supported by Bulk Queries.");
+    }
+
+    require_once 'bulkclient/BulkApiClient.php';
+    $asyncConnection = getAsyncApiConnection();
+
+    $job = new JobInfo();
+    $job->setObject($queryRequest->getObject());
+    $job->setOpertion("query");
+    $job->setContentType(substr($queryRequest->getExportTo(), strlen("async_")));
+    $job->setConcurrencyMode(getConfig("asyncConcurrencyMode"));
+
+    $job = $asyncConnection->createJob($job);
+    $asyncConnection->createBatch($job, $queryRequest->getSoqlQuery());
+    $job = $asyncConnection->updateJobState($job->getId(), "Closed");
+
+
+    header("Location: asyncStatus.php?jobId=" . $job->getId());
 }
 
 ?>

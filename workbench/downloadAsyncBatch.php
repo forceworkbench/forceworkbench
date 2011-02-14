@@ -3,8 +3,8 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'bulkclient/BulkApiClient.php';
 
-if (!isset($_GET['jobId']) || !isset($_GET['batchId']) || !isset($_GET['op']) || !isset($_GET['contentType'])) {
-    displayError("'jobId', 'batchId', 'op', and 'contentType' parameters must be specified", true, true);
+if (!isset($_GET['jobId']) || !isset($_GET['batchId']) || !isset($_GET['op'])) {
+    displayError("'jobId', 'batchId', and 'op' parameters must be specified", true, true);
     exit;
 }
 
@@ -12,7 +12,11 @@ try {
     $asyncConnection = getAsyncApiConnection();
     $jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);
     if ($_GET['op'] == 'result') {
-        $batchData = $asyncConnection->getBatchResults($_GET['jobId'], $_GET['batchId']);
+        if (isset($_GET['resultId'])) {
+            $batchData = $asyncConnection->getBatchResult($_GET['jobId'], $_GET['batchId'], $_GET['resultId']);
+        } else {
+            $batchData = $asyncConnection->getBatchResults($_GET['jobId'], $_GET['batchId']);
+        }
     } else if ($_GET['op'] == 'request') {
         if (!apiVersionIsAtLeast(19.0)) {
             displayError("Downloading batch requests only supported in API 19.0 and higher", true, true);
@@ -37,17 +41,18 @@ if (strpos($batchData, "<exceptionCode>")) {
     displayError("No results found. Confirm job or batch has not expired.", true, true);
     exit;
 } else {
-    if (stristr($_GET['contentType'], "CSV")) {
+    if (stristr($jobInfo->getContentType(), "CSV")) {
         $fileExt = "csv";
-    } else if (stristr($_GET['contentType'], "XML")) {
+        header("Content-Type: application/csv");
+    } else if (stristr($jobInfo->getContentType(), "XML")) {
         $fileExt = "xml";
+        header("Content-Type: application/xml");
     } else {
         throw new Exception("Unknown content type");
     }
     
     
     $csvFilename = "bulk" . ucwords($jobInfo->getOpertion()). "_" . $_GET['op'] . "_" . $_GET['jobId'] . "_" . $_GET['batchId'] . "." . $fileExt;
-    header("Content-Type: application/csv");
     header("Content-Disposition: attachment; filename=$csvFilename");
     print $batchData;
 }

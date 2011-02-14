@@ -31,7 +31,7 @@ try {
     exit;
 }
 
-print "<p class='instructions'>Records have been uploaded to Salesforce via the Bulk API and are processed asynchronously as resources are available. " .
+print "<p class='instructions'>A job has been uploaded to Salesforce via the Bulk API and is being processed asynchronously as resources are available. " .
       "Refresh this page periodically to view the latest status. Results can be downloaded when batches are complete.</p><p/>";
 
 foreach ($batchInfos as $batchInfo) {
@@ -114,9 +114,15 @@ if (count($batchInfos) > 0) {
     foreach ($batchInfos as $batchInfo) {
         print "<tr><td class='dataValue'>";
         if ($batchInfo->getState() == "Completed" || $batchInfo->getState() == "Failed") {
-            print "<a href='downloadAsyncBatch.php?op=result&jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "&contentType=" . $jobInfo->getContentType() . "'>" .
-                  "<img src='" . getStaticResourcesPath() . "/images/downloadIcon" . $batchInfo->getState() . ".gif' border='0' onmouseover=\"Tip('Download " . $batchInfo->getState() . " Batch Results')\"/>" . 
-                  "</a>";
+            $batchResultList = array(null); // default to an array of one null 
+            if ($jobInfo->getOpertion() == 'query' && $batchInfo->getState() == "Completed") {
+                $batchResultList = $asyncConnection->getBatchResultList($jobInfo->getId(), $batchInfo->getId());
+            }
+            foreach($batchResultList as $resultId) {
+                print "<a href='downloadAsyncBatch.php?op=result&jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "&resultId=" . $resultId . "'>" .
+                      "<img src='" . getStaticResourcesPath() . "/images/downloadIcon" . $batchInfo->getState() . ".gif' border='0' onmouseover=\"Tip('Download " . $batchInfo->getState() . " Batch Results')\"/>" .
+                      "</a><br/>";
+            }
         } else {
             print "&nbsp;";
         }
