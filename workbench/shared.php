@@ -750,7 +750,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
         if (isset($_SESSION['restDebugLog']) && $_SESSION['restDebugLog'] != "") {
             print "<h1 onclick=\"toggleDebugSection(this,'rest_debug_container')\" class=\"debugHeader\">+ REST/BULK API LOGS</h1>\n";
             print "<div id='rest_debug_container' class='debugContainer'>";
-            print "<pre>" . htmlspecialchars($_SESSION['restDebugLog'],ENT_QUOTES,'UTF-8') . "</pre>";
+            print "<pre>" . $_SESSION['restDebugLog'] . "</pre>";
             print "<hr/>";
             print "</div>";
 

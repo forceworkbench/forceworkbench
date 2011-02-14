@@ -84,15 +84,10 @@ if (isset($c->autoExec) && !$c->autoExec) {
             <div id="responseListContainer" class="results"></div>
             
             <script type='text/javascript'>convert(<?php echo $c->instResponse ?>);</script>
-    <?php
-        } else {
-            displayInfo("No Body Returned. Dislaying Headers Only.");
-            echo "<pre>" . htmlentities($c->rawResponse->header) . "</pre>";
-        }
-    ?>
+    <?php } ?>
 </div>
 
-<div id="codeViewPortContainer" style="display: none;">
+<div id="codeViewPortContainer" style="display: <?php echo trim($c->instResponse) != "" ? "none; right:10px;" : "block"  ?>;">
     <strong>Raw Response</strong> 
     <p id="codeViewPort"><?php echo htmlentities($c->rawResponse->header); ?><br /><?php echo htmlentities($c->rawResponse->body); ?></p>
 </div>

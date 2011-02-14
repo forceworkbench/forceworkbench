@@ -3,7 +3,7 @@ require_once 'restclient/RestClient.php';
 require_once 'controllers/RestResponseInstrumenter.php';
 
 class RestExplorerController {  
-    private $BASE_REST_URL_PREFIX = '/services/data';
+    private $BASE_REST_URL_PREFIX = '/services';
     public $errors; 
     public $url;
     public $requestBody;
@@ -15,7 +15,7 @@ class RestExplorerController {
     
     public function __construct() {
         $this->requestMethod = 'GET';
-        $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->BASE_REST_URL_PREFIX;
+        $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->BASE_REST_URL_PREFIX . '/data';
     }
     
     public function onPageLoad() {
@@ -44,15 +44,16 @@ class RestExplorerController {
         try {
             // clear any old values, in case we don't populate them on this request
             $this->rawResponse = null;
-            $this->response = null;
+            $this->instResponse = null;
             $this->autoExec = null;
             
             // clean up the URL
             $this->url = str_replace(' ', '+', trim($this->url));
             
             // validate URL
-            if (strpos($this->url, $this->BASE_REST_URL_PREFIX) !== 0) {
-                throw new Exception('Invalid REST API Service URI. Must begin with \'' . $this->BASE_REST_URL_PREFIX . '\'.');
+            if (preg_match("!" . $this->BASE_REST_URL_PREFIX . "/\w+!", $this->url) == 0) {
+                throw new Exception('Invalid REST API Service URI. Must begin with \''
+                        . $this->BASE_REST_URL_PREFIX . '\' followed by a service name, such as \'/services/data\'.');
             }
             
             if (in_array($this->requestMethod, array('POST', 'PATCH')) && trim($this->requestBody) == "") {
@@ -65,15 +66,24 @@ class RestExplorerController {
                                                               in_array($this->requestMethod, array('POST', 'PATCH')) ? $this->requestBody : null,
                                                               $expectBinary);
 
-            if ($expectBinary) {
+            if (stripos($this->rawResponse->header, "HTTP/1.1 404") !== false) {
+                $this->showResponse = false;
+                throw new Exception("Service not found at: " . $this->url);
+            } if (stripos($this->rawResponse->header, "Content-Type: text/html") !== false) {
+                $this->showResponse = false;
+                throw new Exception("Got HTML at: " . $this->url);
+            } else if ($expectBinary) {
                 $this->offerBinaryResponseAsDownload();
                 $this->rawResponse = null;
                 return;
-            } else {                                              
+            } else if (stripos($this->rawResponse->header, "Content-Type: application/json") !== false) {                                              
                 $insturmenter = new RestResponseInstrumenter($_SERVER['PHP_SELF']);
                 $this->instResponse = $insturmenter->instrument($this->rawResponse->body);
                 $this->showResponse = true;
+            } else {
+                $this->showResponse = true;
             }
+
         } catch (Exception $e) {
             $this->errors = $e->getMessage();
         }

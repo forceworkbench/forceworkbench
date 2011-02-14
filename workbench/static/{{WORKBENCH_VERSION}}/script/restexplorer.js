@@ -1,7 +1,7 @@
 function upUrl() {
 	var urlInput = document.getElementById("urlInput");
 	
-	if (urlInput.value.indexOf('/services/data/') == 0) {
+	if (urlInput.value.indexOf('/services/') == 0) {
 		var delims = ["&","?","/"];
 		for (var i in delims) {
 			if (urlInput.value.indexOf(delims[i]) > -1) {
