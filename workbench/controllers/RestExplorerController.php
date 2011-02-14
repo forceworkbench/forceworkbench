@@ -11,8 +11,8 @@ class RestExplorerController {
     public $rawResponse;
     public $instResponse;
     public $showResponse;
-    public $autoExec;    
-    
+    public $autoExec;
+
     public function __construct() {
         $this->requestMethod = 'GET';
         $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->BASE_REST_URL_PREFIX . '/data';
@@ -56,14 +56,14 @@ class RestExplorerController {
                         . $this->BASE_REST_URL_PREFIX . '\' followed by a service name, such as \'/services/data\'.');
             }
             
-            if (in_array($this->requestMethod, array('POST', 'PATCH')) && trim($this->requestBody) == "") {
-                throw new Exception("POST and PATCH must include a Request Body.");
+            if (in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) && trim($this->requestBody) == "") {
+                throw new Exception("Must include a Request Body.");
             }
 
             $expectBinary = $this->requestMethod == 'GET' && preg_match("@\w{4}0{3}\w{8}([A-Z]{3})?/(Body|VersionData|ContentData|Document|Binary)$@", $this->url) > 0;
             $this->rawResponse = getRestApiConnection()->send($this->requestMethod, 
                                                               $this->url, "application/json",
-                                                              in_array($this->requestMethod, array('POST', 'PATCH')) ? $this->requestBody : null,
+                                                              in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) ? $this->requestBody : null,
                                                               $expectBinary);
 
             if (stripos($this->rawResponse->header, "HTTP/1.1 404") !== false) {

@@ -7,6 +7,14 @@ class RestApiClient {
     private $logs;
     private $loggingEnabled = false;
 
+    public static function getMethods() {
+        return array("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD");
+    }
+
+    public static function getMethodsWithBodies() {
+        return array("POST", "PUT", "PATCH");
+    }
+
     public function __construct($partnerEndpoint, $sessionId) {
 		if (!extension_loaded('curl')) {
 			throw new Exception('Missing required cURL extension.');
@@ -74,7 +82,8 @@ class RestApiClient {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
                 break;
             case 'PATCH':
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method); 
+            case 'PUT':
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
                 break;
             default:

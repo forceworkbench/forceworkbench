@@ -103,8 +103,8 @@ function convert(jsonData) {
    }
 }
 
-function toggleRequestBodyDisplay(radio) {
-  if (radio.checked && (radio.value == 'POST' || radio.value == 'PATCH')) {
+function toggleRequestBodyDisplay(radio, hasBody) {
+  if (radio.checked && hasBody) {
 	  document.getElementById('requestBodyContainer').style.display = 'inline';
   } else {
 	  document.getElementById('requestBodyContainer').style.display = 'none';

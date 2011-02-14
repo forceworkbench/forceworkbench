@@ -34,10 +34,11 @@ if ($c->errors != null) {
     
     <p>
     <?php 
-    foreach (array("GET", "POST", "PATCH", "DELETE", "HEAD") as $method) {
+    foreach (RestApiClient::getMethods() as $method) {
         echo "<label><input type='radio' name='requestMethod' value='$method'" . 
                 ($c->requestMethod == $method ? "checked='checked'" : "")  . 
-                " onclick='toggleRequestBodyDisplay(this);'/> $method </label>&nbsp;";
+                " onclick='toggleRequestBodyDisplay(this, " . (in_array($method, RestApiClient::getMethodsWithBodies()) ? 'true' : 'false') .
+                ");'/> $method </label>&nbsp;";
     }
     ?>
 	&nbsp;
@@ -55,7 +56,7 @@ if ($c->errors != null) {
     &nbsp; 
     <input id="execBtn" name="doExecute" type="submit" value="Execute" style="font-size: 18px;"/>
     
-    <div id="requestBodyContainer" style="display: <?php echo in_array($c->requestMethod, array('POST', 'PATCH')) ? 'inline' : 'none';?>;">
+    <div id="requestBodyContainer" style="display: <?php echo in_array($c->requestMethod, RestApiClient::getMethodsWithBodies()) ? 'inline' : 'none';?>;">
         <p>
             <br />
             <strong>Request Body</strong>
