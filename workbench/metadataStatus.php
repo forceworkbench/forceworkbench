@@ -82,15 +82,21 @@ try {
         $results = $operation == "D" ? $metadataConnection->checkDeployStatus($asyncProcessId, $debugInfo) : $metadataConnection->checkRetrieveStatus($asyncProcessId, $debugInfo);
 
         $zipLink = null;
-        if (isset($results->zipFile)) {
+        if (isset($results->zipFile) || isset($results->retrieveResult->zipFile) ) {
+            if (isset($results->zipFile)) {
+                $_SESSION['retrievedZips'][$asyncResults->id] = $results->zipFile;
+                unset($results->zipFile);
+            } else if (isset($results->retrieveResult->zipFile)) {
+                $_SESSION['retrievedZips'][$asyncResults->id] = $results->retrieveResult->zipFile;
+                unset($results->retrieveResult->zipFile);
+            }
+
             displayInfo("Retrieve result ZIP file is ready for download.");
             print "<p/>";
 
             $zipLink = " | <a id='zipLink' href='$_SERVER[PHP_SELF]?asyncProcessId=$asyncResults->id&downloadZip' onclick='undownloadedZip=false;' style='text-decoration:none;'>" .
                        "<span style='text-decoration:underline;'>Download ZIP File</span> <img src='" . getStaticResourcesPath() ."/images/downloadIconCompleted.gif' border='0'/>" . 
                        "</a></p>";
-            $_SESSION['retrievedZips'][$asyncResults->id] = $results->zipFile;
-            unset($results->zipFile);
         }
 
         printTree("metadataStatusResultsTree", processResults($results), true, $zipLink);
