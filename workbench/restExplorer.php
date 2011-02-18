@@ -42,10 +42,14 @@ if ($c->errors != null) {
     }
     ?>
 	&nbsp;
+    <input  id="headersButton"
+	        type="button"
+			value="Headers"
+			onclick="toggleRequestHeaders();"/>
+    &nbsp;
 	<input  id="upButton"
 	        type="button" 
-			src="<?php echo getStaticResourcesPath() . "/images/up.png"; ?>" 
-			value="Up" 
+			value="Up"
 			onclick="upUrl();"/>
     </p>
 
@@ -56,15 +60,14 @@ if ($c->errors != null) {
     &nbsp; 
     <input id="execBtn" name="doExecute" type="submit" value="Execute" style="font-size: 18px;"/>
 
-    <a id="requestHeadersToggler" class="miniLink" href="javascript:toggleRequestHeaders();">Show Request Headers</a>
-
     <div id="requestHeaderContainer" style="display: none;">
         <p>
             <strong>Request Headers</strong>
         </p>
         <textarea id="requestHeaders" name="requestHeaders" style="width: 100%; height: 4em; font-family: courier, monotype;"><?php echo htmlentities($c->requestHeaders); ?></textarea>
-        <a id="requestHeadersDefaulter" class="miniLink pseudoLink"
+        <a id="requestHeadersDefaulter" class="miniLink pseudoLink" style="float: right;"
            onClick="document.getElementById('requestHeaders').value='<?php echo str_replace("\n", "\\n", $c->getDefaultRequestHeaders()); ?>';">Restore Default Headers</a>
+        <br/>
     </div>
 
     <div id="requestBodyContainer" style="display: <?php echo in_array($c->requestMethod, RestApiClient::getMethodsWithBodies()) ? 'inline' : 'none';?>;">
@@ -72,6 +75,7 @@ if ($c->errors != null) {
             <strong>Request Body</strong>
         </p>
         <textarea name="requestBody" style="width: 100%; height: 10em; font-family: courier, monotype;"><?php echo htmlentities($c->requestBody); ?></textarea>
+        <br/>
     </div>
 </form>
 

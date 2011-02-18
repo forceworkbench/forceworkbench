@@ -113,14 +113,11 @@ function toggleRequestBodyDisplay(radio, hasBody) {
 
 function toggleRequestHeaders() {
 	var container = document.getElementById('requestHeaderContainer');
-	var toggler = document.getElementById('requestHeadersToggler');
 
 	if (container.style.display == 'none') {
 		container.style.display = 'block';
-		toggler.innerHTML = 'Hide Request Headers';
 	} else {
 		container.style.display = 'none';
-		toggler.innerHTML = 'Show Request Headers';
 	}
 }
 
