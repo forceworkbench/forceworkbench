@@ -111,15 +111,28 @@ function toggleRequestBodyDisplay(radio, hasBody) {
   }
 }
 
+function toggleRequestHeaders() {
+	var container = document.getElementById('requestHeaderContainer');
+	var toggler = document.getElementById('requestHeadersToggler');
+
+	if (container.style.display == 'none') {
+		container.style.display = 'block';
+		toggler.innerHTML = 'Hide Request Headers';
+	} else {
+		container.style.display = 'none';
+		toggler.innerHTML = 'Show Request Headers';
+	}
+}
+
 function toggleCodeViewPort() {
 	var codeViewPort = document.getElementById('codeViewPortContainer');
 	var codeViewPortToggler = document.getElementById('codeViewPortToggler');
-	
+
 	if (codeViewPort.style.display == 'none') {
 		codeViewPort.style.display = 'block';
-		codeViewPortToggler.innerHTML = 'Hide Raw Response';	
+		codeViewPortToggler.innerHTML = 'Hide Raw Response';
 	} else {
 		codeViewPort.style.display = 'none';
-		codeViewPortToggler.innerHTML = 'Show Raw Response';	
+		codeViewPortToggler.innerHTML = 'Show Raw Response';
 	}
 }

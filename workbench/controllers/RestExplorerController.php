@@ -4,10 +4,11 @@ require_once 'controllers/RestResponseInstrumenter.php';
 
 class RestExplorerController {  
     private $BASE_REST_URL_PREFIX = '/services';
-    public $errors; 
+    private $DEFAULT_REQUEST_HEADERS = "Content-Type: application/json; charset=UTF-8\nAccept: application/json";
+    public $errors;
     public $url;
-    public $requestBody;
     public $requestMethod;
+    public $requestBody;
     public $rawResponse;
     public $instResponse;
     public $showResponse;
@@ -16,24 +17,36 @@ class RestExplorerController {
     public function __construct() {
         $this->requestMethod = 'GET';
         $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->BASE_REST_URL_PREFIX . '/data';
+        $this->requestHeaders = $this->DEFAULT_REQUEST_HEADERS;
+        
     }
     
     public function onPageLoad() {
         $this->errors = null;
         $this->showResponse = false;
         $this->requestMethod = isset($_REQUEST['requestMethod']) ? $_REQUEST['requestMethod'] : $this->requestMethod;
-        $this->url = isset($_REQUEST['url']) 
+
+        $this->url = isset($_REQUEST['url'])
                                 ? (get_magic_quotes_gpc() 
                                     ? stripslashes($_REQUEST['url']) 
                                     : $_REQUEST['url']) 
                                 : $this->url;
-        $this->requestBody = isset($_REQUEST['requestBody']) 
+
+        $this->requestHeaders = isset($_REQUEST['requestHeaders'])
                                 ? (get_magic_quotes_gpc() 
-                                    ? stripslashes($_REQUEST['requestBody']) 
-                                    : $_REQUEST['requestBody']) 
+                                    ? stripslashes($_REQUEST['requestHeaders'])
+                                    : $_REQUEST['requestHeaders'])
+                                : $this->requestHeaders;
+
+        $this->requestBody = isset($_REQUEST['requestBody'])
+                                ? (get_magic_quotes_gpc()
+                                    ? stripslashes($_REQUEST['requestBody'])
+                                    : $_REQUEST['requestBody'])
                                 : $this->requestBody;
-    	$this->autoExec = isset($_REQUEST['autoExec']) ? $_REQUEST['autoExec'] : $this->autoExec;
-    	$doExecute = isset($_REQUEST['doExecute']) ? $_REQUEST['doExecute'] : null;
+
+        $this->autoExec = isset($_REQUEST['autoExec']) ? $_REQUEST['autoExec'] : $this->autoExec;
+
+        $doExecute = isset($_REQUEST['doExecute']) ? $_REQUEST['doExecute'] : null;
     	
     	if ($doExecute != null || $this->autoExec == '1') {
             $this->execute();
@@ -62,7 +75,8 @@ class RestExplorerController {
 
             $expectBinary = $this->requestMethod == 'GET' && preg_match("@\w{4}0{3}\w{8}([A-Z]{3})?/(Body|VersionData|ContentData|Document|Binary)$@", $this->url) > 0;
             $this->rawResponse = getRestApiConnection()->send($this->requestMethod, 
-                                                              $this->url, "application/json",
+                                                              $this->url,
+                                                              explode("\n", $this->requestHeaders),
                                                               in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) ? $this->requestBody : null,
                                                               $expectBinary);
 
@@ -132,6 +146,10 @@ class RestExplorerController {
         header("Content-Disposition: attachment; filename=" . rawurlencode($binFilename));
         if (isset($binContentType)) header("Content-Type: " . $binContentType);
         echo $this->rawResponse->body;
+    }
+
+    public function getDefaultRequestHeaders() {
+        return $this->DEFAULT_REQUEST_HEADERS;
     }
 }
 ?>

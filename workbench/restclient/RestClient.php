@@ -50,21 +50,20 @@ class RestApiClient {
         return $matches[1];
     }
 
-    public function send($method, $url, $contentType, $data, $expectBinary) {
+    public function send($method, $url, $additionalHeaders, $data, $expectBinary) {
         $this->log("INITIALIZING cURL \n" . print_r(curl_version(), true));
 
         $ch = curl_init();
 
         $httpHeaders = array(
             "Authorization: OAuth " . $this->sessionId,
-            "X-PrettyPrint: true",
-            "Accept: application/json",
             "User-Agent: " . $this->userAgent,
+            "X-PrettyPrint: true",
             "Expect:"
             );
         
-        if (isset($contentType)) {
-            $httpHeaders[] = "Content-Type: $contentType; charset=UTF-8";
+        if (isset($additionalHeaders)) {
+            $httpHeaders = array_merge($httpHeaders, $additionalHeaders);
         }
 
         switch ($method) {

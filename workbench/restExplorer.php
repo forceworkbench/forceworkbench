@@ -48,17 +48,27 @@ if ($c->errors != null) {
 			value="Up" 
 			onclick="upUrl();"/>
     </p>
-    
+
     <input id="urlInput" 
            name="url" value="<?php echo htmlentities($c->url); ?>"
     	   style="width: 35em; height: 1.2em; font-size: 18px; font-weight: bold;"
     	   onKeyPress="if (checkEnter(event)) {document.getElementById('execBtn').click(); return false;}" />
     &nbsp; 
     <input id="execBtn" name="doExecute" type="submit" value="Execute" style="font-size: 18px;"/>
-    
+
+    <a id="requestHeadersToggler" class="miniLink" href="javascript:toggleRequestHeaders();">Show Request Headers</a>
+
+    <div id="requestHeaderContainer" style="display: none;">
+        <p>
+            <strong>Request Headers</strong>
+        </p>
+        <textarea id="requestHeaders" name="requestHeaders" style="width: 100%; height: 4em; font-family: courier, monotype;"><?php echo htmlentities($c->requestHeaders); ?></textarea>
+        <a id="requestHeadersDefaulter" class="miniLink pseudoLink"
+           onClick="document.getElementById('requestHeaders').value='<?php echo str_replace("\n", "\\n", $c->getDefaultRequestHeaders()); ?>';">Restore Default Headers</a>
+    </div>
+
     <div id="requestBodyContainer" style="display: <?php echo in_array($c->requestMethod, RestApiClient::getMethodsWithBodies()) ? 'inline' : 'none';?>;">
         <p>
-            <br />
             <strong>Request Body</strong>
         </p>
         <textarea name="requestBody" style="width: 100%; height: 10em; font-family: courier, monotype;"><?php echo htmlentities($c->requestBody); ?></textarea>
