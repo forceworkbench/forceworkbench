@@ -659,7 +659,7 @@ $config["header_Execute"] = array(
         "label" => "Bulk API Recommendation Threshold",
         "description" => "Recommend using the Bulk API if the number of records exceeds this number",
         "default" => 1000,
-        "overrideable" => true,
+        "overrideable" => false,
         "dataType" => "int",
         "minValue" => 1
     );
