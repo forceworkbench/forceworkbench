@@ -97,7 +97,7 @@ if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
         displayQueryForm($queryRequest);
         print "</form>"; //could include inside because if IE page loading bug
         print "<p>&nbsp;</p>";
-        displayError("count() is not supported for CSV file export. Change export to Browser or choose fields and try again.");
+        displayError("count() is not supported for CSV. View as List or choose fields and try again.");
         include_once 'footer.php';
     }
 } else {
