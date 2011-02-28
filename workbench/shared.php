@@ -19,7 +19,7 @@ function registerShortcut($key, $jsCommand) {
 }
 
 function addFooterScript($script) {
-    $scriptHash = hash('md5', $script); //de-duping
+    $scriptHash = md5($script); //de-duping
     $_REQUEST["footerScripts"][$scriptHash] = $script;
 }
 
