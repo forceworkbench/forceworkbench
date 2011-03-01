@@ -511,7 +511,7 @@ function confirmFieldMappings($action, $fieldMap, $csvArray, $extId) {
         exit;
     } 
 
-    $recommendDoAsync = count($csvArray) >= getConfig("asyncRecommendationThreshold");
+    $recommendDoAsync = extension_loaded('curl') && count($csvArray) >= getConfig("asyncRecommendationThreshold");
 
     if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
         if (!isset($fieldMap['Id'])) {
