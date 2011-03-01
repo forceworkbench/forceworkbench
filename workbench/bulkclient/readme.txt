@@ -1,4 +1,4 @@
-PHP BULK API CLIENT 21.0
+PHP BULK API CLIENT 21.0.1
 Distributed under the Open Source BSD License.
 Developed By Ryan Brainard
 

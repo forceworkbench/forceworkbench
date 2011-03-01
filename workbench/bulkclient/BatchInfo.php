@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PHP BULK API CLIENT 21.0
+ * PHP BULK API CLIENT 21.0.1
  * @author Ryan Brainard
  *
  * BatchInfo.php

@@ -3,7 +3,7 @@ require_once 'JobInfo.php';
 require_once 'BatchInfo.php';
 
 /**
- * PHP BULK API CLIENT 21.0
+ * PHP BULK API CLIENT 21.0.1
  * @author Ryan Brainard
  *
  * BulkApiClient.php
@@ -38,7 +38,7 @@ require_once 'BatchInfo.php';
 class BulkApiClient {
     private $endpoint;
     private $sessionId;
-    private $userAgent = "PHP-BulkApiClient/21.0";
+    private $userAgent = "PHP-BulkApiClient/21.0.1";
     private $compressionEnabled = true;
     private $logs;
     private $loggingEnabled = false;
