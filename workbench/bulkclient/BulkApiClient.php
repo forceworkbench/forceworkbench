@@ -36,12 +36,29 @@ require_once 'BatchInfo.php';
  */
 
 class BulkApiClient {
+
+    const URL_SLASH = "/";
+    const JOB = "job";
+    const BATCH = "batch";
+    const REQUEST = "request";
+    const RESULT = "result";
+
+    const CONTENT_TYPE_XML = "application/xml";
+    const CONTENT_TYPE_CSV = "text/csv";
+    const CONTENT_TYPE_ZIP_CSV = "zip/csv";
+    const CONTENT_TYPE_ZIP_XML = "zip/xml";
+
+
     private $endpoint;
     private $sessionId;
     private $userAgent = "PHP-BulkApiClient/21.0.1";
     private $compressionEnabled = true;
     private $logs;
     private $loggingEnabled = false;
+    const CSV = "CSV";
+    const XML = "XML";
+    const ZIP_CSV = "ZIP_CSV";
+    const ZIP_XML = "ZIP_XML";
 
     /**
      * Create a new Bulk API Client from an existing Partner API enpoint and session id
@@ -118,7 +135,8 @@ class BulkApiClient {
      */
     public function createJob(JobInfo $job) {
         $this->validateJob($job);
-        return new JobInfo($this->post($this->endpoint . "/job", "application/xml", $job->asXml()));
+        $createdJob = $this->post($this->url(array($this::JOB)), $this::CONTENT_TYPE_XML, $job->asXml());
+        return new JobInfo($createdJob);
     }
 
     /**
@@ -131,11 +149,12 @@ class BulkApiClient {
      */
     public function updateJob(JobInfo $job) {
         $this->validateJob($job);
-        return new JobInfo($this->post($this->endpoint . "/job/" . $job->getId(), "application/xml", $job->asXml()));
+        $updatedJob = $this->post($this->url(array($this::JOB, $job->getId())), $this::CONTENT_TYPE_XML, $job->asXml());
+        return new JobInfo($updatedJob);
     }
 
     private function validateJob(JobInfo $job) {
-        if ($job->getContentType() == "CSV" && !$this->apiVersionIsAtLeast($this->endpoint, 17.0)) {
+        if ($job->getContentType() == $this::CSV && !$this->apiVersionIsAtLeast($this->endpoint, 17.0)) {
             throw new Exception("Content Type 'CSV' only supported in API 17.0 and higher.");
         }
 
@@ -147,7 +166,7 @@ class BulkApiClient {
             throw new Exception("Bulk API 'Hard Delete' operation only supported in API 19.0 and higher.");
         }
 
-        if (stristr($job->getContentType(), "ZIP_") && !$this->apiVersionIsAtLeast($this->endpoint, 20.0)) {
+        if (in_array($job->getContentType(), array($this::ZIP_CSV, $this::ZIP_XML)) && !$this->apiVersionIsAtLeast($this->endpoint, 20.0)) {
             throw new Exception("Zipped Content Types only supported in API 20.0 and higher.");
         }
     }
@@ -173,7 +192,7 @@ class BulkApiClient {
      * @return JobInfo
      */
     public function getJobInfo($jobId) {
-        return new JobInfo($this->get($this->endpoint . "/job/" . $jobId));
+        return new JobInfo($this->get($this->url(array($this::JOB, $jobId))));
     }
 
     /**
@@ -184,19 +203,19 @@ class BulkApiClient {
      * @return BatchInfo
      */
     public function createBatch(JobInfo $job, $data) {
-        if ($job->getContentType() == "CSV") {
-            $contentType = "text/csv";
-        } else if ($job->getContentType() == "XML") {
-            $contentType = "application/xml";
-        } else if ($job->getContentType() == "ZIP_CSV") {
-            $contentType = "zip/csv";
-        } else if ($job->getContentType() == "ZIP_XML") {
-            $contentType = "zip/xml";
+        if ($job->getContentType() == $this::CSV) {
+            $contentType = $this::CONTENT_TYPE_CSV;
+        } else if ($job->getContentType() == $this::XML) {
+            $contentType = $this::CONTENT_TYPE_XML;
+        } else if ($job->getContentType() == $this::ZIP_CSV) {
+            $contentType = $this::CONTENT_TYPE_ZIP_CSV;
+        } else if ($job->getContentType() == $this::ZIP_XML) {
+            $contentType = $this::CONTENT_TYPE_ZIP_XML;
         } else {
             throw new Exception("Invalid content type specified for batch");
         }
 
-        return new BatchInfo($this->post($this->endpoint . "/job/" . $job->getId() . "/batch", $contentType, $data));
+        return new BatchInfo($this->post($this->url(array($this::JOB, $job->getId(), $this::BATCH)), $contentType, $data));
     }
 
     /**
@@ -207,7 +226,7 @@ class BulkApiClient {
      * @return BatchInfo
      */
     public function getBatchInfo($jobId, $batchId) {
-        return new BatchInfo($this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId));
+        return new BatchInfo($this->get($this->url(array($this::JOB, $jobId, $this::BATCH, $batchId))));
     }
 
     /**
@@ -219,7 +238,7 @@ class BulkApiClient {
     public function getBatchInfos($jobId) {
         $batchInfos = array();
 
-        $batchInfoList = new SimpleXMLElement($this->get($this->endpoint . "/job/" . $jobId . "/batch"));
+        $batchInfoList = new SimpleXMLElement($this->get($this->url(array($this::JOB, $jobId, $this::BATCH))));
         foreach ($batchInfoList as $batchInfoListItem) {
             $batchInfos["$batchInfoListItem->id"] = new BatchInfo($batchInfoListItem->asXml());
         }
@@ -237,10 +256,10 @@ class BulkApiClient {
      */
     public function getBatchRequest($jobId, $batchId, $toFile = null) {
         if (!$this->apiVersionIsAtLeast($this->endpoint, 19.0)) {
-            throw new Exception("Gettiing a batch request is only supported in API 19.0 and higher.");
+            throw new Exception("Getting a batch request is only supported in API 19.0 and higher.");
         }
 
-        return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/request", $toFile);
+        return $this->get($this->url(array($this::JOB, $jobId, $this::BATCH, $batchId, $this::REQUEST)), $toFile);
     }
 
     /**
@@ -252,7 +271,7 @@ class BulkApiClient {
      * @return mixed
      */
     public function getBatchResults($jobId, $batchId, $toFile = null) {
-        return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/result", $toFile);
+        return $this->get($this->url(array($this::JOB, $jobId, $this::BATCH, $batchId, $this::RESULT)), $toFile);
     }
 
     /**
@@ -291,7 +310,7 @@ class BulkApiClient {
      * @return mixed
      */
     public function getBatchResult($jobId, $batchId, $resultId, $toFile = null) {
-        return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/result/" . $resultId, $toFile);
+        return $this->get($this->url(array($this::JOB, $jobId, $this::BATCH, $batchId, $this::RESULT, $resultId)), $toFile);
     }
 
     private function http($isPost, $url, $contentType, $data, $toFile) {
@@ -341,6 +360,10 @@ class BulkApiClient {
 
     private function post($url, $contentType, $data) {
         return $this->http(true, $url, $contentType, $data, null);
+    }
+
+    private function url(array $parts) {
+        return $this->endpoint . $this::URL_SLASH . implode($this::URL_SLASH, $parts);
     }
 
 
