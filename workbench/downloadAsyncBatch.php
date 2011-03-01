@@ -3,45 +3,22 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'bulkclient/BulkApiClient.php';
 
-if (!isset($_GET['jobId']) || !isset($_GET['batchId']) || !isset($_GET['op'])) {
-    displayError("'jobId', 'batchId', and 'op' parameters must be specified", true, true);
-    exit;
-}
-
 try {
+    if (!isset($_GET['jobId']) || !isset($_GET['batchId']) || !isset($_GET['op'])) {
+        throw new Exception("'jobId', 'batchId', and 'op' parameters must be specified");
+    } else if (!in_array($_GET['op'], array('request', 'result'))) {
+        throw new Exception("Invalid operation specified");
+    }
+
     $asyncConnection = getAsyncApiConnection();
     $jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);
-    if ($_GET['op'] == 'result') {
-        if (isset($_GET['resultId'])) {
-            $batchData = $asyncConnection->getBatchResult($_GET['jobId'], $_GET['batchId'], $_GET['resultId']);
-        } else {
-            $batchData = $asyncConnection->getBatchResults($_GET['jobId'], $_GET['batchId']);
-        }
-    } else if ($_GET['op'] == 'request') {
-        if (!apiVersionIsAtLeast(19.0)) {
-            displayError("Downloading batch requests only supported in API 19.0 and higher", true, true);
-            exit;
-        }
 
-        $batchData = $asyncConnection->getBatchRequest($_GET['jobId'], $_GET['batchId']);
-    } else {
-        displayError("Invalid operation specified", true, true);
-        exit;
-    }
-} catch (Exception $e) {
-    displayError($e->getMessage(), true, true);
-    exit;
-}
+    $fileContext = fopen('php://output','w') or die("Error opening php://output");
 
-if (strpos($batchData, "<exceptionCode>")) {
-    $asyncError = new SimpleXMLElement($batchData);
-    displayError($asyncError->exceptionCode . ": " . $asyncError->exceptionMessage, true, true);
-    exit;
-} else if ($batchData == "") {
-    displayError("No results found. Confirm job or batch has not expired.", true, true);
-    exit;
-} else {
-    if (stristr($jobInfo->getContentType(), "CSV")) {
+    if($jobInfo->getOpertion() == "query") {
+        $fileExt = "txt";
+        header("Content-Type: text/plain");
+    } else if (stristr($jobInfo->getContentType(), "CSV")) {
         $fileExt = "csv";
         header("Content-Type: application/csv");
     } else if (stristr($jobInfo->getContentType(), "XML")) {
@@ -50,10 +27,29 @@ if (strpos($batchData, "<exceptionCode>")) {
     } else {
         throw new Exception("Unknown content type");
     }
+
+    $filename = "bulk" . ucwords($jobInfo->getOpertion()) .
+                "_" . $_GET['op'] .
+                "_" . $_GET['jobId'] .
+                "_" . $_GET['batchId'] .
+                (isset($_GET['resultId']) && $_GET['resultId'] != null ? ("_" . $_GET['resultId']) : "") .
+                "." . $fileExt;
     
-    
-    $csvFilename = "bulk" . ucwords($jobInfo->getOpertion()). "_" . $_GET['op'] . "_" . $_GET['jobId'] . "_" . $_GET['batchId'] . "." . $fileExt;
-    header("Content-Disposition: attachment; filename=$csvFilename");
-    print $batchData;
+    header("Content-Disposition: attachment; filename=$filename");
+
+    if ($_GET['op'] == 'result') {
+        if (isset($_GET['resultId'])) {
+            $asyncConnection->getBatchResult($_GET['jobId'], $_GET['batchId'], $_GET['resultId'], $fileContext);
+        } else {
+            $asyncConnection->getBatchResults($_GET['jobId'], $_GET['batchId'], $fileContext);
+        }
+    } else if ($_GET['op'] == 'request') {
+        $batchData = $asyncConnection->getBatchRequest($_GET['jobId'], $_GET['batchId'], $fileContext);
+    }
+
+    fclose($fileContext) or die("Error closing php://output");
+} catch (Exception $e) {
+    displayError($e->getMessage(), true, true);
+    exit;
 }
 ?>

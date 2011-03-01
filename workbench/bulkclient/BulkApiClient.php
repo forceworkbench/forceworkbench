@@ -229,28 +229,30 @@ class BulkApiClient {
 
     /**
      * Returns a copy of the sent request for a given jobId and batchId
+     * Results can optionally be returned to a file handle if $toFile is set.
      *
      * @param  $jobId
      * @param  $batchId
      * @return mixed
      */
-    public function getBatchRequest($jobId, $batchId) {
+    public function getBatchRequest($jobId, $batchId, $toFile = null) {
         if (!$this->apiVersionIsAtLeast($this->endpoint, 19.0)) {
             throw new Exception("Gettiing a batch request is only supported in API 19.0 and higher.");
         }
 
-        return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/request");
+        return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/request", $toFile);
     }
 
     /**
      * Returns either the actual result (DML) or result-list (queries) for a given batch.
+     * Results can optionally be returned to a file handle if $toFile is set.
      *
      * @param  $jobId
      * @param  $batchId
      * @return mixed
      */
-    public function getBatchResults($jobId, $batchId) {
-        return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/result");
+    public function getBatchResults($jobId, $batchId, $toFile = null) {
+        return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/result", $toFile);
     }
 
     /**
@@ -261,8 +263,8 @@ class BulkApiClient {
      * @param  $batchId
      * @return array
      */
-    public function getBatchResultList($jobId, $batchId) {
-        $resultListRaw = $this->getBatchResults($jobId, $batchId);
+    public function getBatchResultList($jobId, $batchId, $toFile = null) {
+        $resultListRaw = $this->getBatchResults($jobId, $batchId, $toFile);
         $resultListXml = new SimpleXMLElement($resultListRaw);
         $resultListArray = array();
 
@@ -279,18 +281,20 @@ class BulkApiClient {
 
     /**
      * Returns an individual result for a given resultId in a batch wih a result-list.
+     * Results can optionally be returned to a file handle if $toFile is set.
      * Currently, only applies to Query operations.
      *
      * @param  $jobId
      * @param  $batchId
      * @param  $resultId
+     * @param  $toFile
      * @return mixed
      */
-    public function getBatchResult($jobId, $batchId, $resultId) {
-        return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/result/" . $resultId);
+    public function getBatchResult($jobId, $batchId, $resultId, $toFile = null) {
+        return $this->get($this->endpoint . "/job/" . $jobId . "/batch/" . $batchId . "/result/" . $resultId, $toFile);
     }
 
-    private function http($isPost, $url, $contentType, $data) {
+    private function http($isPost, $url, $contentType, $data, $toFile) {
         $this->log("INITIALIZING cURL \n" . print_r(curl_version(), true));
 
         $ch = curl_init();
@@ -300,42 +304,43 @@ class BulkApiClient {
             "Accept: application/xml",
             "User-Agent: " . $this->userAgent,
             "Expect:"
-            );
-            if (isset($contentType)) {
-                $httpHeaders[] = "Content-Type: $contentType; charset=UTF-8";
-            }
+        );
+        if (isset($contentType)) {
+            $httpHeaders[] = "Content-Type: $contentType; charset=UTF-8";
+        }
 
+        if($isPost) curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $httpHeaders);
+        if($isPost) curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);                                //TODO: use ca-bundle instead
+        if($this->compressionEnabled) curl_setopt($ch, CURLOPT_ENCODING, "gzip");   //TODO: add  outbound compression support
+        if (isset($toFile)) curl_setopt($ch, CURLOPT_FILE, $toFile);
 
-            if($isPost) curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $httpHeaders);
-            if($isPost) curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);                                //TODO: use ca-bundle instead
-            if($this->compressionEnabled) curl_setopt($ch, CURLOPT_ENCODING, "gzip");   //TODO: add  outbound compression support
+        $this->log("REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlentities($data));
 
-            $this->log("REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlentities($data));
+        $chResponse = curl_exec($ch);
 
-            $chResponse = curl_exec($ch);
-            $this->log("RESPONSE \n" . htmlentities($chResponse));
+        $this->log("RESPONSE \n" . isset($toFile) ? "Sent to file: " . $toFile : htmlentities($chResponse));
 
-            if (curl_error($ch) != null) {
-                $this->log("ERROR \n" . htmlentities(curl_error($ch)));
-                throw new Exception(curl_error($ch));
-            }
+        if (curl_error($ch) != null) {
+            $this->log("ERROR \n" . htmlentities(curl_error($ch)));
+            throw new Exception(curl_error($ch));
+        }
 
-            curl_close($ch);
+        curl_close($ch);
 
-            return $chResponse;
+        return $chResponse;
     }
 
-    private function get($url) {
-        return $this->http(false, $url, null, null);
+    private function get($url, $toFile = null) {
+        return $this->http(false, $url, null, null, $toFile);
     }
 
     private function post($url, $contentType, $data) {
-        return $this->http(true, $url, $contentType, $data);
+        return $this->http(true, $url, $contentType, $data, null);
     }
 
 
