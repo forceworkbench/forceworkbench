@@ -44,7 +44,7 @@ try {
             $asyncConnection->getBatchResults($_GET['jobId'], $_GET['batchId'], $fileContext);
         }
     } else if ($_GET['op'] == 'request') {
-        $batchData = $asyncConnection->getBatchRequest($_GET['jobId'], $_GET['batchId'], $fileContext);
+        $asyncConnection->getBatchRequest($_GET['jobId'], $_GET['batchId'], $fileContext);
     }
 
     fclose($fileContext) or die("Error closing php://output");
