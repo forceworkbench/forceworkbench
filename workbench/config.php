@@ -664,6 +664,16 @@ $config["header_Execute"] = array(
         "minValue" => 1
     );
 
+    $config["memoryUsageWarningThreshold"] = array(
+        "label" => "Memory Usage Warning Threshold",
+        "description" => "Recommend using an alternative method if memory usage exceeds this percentage",
+        "default" => 80,
+        "overrideable" => false,
+        "dataType" => "int",
+        "minValue" => 1,
+        "maxValue" => 100
+    );
+
     $config["maxFileSize"] = array(
         "label" => "Maxiumum File Size (bytes)",
         "description" => "Maximum file size for upload in bytes.",

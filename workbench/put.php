@@ -212,8 +212,9 @@ function convertCsvFileToArray($file) {
     $csvArray = array();
     $handle = fopen($file, "r");
     $memLimitBytes = toBytes(ini_get("memory_limit"));
+    $memWarningThreshold = getConfig("memoryUsageWarningThreshold") / 100;
     for ($row=0; ($data = fgetcsv($handle)) !== FALSE; $row++) {
-        if ($memLimitBytes != 0 && memory_get_usage() / $memLimitBytes > 0.8) {
+        if ($memLimitBytes != 0 && (memory_get_usage() / $memLimitBytes > $memWarningThreshold)) {
             displayError("Workbench almost exhausted all its memory after only processing $row rows of data.
             When performing a large data load, it is recommended to use a zipped request for processing with the Bulk API.
             To do so, rename your CSV file to 'request.txt', zip it, and try uploading again to Workbench.", false, true);
