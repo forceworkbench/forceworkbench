@@ -15,9 +15,12 @@ try {
 
     $fileContext = fopen('php://output','w') or die("Error opening php://output");
 
-    if($jobInfo->getOpertion() == "query") {
+    if ($_GET['op'] == 'request' && $jobInfo->getOpertion() == "query") {
         $fileExt = "txt";
         header("Content-Type: text/plain");
+    } else if ($_GET['op'] == 'request' && stristr($jobInfo->getContentType(), "ZIP")) {
+        $fileExt = "zip";
+        header("Content-Type: application/zip");
     } else if (stristr($jobInfo->getContentType(), "CSV")) {
         $fileExt = "csv";
         header("Content-Type: application/csv");
