@@ -1,4 +1,13 @@
 <?php
+function toBytes ($size_str) {
+    switch (substr ($size_str, -1)) {
+        case 'G': case 'g': $size_str *= 1024;
+        case 'M': case 'm': $size_str *= 1024;
+        case 'K': case 'k': $size_str *= 1024;
+    }
+    return (int)$size_str;
+}
+
 function endsWith($haystack, $needle, $ignoreCase){
     return substr_compare($haystack, $needle, -strlen($needle), strlen($needle), $ignoreCase) === 0;
 }
