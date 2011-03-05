@@ -14,13 +14,18 @@
                 font-weight: bold;
             }
             
-            input, select {
-                position: absolute;
-                left: 160px;
-            }
-            
             input[type="text"] {
-                width: 300px;
+                width: 500px;
+            }
+
+            .error {
+                color: red;
+            }
+
+            .output * {
+               	white-space: pre-wrap;
+                font-family: courier, monotype;
+                font-size: small;
             }
         </style>
     </head>
@@ -29,32 +34,48 @@
 
         <p>Provide the details below to run a sample script:</p> 
         
-        <form id="sampleLauncherForm" method="GET">
-            <p><label>Session Id: <input name="sessionId" type="text"/></label></p>
-            <p><label>Partner API Endpoint: <input name="partnerApiEndpoint" type="text"/></label></p>
+        <form method="GET" action="<?php print $_SERVER["PHP_SELF"]; ?>">
+            <p><label>Session Id:<br/><input name="sessionId"
+                                             type="text"
+                                             value="<?php print isset($_REQUEST['sessionId']) ? $_REQUEST['sessionId'] : ""; ?>"/></label></p>
+            <p><label>Partner API Endpoint:<br/><input name="partnerApiEndpoint"
+                                                       type="text"
+                                                       value="<?php print isset($_REQUEST['partnerApiEndpoint']) ?
+                                                               $_REQUEST['partnerApiEndpoint'] : ""; ?>"/></label></p>
             <p>
-                <label>Sample Script File: 
-                    <select id="sampleFile" onchange="setFormAction(this.value);">
+                <label>Sample Script File:<br/> 
+                    <select name="sampleFile">
                         <?php
                             $thisFile  = basename($_SERVER["PHP_SELF"]); 
                             $thisDir = dirname($_SERVER["SCRIPT_FILENAME"]);
                             foreach (scandir($thisDir) as $file) {
                                 if (stristr($file, ".php") && $file != $thisFile) {
-                                    print "<option value=\"$file\">$file</option>";
+                                    print "<option value=\"$file\"" .
+                                          (($_REQUEST['sampleFile'] == $file) ? "selected='selected'" : "") .
+                                          ">$file</option>";
                                 }
                             }
                         ?>
                     </select>
                 </label>
             </p>
-            <p><input type="submit" value="Submit"></p>
+            <p><input name="submit" type="submit" value="Submit"></p>
         </form>
-    </body>
-    <script type="text/javascript">
-        function setFormAction(action) {
-            document.getElementById("sampleLauncherForm").action = action;
-        }
 
-        setFormAction(document.getElementById("sampleFile").value);
-    </script>
+
+        <div class="output">
+            <?php
+            if (!isset($_REQUEST["submit"])) {
+                exit;
+            }
+
+            try {
+                require_once($_REQUEST["sampleFile"]);
+            } catch (Exception $e) {
+                print "<span class='error'><label>Error: </label>" . $e->getMessage() . "</span>";
+            }
+            ?>
+        </div>
+
+    </body>
 </html>

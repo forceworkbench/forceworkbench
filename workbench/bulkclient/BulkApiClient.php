@@ -112,15 +112,14 @@ class BulkApiClient {
     }
 
     private function convertEndpoint($endpoint) {
-        if (!$this->apiVersionIsAtLeast($endpoint, 16.0)) {
-            throw new Exception("Bulk API operations only supported in API 16.0 and higher.");
-        }
-
-        $limit = 1;
-        $endpoint = preg_replace("!Soap/\w/(\d{1,2}\.\d)(/)?(00D.*)?!", "async/$1", $endpoint, $limit);
+        $endpoint = preg_replace("!Soap/\w/(\d{1,2}\.\d)(/)?(00D.*)?!", "async/$1", $endpoint);
 
         if (preg_match("!https?://.*/services/async/\d{1,2}\.\d$!", $endpoint) == 0) {
-            throw new Exception("Invalid endpoint: " . $endpoint);
+            throw new Exception("Invalid endpoint format: " . $endpoint);
+        }
+
+        if (!$this->apiVersionIsAtLeast($endpoint, 16.0)) {
+            throw new Exception("Bulk API operations only supported in API 16.0 and higher.");
         }
 
          return $endpoint;
