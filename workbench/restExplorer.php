@@ -1,4 +1,5 @@
 <?php
+require_once 'restclient/RestClient.php';
 require_once 'controllers/RestExplorerController.php';
 require_once 'session.php';
 require_once 'shared.php';
