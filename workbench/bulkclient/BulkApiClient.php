@@ -63,15 +63,23 @@ class BulkApiClient {
     /**
      * Create a new Bulk API Client from an existing Partner API enpoint and session id
      *
-     * @param  $partnerEndpoint endpoint from Partner API
+     * @param  $endpoint endpoint from Async/Bulk, Partner, or Enterprise APIs
      * @param  $sessionId active Salesforce session id
      */
-    public function __construct($partnerEndpoint, $sessionId) {
+    public function __construct($endpoint, $sessionId) {
 		if (!extension_loaded('curl')) {
 			throw new Exception('Missing required cURL extension.');
 		}
+
+        if ($endpoint == null) {
+            throw new Exception("Endpoint not set.");
+        }
+
+        if ($sessionId == null) {
+            throw new Exception("Session Id not set.");
+        }
 	
-        $this->endpoint = $this->convertEndpointFromPartner($partnerEndpoint);
+        $this->endpoint = $this->convertEndpoint($endpoint);
         $this->sessionId = $sessionId;
     }
 
@@ -103,21 +111,19 @@ class BulkApiClient {
         $this->compressionEnabled = $compressionEnabled;
     }
 
-    private function convertEndpointFromPartner($partnerEndpoint) {
-
-        if (!$this->apiVersionIsAtLeast($partnerEndpoint, 16.0)) {
+    private function convertEndpoint($endpoint) {
+        if (!$this->apiVersionIsAtLeast($endpoint, 16.0)) {
             throw new Exception("Bulk API operations only supported in API 16.0 and higher.");
         }
 
-        $count = 1;
-        $endpoint = str_replace("Soap/u", "async", $partnerEndpoint, $count);
+        $limit = 1;
+        $endpoint = preg_replace("!Soap/\w/(\d{1,2}\.\d)(/)?(00D.*)?!", "async/$1", $endpoint, $limit);
 
-        //strip off org id hint from end, if present.
-        if (strpos($endpoint, "00D")) {
-            $endpoint = substr($endpoint, 0, strripos($endpoint, "/"));
+        if (preg_match("!https?://.*/services/async/\d{1,2}\.\d$!", $endpoint) == 0) {
+            throw new Exception("Invalid endpoint: " . $endpoint);
         }
 
-        return $endpoint;
+         return $endpoint;
     }
 
     private function apiVersionIsAtLeast($endpoint, $minVersion) {
