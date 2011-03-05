@@ -348,7 +348,7 @@ class BulkApiClient {
 
         $chResponse = curl_exec($ch);
 
-        $this->log("RESPONSE \n" . isset($toFile) ? "Sent to file: " . $toFile : htmlentities($chResponse));
+        $this->log("RESPONSE \n" . (isset($toFile) ? ("Sent to file: " . $toFile) : htmlentities($chResponse)));
 
         if (curl_error($ch) != null) {
             $this->log("ERROR \n" . htmlentities(curl_error($ch)));
