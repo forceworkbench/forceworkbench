@@ -958,7 +958,13 @@ function queryAsync($queryRequest) {
     $asyncConnection = getAsyncApiConnection();
 
     $job = new JobInfo();
-    $job->setObject($queryRequest->getObject());
+
+    // try to find actual object in FROM clause in case it is different from object set in form
+    preg_match("/FROM\s(\w+)/i", $queryRequest->getSoqlQuery(), $fromMatches);
+    // if we can't find it, go ahead and use the object from the form.
+    // it's probably a malformed query anyway, but let SFDC error on it instead of Workbench
+    $job->setObject(isset($fromMatches[1]) ? $fromMatches[1] : $queryRequest->getObject());
+
     $job->setOpertion("query");
     $job->setContentType(substr($queryRequest->getExportTo(), strlen("async_")));
     $job->setConcurrencyMode(getConfig("asyncConcurrencyMode"));
