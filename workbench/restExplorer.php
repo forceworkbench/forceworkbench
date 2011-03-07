@@ -83,7 +83,7 @@ if ($c->errors != null) {
 <p />
 <?php
 if (isset($c->autoExec) && !$c->autoExec) {
-    displayError("This URI needs to be completed before executing." .
+    displayError("This URI needs to be completed before executing. " .
                        "For example, it may need a merge field populated (e.g. {ID}) or a query string appended (e.g. ?q=)");
 }
 ?>
