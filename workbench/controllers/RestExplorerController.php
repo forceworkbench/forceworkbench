@@ -73,8 +73,8 @@ class RestExplorerController {
                 throw new Exception("Must include a Request Body.");
             }
 
-            $expectBinary = $this->requestMethod == 'GET' && preg_match("@\w{4}0{3}\w{8}([A-Z]{3})?/(Body|VersionData|ContentData|Document|Binary)$@", $this->url) > 0;
-            $this->rawResponse = getRestApiConnection()->send($this->requestMethod, 
+            $expectBinary = $this->prepareBinaryResponseAsDownload();
+            $this->rawResponse = getRestApiConnection()->send($this->requestMethod,
                                                               $this->url,
                                                               explode("\n", $this->requestHeaders),
                                                               in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) ? $this->requestBody : null,
@@ -87,8 +87,6 @@ class RestExplorerController {
                 $this->showResponse = false;
                 throw new Exception("Got HTML at: " . $this->url);
             } else if ($expectBinary) {
-                $this->offerBinaryResponseAsDownload();
-                $this->rawResponse = null;
                 return;
             } else if (stripos($this->rawResponse->header, "Content-Type: application/json") !== false) {                                              
                 $insturmenter = new RestResponseInstrumenter($_SERVER['PHP_SELF']);
@@ -102,8 +100,16 @@ class RestExplorerController {
             $this->errors = $e->getMessage();
         }
     }
-    
-    private function offerBinaryResponseAsDownload() {
+
+    /**
+     * @return bool true if binary is expected
+     */
+    private function prepareBinaryResponseAsDownload() {
+        if ($this->requestMethod != 'GET'
+            || preg_match("@\w{4}0{3}\w{8}([A-Z]{3})?/(Body|VersionData|ContentData|Document|Binary)$@", $this->url) == 0) {
+            return false;
+        }
+
         $expUrl = explode("/", $this->url);
         
         $binIdPos = count($expUrl) - 2;
@@ -113,39 +119,38 @@ class RestExplorerController {
         $binSobjectType = $expUrl[$binSobjectTypePos];
         
         global $partnerConnection;
-        try {
-            // Handle the different fields that support binary data in their own special way.
-            
-            if (in_arrayi($binSobjectType, array("Document", "Attachment", "StaticResource"))) {
-                $binInfo = new SObject($partnerConnection->retrieve("Name, ContentType", $binSobjectType, $binId));    
-                $binFilename = $binInfo->fields->Name;
-                $binContentType = $binInfo->fields->ContentType;
-            } else if ($binSobjectType == "ContentVersion") {
-                $binInfo = new SObject($partnerConnection->retrieve("PathOnClient, FileType", $binSobjectType, $binId));    
-                $binFilename= basename($binInfo->fields->PathOnClient);
-                $binContentType = "application/" . $binInfo->fields->FileType;
-            } else if ($binSobjectType == "FeedPost") {
-                $binInfo = new SObject($partnerConnection->retrieve("ContentFileName, ContentType", $binSobjectType, $binId));    
-                $binFilename= $binInfo->fields->ContentFileName;
-                $binContentType = $binInfo->fields->ContentType;
-            } else if ($binSobjectType == "MailmergeTemplate") {
-                $binInfo = new SObject($partnerConnection->retrieve("Filename", $binSobjectType, $binId));    
-                $binFilename= $binInfo->fields->Filename;
-                $binContentType = "application/msword";
-            } else if ($binSobjectType == "QuoteDocument") {
-                $binInfo = new SObject($partnerConnection->retrieve("Name", $binSobjectType, $binId));    
-                $binFilename= $binInfo->fields->Name;
-            } else {
-                throw new Exception('Unknown binary type');
-            }
-        } catch (Exception $e) {
-              // if we don't know this type, just use the id and don't set the content type
-              $binFilename = $binId;
+        // Handle the different fields that support binary data in their own special way.
+        if (in_arrayi($binSobjectType, array("Document", "Attachment", "StaticResource"))) {
+            $binInfo = new SObject($partnerConnection->retrieve("Name, ContentType, BodyLength", $binSobjectType, $binId));
+            $binFilename = $binInfo->fields->Name;
+            $binContentType = $binInfo->fields->ContentType;
+            $binContentLength = $binInfo->fields->BodyLength;
+        } else if ($binSobjectType == "ContentVersion") {
+            $binInfo = new SObject($partnerConnection->retrieve("PathOnClient, FileType, ContentSize", $binSobjectType, $binId));
+            $binFilename= basename($binInfo->fields->PathOnClient);
+            $binContentType = "application/" . $binInfo->fields->FileType;
+            $binContentLength = $binInfo->fields->ContentSize;
+        } else if (stripos($this->url, "ContentData")) {
+            $binInfo = new SObject($partnerConnection->retrieve("ContentFileName, ContentType, ContentSize", $binSobjectType, $binId));
+            $binFilename= $binInfo->fields->ContentFileName;
+            $binContentType = $binInfo->fields->ContentType;
+            $binContentLength = $binInfo->fields->ContentSize;
+        } else if ($binSobjectType == "MailmergeTemplate") {
+            $binInfo = new SObject($partnerConnection->retrieve("Filename, BodyLength", $binSobjectType, $binId));
+            $binFilename= $binInfo->fields->Filename;
+            $binContentType = "application/msword";
+            $binContentLength = $binInfo->fields->BodyLength;
+        } else if ($binSobjectType == "QuoteDocument") {
+            $binInfo = new SObject($partnerConnection->retrieve("Name", $binSobjectType, $binId));
+            $binFilename= $binInfo->fields->Name;
+        } else {
+            return false;
         }
-        
+
         header("Content-Disposition: attachment; filename=" . rawurlencode($binFilename));
         if (isset($binContentType)) header("Content-Type: " . $binContentType);
-        echo $this->rawResponse->body;
+        if (isset($binContentLength)) header("Content-Length: " . $binContentLength);
+        return true;
     }
 
     public function getDefaultRequestHeaders() {
