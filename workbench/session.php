@@ -161,13 +161,26 @@ if (isLoggedIn()) {
         
         if (!isset($_SESSION['getUserInfo']) || !getConfig('cacheGetUserInfo')) {
             $_SESSION['getUserInfo'] = $partnerConnection->getUserInfo();
+        } else if (isset($_SESSION['lastRequestTime'])) {
+            $idleTime = microtime(true) - $_SESSION['lastRequestTime'];
+            if ($idleTime > (getConfig("sessionIdleMinutes") * 60)) {
+                // ping SFDC to check if session is still alive
+                $partnerConnection->getServerTimestamp();
+            }
         }
+        $_SESSION['lastRequestTime'] = microtime(true);
 
     } catch (exception $e) {
         session_unset();
         session_destroy();
         try { include_once 'header.php'; } catch (exception $e) {}
-        displayError("Fatal error connecting to Salesforce. Please login again.\n\nERROR: " . $e->getMessage(), false, false);
+
+        if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
+            displayError("Your Salesforce session is invalid or has expired. Please login again.", false, false);
+        } else {
+            displayError("Fatal error connecting to Salesforce. Please login again.\n\nERROR: " . $e->getMessage(), false, false);
+        }
+
         print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\",3000);</script>";
         include_once 'footer.php';
         exit;

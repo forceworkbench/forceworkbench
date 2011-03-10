@@ -636,6 +636,15 @@ $config["header_Execute"] = array(
         "dataType" => "boolean"
     );
 
+    $config["sessionIdleMinutes"] = array(
+        "label" => "Session Idle Minutes",
+        "description" => "Amount of minutes that must pass between requests before checking that the Salesforce session is still alive.",
+        "default" => 5,
+        "overrideable" => false,
+        "dataType" => "int",
+        "minValue" => 0
+    );
+
     $config["batchSize"] = array(
         "label" => "Synchronous Record Batch Size",
         "description" => "Number of records that are batched together in one synchronous API call. Recommended to leave at 200.",
