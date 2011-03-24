@@ -85,7 +85,13 @@ if ($myPage->showTitle) {
     print "<td id='pageTitle'>" . $myPage->title . "</td>";
 }
 if (isLoggedIn()) {
-    print "<td id='myUserInfo'><a href='sessionInfo.php'>" . $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . " on API " . getApiVersion() . "</a></td>";
+    $infoTips = array("Username:&nbsp;" . $_SESSION['getUserInfo']->userName,
+                      "Instance:&nbsp;" . parse_url($_SESSION['location'], PHP_URL_HOST),
+                      "Org Id:&nbsp;&nbsp;" . substr($_SESSION['getUserInfo']->organizationId, 0, 15),
+                      "User Id:&nbsp;" . substr($_SESSION['getUserInfo']->userId, 0, 15));
+
+    print "<td id='myUserInfo'><a href='sessionInfo.php' onmouseover=\"Tip('". implode("<br/>", $infoTips) ."')\" >" .
+           $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . " on API " . getApiVersion() . "</a></td>";
 }
 print "</tr></table>";
 
