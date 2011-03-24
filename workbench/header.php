@@ -85,8 +85,8 @@ if ($myPage->showTitle) {
     print "<td id='pageTitle'>" . $myPage->title . "</td>";
 }
 if (isLoggedIn()) {
-    $infoTips = array("Username:&nbsp;" . $_SESSION['getUserInfo']->userName,
-                      "Instance:&nbsp;" . parse_url($_SESSION['location'], PHP_URL_HOST),
+    $infoTips = array("Username: " . $_SESSION['getUserInfo']->userName,
+                      "Instance: " . parse_url($_SESSION['location'], PHP_URL_HOST),
                       "Org Id:&nbsp;&nbsp;" . substr($_SESSION['getUserInfo']->organizationId, 0, 15),
                       "User Id:&nbsp;" . substr($_SESSION['getUserInfo']->userId, 0, 15));
 
