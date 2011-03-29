@@ -96,11 +96,13 @@ $config["header_General"] = array(
     );
 
     $timezones = array(''=>'UTC');
-    foreach (timezone_identifiers_list() as $timezone) {
-            $tz = explode('/',$timezone);
-            if (isset($tz[1])) {
-                $timezones[$timezone] = $tz[0].'/'.str_replace('_',' ',$tz[1]);
-            }
+    if (function_exists('timezone_identifiers_list')) {
+        foreach (timezone_identifiers_list() as $timezone) {
+                $tz = explode('/',$timezone);
+                if (isset($tz[1])) {
+                    $timezones[$timezone] = $tz[0].'/'.str_replace('_',' ',$tz[1]);
+                }
+        }
     }
     $timezones = array_unique($timezones);
 
