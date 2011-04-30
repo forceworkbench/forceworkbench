@@ -190,6 +190,8 @@ $config["header_LoginOptions"] = array(
             "na7-api" => array("NA7","A"),
             "na8-api" => array("NA8","C"),
             "na9-api" => array("NA9","E"),
+            "na10-api" => array("NA10","F"),
+            "na11-api" => array("NA11","G"),
             "ap0-api" => array("AP0 (ap)","1"),
             "ap1-api" => array("AP1","9"),
             "eu0-api" => array("EU0 (emea)","2"),
@@ -203,11 +205,15 @@ $config["header_LoginOptions"] = array(
             "cs6-api" => array("Sandbox: CS6","N"),
             "cs7-api" => array("Sandbox: CS7","M"),
             "cs8-api" => array("Sandbox: CS8","L"),
+            "cs9-api" => array("Sandbox: CS9","K"),
+            "cs10-api" => array("Sandbox: CS10","J"),
+            "cs11-api" => array("Sandbox: CS11","I"),
             "prerelna1.pre" => array("Pre-Release: NA1","t")
         )
     );
 
     $GLOBALS['API_VERSIONS'] = array(
+        "22.0" => "22.0",
         "21.0" => "21.0",
         "20.0" => "20.0",
         "19.0" => "19.0",

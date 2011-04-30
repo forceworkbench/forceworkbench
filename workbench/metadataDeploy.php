@@ -91,7 +91,7 @@ options:</p>
     <img onmouseover="Tip('Choose a ZIP file containing a project manifest, a file named package.xml, and a set of directories that contain the components to deploy.  See Salesforce.com Metadata API Developers guide more information about working with ZIP files for deployment.')"
      align='absmiddle' src='<?php echo getStaticResourcesPath(); ?>/images/help16.png' />
 <p />
-    <?php printDeployOptions(new DeployOptions(), true); ?>
+    <?php printDeployOptions(defaultDeployOptions(), true); ?>
 <p />
 <input type='submit' name='stageForDeployment' value='Next' /></form>
     <?php
@@ -104,7 +104,7 @@ exit;
 
 
 function deserializeDeployOptions($request) {
-    $deployOptions = new DeployOptions();
+    $deployOptions = defaultDeployOptions();
 
     foreach ($deployOptions as $optionName => $optionValue) {
         if (is_bool($optionValue)) {
@@ -146,5 +146,21 @@ function validateZipFile($file) {
     return $validationResult;
 }
 
+function defaultDeployOptions() {
+    $deployOptions = new DeployOptions();
+
+    $deployOptions->allowMissingFiles = false;
+    $deployOptions->autoUpdatePackage = false;
+    $deployOptions->checkOnly = false;
+    $deployOptions->ignoreWarnings = false;
+    $deployOptions->performRetrieve = false;
+    if (apiVersionIsAtLeast(22.0)) { $deployOptions->purgeOnDelete = false; }
+    $deployOptions->rollbackOnError = false;
+    $deployOptions->singlePackage = false;
+    $deployOptions->runAllTests = false;
+    $deployOptions->runTests = array();
+
+    return $deployOptions;
+}
 
 ?>

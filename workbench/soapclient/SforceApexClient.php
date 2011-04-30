@@ -12,7 +12,7 @@ class SforceApexClient extends SoapBaseClient {
     }
 
     protected function getWsdl() {
-        return "soapclient/sforce." . str_replace(".","",max($GLOBALS['API_VERSIONS'])) . ".apex.wsdl";
+        return "soapclient/sforce." . str_replace(".","",getApiVersion()) . ".apex.wsdl";
     }
 
     public function executeAnonymous($executeAnonymousBlock) {

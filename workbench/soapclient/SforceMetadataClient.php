@@ -12,7 +12,8 @@ class SforceMetadataClient extends SoapBaseClient {
     }
 
     protected function getWsdl() {
-        return "soapclient/sforce." . str_replace(".","",max($GLOBALS['API_VERSIONS'])) . ".metadata.wsdl";
+
+        return "soapclient/sforce." . str_replace(".","",getApiVersion()) . ".metadata.wsdl";
     }
 
     public function describeMetadata($asOfVersion) {
@@ -106,18 +107,7 @@ class SforceMetadataClient extends SoapBaseClient {
 
 }
 
-class DeployOptions {
-    public $allowMissingFiles = false;
-    public $autoUpdatePackage = false;
-    public $checkOnly = false;
-    public $ignoreWarnings = false;
-    public $performRetrieve = false;
-    public $rollbackOnError = false;
-    public $singlePackage = false;
-    public $runAllTests = false;
-    public $runTests = array();
-}
-
+class DeployOptions {}
 
 class RetrieveRequest { /* purposely leaving blank as to not force values if user doesn't provide them */ }
 
