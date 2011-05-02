@@ -99,7 +99,7 @@ try {
                        "</a></p>";
         }
 
-        printTree("metadataStatusResultsTree", processResults($results), true, $zipLink);
+        printTree("metadataStatusResultsTree", processResults($results), true, $zipLink, true, true);
 
         if (isset($debugInfo["DebuggingInfo"]->debugLog)) {
             print "<p>&nbsp;</p><h3>Debug Logs</h3>";

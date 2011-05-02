@@ -274,6 +274,18 @@ activateable {
     color: #663399;
 }
 
+.legend {
+    float: right;
+    border:1px solid #bbb;
+    padding:0.5em;
+    margin-right:1em;
+}
+
+.legend ul {
+    margin:0;
+    padding-left: 2em;
+}
+
 /*SORTABLE CSS*/ /* Copyright 2006 Joost de Valk */
 a img {
     border: 0;

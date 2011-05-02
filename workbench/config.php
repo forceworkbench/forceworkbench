@@ -335,30 +335,6 @@ $config["header_Describe"] = array(
         )
     );
 
-    $config["highightBooleanValues"] = array(
-        "label" => "Boolean Values",
-        "description" => "Color code true and false values in Describe results",
-        "default" => true,
-        "overrideable" => true,
-        "dataType" => "boolean"
-    );
-
-    $config["highlightSystemFields"] = array(
-        "label" => "System Fields",
-        "description" => "Color code system fields (i.e. Id, CreatedById, LastModified, etc.) in Describe results.",
-        "default" => true,
-        "overrideable" => true,
-        "dataType" => "boolean"
-    );
-
-    $config["highlightCustomFields"] = array(
-        "label" => "Custom Fields",
-        "description" => "Color code custom fields in Describe results.",
-        "default" => true,
-        "overrideable" => true,
-        "dataType" => "boolean"
-    );
-
 
 $config["header_DataManagement"] = array(
     "label" => "Data Management Options",

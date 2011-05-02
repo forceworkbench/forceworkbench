@@ -82,34 +82,57 @@ function handleAllExceptions($e) {
     exit;
 }
 
-function processResults($raw) {
+function processResults($raw, $groupTopLevelScalarsIn = null, $unCamelCaseKeys = false, $parentRawKey = null) {
+    $systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp");
     $processed = array();
 
     foreach (array(true, false) as $scalarProcessing) {
         foreach ($raw as $rawKey => $rawValue) {
             if (is_array($rawValue) || is_object($rawValue)) {
-                if($scalarProcessing) continue;
+                if ($scalarProcessing) continue;
+
+                $processedSubResults = processResults($rawValue, null, $unCamelCaseKeys, $rawKey);
+                $subCount = " (" . count($processedSubResults) . ")";
 
                 if (isset($rawValue->name) && $rawValue->name != "") {
-                    $processed[$rawValue->name] = processResults($rawValue);
+                    $nameKey = $rawValue->name;
+                    if (isset($parentRawKey) && $parentRawKey == "fields") {
+                        if (in_array($rawValue->name, $systemFields)) {
+                            $nameKey = "<span class='highlightSystemField'>$rawValue->name</span>";
+                        } else if ($rawValue->custom) {
+                            $nameKey = "<span class='highlightCustomField'>$rawValue->name</span>";
+                        }
+                    }
+                    $processed[$nameKey] = $processedSubResults;
                 } else if (isset($rawValue->fileName) && $rawValue->fileName != "") {
-                    $processed[$rawValue->fileName] = processResults($rawValue);
+                    $processed[$rawValue->fileName] = $processedSubResults;
                 } else if (isset($rawValue->fullName) && $rawValue->fullName != "") {
-                    $processed[$rawValue->fullName] = processResults($rawValue);
+                    $processed[$rawValue->fullName] = $processedSubResults;
+                } else if (isset($rawValue->label) && $rawValue->label != "") {
+                    $processed[$rawValue->label] = $processedSubResults;
                 } else if (isset($rawValue->column) && isset($rawValue->line)) {
-                    $processed[$rawValue->column . ":" . $rawValue->line] = processResults($rawValue);
+                    $processed[$rawValue->column . ":" . $rawValue->line] = $processedSubResults;
                     krsort($processed);
+                } else if (isset($rawValue->childSObject) && isset($rawValue->field)) {
+                    $processed[$rawValue->childSObject . "." . $rawValue->field] = $processedSubResults;
+                } else if ($unCamelCaseKeys) {
+                    $processed[unCamelCase($rawKey) . $subCount] = $processedSubResults;
                 } else {
-                    $processed[$rawKey] = processResults($rawValue);
+                    $processed[$rawKey . $subCount] = $processedSubResults;
                 }
             } else {
-                $processed[$rawKey] = $rawValue;
+                if ($groupTopLevelScalarsIn != null) {
+                    $processed[$groupTopLevelScalarsIn][$rawKey] = $rawValue;
+                } else {
+                    $processed[$rawKey] = $rawValue;
+                }
             }
         }
     }
 
     return $processed;
 }
+
 
 function unCamelCase($camelCasedString) {
     return ucfirst(preg_replace( '/([a-z0-9])([A-Z])/', "$1 $2", $camelCasedString));
@@ -426,7 +449,7 @@ function describeSObject($objectTypes) {
     }
 }
 
-function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = null) {
+function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = null, $containsIds = false, $containsDates = false) {
     print "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'expand'); return false;\">Expand All</a> | " .
           "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'collapse'); return false;\">Collapse All</a>\n";
 
@@ -436,7 +459,7 @@ function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = 
 
     print "<ul id='$tableId' class='treeview'>";
 
-    printNode($nodes);
+    printNode($nodes, $containsIds, $containsDates);
     
     print "</ul>\n";
     
@@ -448,17 +471,23 @@ function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = 
                     "</script>");
 }
 
-function printNode($node) {
+function printNode($node, $containsIds, $containsDates) {
     foreach ($node as $nodeKey => $nodeValue) {
         if (is_array($nodeValue) || is_object($nodeValue)) {
             print "<li>$nodeKey<ul style='display:none;'>\n";
-            printNode($nodeValue);
+            printNode($nodeValue, $containsIds, $containsDates);
             print "</ul></li>\n";
         } else {
+            $nodeKey = is_numeric($nodeKey) ? "" : $nodeKey . ": ";
+
             if (is_bool($nodeValue)) {
                 $nodeValue = $nodeValue == 1 ? "<span class='trueColor'>true</span>" : "<span class='falseColor'>false</span>";
+            } else {
+                $nodeValue = $containsDates ? localizeDateTimes($nodeValue) : $nodeValue;
+                $nodeValue = $containsIds ? addLinksToUiForIds($nodeValue) : $nodeValue;
             }
-            print "<li>". (!is_numeric($nodeKey) ? $nodeKey . ": " : "") . "<span style='font-weight:bold;'>" . addLinksToUiForIds(localizeDateTimes($nodeValue)) . "</span></li>\n";
+            
+            print "<li>$nodeKey<span style='font-weight:bold;'>$nodeValue</span></li>\n";
         }
     }
 }

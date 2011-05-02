@@ -94,7 +94,7 @@ if (count($errors) > 0) {
     print "</p>";
 }
 
-printTree("sessionInfoTree", $sessionInfo);
+printTree("sessionInfoTree", $sessionInfo, false, null, true, true);
 
 print "</div>";
 require_once 'footer.php';

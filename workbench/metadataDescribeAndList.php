@@ -80,7 +80,7 @@ if (isset($typeString)) {
 
     $metadataComponents = listMetadata($type);
 
-    printTree("listMetadataTree", array("Type Description"=>$type, "Components"=>$metadataComponents), $typeStringChanged);
+    printTree("listMetadataTree", array("Type Description"=>$type, "Components"=>$metadataComponents), $typeStringChanged, null, true, true);
 }
 
 require_once 'footer.php';
