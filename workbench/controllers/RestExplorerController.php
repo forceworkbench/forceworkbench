@@ -64,10 +64,10 @@ class RestExplorerController {
             $this->url = str_replace(' ', '+', trim($this->url));
             
             // validate URL
-//            if (preg_match("!" . $this->BASE_REST_URL_PREFIX . "/\w+!", $this->url) == 0) {
-//                throw new Exception('Invalid REST API Service URI. Must begin with \''
-//                        . $this->BASE_REST_URL_PREFIX . '\' followed by a service name, such as \'/services/data\'.');
-//            }
+            if (preg_match("!" . $this->BASE_REST_URL_PREFIX . "/\w+!", $this->url) == 0) {
+                throw new Exception('Invalid REST API Service URI. Must begin with \''
+                        . $this->BASE_REST_URL_PREFIX . '\' followed by a service name, such as \'/services/data\'.');
+            }
             
             if (in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) && trim($this->requestBody) == "") {
                 throw new Exception("Must include a Request Body.");
