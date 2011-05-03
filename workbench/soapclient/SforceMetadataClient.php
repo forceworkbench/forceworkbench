@@ -12,8 +12,8 @@ class SforceMetadataClient extends SoapBaseClient {
     }
 
     protected function getWsdl() {
-
-        return "soapclient/sforce." . str_replace(".","",getApiVersion()) . ".metadata.wsdl";
+        $minMetadataWsdlAvailable = "190"; // lowest before the weird spotting coverage; TODO: find older WSDLs
+        return "soapclient/sforce." . str_replace(".","", max($minMetadataWsdlAvailable, getApiVersion())) . ".metadata.wsdl";
     }
 
     public function describeMetadata($asOfVersion) {

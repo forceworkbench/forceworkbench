@@ -12,7 +12,8 @@ class SforceApexClient extends SoapBaseClient {
     }
 
     protected function getWsdl() {
-        return "soapclient/sforce." . str_replace(".","",getApiVersion()) . ".apex.wsdl";
+        $maxApexWsdlAvailable = "140"; // lowest before the weird spotting coverage TODO: find older WSDLs
+        return "soapclient/sforce." . str_replace(".","", max($maxApexWsdlAvailable, getApiVersion())) . ".apex.wsdl";
     }
 
     public function executeAnonymous($executeAnonymousBlock) {
