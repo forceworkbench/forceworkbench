@@ -52,7 +52,7 @@ if (!isLoggedIn() && $myPage->requiresSfdcSession) {
     exit;
 }
 if (!$myPage->isReadOnly && isReadOnlyMode()) {
-    throw new Exception("This page is not accessable in read-only mode");
+    throw new Exception("This page is not accessible in read-only mode");
 }
 
 
