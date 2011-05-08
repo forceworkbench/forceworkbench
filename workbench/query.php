@@ -810,7 +810,7 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
     return localizeDateTimes($table);
 }
 
-function createQueryResultTable($records) {
+function createQueryResultTable($records, $rowNum) {
     $table = "<table id='query_results' class='" . getTableClass() . "'>\n";
 
     //call shared recusive function above for header printing
@@ -823,7 +823,6 @@ function createQueryResultTable($records) {
     $table .= "</th></tr>\n";
 
 
-    $rowNum = 1;
     //Print the remaining rows in the body
     foreach ($records as $record) {
         //call shared recusive function above for row printing
@@ -840,7 +839,7 @@ function createQueryResultTable($records) {
             if($row[$i] instanceof QueryResult && !is_array($row[$i])) $row[$i] = array($row[$i]);
             if (isset($row[$i][0]) && $row[$i][0] instanceof QueryResult) {
                 foreach ($row[$i] as $qr) {
-                    $table .= createQueryResultTable($qr->records);
+                    $table .= createQueryResultTable($qr->records, 1);
                     if($qr != end($row[$i])) $table .= "</td><td>";
                 }
             } else {
@@ -897,7 +896,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
 
             print addLinksToUiForIds($queryRequest->getExportTo() == 'matrix' ?
             createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
-            createQueryResultTable($records));
+            createQueryResultTable($records, $rowNum));
 
             if (!getConfig("autoRunQueryMore") && $_SESSION['queryLocator']) {
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
