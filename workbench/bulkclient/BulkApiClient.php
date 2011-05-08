@@ -51,6 +51,7 @@ class BulkApiClient {
 
     private $endpoint;
     private $sessionId;
+    private $proxySettings;
     private $userAgent = "PHP-BulkApiClient/21.0.1";
     private $compressionEnabled = true;
     private $logs;
@@ -81,6 +82,16 @@ class BulkApiClient {
 	
         $this->endpoint = $this->convertEndpoint($endpoint);
         $this->sessionId = $sessionId;
+    }
+
+    /**
+     * Sets proxy settings as an array with the keys:
+     * "proxy_host", "proxy_port", "proxy_username", "proxy_password"
+     *
+     * @param  $proxySettings
+     */
+    public function setProxySettings($proxySettings) {
+        $this->proxySettings = $proxySettings;
     }
 
     /**
@@ -340,6 +351,14 @@ class BulkApiClient {
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);                                //TODO: use ca-bundle instead
         if($this->compressionEnabled) curl_setopt($ch, CURLOPT_ENCODING, "gzip");   //TODO: add  outbound compression support
+
+        if ($this->proxySettings != null) {
+            if (isset($this->proxySettings["proxy_host"])) curl_setopt($ch, CURLOPT_PROXY, $this->proxySettings["proxy_host"]);
+            if (isset($this->proxySettings["proxy_port"])) curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxySettings["proxy_port"]);
+            if (isset($this->proxySettings["proxy_username"]) && isset($this->proxySettings["proxy_password"])) {
+                curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->proxySettings["proxy_username"] . ":" . $this->proxySettings["proxy_password"]);
+            }
+        }
 
         if (isset($toFile)) {
             curl_setopt($ch, CURLOPT_FILE, $toFile);

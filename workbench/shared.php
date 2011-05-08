@@ -554,18 +554,32 @@ function getAsyncApiConnection() {
     $asyncConnection->setUserAgent(getWorkbenchUserAgent());
     $asyncConnection->setExternalLogReference($_SESSION['restDebugLog']); //TODO: maybe replace w/ its own log??
     $asyncConnection->setLoggingEnabled(getConfig("debug") == true);
+    $asyncConnection->setProxySettings(getProxySettings());
 
     return $asyncConnection;
 }
 
 function getRestApiConnection() {
-    $asyncConnection = new RestApiClient($_SESSION['location'], $_SESSION['sessionId']);
-    $asyncConnection->setCompressionEnabled(getConfig("enableGzip"));
-    $asyncConnection->setUserAgent(getWorkbenchUserAgent());
-    $asyncConnection->setExternalLogReference($_SESSION['restDebugLog']);
-    $asyncConnection->setLoggingEnabled(getConfig("debug") == true);
+    $restConnection = new RestApiClient($_SESSION['location'], $_SESSION['sessionId']);
+    $restConnection->setCompressionEnabled(getConfig("enableGzip"));
+    $restConnection->setUserAgent(getWorkbenchUserAgent());
+    $restConnection->setExternalLogReference($_SESSION['restDebugLog']);
+    $restConnection->setLoggingEnabled(getConfig("debug") == true);
+    $restConnection->setProxySettings(getProxySettings());
 
-    return $asyncConnection;
+    return $restConnection;
+}
+
+function getProxySettings() {
+    if (!getConfig("proxyEnabled"))  return null;
+
+    $proxySettings = array();
+    $proxySettings['proxy_host'] = getConfig("proxyHost");
+    $proxySettings['proxy_port'] = (int)getConfig("proxyPort"); // Use an integer, not a string
+    $proxySettings['proxy_username'] = getConfig("proxyUsername");
+    $proxySettings['proxy_password'] = getConfig("proxyPassword");
+
+     return $proxySettings;
 }
 
 function in_arrayi($needle, $haystack) {

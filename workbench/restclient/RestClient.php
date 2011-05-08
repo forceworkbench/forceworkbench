@@ -2,6 +2,7 @@
 class RestApiClient {
     private $baseUrl;
     private $sessionId;
+    private $proxySettings;
     private $userAgent = "PHP-RestApiClient/21.0";
     private $compressionEnabled = true;
     private $logs;
@@ -22,6 +23,10 @@ class RestApiClient {
 	
         $this->baseUrl = $this->getBaseUrlFromPartnerEndpoint($partnerEndpoint);
         $this->sessionId = $sessionId;
+    }
+
+    public function setProxySettings($proxySettings) {
+        $this->proxySettings = $proxySettings;
     }
 
     public function getUserAgent() {
@@ -96,6 +101,12 @@ class RestApiClient {
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, $expectBinary ? 1 : 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);                                //TODO: use ca-bundle instead
+
+        if ($this->proxySettings != null) {
+            curl_setopt($ch, CURLOPT_PROXY, $this->proxySettings["proxy_host"]);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxySettings["proxy_port"]);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->proxySettings["proxy_username"] . ":" . $this->proxySettings["proxy_password"]);
+        }
         
         if ($this->compressionEnabled) {
             curl_setopt($ch, CURLOPT_ENCODING, "gzip");   //TODO: add  outbound compression support
