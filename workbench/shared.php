@@ -736,26 +736,25 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
             }
         }
 
-        global $metadataConnection;
-        if ($showSoap && isset($metadataConnection) && $metadataConnection->getLastRequestHeaders()) {
+        if ($showSoap && WorkbenchContext::get()->getMetadataConnection()->getLastRequestHeaders()) {
             try {
                 print "<h1 onclick=\"toggleDebugSection(this,'metadata_soap_container')\" class=\"debugHeader\">+ METADATA SOAP MESSAGES</h1>\n";
                 print "<div id='metadata_soap_container' class='debugContainer'>";
 
                 print "<strong>LAST REQUEST HEADER</strong>\n";
-                print htmlspecialchars($metadataConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getMetadataConnection()->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST REQUEST</strong>\n";
-                print htmlspecialchars(prettyPrintXml($metadataConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getMetadataConnection()->getLastRequest()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE HEADER</strong>\n";
-                print htmlspecialchars($metadataConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getMetadataConnection()->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE</strong>\n";
-                print htmlspecialchars(prettyPrintXml($metadataConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getMetadataConnection()->getLastResponse()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "</div>";

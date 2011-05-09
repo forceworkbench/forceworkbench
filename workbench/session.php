@@ -59,10 +59,6 @@ if (!$myPage->isReadOnly && isReadOnlyMode()) {
 
 if (isLoggedIn()) {
     try {
-        require_once 'soapclient/SforceHeaderOptions.php';
-        require_once 'soapclient/SforceMetadataClient.php';
-        $metadataConnection = new SforceMetadataClient();
-
         //setting default object to remove notices through functions
         if (!isset($_SESSION['default_object'])) {
             $_SESSION['default_object'] = null;

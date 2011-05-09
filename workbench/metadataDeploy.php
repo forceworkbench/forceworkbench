@@ -20,9 +20,8 @@ if (isset($_POST['deploymentConfirmed']) && isset($_POST["deployFileTmpName"])) 
         exit;
     }
 
-    global $metadataConnection;
     try {
-        $deployAsyncResults = $metadataConnection->deploy($_SESSION[$deployFileTmpName], $_SESSION[$deployFileTmpName . "_OPTIONS"]);
+        $deployAsyncResults = WorkbenchContext::get()->getMetadataConnection()->deploy($_SESSION[$deployFileTmpName], $_SESSION[$deployFileTmpName . "_OPTIONS"]);
         unset($_SESSION[$deployFileTmpName]);
         unset($_SESSION[$deployFileTmpName . "_OPTIONS"]);
 

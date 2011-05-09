@@ -75,9 +75,8 @@ try {
 }
 
 if (apiVersionIsAtLeast(10.0)) {
-    global $metadataConnection;
     try {
-        foreach ($metadataConnection->describeMetadata(getApiVersion()) as $resultsKey => $resultsValue) {
+        foreach (WorkbenchContext::get()->getMetadataConnection()->describeMetadata(getApiVersion()) as $resultsKey => $resultsValue) {
             if ($resultsKey != 'metadataObjects' && !is_array($resultsValue)) {
                 $sessionInfo['Metadata'][$resultsKey] = $resultsValue;
             }

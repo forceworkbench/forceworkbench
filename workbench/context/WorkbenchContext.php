@@ -1,6 +1,7 @@
 <?php
 require_once 'context/ConnectionConfiguration.php';
 require_once 'context/PartnerConnectionProvider.php';
+require_once 'context/MetadataConnectionProvider.php';
 
 class WorkbenchContext {
     const INSTANCE    = 'WORKBENCH_CONTEXT';
@@ -51,8 +52,18 @@ class WorkbenchContext {
         return $this->connConfig->getApiVersion();
     }
 
+    /**
+     * @return SforcePartnerClient
+     */
     function getPartnerConnection() {
         return $this->getConnection(self::PARTNER);
+    }
+
+    /**
+     * @return SforceMetadataClient
+     */
+    function getMetadataConnection() {
+        return $this->getConnection(self::METADATA);
     }
 
     private function getConnection($type) {
@@ -64,6 +75,7 @@ class WorkbenchContext {
         // lazily register static connection providers
         if (!isset(self::$connectionProviders)) {
             self::$connectionProviders[self::PARTNER] = new PartnerConnectionProvider();
+            self::$connectionProviders[self::METADATA] = new MeteadataConnectionProvider();
         }
 
         // find the requested connection provider

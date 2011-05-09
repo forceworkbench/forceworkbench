@@ -39,9 +39,8 @@ print "<p class='instructions'>A Metadata API operation has been performed, whic
       "Refresh this page periodically to view the latest status. Results will be available once processing is complete.</p><p/>";
 
 require_once 'soapclient/SforceMetadataClient.php';
-global $metadataConnection;
 try {
-    $asyncResults = $metadataConnection->checkStatus($asyncProcessId);
+    $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkStatus($asyncProcessId);
 
     if (!isset($asyncResults)) {
         displayError("No results returned for '$asyncProcessId'", false, true);
@@ -79,7 +78,7 @@ try {
         //if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
         $operation = isset($_REQUEST['op']) ? htmlentities($_REQUEST['op']) : (isset($asyncResults->checkOnly) ? "D" : "R");
 
-        $results = $operation == "D" ? $metadataConnection->checkDeployStatus($asyncProcessId, $debugInfo) : $metadataConnection->checkRetrieveStatus($asyncProcessId, $debugInfo);
+        $results = $operation == "D" ? WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, $debugInfo) : WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
 
         $zipLink = null;
         if (isset($results->zipFile) || isset($results->retrieveResult->zipFile) ) {

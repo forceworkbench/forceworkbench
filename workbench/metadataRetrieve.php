@@ -15,9 +15,8 @@ if (isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
         exit;
     }
 
-    global $metadataConnection;
     try {
-        $retrieveAsyncResults = $metadataConnection->retrieve($_SESSION[$retrieveRequestId]);
+        $retrieveAsyncResults = WorkbenchContext::get()->getMetadataConnection()->retrieve($_SESSION[$retrieveRequestId]);
 
         if (!isset($retrieveAsyncResults->id)) {
             displayError("Unknown retrieval error.\n" . isset($retrieveAsyncResults->message) ? $retrieveAsyncResults->message : "", true, true);

@@ -10,9 +10,8 @@ if (!apiVersionIsAtLeast(10.0)) {
 
 require_once 'soapclient/SforceMetadataClient.php';
 
-global $metadataConnection;
 try {
-    $describeMetadataResult = $metadataConnection->describeMetadata(getApiVersion());
+    $describeMetadataResult = WorkbenchContext::get()->getMetadataConnection()->describeMetadata(getApiVersion());
 } catch (Exception $e) {
     displayError($e->getMessage(), false, true);
 }
@@ -87,14 +86,13 @@ require_once 'footer.php';
 
 
 function listMetadata($type) {
-    global $metadataConnection;
     try {
         if (isset($type->childXmlName)) {
-            return processListMetadataResult($metadataConnection->listMetadata($type->childXmlName, null, getApiVersion()));
+            return processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->childXmlName, null, getApiVersion()));
         }
 
         if (!$type->inFolder) {
-            return processListMetadataResult($metadataConnection->listMetadata($type->xmlName, null, getApiVersion()));
+            return processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->xmlName, null, getApiVersion()));
         }
 
         $folderQueryResult = WorkbenchContext::get()->getPartnerConnection()->query("SELECT DeveloperName FROM Folder WHERE Type = '" . $type->xmlName . "' AND DeveloperName != null AND NamespacePrefix = null");
@@ -107,7 +105,7 @@ function listMetadata($type) {
             $folder = new SObject($folderRecord);
             $folderName = $folder->fields->DeveloperName;
 
-            $listMetadataResult["$folderName"] = processListMetadataResult($metadataConnection->listMetadata($type->xmlName, $folder->fields->DeveloperName, getApiVersion()));
+            $listMetadataResult["$folderName"] = processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->xmlName, $folder->fields->DeveloperName, getApiVersion()));
         }
 
         return $listMetadataResult;
