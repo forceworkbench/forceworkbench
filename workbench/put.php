@@ -631,9 +631,8 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults) {
         while($idArray) {
             $idArrayBatch = array_splice($idArray,0,getConfig("batchSize"));
             try {
-                global $partnerConnection;
                 if($apiCall == 'purge') $apiCall = 'emptyRecycleBin';
-                $resultsMore = $partnerConnection->$apiCall($idArrayBatch);
+                $resultsMore = WorkbenchContext::get()->getPartnerConnection()->$apiCall($idArrayBatch);
 
                 if (!$results) {
                     $results = $resultsMore;
@@ -709,11 +708,10 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
 
 
             try {
-                global $partnerConnection;
                 if ($apiCall == 'upsert') {
-                    $resultsMore = $partnerConnection->$apiCall($extId,$sObjects);
+                    $resultsMore = WorkbenchContext::get()->getPartnerConnection()->$apiCall($extId,$sObjects);
                 } else {
-                    $resultsMore = $partnerConnection->$apiCall($sObjects);
+                    $resultsMore = WorkbenchContext::get()->getPartnerConnection()->$apiCall($sObjects);
                 }
                 unset($sObjects);
             } catch (Exception $e) {

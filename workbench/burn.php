@@ -8,11 +8,9 @@ if (isset($_GET['ajaxBurn'])) {
     $burnt = 0;
     $burnErrors = array();
 
-    global $partnerConnection;
-
     for ($b = 0; $b < $numToBurn; $b++) {
         try {
-            $partnerConnection->getServerTimestamp();
+            WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
             $burnt++;
         } catch (Exception $ex) {
             $burnErrors[] = $ex->getMessage();

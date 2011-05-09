@@ -9,10 +9,9 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
     header("Location: $_SERVER[PHP_SELF]?previousVersion=" . $previousVersion);
 }
 
-global $partnerConnection;
 if (isset($_REQUEST['previousVersion'])) {
     try {
-        $partnerConnection->getServerTimestamp();
+        WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
     } catch (Exception $e) {
         if (stripos($e->getMessage(),'UNSUPPORTED_API_VERSION') > -1) {
             clearSessionCache();
@@ -57,14 +56,14 @@ $sessionInfo = array();
 $sessionInfo['Connection'] = array(
     'API Version' => getApiVersion(),
     'Client Id' => isset($_SESSION['tempClientId']) ? $_SESSION['tempClientId'] : getConfig('callOptions_client'), 
-    'Endpoint' => $partnerConnection->getLocation(),
-    'Session Id' => $partnerConnection->getSessionId(), 
+    'Endpoint' => WorkbenchContext::get()->getPartnerConnection()->getLocation(),
+    'Session Id' => WorkbenchContext::get()->getPartnerConnection()->getSessionId(),
 );
 
 $errors = array();
 
 try {
-    foreach ($partnerConnection->getUserInfo() as $uiKey => $uiValue) {
+    foreach (WorkbenchContext::get()->getPartnerConnection()->getUserInfo() as $uiKey => $uiValue) {
         if (stripos($uiKey,'org') !== 0) {
             $sessionInfo['User'][$uiKey] = $uiValue;
         } else {

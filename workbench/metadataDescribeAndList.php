@@ -88,8 +88,6 @@ require_once 'footer.php';
 
 function listMetadata($type) {
     global $metadataConnection;
-    global $partnerConnection;
-
     try {
         if (isset($type->childXmlName)) {
             return processListMetadataResult($metadataConnection->listMetadata($type->childXmlName, null, getApiVersion()));
@@ -99,7 +97,7 @@ function listMetadata($type) {
             return processListMetadataResult($metadataConnection->listMetadata($type->xmlName, null, getApiVersion()));
         }
 
-        $folderQueryResult = $partnerConnection->query("SELECT DeveloperName FROM Folder WHERE Type = '" . $type->xmlName . "' AND DeveloperName != null AND NamespacePrefix = null");
+        $folderQueryResult = WorkbenchContext::get()->getPartnerConnection()->query("SELECT DeveloperName FROM Folder WHERE Type = '" . $type->xmlName . "' AND DeveloperName != null AND NamespacePrefix = null");
 
         if ($folderQueryResult->size == 0) {
             return array();

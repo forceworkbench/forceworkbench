@@ -11,21 +11,19 @@ if (isset($_POST['passwordChangeType'])) {
 
 
 function changePassword($passwordChangeType) {
-    global $partnerConnection;
-
     $infos  = null;
     $errors = null;
     
     try {
         if ($passwordChangeType == 'set' && isset($_POST['userId']) && isset($_POST['passwordOne'])) {
             if ($_POST['passwordOne'] == $_POST['passwordConfirm']) {
-                $partnerConnection->setPassword($_POST['userId'],$_POST['passwordOne']);
+                WorkbenchContext::get()->getPartnerConnection()->setPassword($_POST['userId'],$_POST['passwordOne']);
                 $infos[] = "Successfully set password for " . $_POST['userId'];
             } else {
                 $errors[] = "Passwords must match, and don't be sneaky and turn off JavaScript";
             }
         } else if ($passwordChangeType == 'reset' && isset($_POST['userId'])) {
-            $changePasswordResult = $partnerConnection->resetPassword($_POST['userId']);
+            $changePasswordResult = WorkbenchContext::get()->getPartnerConnection()->resetPassword($_POST['userId']);
             $infos[] = "Successfully reset password for " . $_POST['userId'];
         }
     } catch(Exception $e) {

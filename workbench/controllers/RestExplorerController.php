@@ -118,30 +118,29 @@ class RestExplorerController {
         $binSobjectTypePos = count($expUrl) - 3;
         $binSobjectType = $expUrl[$binSobjectTypePos];
         
-        global $partnerConnection;
         // Handle the different fields that support binary data in their own special way.
         if (in_arrayi($binSobjectType, array("Document", "Attachment", "StaticResource"))) {
-            $binInfo = new SObject($partnerConnection->retrieve("Name, ContentType, BodyLength", $binSobjectType, $binId));
+            $binInfo = new SObject(WorkbenchContext::get()->getPartnerConnection()->retrieve("Name, ContentType, BodyLength", $binSobjectType, $binId));
             $binFilename = $binInfo->fields->Name;
             $binContentType = $binInfo->fields->ContentType;
             $binContentLength = $binInfo->fields->BodyLength;
         } else if ($binSobjectType == "ContentVersion") {
-            $binInfo = new SObject($partnerConnection->retrieve("PathOnClient, FileType, ContentSize", $binSobjectType, $binId));
+            $binInfo = new SObject(WorkbenchContext::get()->getPartnerConnection()->retrieve("PathOnClient, FileType, ContentSize", $binSobjectType, $binId));
             $binFilename= basename($binInfo->fields->PathOnClient);
             $binContentType = "application/" . $binInfo->fields->FileType;
             $binContentLength = $binInfo->fields->ContentSize;
         } else if (stripos($this->url, "ContentData")) {
-            $binInfo = new SObject($partnerConnection->retrieve("ContentFileName, ContentType, ContentSize", $binSobjectType, $binId));
+            $binInfo = new SObject(WorkbenchContext::get()->getPartnerConnection()->retrieve("ContentFileName, ContentType, ContentSize", $binSobjectType, $binId));
             $binFilename= $binInfo->fields->ContentFileName;
             $binContentType = $binInfo->fields->ContentType;
             $binContentLength = $binInfo->fields->ContentSize;
         } else if ($binSobjectType == "MailmergeTemplate") {
-            $binInfo = new SObject($partnerConnection->retrieve("Filename, BodyLength", $binSobjectType, $binId));
+            $binInfo = new SObject(WorkbenchContext::get()->getPartnerConnection()->retrieve("Filename, BodyLength", $binSobjectType, $binId));
             $binFilename= $binInfo->fields->Filename;
             $binContentType = "application/msword";
             $binContentLength = $binInfo->fields->BodyLength;
         } else if ($binSobjectType == "QuoteDocument") {
-            $binInfo = new SObject($partnerConnection->retrieve("Name", $binSobjectType, $binId));
+            $binInfo = new SObject(WorkbenchContext::get()->getPartnerConnection()->retrieve("Name", $binSobjectType, $binId));
             $binFilename= $binInfo->fields->Name;
         } else {
             return false;

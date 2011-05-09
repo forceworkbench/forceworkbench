@@ -59,8 +59,6 @@ if (!$myPage->isReadOnly && isReadOnlyMode()) {
 
 if (isLoggedIn()) {
     try {
-        $partnerConnection = WorkbenchContext::get()->getPartnerConnection();
-
         require_once 'soapclient/SforceHeaderOptions.php';
         require_once 'soapclient/SforceMetadataClient.php';
         $metadataConnection = new SforceMetadataClient();
@@ -78,12 +76,12 @@ if (isLoggedIn()) {
         }
 
         if (!isset($_SESSION['getUserInfo']) || !getConfig('cacheGetUserInfo')) {
-            $_SESSION['getUserInfo'] = $partnerConnection->getUserInfo();
+            $_SESSION['getUserInfo'] = WorkbenchContext::get()->getPartnerConnection()->getUserInfo();
         } else if (isset($_SESSION['lastRequestTime'])) {
             $idleTime = microtime(true) - $_SESSION['lastRequestTime'];
             if ($idleTime > (getConfig("sessionIdleMinutes") * 60)) {
                 // ping SFDC to check if session is still alive
-                $partnerConnection->getServerTimestamp();
+                WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
             }
         }
         $_SESSION['lastRequestTime'] = microtime(true);

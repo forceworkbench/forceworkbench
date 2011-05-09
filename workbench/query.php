@@ -626,11 +626,9 @@ QUERY_BUILDER_SCRIPT;
 
 function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false) {
     try {
-
-        global $partnerConnection;
-        if ($queryAction == 'Query') $queryResponse = $partnerConnection->query($soqlQuery);
-        if ($queryAction == 'QueryAll') $queryResponse = $partnerConnection->queryAll($soqlQuery);
-        if ($queryAction == 'QueryMore' && isset($queryLocator)) $queryResponse = $partnerConnection->queryMore($queryLocator);
+        if ($queryAction == 'Query') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->query($soqlQuery);
+        if ($queryAction == 'QueryAll') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryAll($soqlQuery);
+        if ($queryAction == 'QueryMore' && isset($queryLocator)) $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryMore($queryLocator);
 
         if (substr_count($soqlQuery,"count()") && $suppressScreenOutput == false) {
             $countString = "Query would return " . $queryResponse->size . " record";
@@ -661,7 +659,7 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
         }
 
         while(($suppressScreenOutput || getConfig("autoRunQueryMore")) && !$queryResponse->done) {
-            $queryResponse = $partnerConnection->queryMore($queryResponse->queryLocator);
+            $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryMore($queryResponse->queryLocator);
 
             if (!is_array($queryResponse->records)) {
                 $queryResponse->records = array($queryResponse->records);

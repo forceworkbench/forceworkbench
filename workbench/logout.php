@@ -6,7 +6,7 @@ if ($_SESSION) {
     require_once 'header.php';
     if (getConfig("invalidateSessionOnLogout")) {
         try {
-            $partnerConnection->logout();
+            WorkbenchContext::get()->getPartnerConnection()->logout();
             $sessionInvatidated = true;
         } catch(Exception $e) {
             $sessionInvatidated = false;

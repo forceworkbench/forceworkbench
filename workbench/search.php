@@ -302,9 +302,7 @@ SEARCH_BUILDER_SCRIPT;
 
 function search($searchRequest) {
     try {
-
-        global $partnerConnection;
-        $searchResponse = $partnerConnection->search($searchRequest->getSoslSearch());
+        $searchResponse = WorkbenchContext::get()->getPartnerConnection()->search($searchRequest->getSoslSearch());
 
         if (isset($searchResponse->searchRecords)) {
             $records = $searchResponse->searchRecords;

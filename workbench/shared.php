@@ -320,8 +320,7 @@ function describeGlobal($filter1=null, $filter2=null) {
 
     if (!isset($_SESSION['myGlobal']) || !getConfig("cacheDescribeGlobal")) {
         try {
-            global $partnerConnection;
-            $describeGlobalResponse = $partnerConnection->describeGlobal();
+            $describeGlobalResponse = WorkbenchContext::get()->getPartnerConnection()->describeGlobal();
 
             //Change to pre-17.0 format
             if (isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)) {
@@ -398,8 +397,7 @@ function describeSObject($objectTypes) {
     // retreive uncached object descriptions from the API and return as an array.
     if (count($objectTypesToRetreive) >= 1 && count($objectTypesToRetreive) <= 100) {
         try {
-            global $partnerConnection;
-            $describeSObjectsResults = $partnerConnection->describeSObjects($objectTypesToRetreive);
+            $describeSObjectsResults = WorkbenchContext::get()->getPartnerConnection()->describeSObjects($objectTypesToRetreive);
         } catch (Exception $e) {
             displayError($e->getMessage(),false,true);
         }
@@ -708,27 +706,26 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
             print "</div>";
         }
 
-
-        global $partnerConnection;
-        if ($showSoap && isset($partnerConnection) && $partnerConnection->getLastRequestHeaders()) {
+// todo: contextify
+        if ($showSoap && WorkbenchContext::get()->getPartnerConnection()->getLastRequestHeaders()) {
             try {
                 print "<h1 onclick=\"toggleDebugSection(this,'partner_soap_container')\" class=\"debugHeader\">+ PARTNER SOAP MESSAGES</h1>\n";
                 print "<div id='partner_soap_container'  class='debugContainer'>";
 
                 print "<strong>LAST REQUEST HEADER</strong>\n";
-                print htmlspecialchars($partnerConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getPartnerConnection()->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST REQUEST</strong>\n";
-                print htmlspecialchars(prettyPrintXml($partnerConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getPartnerConnection()->getLastRequest()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE HEADER</strong>\n";
-                print htmlspecialchars($partnerConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getPartnerConnection()->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE</strong>\n";
-                print htmlspecialchars(prettyPrintXml($partnerConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getPartnerConnection()->getLastResponse()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "</div>";
