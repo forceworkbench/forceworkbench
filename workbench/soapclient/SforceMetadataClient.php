@@ -7,15 +7,6 @@ class SforceMetadataClient extends SoapBaseClient {
         return 'http://soap.sforce.com/2006/04/metadata';
     }
 
-    protected function getServerUrl() {
-        return str_replace("/u/","/m/",$_SESSION['location']);
-    }
-
-    protected function getWsdl() {
-        $minMetadataWsdlAvailable = "190"; // lowest before the weird spotting coverage; TODO: find older WSDLs
-        return "soapclient/sforce." . str_replace(".","", max($minMetadataWsdlAvailable, getApiVersion())) . ".metadata.wsdl";
-    }
-
     public function describeMetadata($asOfVersion) {
         $request = new stdClass;
         $request->asOfVersion = $asOfVersion;

@@ -2,6 +2,7 @@
 require_once 'context/ConnectionConfiguration.php';
 require_once 'context/PartnerConnectionProvider.php';
 require_once 'context/MetadataConnectionProvider.php';
+require_once 'context/ApexConnectionProvider.php';
 
 class WorkbenchContext {
     const INSTANCE    = 'WORKBENCH_CONTEXT';
@@ -66,6 +67,13 @@ class WorkbenchContext {
         return $this->getConnection(self::METADATA);
     }
 
+    /**
+     * @return SforceApexClient
+     */
+    function getApexConnection() {
+        return $this->getConnection(self::APEX);
+    }
+    
     private function getConnection($type) {
         // connections can't be serialized in $_SESSION, so use $_REQUEST
         if (isset($_REQUEST[self::INSTANCE][self::CONNECTIONS][$type])) {
@@ -74,8 +82,9 @@ class WorkbenchContext {
 
         // lazily register static connection providers
         if (!isset(self::$connectionProviders)) {
-            self::$connectionProviders[self::PARTNER] = new PartnerConnectionProvider();
-            self::$connectionProviders[self::METADATA] = new MeteadataConnectionProvider();
+            self::$connectionProviders[self::PARTNER]  = new PartnerConnectionProvider();
+            self::$connectionProviders[self::METADATA] = new MetadataConnectionProvider();
+            self::$connectionProviders[self::APEX] = new ApexConnectionProvider();
         }
 
         // find the requested connection provider

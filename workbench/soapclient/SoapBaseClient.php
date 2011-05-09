@@ -4,9 +4,9 @@ abstract class SoapBaseClient {
     protected $sessionId;
     protected $location;
 
-    public function __construct($LogCategory = null, $LogCategoryLevel = null) {
+    public function __construct($sessionId, $endpoint, $wsdlPath) {
 
-        $_SERVER['HTTP_USER_AGENT'] = 'Salesforce/PHPToolkit/1.0';
+        $_SERVER['HTTP_USER_AGENT'] = getWorkbenchUserAgent();
 
         $soapClientArray = array();
         $soapClientArray['trace'] = 1;
@@ -28,37 +28,21 @@ abstract class SoapBaseClient {
             $soapClientArray = array_merge($soapClientArray, $proxySettings);
         }
 
-        $this->sforce = new SoapClient($this->getWsdl(), $soapClientArray);
+        $this->sforce = new SoapClient($wsdlPath, $soapClientArray);
 
         //start to set headers
         $headerArray = array();
 
         //set session header
-        $sessionVar = array('sessionId' => new SoapVar($_SESSION['sessionId'], XSD_STRING));
+        $sessionVar = array('sessionId' => new SoapVar($sessionId, XSD_STRING));
         $headerBody = new SoapVar($sessionVar, SOAP_ENC_OBJECT);
         $headerArray[] = new SoapHeader($this->getNamespace(), 'SessionHeader', $headerBody, false);
-
-        //set debugging header
-        if (isset($LogCategory) && isset($LogCategoryLevel)) {
-            $logInfoComp = array(
-                    'category' => new SoapVar($LogCategory, XSD_STRING),
-                    'level' => new SoapVar($LogCategoryLevel, XSD_STRING)
-            );
-
-            $logInfoVar = array(
-                    'categories' => new SoapVar($logInfoComp, SOAP_ENC_OBJECT)
-            );
-
-            $debugBody = new SoapVar($logInfoVar, SOAP_ENC_OBJECT);
-
-            $headerArray[] = new SoapHeader($this->getNamespace(), 'DebuggingHeader', $debugBody, false);
-        }
 
         //set call options header
         if (getConfig("callOptions_client")) {
             $clientBody = array('client' => new SoapVar(getConfig("callOptions_client"), XSD_STRING));
             $callOptionsHeader = new SoapHeader($this->getNamespace(), 'CallOptions', $clientBody, false);
-            $headerArray[] = $callOptionsHeader;
+            $this->headerArray[] = $callOptionsHeader;
         }
 
         //set allowFieldTruncationHeader header
@@ -67,17 +51,29 @@ abstract class SoapBaseClient {
             $allowFieldTruncationHeader = new SoapHeader($this->getNamespace(), 'AllowFieldTruncationHeader', $allowFieldTruncationBody, false);
             $headerArray[] = $allowFieldTruncationHeader;
         }
+
         $this->sforce->__setSoapHeaders($headerArray);
-        $this->sforce->__setLocation($this->getServerUrl());
+        $this->sforce->__setLocation($endpoint);
 
         return $this->sforce;
     }
 
     abstract protected function getNamespace();
 
-    abstract protected function getServerUrl();
+    public function setDebugLevels($logCategory, $logCategoryLevel) {
+        $logInfoComp = array(
+                'category' => new SoapVar($logCategory, XSD_STRING),
+                'level' => new SoapVar($logCategoryLevel, XSD_STRING)
+        );
 
-    abstract protected function getWsdl();
+        $logInfoVar = array(
+                'categories' => new SoapVar($logInfoComp, SOAP_ENC_OBJECT)
+        );
+
+        $debugBody = new SoapVar($logInfoVar, SOAP_ENC_OBJECT);
+
+        $this->sforce->__default_headers[] = new SoapHeader($this->getNamespace(), 'DebuggingHeader', $debugBody, false);
+    }
 
     public function getLastRequest() {
         return $this->sforce->__getLastRequest();

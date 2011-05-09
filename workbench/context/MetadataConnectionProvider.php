@@ -2,10 +2,11 @@
 require_once "context/AbstractConnectionProvider.php";
 require_once 'soapclient/SforceMetadataClient.php';
 
-class MeteadataConnectionProvider extends AbstractConnectionProvider {
+class MetadataConnectionProvider extends AbstractConnectionProvider {
     function establish(ConnectionConfiguration $connConfig) {
-        $connection =  new SforceMetadataClient();
-        return $connection;
+        return new SforceMetadataClient($connConfig->getSessionId(),
+                                        $this->buildEndpoint($connConfig),
+                                        $this->buildWsdlPath($connConfig));
     }
 
     function getWsdlType() {
@@ -14,6 +15,10 @@ class MeteadataConnectionProvider extends AbstractConnectionProvider {
 
     function getEndpointType() {
         return "Soap/m";
+    }
+
+    function getMinWsdlVersion() {
+        return 19.0; //TODO: does this need to be a string?
     }
 }
 

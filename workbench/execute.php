@@ -63,9 +63,9 @@ if (isset($_POST['execute'])) {
 if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != "") {
     print "<h2>Results</h2>";
 
-    $apexConnection = new SforceApexClient($_POST['LogCategory'],$_POST['LogCategoryLevel']);
-
     try {
+        $apexConnection = WorkbenchContext::get()->getApexConnection();
+        $apexConnection->setDebugLevels($_POST['LogCategory'], $_POST['LogCategoryLevel']);
         $executeAnonymousResultWithDebugLog = $apexConnection->executeAnonymous($_POST['scriptInput']);
     } catch(Exception $e) {
         displayError($e->getMessage(),false,true);
