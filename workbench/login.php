@@ -465,6 +465,18 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
             if (isset($_GET['clientId'])) $_SESSION['tempClientId'] = $_GET['clientId'];
         }
 
+        if (preg_match("!http(s?)://(.*)/services/Soap/u/(\d{1,2}\.\d)!", $location, $endpointMatches) == 0) {
+            throw new Exception("Invalid endpoint format: " . $location);
+        }
+
+
+        WorkbenchContext::release();
+        WorkbenchContext::establish(new ConnectionConfiguration(
+                                        $partnerConnection->getSessionId(),
+                                        $endpointMatches[1] == "s",
+                                        $endpointMatches[2],
+                                        $endpointMatches[3]));
+
         session_write_close();
 
         header("Location: $actionJump");
