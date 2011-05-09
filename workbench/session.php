@@ -1,6 +1,6 @@
 <?php
 require_once 'shared.php';
-require_once 'session/WorkbenchContext.php';
+require_once 'context/WorkbenchContext.php';
 
 set_exception_handler('handleAllExceptions');
 

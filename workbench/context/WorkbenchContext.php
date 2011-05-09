@@ -1,6 +1,6 @@
 <?php
-require_once 'session/ConnectionConfiguration.php';
-require_once 'session/PartnerConnectionProvider.php';
+require_once 'context/ConnectionConfiguration.php';
+require_once 'context/PartnerConnectionProvider.php';
 
 class WorkbenchContext {
     const INSTANCE    = 'WORKBENCH_CONTEXT';

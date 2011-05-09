@@ -1,5 +1,5 @@
 <?php
-require_once 'session/ConnectionConfiguration.php';
+require_once 'context/ConnectionConfiguration.php';
 
 abstract class AbstractConnectionProvider {
     abstract function establish(ConnectionConfiguration $connConfig);

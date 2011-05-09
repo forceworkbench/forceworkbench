@@ -1,5 +1,5 @@
 <?php
-require_once "session/AbstractConnectionProvider.php";
+require_once "context/AbstractConnectionProvider.php";
 require_once 'soapclient/SforcePartnerClient.php';
 
 class PartnerConnectionProvider extends AbstractConnectionProvider {
