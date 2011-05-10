@@ -10,7 +10,7 @@ class ConnectionConfiguration {
         $this->sessionId = $sessionId;
         $this->isSecure = $isSecure;
         $this->host = $host;
-        $this->apiVersion = floor($apiVersion) == $apiVersion ? floor($apiVersion) . ".0" : $apiVersion;
+        $this->setApiVersion($apiVersion);
     }
 
     function getSessionId() {
@@ -23,6 +23,10 @@ class ConnectionConfiguration {
 
     function getHost() {
         return $this->host;
+    }
+
+    function setApiVersion($apiVersion) {
+        $this->apiVersion = floor($apiVersion) == $apiVersion ? floor($apiVersion) . ".0" : $apiVersion;
     }
 
     function getApiVersion() {

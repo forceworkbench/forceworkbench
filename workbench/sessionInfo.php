@@ -3,24 +3,24 @@ require_once 'session.php';
 require_once 'shared.php';
 if (isset($_REQUEST['switchApiVersionTo'])) {
     $previousVersion = getApiVersion();
-    clearSessionCache();
-    $_SESSION['location'] = preg_replace("/\d\d?\.\d/",$_REQUEST['switchApiVersionTo'], $_SESSION['location']);
-    $_SESSION['wsdl'] = 'soapclient/sforce.' . str_replace('.', '', $_REQUEST['switchApiVersionTo']) . '.partner.wsdl';
+    clearSessionCache(); //todo: move to ctx
+    WorkbenchContext::get()->setApiVersion($_REQUEST['switchApiVersionTo']);
     header("Location: $_SERVER[PHP_SELF]?previousVersion=" . $previousVersion);
 }
 
+//todo error handle
 if (isset($_REQUEST['previousVersion'])) {
     try {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
     } catch (Exception $e) {
         if (stripos($e->getMessage(),'UNSUPPORTED_API_VERSION') > -1) {
             clearSessionCache();
-            $_SESSION['location'] = preg_replace("/\d\d?\.\d/",$_REQUEST['previousVersion'], $_SESSION['location']);
-            $_SESSION['wsdl'] = 'soapclient/sforce.' . str_replace('.', '', $_REQUEST['previousVersion']) . '.partner.wsdl';
+            WorkbenchContext::get()->setApiVersion($_REQUEST['previousVersion']);
             header("Location: $_SERVER[PHP_SELF]?UNSUPPORTED_API_VERSION");
+        } else {
+            displayError($e->getMessage(),true,true);
+            exit;
         }
-        displayError($e->getMessage(),true,true);
-        exit;
     }
 }
 

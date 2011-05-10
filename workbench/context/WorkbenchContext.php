@@ -51,6 +51,10 @@ class WorkbenchContext {
         return $this->connConfig->getSessionId();
     }
 
+    function setApiVersion($apiVersion) {
+        $this->connConfig->setApiVersion($apiVersion);
+    }
+
     function getApiVersion() {
         return $this->connConfig->getApiVersion();
     }

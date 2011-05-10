@@ -192,8 +192,7 @@ function apiVersionIsAtLeast($minVersion) {
 }
 
 function getApiVersion() {
-    preg_match('!services/Soap/\w/(\d{1,2}\.\d)!',$_SESSION['location'],$apiVersionMatches);
-    return $apiVersionMatches[1];
+    return WorkbenchContext::get()->getApiVersion();
 }
 
 function clearSessionCache() {
