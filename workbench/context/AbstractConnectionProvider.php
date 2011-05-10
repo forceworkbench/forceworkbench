@@ -15,6 +15,7 @@ abstract class AbstractConnectionProvider {
     }
 
     // TODO: add getMinSupportedVersion() ?
+    // TODO: add AbstractRestConnectionProvider ??
 }
 
 ?>

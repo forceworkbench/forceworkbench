@@ -546,17 +546,6 @@ function convertArrayToCsv($arr) {
     return implode("\n", $lines);
 }
 
-function getRestApiConnection() {
-    $restConnection = new RestApiClient($_SESSION['location'], $_SESSION['sessionId']);
-    $restConnection->setCompressionEnabled(getConfig("enableGzip"));
-    $restConnection->setUserAgent(getWorkbenchUserAgent());
-    $restConnection->setExternalLogReference($_SESSION['restDebugLog']);
-    $restConnection->setLoggingEnabled(getConfig("debug") == true);
-    $restConnection->setProxySettings(getProxySettings());
-
-    return $restConnection;
-}
-
 function getProxySettings() {
     if (!getConfig("proxyEnabled"))  return null;
 

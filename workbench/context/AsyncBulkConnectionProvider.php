@@ -1,6 +1,6 @@
 <?php
 require_once "context/AbstractConnectionProvider.php";
-require_once 'bulkclient/BulkApiClient.php';
+require_once "bulkclient/BulkApiClient.php";
 
 class AsyncBulkConnectionProvider extends AbstractConnectionProvider {
     function establish(ConnectionConfiguration $connConfig) {

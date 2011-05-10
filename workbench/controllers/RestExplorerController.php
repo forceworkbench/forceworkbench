@@ -74,11 +74,13 @@ class RestExplorerController {
             }
 
             $expectBinary = $this->prepareBinaryResponseAsDownload();
-            $this->rawResponse = getRestApiConnection()->send($this->requestMethod,
-                                                              $this->url,
-                                                              explode("\n", $this->requestHeaders),
-                                                              in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) ? $this->requestBody : null,
-                                                              $expectBinary);
+            $this->rawResponse = WorkbenchContext::get()->getRestDataConnection()->send(
+                                  $this->requestMethod,
+                                  $this->url,
+                                  explode("\n", $this->requestHeaders),
+                                  in_array($this->requestMethod,
+                                  RestApiClient::getMethodsWithBodies()) ? $this->requestBody : null,
+                                  $expectBinary);
 
             if (stripos($this->rawResponse->header, "HTTP/1.1 404") !== false) {
                 $this->showResponse = false;

@@ -4,6 +4,7 @@ require_once 'context/PartnerConnectionProvider.php';
 require_once 'context/MetadataConnectionProvider.php';
 require_once 'context/ApexConnectionProvider.php';
 require_once 'context/AsyncBulkConnectionProvider.php';
+require_once 'context/RestDataConnectionProvider.php';
 
 class WorkbenchContext {
     const INSTANCE    = 'WORKBENCH_CONTEXT';
@@ -12,7 +13,7 @@ class WorkbenchContext {
     const METADATA    = "metadata";
     const ASYNC_BULK  = "async_bulk";
     const APEX        = "apex";
-    const REST        = "rest";
+    const REST_DATA   = "rest_data";
 
     private static $connectionProviders;
 
@@ -81,7 +82,14 @@ class WorkbenchContext {
     function getAsyncBulkConnection() {
         return $this->getConnection(self::ASYNC_BULK);
     }
-    
+
+    /**
+     * @return RestApiClient
+     */
+    function getRestDataConnection() {
+        return $this->getConnection(self::REST_DATA);
+    }
+
     private function getConnection($type) {
         // connections can't be serialized in $_SESSION, so use $_REQUEST
         if (isset($_REQUEST[self::INSTANCE][self::CONNECTIONS][$type])) {
@@ -94,6 +102,7 @@ class WorkbenchContext {
             self::$connectionProviders[self::METADATA] = new MetadataConnectionProvider();
             self::$connectionProviders[self::APEX] = new ApexConnectionProvider();
             self::$connectionProviders[self::ASYNC_BULK] = new AsyncBulkConnectionProvider();
+            self::$connectionProviders[self::REST_DATA] = new RestDataConnectionProvider();
         }
 
         // find the requested connection provider
