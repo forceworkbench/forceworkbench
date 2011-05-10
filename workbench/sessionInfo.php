@@ -2,8 +2,6 @@
 require_once 'session.php';
 require_once 'shared.php';
 
-const UNSUPPORTED_API_VERSION = 'UNSUPPORTED_API_VERSION';
-
 if (isset($_REQUEST['switchApiVersionTo'])) {
     $previousVersion = getApiVersion();
     clearSessionCache(); //todo: move to ctx
@@ -11,9 +9,9 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
     try {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
     } catch (Exception $e) {
-        if (stripos($e->getMessage(), UNSUPPORTED_API_VERSION) > -1) {
+        if (stripos($e->getMessage(), 'UNSUPPORTED_API_VERSION') > -1) {
             
-            header("Location: $_SERVER[PHP_SELF]?switchApiVersionTo=" . $previousVersion . "&" . UNSUPPORTED_API_VERSION);
+            header("Location: $_SERVER[PHP_SELF]?switchApiVersionTo=" . $previousVersion . "&" . 'UNSUPPORTED_API_VERSION');
         } else {
             throw $e;
         }
@@ -40,7 +38,7 @@ require_once 'header.php';
 
 <?php
 
-if (isset($_REQUEST[UNSUPPORTED_API_VERSION])) {
+if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
     print "<div style='margin-top: 3em;'>";
     displayError("Selected API version is not supported by this Salesforce organization. Automatically reverted to prior version.",false,false);
     print "<p/>";
