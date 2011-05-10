@@ -35,6 +35,14 @@ class WorkbenchContext {
         throw new Exception("Workbench session not yet established");
     }
 
+    /**
+     * @static
+     * @return bool
+     */
+    static function isEstablished() {
+        return isset($_SESSION[self::INSTANCE]);
+    }
+
     static function establish(ConnectionConfiguration $connConfig) {
         if (isset($_SESSION[self::INSTANCE])) {
             throw new Exception("Workbench session already established. Call get() or release() instead.");

@@ -625,14 +625,14 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
             }
             </script>";
          
-        print "<div style='text-align: left;'>";
+        print "<div style='text-align: left;'><h1>Debug Mode</h1>";
 
 
         if ($customValue) {
             if ($customName) {
-                print "<h1>$customName</h1>\n";
+                print "<h2>$customName</h2>\n";
             } else {
-                print "<h1>CUSTOM</h1>\n";
+                print "<h2>CUSTOM</h2>\n";
             }
 
             var_dump($customValue);
@@ -640,7 +640,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
         }
 
         if ($showSuperVars) {
-            print "<h1 onclick=\"toggleDebugSection(this,'container_globals')\" class=\"debugHeader\">+ SUPERGLOBAL VARIABLES</h1>\n";
+            print "<h2 onclick=\"toggleDebugSection(this,'container_globals')\" class=\"debugHeader\">+ SUPERGLOBAL VARIABLES</h2>\n";
             print "<div id='container_globals' class='debugContainer'>";
 
 
@@ -684,9 +684,9 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
         }
 
 // todo: contextify
-        if ($showSoap && WorkbenchContext::get()->getPartnerConnection()->getLastRequestHeaders()) {
+        if ($showSoap && WorkbenchContext::isEstablished() && WorkbenchContext::get()->getPartnerConnection()->getLastRequestHeaders()) {
             try {
-                print "<h1 onclick=\"toggleDebugSection(this,'partner_soap_container')\" class=\"debugHeader\">+ PARTNER SOAP MESSAGES</h1>\n";
+                print "<h2 onclick=\"toggleDebugSection(this,'partner_soap_container')\" class=\"debugHeader\">+ PARTNER SOAP MESSAGES</h2>\n";
                 print "<div id='partner_soap_container'  class='debugContainer'>";
 
                 print "<strong>LAST REQUEST HEADER</strong>\n";
@@ -713,9 +713,9 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
             }
         }
 
-        if ($showSoap && WorkbenchContext::get()->getMetadataConnection()->getLastRequestHeaders()) {
+        if ($showSoap && WorkbenchContext::isEstablished() && WorkbenchContext::get()->getMetadataConnection()->getLastRequestHeaders()) {
             try {
-                print "<h1 onclick=\"toggleDebugSection(this,'metadata_soap_container')\" class=\"debugHeader\">+ METADATA SOAP MESSAGES</h1>\n";
+                print "<h2 onclick=\"toggleDebugSection(this,'metadata_soap_container')\" class=\"debugHeader\">+ METADATA SOAP MESSAGES</h2>\n";
                 print "<div id='metadata_soap_container' class='debugContainer'>";
 
                 print "<strong>LAST REQUEST HEADER</strong>\n";
@@ -742,26 +742,25 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
             }
         }
 
-        global $apexConnection;
-        if ($showSoap && isset($apexConnection) && $apexConnection->getLastRequestHeaders()) {
+        if ($showSoap  && WorkbenchContext::isEstablished() && WorkbenchContext::get()->getApexConnection()->getLastRequestHeaders()) {
             try {
-                print "<h1 onclick=\"toggleDebugSection(this,'apex_soap_container')\" class=\"debugHeader\">+ APEX SOAP MESSAGES</h1>\n";
+                print "<h2 onclick=\"toggleDebugSection(this,'apex_soap_container')\" class=\"debugHeader\">+ APEX SOAP MESSAGES</h2>\n";
                 print "<div id='apex_soap_container' class='debugContainer'>";
 
                 print "<strong>LAST REQUEST HEADER</strong>\n";
-                print htmlspecialchars($apexConnection->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getApexConnection()->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST REQUEST</strong>\n";
-                print htmlspecialchars(prettyPrintXml($apexConnection->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getApexConnection()->getLastRequest()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE HEADER</strong>\n";
-                print htmlspecialchars($apexConnection->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getApexConnection()->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE</strong>\n";
-                print htmlspecialchars(prettyPrintXml($apexConnection->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getApexConnection()->getLastResponse()),ENT_QUOTES,'UTF-8');
                 print "<hr/>";
 
                 print "</div>";
@@ -772,8 +771,9 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
             }
         }
 
+        // TODO: move into WbCtx
         if (isset($_SESSION['restDebugLog']) && $_SESSION['restDebugLog'] != "") {
-            print "<h1 onclick=\"toggleDebugSection(this,'rest_debug_container')\" class=\"debugHeader\">+ REST/BULK API LOGS</h1>\n";
+            print "<h2 onclick=\"toggleDebugSection(this,'rest_debug_container')\" class=\"debugHeader\">+ REST/BULK API LOGS</h2>\n";
             print "<div id='rest_debug_container' class='debugContainer'>";
             print "<pre>" . $_SESSION['restDebugLog'] . "</pre>";
             print "<hr/>";

@@ -64,9 +64,8 @@ if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptIn
     print "<h2>Results</h2>";
 
     try {
-        $apexConnection = WorkbenchContext::get()->getApexConnection();
-        $apexConnection->setDebugLevels($_POST['LogCategory'], $_POST['LogCategoryLevel']);
-        $executeAnonymousResultWithDebugLog = $apexConnection->executeAnonymous($_POST['scriptInput']);
+        WorkbenchContext::get()->getApexConnection()->setDebugLevels($_POST['LogCategory'], $_POST['LogCategoryLevel']);
+        $executeAnonymousResultWithDebugLog = WorkbenchContext::get()->getApexConnection()->executeAnonymous($_POST['scriptInput']);
     } catch(Exception $e) {
         displayError($e->getMessage(),false,true);
     }
