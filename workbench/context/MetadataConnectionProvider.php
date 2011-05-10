@@ -9,16 +9,16 @@ class MetadataConnectionProvider extends AbstractSoapConnectionProvider {
                                         $this->buildWsdlPath($connConfig));
     }
 
-    function getWsdlType() {
+    protected function getWsdlType() {
         return "metadata";
     }
 
-    function getEndpointType() {
+    protected function getEndpointType() {
         return "Soap/m";
     }
 
-    function getMinWsdlVersion() {
-        return 19.0; //TODO: does this need to be a string?
+    protected function getMinWsdlVersion() {
+        return "19.0";
     }
 }
 

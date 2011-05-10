@@ -9,16 +9,16 @@ class ApexConnectionProvider extends AbstractSoapConnectionProvider {
                                     $this->buildWsdlPath($connConfig));
     }
 
-    function getWsdlType() {
+    protected function getWsdlType() {
         return "apex";
     }
 
-    function getEndpointType() {
+    protected function getEndpointType() {
         return "Soap/s";
     }
 
-    function getMinWsdlVersion() {
-        return 14.0; //TODO: does this need to be a string?
+    protected function getMinWsdlVersion() {
+        return "14.0";
     }
 }
 

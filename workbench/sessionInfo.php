@@ -1,50 +1,46 @@
 <?php
 require_once 'session.php';
 require_once 'shared.php';
+
+const UNSUPPORTED_API_VERSION = 'UNSUPPORTED_API_VERSION';
+
 if (isset($_REQUEST['switchApiVersionTo'])) {
     $previousVersion = getApiVersion();
     clearSessionCache(); //todo: move to ctx
     WorkbenchContext::get()->setApiVersion($_REQUEST['switchApiVersionTo']);
-    header("Location: $_SERVER[PHP_SELF]?previousVersion=" . $previousVersion);
-}
-
-//todo error handle
-if (isset($_REQUEST['previousVersion'])) {
     try {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
     } catch (Exception $e) {
-        if (stripos($e->getMessage(),'UNSUPPORTED_API_VERSION') > -1) {
-            clearSessionCache();
-            WorkbenchContext::get()->setApiVersion($_REQUEST['previousVersion']);
-            header("Location: $_SERVER[PHP_SELF]?UNSUPPORTED_API_VERSION");
+        if (stripos($e->getMessage(), UNSUPPORTED_API_VERSION) > -1) {
+            
+            header("Location: $_SERVER[PHP_SELF]?switchApiVersionTo=" . $previousVersion . "&" . UNSUPPORTED_API_VERSION);
         } else {
-            displayError($e->getMessage(),true,true);
-            exit;
+            throw $e;
         }
     }
+
 }
 
 require_once 'header.php';
 ?>
 <p />
-<p class='instructions'>Below is information regarding the current user
-session:</p>
+<p class='instructions'>Below is information regarding the current user session:</p>
 <div style='float: right;'>
-<form name="changeApiVersionForm" action="<?php $_SERVER['PHP_SELF'] ?>">
-Change API Version: <?php
-print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
-foreach ($GLOBALS['API_VERSIONS'] as $v) {
-    print "<option value='$v'";
-    if (getApiVersion() == $v) print " selected=\"selected\"";
-    print ">" . $v . "</option>";
-}
-print "</select>";
-?></form>
+    <form name="changeApiVersionForm" action="<?php $_SERVER['PHP_SELF'] ?>">
+    Change API Version: <?php
+    print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
+    foreach ($GLOBALS['API_VERSIONS'] as $v) {
+        print "<option value='$v'";
+        if (getApiVersion() == $v) print " selected=\"selected\"";
+        print ">" . $v . "</option>";
+    }
+    print "</select>";
+    ?></form>
 </div>
 
 <?php
 
-if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
+if (isset($_REQUEST[UNSUPPORTED_API_VERSION])) {
     print "<div style='margin-top: 3em;'>";
     displayError("Selected API version is not supported by this Salesforce organization. Automatically reverted to prior version.",false,false);
     print "<p/>";

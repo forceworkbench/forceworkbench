@@ -102,11 +102,11 @@ class WorkbenchContext {
 
         // lazily register static connection providers
         if (!isset(self::$connectionProviders)) {
-            self::$connectionProviders[self::PARTNER]  = new PartnerConnectionProvider();
-            self::$connectionProviders[self::METADATA] = new MetadataConnectionProvider();
-            self::$connectionProviders[self::APEX] = new ApexConnectionProvider();
+            self::$connectionProviders[self::PARTNER]    = new PartnerConnectionProvider();
+            self::$connectionProviders[self::METADATA]   = new MetadataConnectionProvider();
+            self::$connectionProviders[self::APEX]       = new ApexConnectionProvider();
             self::$connectionProviders[self::ASYNC_BULK] = new AsyncBulkConnectionProvider();
-            self::$connectionProviders[self::REST_DATA] = new RestDataConnectionProvider();
+            self::$connectionProviders[self::REST_DATA]  = new RestDataConnectionProvider();
         }
 
         // find the requested connection provider
