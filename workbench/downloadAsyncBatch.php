@@ -1,7 +1,6 @@
 <?php
 require_once 'session.php';
 require_once 'shared.php';
-require_once 'bulkclient/BulkApiClient.php';
 
 try {
     if (!isset($_GET['jobId']) || !isset($_GET['batchId']) || !isset($_GET['op'])) {
@@ -10,7 +9,7 @@ try {
         throw new Exception("Invalid operation specified");
     }
 
-    $asyncConnection = getAsyncApiConnection();
+    $asyncConnection = WorkbenchContext::get()->getAsyncBulkConnection();
     $jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);
 
     $fileContext = fopen('php://output','w') or die("Error opening php://output");

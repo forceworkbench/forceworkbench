@@ -546,17 +546,6 @@ function convertArrayToCsv($arr) {
     return implode("\n", $lines);
 }
 
-function getAsyncApiConnection() {
-    $asyncConnection = new BulkApiClient($_SESSION['location'], $_SESSION['sessionId']);
-    $asyncConnection->setCompressionEnabled(getConfig("enableGzip"));
-    $asyncConnection->setUserAgent(getWorkbenchUserAgent());
-    $asyncConnection->setExternalLogReference($_SESSION['restDebugLog']); //TODO: maybe replace w/ its own log??
-    $asyncConnection->setLoggingEnabled(getConfig("debug") == true);
-    $asyncConnection->setProxySettings(getProxySettings());
-
-    return $asyncConnection;
-}
-
 function getRestApiConnection() {
     $restConnection = new RestApiClient($_SESSION['location'], $_SESSION['sessionId']);
     $restConnection->setCompressionEnabled(getConfig("enableGzip"));

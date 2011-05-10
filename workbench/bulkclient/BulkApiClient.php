@@ -64,8 +64,8 @@ class BulkApiClient {
     /**
      * Create a new Bulk API Client from an existing Partner API enpoint and session id
      *
-     * @param  $endpoint endpoint from Async/Bulk, Partner, or Enterprise APIs
-     * @param  $sessionId active Salesforce session id
+     * @param  string $endpoint endpoint from Async/Bulk, Partner, or Enterprise APIs
+     * @param  string $sessionId active Salesforce session id
      */
     public function __construct($endpoint, $sessionId) {
 		if (!extension_loaded('curl')) {
@@ -88,7 +88,7 @@ class BulkApiClient {
      * Sets proxy settings as an array with the keys:
      * "proxy_host", "proxy_port", "proxy_username", "proxy_password"
      *
-     * @param  $proxySettings
+     * @param array $proxySettings
      */
     public function setProxySettings($proxySettings) {
         $this->proxySettings = $proxySettings;
@@ -102,7 +102,7 @@ class BulkApiClient {
     }
 
     /**
-     * @param $userAgent customized user agent for this client
+     * @param string $userAgent customized user agent for this client
      */
     public function setUserAgent($userAgent) {
         $this->userAgent = $userAgent;
@@ -116,7 +116,7 @@ class BulkApiClient {
     }
 
     /**
-     * @param  $compressionEnabled true to enable compression
+     * @param  bool $compressionEnabled true to enable compression
      */
     public function setCompressionEnabled($compressionEnabled) {
         $this->compressionEnabled = $compressionEnabled;
@@ -405,7 +405,7 @@ class BulkApiClient {
     }
 
     /**
-     * @param  $loggingEnabled enables logging if true
+     * @param  $loggingEnabled bool enables logging if true
      */
     public function setLoggingEnabled($loggingEnabled) {
         $this->loggingEnabled = $loggingEnabled;

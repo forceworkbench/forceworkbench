@@ -1,8 +1,8 @@
 <?php
-require_once "context/AbstractConnectionProvider.php";
+require_once "context/AbstractSoapConnectionProvider.php";
 require_once 'soapclient/SforceMetadataClient.php';
 
-class MetadataConnectionProvider extends AbstractConnectionProvider {
+class MetadataConnectionProvider extends AbstractSoapConnectionProvider {
     function establish(ConnectionConfiguration $connConfig) {
         return new SforceMetadataClient($connConfig->getSessionId(),
                                         $this->buildEndpoint($connConfig),

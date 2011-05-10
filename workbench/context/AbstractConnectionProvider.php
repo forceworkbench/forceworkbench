@@ -2,28 +2,19 @@
 require_once 'context/ConnectionConfiguration.php';
 
 abstract class AbstractConnectionProvider {
-    abstract function establish(ConnectionConfiguration $connConfig);
 
-    abstract function getEndpointType();
+    public abstract function establish(ConnectionConfiguration $connConfig);
 
-    abstract function getWsdlType();
+    protected abstract function getEndpointType();
 
-    function buildEndpoint(ConnectionConfiguration $connConfig) {
+    protected function buildEndpoint(ConnectionConfiguration $connConfig) {
         return "http" . ($connConfig->isSecure() ? "s" : "") . "://" .
                $connConfig->getHost() .
                "/services/" . $this->getEndpointType() . "/" .
                $connConfig->getApiVersion();
     }
 
-    function buildWsdlPath(ConnectionConfiguration $connConfig) {
-        return 'soapclient/sforce.' .
-               str_replace(".", "", max($this->getMinWsdlVersion(), $connConfig->getApiVersion())) .
-               "." . $this->getWsdlType() . ".wsdl";
-    }
-
-    function getMinWsdlVersion() {
-        return 0;
-    }
+    // TODO: add getMinSupportedVersion() ?
 }
 
 ?>

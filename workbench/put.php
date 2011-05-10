@@ -747,7 +747,6 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
     if (!$doingZip && !($fieldMap && $csvArray && $_SESSION['default_object'])) {
         displayError("CSV file and field mapping not initialized or object not selected. Upload a new file and map fields.",true,true);
     } else {
-        require_once 'bulkclient/BulkApiClient.php';
         try {
             $job = new JobInfo();
             $job->setObject($_SESSION['default_object']);
@@ -757,8 +756,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
             if(getConfig("assignmentRuleHeader_assignmentRuleId")) $job->setAssignmentRuleId(getConfig("assignmentRuleHeader_assignmentRuleId"));
             if($apiCall == "upsert" && isset($extId)) $job->setExternalIdFieldName($extId);
 
-            $asyncConnection = getAsyncApiConnection();
-            $job = $asyncConnection->createJob($job);
+            $job = WorkbenchContext::get()->getAsyncBulkConnection()->createJob($job);
         } catch (Exception $e) {
             displayError($e->getMessage(), true, true);
         }
@@ -769,7 +767,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
 
         if ($doingZip) {
             try {
-               $asyncConnection->createBatch($job, $zipFile);
+               WorkbenchContext::get()->getAsyncBulkConnection()->createBatch($job, $zipFile);
             } catch (Exception $e) {
                 displayError($e->getMessage(), true, true);
             }

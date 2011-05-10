@@ -1,8 +1,8 @@
 <?php
-require_once "context/AbstractConnectionProvider.php";
+require_once "context/AbstractSoapConnectionProvider.php";
 require_once 'soapclient/SforcePartnerClient.php';
 
-class PartnerConnectionProvider extends AbstractConnectionProvider {
+class PartnerConnectionProvider extends AbstractSoapConnectionProvider {
     function establish(ConnectionConfiguration $connConfig) {
         $connection =  new SforcePartnerClient();
 

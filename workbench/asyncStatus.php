@@ -2,7 +2,6 @@
 require_once 'session.php';
 require_once 'shared.php';
 require_once 'header.php';
-require_once 'bulkclient/BulkApiClient.php';
 
 print "<p/>";
 if (!isset($_GET['jobId']) || $_GET['jobId'] == "") {
@@ -19,7 +18,7 @@ if (!isset($_GET['jobId']) || $_GET['jobId'] == "") {
 $_GET['jobId'] = htmlspecialchars(trim($_GET['jobId']));
 
 try {
-    $asyncConnection = getAsyncApiConnection();
+    $asyncConnection = WorkbenchContext::get()->getAsyncBulkConnection();
     $jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);
     $batchInfos = $asyncConnection->getBatchInfos($_GET['jobId']);
 } catch (Exception $e) {

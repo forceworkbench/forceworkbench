@@ -396,43 +396,43 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
             displayLogin("Could not find WSDL for this API version. Please try logging in again.");
         }
 
-        WorkbenchContext::get()->getPartnerConnection() = (getConfig('mockClients') ? new SforceMockPartnerClient() : new SforcePartnerClient());
-        WorkbenchContext::get()->getPartnerConnection()->createConnection($wsdl);
+        $partnerConnection = (getConfig('mockClients') ? new SforceMockPartnerClient() : new SforcePartnerClient());
+        $partnerConnection->createConnection($wsdl);
 
         //set call options header for login before a session exists
         if (isset($_GET['clientId'])) {
-            WorkbenchContext::get()->getPartnerConnection()->setCallOptions(new CallOptions($_GET['clientId'], getConfig("callOptions_defaultNamespace")));
+            $partnerConnection->setCallOptions(new CallOptions($_GET['clientId'], getConfig("callOptions_defaultNamespace")));
 
         } else if (getConfig("callOptions_client") || getConfig("callOptions_defaultNamespace")) {
             $clientId = getConfig("callOptions_client") ? getConfig("callOptions_client") : null;
             $defaultNamespace = getConfig("callOptions_defaultNamespace") ? getConfig("callOptions_defaultNamespace") : null;
-            WorkbenchContext::get()->getPartnerConnection()->setCallOptions(new CallOptions($clientId, $defaultNamespace));
+            $partnerConnection->setCallOptions(new CallOptions($clientId, $defaultNamespace));
         }
 
         //set login scope header for login before a session exists
         if (isset($_GET['orgId']) || isset($_GET['portalId'])) {
-            WorkbenchContext::get()->getPartnerConnection()->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));
+            $partnerConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));
 
         } else if (getConfig("loginScopeHeader_organizationId") || getConfig("loginScopeHeader_portalId")) {
             $loginScopeHeaderOrganizationId = getConfig("loginScopeHeader_organizationId") ? getConfig("loginScopeHeader_organizationId") : null;
             $loginScopeHeaderPortalId = getConfig("loginScopeHeader_portalId") ? getConfig("loginScopeHeader_portalId") : null;
-            WorkbenchContext::get()->getPartnerConnection()->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeaderOrganizationId, $loginScopeHeaderPortalId));
+            $partnerConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeaderOrganizationId, $loginScopeHeaderPortalId));
         }
 
         if ($username && $password && !$sessionId) {
-            WorkbenchContext::get()->getPartnerConnection()->setEndpoint($serverUrl);
-            WorkbenchContext::get()->getPartnerConnection()->login($username, $password);
+            $partnerConnection->setEndpoint($serverUrl);
+            $partnerConnection->login($username, $password);
         } else if ($sessionId && $serverUrl && !($username && $password)) {
             if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
                 displayLogin('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. Choose your specific Salesforce instance on the QuickSelect menu when using a session id; otherwise, provide a username and password and choose the appropriate a login server.');
                 exit;
             }
 
-            WorkbenchContext::get()->getPartnerConnection()->setEndpoint($serverUrl);
-            WorkbenchContext::get()->getPartnerConnection()->setSessionHeader($sessionId);
+            $partnerConnection->setEndpoint($serverUrl);
+            $partnerConnection->setSessionHeader($sessionId);
         }
 
-        if (stripos(WorkbenchContext::get()->getPartnerConnection()->getLocation(),'localhost')) {
+        if (stripos($partnerConnection->getLocation(),'localhost')) {
             if (isset($GLOBALS['internal']['localhostLoginRedirectError'])) {
                 displayLogin($GLOBALS['internal']['localhostLoginRedirectError'],false,true);
             } else {
@@ -442,14 +442,14 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         }
 
         //replace HTTPS w/ HTTP if useHTTP config is false
-        $location = getConfig("useHTTPS") ? WorkbenchContext::get()->getPartnerConnection()->getLocation() : str_replace("https","http",WorkbenchContext::get()->getPartnerConnection()->getLocation());
+        $location = getConfig("useHTTPS") ? $partnerConnection->getLocation() : str_replace("https","http",$partnerConnection->getLocation());
 
         session_unset();
         session_destroy();
         session_start();
 
         $_SESSION['location'] = $location;
-        $_SESSION['sessionId'] = WorkbenchContext::get()->getPartnerConnection()->getSessionId();
+        $_SESSION['sessionId'] = $partnerConnection->getSessionId();
         $_SESSION['wsdl'] = $wsdl;
         $_SESSION['sfdcUiSidLikelySet'] = isset($_GET['sid']);
 
@@ -472,10 +472,10 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
 
         WorkbenchContext::release();
         WorkbenchContext::establish(new ConnectionConfiguration(
-                                        WorkbenchContext::get()->getPartnerConnection()->getSessionId(),
-                                        $endpointMatches[1] == "s",
-                                        $endpointMatches[2],
-                                        $endpointMatches[3]));
+                                        $partnerConnection->getSessionId(),
+                                        $endpointMatches[1] == "s", // using HTTPS
+                                        $endpointMatches[2],        // host
+                                        $endpointMatches[3]));      // API Version
 
         session_write_close();
 

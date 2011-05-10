@@ -951,8 +951,7 @@ function queryAsync($queryRequest) {
         throw new Exception("Including deleted and archived records not supported by Bulk Queries.");
     }
 
-    require_once 'bulkclient/BulkApiClient.php';
-    $asyncConnection = getAsyncApiConnection();
+    $asyncConnection = WorkbenchContext::get()->getAsyncBulkConnection();
 
     $job = new JobInfo();
 

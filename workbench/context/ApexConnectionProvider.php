@@ -1,8 +1,8 @@
 <?php
-require_once "context/AbstractConnectionProvider.php";
+require_once "context/AbstractSoapConnectionProvider.php";
 require_once 'soapclient/SforceApexClient.php';
 
-class ApexConnectionProvider extends AbstractConnectionProvider {
+class ApexConnectionProvider extends AbstractSoapConnectionProvider {
     function establish(ConnectionConfiguration $connConfig) {
         return new SforceApexClient($connConfig->getSessionId(),
                                     $this->buildEndpoint($connConfig),

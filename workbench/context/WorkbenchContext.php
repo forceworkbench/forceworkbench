@@ -3,6 +3,7 @@ require_once 'context/ConnectionConfiguration.php';
 require_once 'context/PartnerConnectionProvider.php';
 require_once 'context/MetadataConnectionProvider.php';
 require_once 'context/ApexConnectionProvider.php';
+require_once 'context/AsyncBulkConnectionProvider.php';
 
 class WorkbenchContext {
     const INSTANCE    = 'WORKBENCH_CONTEXT';
@@ -73,6 +74,13 @@ class WorkbenchContext {
     function getApexConnection() {
         return $this->getConnection(self::APEX);
     }
+
+    /**
+     * @return BulkApiClient
+     */
+    function getAsyncBulkConnection() {
+        return $this->getConnection(self::ASYNC_BULK);
+    }
     
     private function getConnection($type) {
         // connections can't be serialized in $_SESSION, so use $_REQUEST
@@ -85,6 +93,7 @@ class WorkbenchContext {
             self::$connectionProviders[self::PARTNER]  = new PartnerConnectionProvider();
             self::$connectionProviders[self::METADATA] = new MetadataConnectionProvider();
             self::$connectionProviders[self::APEX] = new ApexConnectionProvider();
+            self::$connectionProviders[self::ASYNC_BULK] = new AsyncBulkConnectionProvider();
         }
 
         // find the requested connection provider
