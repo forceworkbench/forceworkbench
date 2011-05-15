@@ -7,18 +7,18 @@ if ($_SESSION) {
     if (getConfig("invalidateSessionOnLogout")) {
         try {
             WorkbenchContext::get()->getPartnerConnection()->logout();
-            $sessionInvatidated = true;
+            $sessionInvalidated = true;
         } catch(Exception $e) {
-            $sessionInvatidated = false;
+            $sessionInvalidated = false;
         }
     } else {
-        $sessionInvatidated = false;
+        $sessionInvalidated = false;
     }
 
     session_unset();
     session_destroy();
     print "<p/>";
-    if ($sessionInvatidated == true) {
+    if ($sessionInvalidated) {
         displayInfo('You have been successfully logged out of Workbench and Salesforce.');
     } else {
         displayInfo('You have been successfully logged out of Workbench.');
