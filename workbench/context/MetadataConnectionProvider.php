@@ -5,6 +5,7 @@ require_once 'soapclient/SforceMetadataClient.php';
 class MetadataConnectionProvider extends AbstractSoapConnectionProvider {
     function establish(ConnectionConfiguration $connConfig) {
         return new SforceMetadataClient($connConfig->getSessionId(),
+                                        $connConfig->getClientId(),
                                         $this->buildEndpoint($connConfig),
                                         $this->buildWsdlPath($connConfig));
     }

@@ -9,13 +9,7 @@ class PartnerConnectionProvider extends AbstractSoapConnectionProvider {
         $connection->createConnection($this->buildWsdlPath($connConfig));
         $connection->setEndpoint($this->buildEndpoint($connConfig));
         $connection->setSessionHeader($connConfig->getSessionId());
-
-        // TODO: remove from session
-        if (isset($_SESSION['tempClientId'])) {
-            $connection->setCallOptions(new CallOptions($_SESSION['tempClientId'], getConfig('callOptions_defaultNamespace')));
-        } else if (getConfig('callOptions_client') || getConfig('callOptions_defaultNamespace')) {
-            $connection->setCallOptions(new CallOptions(getConfig('callOptions_client'), getConfig('callOptions_defaultNamespace')));
-        }
+        $connection->setCallOptions(new CallOptions($connConfig->getClientId(), getConfig('callOptions_defaultNamespace')));
 
         if (getConfig('assignmentRuleHeader_assignmentRuleId') || getConfig('assignmentRuleHeader_useDefaultRule')) {
             $connection->setAssignmentRuleHeader(

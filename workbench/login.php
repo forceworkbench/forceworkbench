@@ -358,30 +358,13 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
     session_start();
     $_SESSION['config'] = $savedConfig;
 
-    
+    $overriddenClientId = isset($_GET["clientId"]) ? $_GET["clientId"] : null;
     if ($username && $password && !$sessionId) {
-        WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, null)); // establish context with null session id
-        $partnerConnection = WorkbenchContext::get()->getPartnerConnection();
+        $orgId = isset($_GET["orgId"]) ? $_GET["orgId"] : getConfig("loginScopeHeader_organizationId");
+        $portalId = isset($_GET["portalId"]) ? $_GET["clientId"] : getConfig("loginScopeHeader_portalId");
 
-        //set call options header for login before a session exists
-        if (isset($_GET['clientId'])) {
-            $partnerConnection->setCallOptions(new CallOptions($_GET['clientId'], getConfig("callOptions_defaultNamespace")));
-        } else if (getConfig("callOptions_client") || getConfig("callOptions_defaultNamespace")) {
-            $clientId = getConfig("callOptions_client") ? getConfig("callOptions_client") : null;
-            $defaultNamespace = getConfig("callOptions_defaultNamespace") ? getConfig("callOptions_defaultNamespace") : null;
-            $partnerConnection->setCallOptions(new CallOptions($clientId, $defaultNamespace));
-        }
-
-        //set login scope header for login before a session exists
-        if (isset($_GET['orgId']) || isset($_GET['portalId'])) {
-            $partnerConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));
-        } else if (getConfig("loginScopeHeader_organizationId") || getConfig("loginScopeHeader_portalId")) {
-            $loginScopeHeaderOrganizationId = getConfig("loginScopeHeader_organizationId") ? getConfig("loginScopeHeader_organizationId") : null;
-            $loginScopeHeaderPortalId = getConfig("loginScopeHeader_portalId") ? getConfig("loginScopeHeader_portalId") : null;
-            $partnerConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeaderOrganizationId, $loginScopeHeaderPortalId));
-        }
-
-        WorkbenchContext::get()->login($username, $password);
+        WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, null, $overriddenClientId));
+        WorkbenchContext::get()->login($username, $password, $orgId, $portalId);
     } else if ($sessionId && $serverUrl && !($username && $password)) {
         if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
             displayLogin('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. ' .
@@ -390,7 +373,7 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
             exit;
         }
 
-        WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, $sessionId));
+        WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, $sessionId, $overriddenClientId));
     } else {
         throw new Exception('Invalid login parameters.');
     }

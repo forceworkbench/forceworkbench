@@ -4,7 +4,7 @@ abstract class SoapBaseClient {
     protected $sessionId;
     protected $location;
 
-    public function __construct($sessionId, $endpoint, $wsdlPath) {
+    public function __construct($sessionId, $clientId, $endpoint, $wsdlPath) {
 
         $_SERVER['HTTP_USER_AGENT'] = getWorkbenchUserAgent();
 
@@ -39,10 +39,10 @@ abstract class SoapBaseClient {
         $headerArray[] = new SoapHeader($this->getNamespace(), 'SessionHeader', $headerBody, false);
 
         //set call options header
-        if (getConfig("callOptions_client")) {
+        if ($clientId != null) {
             $clientBody = array('client' => new SoapVar(getConfig("callOptions_client"), XSD_STRING));
             $callOptionsHeader = new SoapHeader($this->getNamespace(), 'CallOptions', $clientBody, false);
-            $this->headerArray[] = $callOptionsHeader;
+            $headerArray[] = $callOptionsHeader;
         }
 
         //set allowFieldTruncationHeader header

@@ -5,12 +5,14 @@ class ConnectionConfiguration {
     private $isSecure;
     private $host;
     private $apiVersion;
+    private $overriddenClientId;
 
-    function __construct($sessionId, $isSecure, $host, $apiVersion) {
+    private function __construct($sessionId, $isSecure, $host, $apiVersion, $overriddenClientId) {
         $this->sessionId = $sessionId;
         $this->isSecure = $isSecure;
         $this->host = $host;
         $this->setApiVersion($apiVersion);
+        $this->overriddenClientId = $overriddenClientId;
     }
 
     function getSessionId() {
@@ -33,7 +35,16 @@ class ConnectionConfiguration {
         return $this->apiVersion;
     }
 
-    static function fromUrl($serviceUrl, $sessionId) {
+    function getClientId() {
+        return isset($this->overriddenClientId) ? $this->overriddenClientId : getConfig("callOptions_client");
+    }
+
+    function applyLoginResult($loginResult) {
+        $this->host = parse_url($loginResult->serverUrl, PHP_URL_HOST);
+        $this->sessionId = $loginResult->sessionId;
+    }
+
+    static function fromUrl($serviceUrl, $sessionId, $clientId) {
         if (preg_match("!http(s?)://(.*)/services/Soap/u/(\d{1,2}\.\d)!", $serviceUrl, $serviceUrlMatches) == 0) {
             throw new Exception("Invalid Service URL format: " . $serviceUrl);
         }
@@ -42,7 +53,8 @@ class ConnectionConfiguration {
                     $sessionId,
                     $serviceUrlMatches[1] == "s", // using HTTPS
                     $serviceUrlMatches[2],        // host
-                    $serviceUrlMatches[3]);       // API Version
+                    $serviceUrlMatches[3],        // API Version
+                    $clientId);
     }
 }
 

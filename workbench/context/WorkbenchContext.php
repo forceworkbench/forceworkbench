@@ -53,10 +53,19 @@ class WorkbenchContext {
 
     static function establish(ConnectionConfiguration $connConfig) {
         if (self::isEstablished()) {
-            throw new Exception("Workbench session already established. Call get() or release() instead."); //todo: do we really care about this?
+            throw new Exception("Workbench session already established. Call get() or release() instead.");
         }
 
-        $_SESSION[self::INSTANCE] = new WorkbenchContext($connConfig, true);
+        $_SESSION[self::INSTANCE] = new WorkbenchContext($connConfig);
+    }
+
+    function login($username, $password, $orgId, $portalId) {
+        if ($orgId != null || $portalId != null) {
+            $this->getPartnerConnection()->setLoginScopeHeader(new LoginScopeHeader($orgId, $portalId));
+        }
+
+        $loginResult = $this->getPartnerConnection()->login($username, $password);
+        $this->connConfig->applyLoginResult($loginResult);
     }
 
     function release() {
@@ -65,13 +74,7 @@ class WorkbenchContext {
     }
 
     function isLoggedIn() {
-        return $this->connConfig->getSessionId() != null; //todo: is it that simple? need a flag, check connection?
-    }
-
-    function login($username, $password) {
-        $loginResult = $this->getPartnerConnection()->login($username, $password);
-        $serverUrl = getConfig("useHTTPS") ? $loginResult->serverUrl : str_replace("https", "http", $loginResult->serverUrl);
-        $this->connConfig = ConnectionConfiguration::fromUrl($serverUrl, $loginResult->sessionId);
+        return $this->connConfig->getSessionId() != null;
     }
 
     function getSessionId() {

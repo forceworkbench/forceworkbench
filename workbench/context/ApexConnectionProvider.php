@@ -5,6 +5,7 @@ require_once 'soapclient/SforceApexClient.php';
 class ApexConnectionProvider extends AbstractSoapConnectionProvider {
     function establish(ConnectionConfiguration $connConfig) {
         return new SforceApexClient($connConfig->getSessionId(),
+                                    $connConfig->getClientId(),
                                     $this->buildEndpoint($connConfig),
                                     $this->buildWsdlPath($connConfig));
     }
