@@ -350,6 +350,14 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
     if (WorkbenchContext::isEstablished()) {
         WorkbenchContext::get()->release();
     }
+
+    // TODO: clean up this hackiness due to in-progress context refactoring...
+    $savedConfig = $_SESSION['config'];
+    session_unset();
+    session_destroy();
+    session_start();
+    $_SESSION['config'] = $savedConfig;
+
     
     if ($username && $password && !$sessionId) {
         WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, null)); // establish context with null session id
@@ -387,6 +395,7 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         throw new Exception('Invalid login parameters.');
     }
 
+    // todo: put in WbCtx?
     if (stripos(WorkbenchContext::get()->getHost(),'localhost')) {
         if (isset($GLOBALS['internal']['localhostLoginRedirectError'])) {
             displayLogin($GLOBALS['internal']['localhostLoginRedirectError'],false,true);
