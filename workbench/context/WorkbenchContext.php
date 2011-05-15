@@ -5,19 +5,22 @@ require_once 'MetadataConnectionProvider.php';
 require_once 'ApexConnectionProvider.php';
 require_once 'AsyncBulkConnectionProvider.php';
 require_once 'RestDataConnectionProvider.php';
+require_once 'UserInfoProvider.php';
 
 class WorkbenchContext {
-    const INSTANCE    = 'WORKBENCH_CONTEXT';
-    const CONNECTIONS = "connections";
-    const PARTNER     = "partner";
-    const METADATA    = "metadata";
-    const ASYNC_BULK  = "async_bulk";
-    const APEX        = "apex";
-    const REST_DATA   = "rest_data";
+    const INSTANCE    = "WORKBENCH_CONTEXT";
+    const CACHE       = "CACHE";
+    const PARTNER     = "PARTNER";
+    const METADATA    = "METADATA";
+    const ASYNC_BULK  = "ASYNC_BULK";
+    const APEX        = "APEX";
+    const REST_DATA   = "REST_DATA";
+    const USER_INFO   = "USER_INFO";
 
-    private static $connectionProviders;
+    private static $cacheKeys;
 
     private $connConfig;
+    private $cache;
 
     private function __construct(ConnectionConfiguration $connConfig) {
         if ($connConfig->getHost() == null) {
@@ -29,6 +32,7 @@ class WorkbenchContext {
         }
 
         $this->connConfig = $connConfig;
+        $this->cache = array();
     }
 
     /**
@@ -97,6 +101,15 @@ class WorkbenchContext {
         return $this->connConfig->isSecure();
     }
 
+    function clearCache() {
+        if (!isset(self::$cacheKeys)) {
+            foreach (self::$cacheKeys as $cacheKey => $provider) {
+                $cacheLocation =& $this->resolveCacheLocation($provider->getCacheBaseLocation(), $cacheKey);
+                unset($cacheLocation);
+            }
+        }
+    }
+
     /**
      * @return SforcePartnerClient
      */
@@ -132,34 +145,49 @@ class WorkbenchContext {
         return $this->getConnection(self::REST_DATA);
     }
 
-    private function getConnection($type) {
-        // connections can't be serialized in $_SESSION, so use $_REQUEST
-        if (isset($_REQUEST[self::INSTANCE][self::CONNECTIONS][$type])) {
-            return $_REQUEST[self::INSTANCE][self::CONNECTIONS][$type];
-        }
-
-        // lazily register static connection providers
-        if (!isset(self::$connectionProviders)) {
-            self::$connectionProviders[self::PARTNER]    = new PartnerConnectionProvider();
-            self::$connectionProviders[self::METADATA]   = new MetadataConnectionProvider();
-            self::$connectionProviders[self::APEX]       = new ApexConnectionProvider();
-            self::$connectionProviders[self::ASYNC_BULK] = new AsyncBulkConnectionProvider();
-            self::$connectionProviders[self::REST_DATA]  = new RestDataConnectionProvider();
-        }
-
-        // find the requested connection provider
-        $provider = self::$connectionProviders[$type];
-        if ($provider == null) {
-            throw new Exception("Unknown connection type: " . $type);
-        }
-
-        // establish and cache the connection
-        $_REQUEST[self::INSTANCE][self::CONNECTIONS][$type] = $provider->establish($this->connConfig);;
-
-        // call ourselves to pull from cache
-        return $this->getConnection($type);
+    function getUserInfo() {
+        return $this->getCacheableValue(self::USER_INFO);
     }
 
+    private function getConnection($type) {
+        return $this->getCacheableValue($type, $this->connConfig);
+    }
+
+    private function &getCacheableValue($cacheKey, $args=null) {
+        // lazily register static cache keys
+        if (!isset(self::$cacheKeys)) {
+            self::$cacheKeys[self::PARTNER]    = new PartnerConnectionProvider();
+            self::$cacheKeys[self::METADATA]   = new MetadataConnectionProvider();
+            self::$cacheKeys[self::APEX]       = new ApexConnectionProvider();
+            self::$cacheKeys[self::ASYNC_BULK] = new AsyncBulkConnectionProvider();
+            self::$cacheKeys[self::REST_DATA]  = new RestDataConnectionProvider();
+            self::$cacheKeys[self::USER_INFO]  = new UserInfoProvider();
+        }
+
+        // find the provider for the requested cache key
+        $provider = self::$cacheKeys[$cacheKey];
+        if ($provider == null) {
+            throw new Exception("Unknown cache key: " . $cacheKey);
+        }
+
+        $cachedLocation =& $this->resolveCacheLocation($provider->isSerializable(), $cacheKey);
+        if (isset($cachedLocation)) {
+            return $cachedLocation;
+        } else {
+            /** @noinspection PhpUnusedLocalVariableInspection */
+            $cachedLocation =& $provider->load($args);
+        }
+
+        return $this->getCacheableValue($cacheKey, $args);
+    }
+
+    private function &resolveCacheLocation($isSerializable, $cacheKey) {
+        if ($isSerializable) {
+            return $this->cache[$cacheKey];
+        } else {
+            return $_REQUEST[self::INSTANCE][self::CACHE][$cacheKey];
+        }
+    }
 }
 
 ?>

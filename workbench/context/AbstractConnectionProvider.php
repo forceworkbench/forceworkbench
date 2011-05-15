@@ -1,7 +1,16 @@
 <?php
 require_once 'context/ConnectionConfiguration.php';
+require_once 'context/CacheableValueProvider.php';
 
-abstract class AbstractConnectionProvider {
+abstract class AbstractConnectionProvider implements CacheableValueProvider {
+
+    function isSerializable() {
+        return false;
+    }
+
+    function load($connConfig) {
+        return $this->establish($connConfig);
+    }
 
     public abstract function establish(ConnectionConfiguration $connConfig);
 

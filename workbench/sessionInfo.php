@@ -57,7 +57,7 @@ $sessionInfo['Connection'] = array(
 $errors = array();
 
 try {
-    foreach (WorkbenchContext::get()->getPartnerConnection()->getUserInfo() as $uiKey => $uiValue) {
+    foreach (WorkbenchContext::get()->getUserInfo() as $uiKey => $uiValue) {
         if (stripos($uiKey,'org') !== 0) {
             $sessionInfo['User'][$uiKey] = $uiValue;
         } else {
