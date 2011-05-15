@@ -6,7 +6,7 @@ if (!isset($_GET['startUrl'])) {
     throw new Exception("startUrl param not set");
 }
 
-preg_match("@((https?://)((.*)-api)?(.*))/services@", $_SESSION['location'], $sfdcApiHost);
+preg_match("@((https?://)((.*)-api)?(.*))/services@", WorkbenchContext::get()->getPartnerConnection()->getLocation(), $sfdcApiHost);
 
 // [1] => https://na4-api.salesforce.com
 // [2] => https://
@@ -28,7 +28,7 @@ if ($sfdcApiHost[3] != null) {
 
 if (getConfig("useSfdcFrontdoor") == 'ALWAYS' || (getConfig("useSfdcFrontdoor") == 'AUTO' && !$_SESSION['sfdcUiSidLikelySet'])) {
     $_SESSION['sfdcUiSidLikelySet'] = true;
-    $jumpUrl = "$sfdcUiHost/secur/frontdoor.jsp?sid=". $_SESSION['sessionId'] . "&retURL=%2F" . $_GET['startUrl'];
+    $jumpUrl = "$sfdcUiHost/secur/frontdoor.jsp?sid=". WorkbenchContext::get()->getSessionId() . "&retURL=%2F" . $_GET['startUrl'];
 } else {
     $jumpUrl = "$sfdcUiHost/" . $_GET['startUrl'];
 }

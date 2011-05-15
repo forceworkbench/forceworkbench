@@ -2,43 +2,6 @@
 require_once 'session.php';
 require_once 'shared.php';
 
-//general functions
-function getDefaultServerUrl() {
-    $serverUrl = '';
-
-    if (isset($_GET['serverUrlPrefix'])) {
-        $serverUrl .= $_GET['serverUrlPrefix'];
-    } else {
-        if (getConfig("useHTTPS") && !stristr(getConfig("defaultInstance"),'localhost')) {
-            $serverUrl .= "https://";
-        } else {
-            $serverUrl .= "http://";
-        }
-
-        if (isset($_GET['inst'])) {
-            $serverUrl .= $_GET['inst'];
-        } else {
-            $serverUrl .= getConfig("defaultInstance");
-        }
-
-        $serverUrl .= ".salesforce.com";
-
-        if (isset($_GET['port'])) {
-            $serverUrl .= ":" . $_GET['port'];
-        }
-    }
-
-    $serverUrl .= "/services/Soap/u/";
-
-    if (isset($_GET['api'])) {
-        $serverUrl .= $_GET['api'];
-    } else {
-        $serverUrl .= getConfig("defaultApiVersion");
-    }
-
-    return $serverUrl;
-}
-
 //main login
 
 /*
@@ -361,48 +324,40 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
     if (isset($_POST['rememberUser']) && $_POST['rememberUser'] !== 'on') setcookie('user',NULL,time()-3600);
 
     if ($username && $password && $sessionId) {
-        $errors = null;
-        $errors = 'Provide only username and password OR session id, but not all three.';
-        displayLogin($errors);
+        displayLogin('Provide only username and password OR session id, but not all three.');
         exit;
     }
 
+    //build server URL if not already; moved from logic below
+    if (!isset($serverUrl) || $serverUrl == '') {
+        $serverUrl = getDefaultServerUrl();
+    }
 
-    try {
-        if (getConfig('mockClients')) {
-            require_once 'soapclient/SforceMockPartnerClient.php';
-        }
-        require_once 'soapclient/SforcePartnerClient.php';
-        require_once 'soapclient/SforceHeaderOptions.php';
-
-        //build server URL if not already; moved from logic below
-        if (!isset($serverUrl) || $serverUrl == '') {
-            $serverUrl = getDefaultServerUrl();
-        }
-
-        //block connections to localhost
-        if (stripos($serverUrl,'localhost')) {
-            if (isset($GLOBALS['internal']['localhostLoginError'])) {
-                displayLogin($GLOBALS['internal']['localhostLoginError'],false,true);
-            } else {
-                displayLogin("Must not connect to 'localhost'",false,true);
-            }
-            exit;
-        }
-
-        if (preg_match('!services/Soap/\w/(\d{1,2})\.(\d)!',$serverUrl,$serverUrlMatches) && $serverUrlMatches[1] >= 8) {
-            $wsdl = 'soapclient/sforce.' . $serverUrlMatches[1] . $serverUrlMatches[2] . '.partner.wsdl';
+    //block connections to localhost
+    if (stripos($serverUrl,'localhost')) {
+        if (isset($GLOBALS['internal']['localhostLoginError'])) {
+            displayLogin($GLOBALS['internal']['localhostLoginError'],false,true);
         } else {
-            displayLogin("Could not find WSDL for this API version. Please try logging in again.");
+            displayLogin("Must not connect to 'localhost'",false,true);
         }
+        exit;
+    }
 
-        $partnerConnection = (getConfig('mockClients') ? new SforceMockPartnerClient() : new SforcePartnerClient());
-        $partnerConnection->createConnection($wsdl);
+//        TODO: add support for mock clients with WbCtx
+//        $partnerConnection = (getConfig('mockClients') ? new SforceMockPartnerClient() : new SforcePartnerClient());
+
+
+    if (WorkbenchContext::isEstablished()) {
+        WorkbenchContext::get()->release();
+    }
+    
+    if ($username && $password && !$sessionId) {
+        WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, null)); // establish context with null session id
+        $partnerConnection = WorkbenchContext::get()->getPartnerConnection();
 
         //set call options header for login before a session exists
         if (isset($_GET['clientId'])) {
             $partnerConnection->setCallOptions(new CallOptions($_GET['clientId'], getConfig("callOptions_defaultNamespace")));
-
         } else if (getConfig("callOptions_client") || getConfig("callOptions_defaultNamespace")) {
             $clientId = getConfig("callOptions_client") ? getConfig("callOptions_client") : null;
             $defaultNamespace = getConfig("callOptions_defaultNamespace") ? getConfig("callOptions_defaultNamespace") : null;
@@ -412,82 +367,87 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         //set login scope header for login before a session exists
         if (isset($_GET['orgId']) || isset($_GET['portalId'])) {
             $partnerConnection->setLoginScopeHeader(new LoginScopeHeader($_GET['orgId'], $_GET['portalId']));
-
         } else if (getConfig("loginScopeHeader_organizationId") || getConfig("loginScopeHeader_portalId")) {
             $loginScopeHeaderOrganizationId = getConfig("loginScopeHeader_organizationId") ? getConfig("loginScopeHeader_organizationId") : null;
             $loginScopeHeaderPortalId = getConfig("loginScopeHeader_portalId") ? getConfig("loginScopeHeader_portalId") : null;
             $partnerConnection->setLoginScopeHeader(new LoginScopeHeader($loginScopeHeaderOrganizationId, $loginScopeHeaderPortalId));
         }
 
-        if ($username && $password && !$sessionId) {
-            $partnerConnection->setEndpoint($serverUrl);
-            $partnerConnection->login($username, $password);
-        } else if ($sessionId && $serverUrl && !($username && $password)) {
-            if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
-                displayLogin('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. Choose your specific Salesforce instance on the QuickSelect menu when using a session id; otherwise, provide a username and password and choose the appropriate a login server.');
-                exit;
-            }
-
-            $partnerConnection->setEndpoint($serverUrl);
-            $partnerConnection->setSessionHeader($sessionId);
-        }
-
-        if (stripos($partnerConnection->getLocation(),'localhost')) {
-            if (isset($GLOBALS['internal']['localhostLoginRedirectError'])) {
-                displayLogin($GLOBALS['internal']['localhostLoginRedirectError'],false,true);
-            } else {
-                displayLogin("Must not connect to 'localhost'",false,true);
-            }
+        WorkbenchContext::get()->login($username, $password);
+    } else if ($sessionId && $serverUrl && !($username && $password)) {
+        if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
+            displayLogin('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. ' .
+                         'Choose your specific Salesforce instance on the QuickSelect menu when using a session id; ' .
+                         'otherwise, provide a username and password and choose the appropriate a login server.');
             exit;
         }
 
-        //replace HTTPS w/ HTTP if useHTTP config is false
-        $location = getConfig("useHTTPS") ? $partnerConnection->getLocation() : str_replace("https","http",$partnerConnection->getLocation());
+        WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, $sessionId));
+    } else {
+        throw new Exception('Invalid login parameters.');
+    }
 
-        session_unset();
-        session_destroy();
-        session_start();
-
-        $_SESSION['location'] = $location;
-        $_SESSION['sessionId'] = $partnerConnection->getSessionId();
-        $_SESSION['wsdl'] = $wsdl;
-        $_SESSION['sfdcUiSidLikelySet'] = isset($_GET['sid']);
-
-        if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'on') {
-            setcookie('user',$username,time()+60*60*24*7,'','','',TRUE);
+    if (stripos(WorkbenchContext::get()->getHost(),'localhost')) {
+        if (isset($GLOBALS['internal']['localhostLoginRedirectError'])) {
+            displayLogin($GLOBALS['internal']['localhostLoginRedirectError'],false,true);
         } else {
-            setcookie('user',NULL,time()-3600);
+            displayLogin("Must not connect to 'localhost'",false,true);
         }
-
-        if (isset($_REQUEST['autoLogin'])) {
-            $actionJump .= "?autoLogin=1";
-            if (isset($_REQUEST['skipVC'])) $actionJump .= "&skipVC=1";
-            if (isset($_GET['clientId'])) $_SESSION['tempClientId'] = $_GET['clientId'];
-        }
-
-        if (preg_match("!http(s?)://(.*)/services/Soap/u/(\d{1,2}\.\d)!", $location, $endpointMatches) == 0) {
-            throw new Exception("Invalid endpoint format: " . $location);
-        }
-
-
-        WorkbenchContext::release();
-        WorkbenchContext::establish(new ConnectionConfiguration(
-                                        $partnerConnection->getSessionId(),
-                                        $endpointMatches[1] == "s", // using HTTPS
-                                        $endpointMatches[2],        // host
-                                        $endpointMatches[3]));      // API Version
-
-        session_write_close();
-
-        header("Location: $actionJump");
-
-    } catch (Exception $e) {
-        $errors = null;
-        $errors = $e->getMessage();
-        displayLogin($errors);
         exit;
     }
 
+    //todo: put in WbCtx
+    $_SESSION['sfdcUiSidLikelySet'] = isset($_GET['sid']);
+
+    if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'on') {
+        setcookie('user',$username,time()+60*60*24*7,'','','',TRUE);
+    } else {
+        setcookie('user',NULL,time()-3600);
+    }
+
+    if (isset($_REQUEST['autoLogin'])) {
+        $actionJump .= "?autoLogin=1";
+        if (isset($_REQUEST['skipVC'])) $actionJump .= "&skipVC=1";
+        if (isset($_GET['clientId'])) $_SESSION['tempClientId'] = $_GET['clientId'];
+    }
+
+    header("Location: $actionJump");
+}
+
+function getDefaultServerUrl() {
+    $serverUrl = '';
+
+    if (isset($_GET['serverUrlPrefix'])) {
+        $serverUrl .= $_GET['serverUrlPrefix'];
+    } else {
+        if (getConfig("useHTTPS") && !stristr(getConfig("defaultInstance"),'localhost')) {
+            $serverUrl .= "https://";
+        } else {
+            $serverUrl .= "http://";
+        }
+
+        if (isset($_GET['inst'])) {
+            $serverUrl .= $_GET['inst'];
+        } else {
+            $serverUrl .= getConfig("defaultInstance");
+        }
+
+        $serverUrl .= ".salesforce.com";
+
+        if (isset($_GET['port'])) {
+            $serverUrl .= ":" . $_GET['port'];
+        }
+    }
+
+    $serverUrl .= "/services/Soap/u/";
+
+    if (isset($_GET['api'])) {
+        $serverUrl .= $_GET['api'];
+    } else {
+        $serverUrl .= getConfig("defaultApiVersion");
+    }
+
+    return $serverUrl;
 }
 ?>
 

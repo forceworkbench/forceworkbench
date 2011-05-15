@@ -1,10 +1,10 @@
 <?php
-require_once 'context/ConnectionConfiguration.php';
-require_once 'context/PartnerConnectionProvider.php';
-require_once 'context/MetadataConnectionProvider.php';
-require_once 'context/ApexConnectionProvider.php';
-require_once 'context/AsyncBulkConnectionProvider.php';
-require_once 'context/RestDataConnectionProvider.php';
+require_once 'ConnectionConfiguration.php';
+require_once 'PartnerConnectionProvider.php';
+require_once 'MetadataConnectionProvider.php';
+require_once 'ApexConnectionProvider.php';
+require_once 'AsyncBulkConnectionProvider.php';
+require_once 'RestDataConnectionProvider.php';
 
 class WorkbenchContext {
     const INSTANCE    = 'WORKBENCH_CONTEXT';
@@ -20,6 +20,14 @@ class WorkbenchContext {
     private $connConfig;
 
     private function __construct(ConnectionConfiguration $connConfig) {
+        if ($connConfig->getHost() == null) {
+            throw new Exception("Host must set to establish Workbench Context.");
+        }
+
+        if ($connConfig->getApiVersion() == null) {
+            throw new Exception("API Version must set to establish Workbench Context.");
+        }
+
         $this->connConfig = $connConfig;
     }
 
@@ -32,7 +40,7 @@ class WorkbenchContext {
             return $_SESSION[self::INSTANCE];
         }
 
-        throw new Exception("Workbench session not yet established");
+        throw new Exception("Workbench Context not yet established");
     }
 
     /**
@@ -44,19 +52,34 @@ class WorkbenchContext {
     }
 
     static function establish(ConnectionConfiguration $connConfig) {
-        if (isset($_SESSION[self::INSTANCE])) {
-            throw new Exception("Workbench session already established. Call get() or release() instead.");
+        if (self::isEstablished()) {
+            throw new Exception("Workbench session already established. Call get() or release() instead."); //todo: do we really care about this?
         }
 
-        $_SESSION[self::INSTANCE] = new WorkbenchContext($connConfig);
+        $_SESSION[self::INSTANCE] = new WorkbenchContext($connConfig, true);
     }
 
-    static function release() {
+    function release() {
         unset($_SESSION[self::INSTANCE]);
+        unset($_REQUEST[self::INSTANCE]);
+    }
+
+    function isLoggedIn() {
+        return $this->connConfig->getSessionId() != null; //todo: is it that simple? need a flag, check connection?
+    }
+
+    function login($username, $password) {
+        $loginResult = $this->getPartnerConnection()->login($username, $password);
+        $serverUrl = getConfig("useHTTPS") ? $loginResult->serverUrl : str_replace("https", "http", $loginResult->serverUrl);
+        $this->connConfig = ConnectionConfiguration::fromUrl($serverUrl, $loginResult->sessionId);
     }
 
     function getSessionId() {
         return $this->connConfig->getSessionId();
+    }
+
+    function getHost() {
+        return $this->connConfig->getHost();
     }
 
     function setApiVersion($apiVersion) {
@@ -65,6 +88,10 @@ class WorkbenchContext {
 
     function getApiVersion() {
         return $this->connConfig->getApiVersion();
+    }
+
+    function isSecure() {
+        return $this->connConfig->isSecure();
     }
 
     /**

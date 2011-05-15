@@ -86,7 +86,7 @@ if ($myPage->showTitle) {
 }
 if (isLoggedIn()) {
     $infoTips = array("Username: " . $_SESSION['getUserInfo']->userName,
-                      "Instance: " . parse_url($_SESSION['location'], PHP_URL_HOST),
+                      "Instance: " . WorkbenchContext::get()->getHost(),
                       "Org Id:&nbsp;&nbsp;" . substr($_SESSION['getUserInfo']->organizationId, 0, 15),
                       "User Id:&nbsp;" . substr($_SESSION['getUserInfo']->userId, 0, 15));
 

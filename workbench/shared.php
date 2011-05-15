@@ -165,7 +165,7 @@ function validateUploadedFile($file) {
 }
 
 function isLoggedIn() {
-    return isset($_SESSION['sessionId']);
+    return WorkbenchContext::isEstablished() && WorkbenchContext::get()->isLoggedIn();
 }
 
 function getMyPage() {

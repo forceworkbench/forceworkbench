@@ -6,13 +6,12 @@ include_once 'shared.php';
 <div id='disclaimer'><br />
 
 <?php
-//print $_SERVER[SERVER_NAME];
-if (isset($_SESSION["config"]["checkSSL"]) && $_SESSION["config"]["checkSSL"] == true) {
+if (WorkbenchContext::isEstablished() && isset($_SESSION["config"]["checkSSL"]) && $_SESSION["config"]["checkSSL"]) {
     //is connection unsecure from this machine to Workbench?
     $unsecureLocal2Wb = !isset($_SERVER['HTTPS']) && $_SERVER['SERVER_NAME'] !== 'localhost' && $_SERVER['SERVER_NAME'] !== '127.0.0.1' && $_SERVER['SERVER_NAME'] !== 'workbench';
 
     //is connection unsecure from Workbench to Salesforce?
-    $unsecureWb2sfdc = isset($_SESSION['location']) && !strstr($_SESSION['location'],'https');
+    $unsecureWb2sfdc = !WorkbenchContext::get()->isSecure();
 
     if ($unsecureLocal2Wb || $unsecureWb2sfdc) {
         print "<span style='font-size: 8pt; color: red;'>WARNING: Unsecure connection detected";

@@ -1,6 +1,6 @@
 <?php
 require_once "context/AbstractSoapConnectionProvider.php";
-require_once 'soapclient/SforcePartnerClient.php';
+require_once "soapclient/SforcePartnerClient.php";
 
 class PartnerConnectionProvider extends AbstractSoapConnectionProvider {
     function establish(ConnectionConfiguration $connConfig) {
@@ -10,6 +10,7 @@ class PartnerConnectionProvider extends AbstractSoapConnectionProvider {
         $connection->setEndpoint($this->buildEndpoint($connConfig));
         $connection->setSessionHeader($connConfig->getSessionId());
 
+        // TODO: remove from session
         if (isset($_SESSION['tempClientId'])) {
             $connection->setCallOptions(new CallOptions($_SESSION['tempClientId'], getConfig('callOptions_defaultNamespace')));
         } else if (getConfig('callOptions_client') || getConfig('callOptions_defaultNamespace')) {
