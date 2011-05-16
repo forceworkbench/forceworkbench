@@ -196,8 +196,8 @@ function getApiVersion() {
 }
 
 function clearSessionCache() {
-    $_SESSION['myGlobal'] = null;
-    $_SESSION['describeSObjects_results'] = null;
+    WorkbenchContext::get()->clearCache();
+    $_SESSION['describeSObjects_results'] = null; //todo: move into ctx
 }
 
 function displayError($errors, $showHeader=false, $showFooter=false) {
@@ -312,36 +312,16 @@ function printSelectOptions($valuesToLabelsArray,$defaultValue) {
     return $valueAndLabelMatched;
 }
 
-
-
+// todo: make these args in the cache??
 function describeGlobal($filter1=null, $filter2=null) {
     $processedDescribeGlobalResponse = array();
 
-    if (!isset($_SESSION['myGlobal']) || !getConfig("cacheDescribeGlobal")) {
-        try {
-            $describeGlobalResponse = WorkbenchContext::get()->getPartnerConnection()->describeGlobal();
-
-            //Change to pre-17.0 format
-            if (isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)) {
-                $describeGlobalResponse->types = array(); //create the array
-                foreach ($describeGlobalResponse->sobjects as $sobject) {
-                    $describeGlobalResponse->types[] = $sobject->name; //migrate to pre 17.0 format
-                    $describeGlobalResponse->attributeMap["$sobject->name"] = $sobject; //recreate into a map for faster lookup later
-                }
-                unset($describeGlobalResponse->sobjects); //remove from array, since not needed
-            }
-
-            $_SESSION['myGlobal'] = $describeGlobalResponse;
-        } catch (Exception $e) {
-            displayError($e->getMessage(),false,true);
-        }
-    }
-
+    $describeGlobalResponse = WorkbenchContext::get()->describeGlobal();
     //Print the global object types in a dropdown select box, using the filter set and the API version supports it
-    foreach ($_SESSION['myGlobal']->types as $type) {
-        if(!isset($_SESSION['myGlobal']->attributeMap) ||
-        (($filter1 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter1) &&
-        ($filter2 == null || $_SESSION['myGlobal']->attributeMap["$type"]->$filter2))) {
+    foreach ($describeGlobalResponse->types as $type) {
+        if(!isset($describeGlobalResponse->attributeMap) ||
+        (($filter1 == null || $describeGlobalResponse->attributeMap["$type"]->$filter1) &&
+        ($filter2 == null || $describeGlobalResponse->attributeMap["$type"]->$filter2))) {
 
             $processedDescribeGlobalResponse[] = $type;
         }

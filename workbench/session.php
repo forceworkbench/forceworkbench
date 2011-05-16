@@ -71,9 +71,8 @@ if (isLoggedIn()) {
             $_SESSION['default_object'] = $_REQUEST['default_object'];
         }
 
-        if (!isset($_SESSION['getUserInfo']) || !getConfig('cacheGetUserInfo')) {
-            $_SESSION['getUserInfo'] = WorkbenchContext::get()->getPartnerConnection()->getUserInfo();
-        } else if (isset($_SESSION['lastRequestTime'])) {
+        // todo: should this be in the ctx?
+        if (isset($_SESSION['lastRequestTime'])) {
             $idleTime = microtime(true) - $_SESSION['lastRequestTime'];
             if ($idleTime > (getConfig("sessionIdleMinutes") * 60)) {
                 // ping SFDC to check if session is still alive

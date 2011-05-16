@@ -13,9 +13,9 @@ if ((isset($_POST['searchSubmit']) && $_POST['searchSubmit']=='Search') || (isse
 
 $persistedSavedSearchRequestsKey = "PSSR@";
 if (getConfig("savedQueriesAndSearchesPersistanceLevel") == 'USER') {
-    $persistedSavedSearchRequestsKey .= $_SESSION['getUserInfo']->userId . "@" . $_SESSION['getUserInfo']->organizationId;
+    $persistedSavedSearchRequestsKey .= WorkbenchContext::get()->getUserInfo()->userId . "@" . WorkbenchContext::get()->getUserInfo()->organizationId;
 } else if (getConfig("savedQueriesAndSearchesPersistanceLevel") == "ORG") {
-    $persistedSavedSearchRequestsKey .= $_SESSION['getUserInfo']->organizationId;
+    $persistedSavedSearchRequestsKey .= WorkbenchContext::get()->getUserInfo()->organizationId;
 } else if (getConfig("savedQueriesAndSearchesPersistanceLevel") == 'ALL') {
     $persistedSavedSearchRequestsKey .= "ALL";
 }

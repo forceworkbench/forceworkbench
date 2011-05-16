@@ -20,9 +20,9 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
 
     $persistedSavedQueryRequestsKey = "PSQR@";
     if (getConfig("savedQueriesAndSearchesPersistanceLevel") == 'USER') {
-        $persistedSavedQueryRequestsKey .= $_SESSION['getUserInfo']->userId . "@" . $_SESSION['getUserInfo']->organizationId;
+        $persistedSavedQueryRequestsKey .= WorkbenchContext::get()->getUserInfo()->userId . "@" . WorkbenchContext::get()->getUserInfo()->organizationId;
     } else if (getConfig("savedQueriesAndSearchesPersistanceLevel") == "ORG") {
-        $persistedSavedQueryRequestsKey .= $_SESSION['getUserInfo']->organizationId;
+        $persistedSavedQueryRequestsKey .= WorkbenchContext::get()->getUserInfo()->organizationId;
     } else if (getConfig("savedQueriesAndSearchesPersistanceLevel") == 'ALL') {
         $persistedSavedQueryRequestsKey .= "ALL";
     }

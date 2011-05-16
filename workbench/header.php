@@ -85,13 +85,14 @@ if ($myPage->showTitle) {
     print "<td id='pageTitle'>" . $myPage->title . "</td>";
 }
 if (isLoggedIn()) {
-    $infoTips = array("Username: " . $_SESSION['getUserInfo']->userName,
+    $userInfo = WorkbenchContext::get()->getUserInfo();
+    $infoTips = array("Username: " . $userInfo->userName,
                       "Instance: " . WorkbenchContext::get()->getHost(),
-                      "Org Id:&nbsp;&nbsp;" . substr($_SESSION['getUserInfo']->organizationId, 0, 15),
-                      "User Id:&nbsp;" . substr($_SESSION['getUserInfo']->userId, 0, 15));
+                      "Org Id:&nbsp;&nbsp;" . substr($userInfo->organizationId, 0, 15),
+                      "User Id:&nbsp;" . substr($userInfo->userId, 0, 15));
 
     print "<td id='myUserInfo'><a href='sessionInfo.php' onmouseover=\"Tip('". implode("<br/>", $infoTips) ."')\" >" .
-           $_SESSION['getUserInfo']->userFullName . " at " . $_SESSION['getUserInfo']->organizationName . " on API " . getApiVersion() . "</a></td>";
+           $userInfo->userFullName . " at " . $userInfo->organizationName . " on API " . getApiVersion() . "</a></td>";
 }
 print "</tr></table>";
 

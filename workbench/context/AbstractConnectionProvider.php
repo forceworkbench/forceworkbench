@@ -8,6 +8,10 @@ abstract class AbstractConnectionProvider implements CacheableValueProvider {
         return false;
     }
 
+    function isCacheable() {
+        return true;
+    }
+
     function load($connConfig) {
         return $this->establish($connConfig);
     }

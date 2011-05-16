@@ -6,16 +6,18 @@ require_once 'ApexConnectionProvider.php';
 require_once 'AsyncBulkConnectionProvider.php';
 require_once 'RestDataConnectionProvider.php';
 require_once 'UserInfoProvider.php';
+require_once 'DescribeGlobalProvider.php';
 
 class WorkbenchContext {
-    const INSTANCE    = "WORKBENCH_CONTEXT";
-    const CACHE       = "CACHE";
-    const PARTNER     = "PARTNER";
-    const METADATA    = "METADATA";
-    const ASYNC_BULK  = "ASYNC_BULK";
-    const APEX        = "APEX";
-    const REST_DATA   = "REST_DATA";
-    const USER_INFO   = "USER_INFO";
+    const INSTANCE = "WORKBENCH_CONTEXT";
+    const CACHE = "CACHE";
+    const PARTNER = "PARTNER";
+    const METADATA = "METADATA";
+    const ASYNC_BULK = "ASYNC_BULK";
+    const APEX = "APEX";
+    const REST_DATA = "REST_DATA";
+    const USER_INFO = "USER_INFO";
+    const DESCRIBE_GLOBAL = "DESCRIBE_GLOBAL";
 
     private static $cacheKeys;
 
@@ -149,19 +151,40 @@ class WorkbenchContext {
         return $this->getCacheableValue(self::USER_INFO);
     }
 
+    function describeGlobal() {
+        return $this->getCacheableValue(self::DESCRIBE_GLOBAL);
+    }
+
     private function getConnection($type) {
         return $this->getCacheableValue($type, $this->connConfig);
     }
 
     private function &getCacheableValue($cacheKey, $args=null) {
+        $provider = $this->resolveCacheProvider($cacheKey);
+
+        $cachedValue =& $this->resolveCacheLocation($provider->isSerializable(), $cacheKey);
+        if (!$provider->isCacheable() || !isset($cachedValue)) {
+            $cachedValue =& $provider->load($args);
+        }
+
+        return $cachedValue;
+    }
+
+    /**
+     * @static
+     * @param  $cacheKey
+     * @return CacheableValueProvider
+     */
+    private static function resolveCacheProvider($cacheKey) {
         // lazily register static cache keys
         if (!isset(self::$cacheKeys)) {
-            self::$cacheKeys[self::PARTNER]    = new PartnerConnectionProvider();
-            self::$cacheKeys[self::METADATA]   = new MetadataConnectionProvider();
-            self::$cacheKeys[self::APEX]       = new ApexConnectionProvider();
+            self::$cacheKeys[self::PARTNER] = new PartnerConnectionProvider();
+            self::$cacheKeys[self::METADATA] = new MetadataConnectionProvider();
+            self::$cacheKeys[self::APEX] = new ApexConnectionProvider();
             self::$cacheKeys[self::ASYNC_BULK] = new AsyncBulkConnectionProvider();
-            self::$cacheKeys[self::REST_DATA]  = new RestDataConnectionProvider();
-            self::$cacheKeys[self::USER_INFO]  = new UserInfoProvider();
+            self::$cacheKeys[self::REST_DATA] = new RestDataConnectionProvider();
+            self::$cacheKeys[self::USER_INFO] = new UserInfoProvider();
+            self::$cacheKeys[self::DESCRIBE_GLOBAL] = new DescribeGlobalProvider();
         }
 
         // find the provider for the requested cache key
@@ -170,15 +193,7 @@ class WorkbenchContext {
             throw new Exception("Unknown cache key: " . $cacheKey);
         }
 
-        $cachedLocation =& $this->resolveCacheLocation($provider->isSerializable(), $cacheKey);
-        if (isset($cachedLocation)) {
-            return $cachedLocation;
-        } else {
-            /** @noinspection PhpUnusedLocalVariableInspection */
-            $cachedLocation =& $provider->load($args);
-        }
-
-        return $this->getCacheableValue($cacheKey, $args);
+        return $provider;
     }
 
     private function &resolveCacheLocation($isSerializable, $cacheKey) {
