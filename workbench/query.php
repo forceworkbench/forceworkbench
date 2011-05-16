@@ -665,7 +665,7 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
                 $queryResponse->records = array($queryResponse->records);
             }
 
-            $records = array_merge($records,$queryResponse->records);
+            $records = array_merge($records,$queryResponse->records); //todo: do memory check here
         }
 
         return $records;
