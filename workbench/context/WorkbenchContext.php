@@ -19,10 +19,9 @@ class WorkbenchContext {
     const USER_INFO = "USER_INFO";
     const DESCRIBE_GLOBAL = "DESCRIBE_GLOBAL";
 
-    private static $cacheKeys;
-
     private $connConfig;
-    private $cache;
+    private $cacheProviders;
+    private $sessionCache;
 
     private function __construct(ConnectionConfiguration $connConfig) {
         if ($connConfig->getHost() == null) {
@@ -34,7 +33,16 @@ class WorkbenchContext {
         }
 
         $this->connConfig = $connConfig;
-        $this->cache = array();
+
+        $this->cacheProviders[self::PARTNER] = new PartnerConnectionProvider();
+        $this->cacheProviders[self::METADATA] = new MetadataConnectionProvider();
+        $this->cacheProviders[self::APEX] = new ApexConnectionProvider();
+        $this->cacheProviders[self::ASYNC_BULK] = new AsyncBulkConnectionProvider();
+        $this->cacheProviders[self::REST_DATA] = new RestDataConnectionProvider();
+        $this->cacheProviders[self::USER_INFO] = new UserInfoProvider();
+        $this->cacheProviders[self::DESCRIBE_GLOBAL] = new DescribeGlobalProvider();
+
+        $this->sessionCache;
     }
 
     /**
@@ -103,13 +111,8 @@ class WorkbenchContext {
         return $this->connConfig->isSecure();
     }
 
-    function clearCache() {
-        if (!isset(self::$cacheKeys)) {
-            foreach (self::$cacheKeys as $cacheKey => $provider) {
-                $cacheLocation =& $this->resolveCacheLocation($provider->getCacheBaseLocation(), $cacheKey);
-                unset($cacheLocation);
-            }
-        }
+    function clearSessionCache() {
+        $this->sessionCache = array();
     }
 
     /**
@@ -162,33 +165,25 @@ class WorkbenchContext {
     private function &getCacheableValue($cacheKey, $args=null) {
         $provider = $this->resolveCacheProvider($cacheKey);
 
-        $cachedValue =& $this->resolveCacheLocation($provider->isSerializable(), $cacheKey);
-        if (!$provider->isCacheable() || !isset($cachedValue)) {
-            $cachedValue =& $provider->load($args);
+        if ($provider->isCacheable()) {
+            $cachedValue =& $this->resolveCacheLocation($provider->isSerializable(), $cacheKey);
+            if (!isset($cachedValue)) {
+                $cachedValue =& $provider->load($args);
+            }
+            return $cachedValue;
+        } else {
+            $loadedValue =& $provider->load($args);
+            return $loadedValue;
         }
-
-        return $cachedValue;
     }
 
     /**
-     * @static
      * @param  $cacheKey
      * @return CacheableValueProvider
      */
-    private static function resolveCacheProvider($cacheKey) {
-        // lazily register static cache keys
-        if (!isset(self::$cacheKeys)) {
-            self::$cacheKeys[self::PARTNER] = new PartnerConnectionProvider();
-            self::$cacheKeys[self::METADATA] = new MetadataConnectionProvider();
-            self::$cacheKeys[self::APEX] = new ApexConnectionProvider();
-            self::$cacheKeys[self::ASYNC_BULK] = new AsyncBulkConnectionProvider();
-            self::$cacheKeys[self::REST_DATA] = new RestDataConnectionProvider();
-            self::$cacheKeys[self::USER_INFO] = new UserInfoProvider();
-            self::$cacheKeys[self::DESCRIBE_GLOBAL] = new DescribeGlobalProvider();
-        }
-
+    private function resolveCacheProvider($cacheKey) {
         // find the provider for the requested cache key
-        $provider = self::$cacheKeys[$cacheKey];
+        $provider = $this->cacheProviders[$cacheKey];
         if ($provider == null) {
             throw new Exception("Unknown cache key: " . $cacheKey);
         }
@@ -198,7 +193,7 @@ class WorkbenchContext {
 
     private function &resolveCacheLocation($isSerializable, $cacheKey) {
         if ($isSerializable) {
-            return $this->cache[$cacheKey];
+            return $this->sessionCache[$cacheKey];
         } else {
             return $_REQUEST[self::INSTANCE][self::CACHE][$cacheKey];
         }

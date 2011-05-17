@@ -196,7 +196,7 @@ function getApiVersion() {
 }
 
 function clearSessionCache() {
-    WorkbenchContext::get()->clearCache();
+    WorkbenchContext::get()->clearSessionCache();
     $_SESSION['describeSObjects_results'] = null; //todo: move into ctx
 }
 
@@ -312,7 +312,7 @@ function printSelectOptions($valuesToLabelsArray,$defaultValue) {
     return $valueAndLabelMatched;
 }
 
-// todo: make these args in the cache??
+// todo: make these args in the cache?? change to an array instead of 1, 2..dumb
 function describeGlobal($filter1=null, $filter2=null) {
     $processedDescribeGlobalResponse = array();
 
