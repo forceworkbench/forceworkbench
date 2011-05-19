@@ -3,45 +3,111 @@ require_once 'CacheableValueProvider.php';
 
 class DescribeSObjectsProvider extends CacheableValueProvider {
 
+    public $cache;
+
+    public function __construct($cacheKey) {
+        parent::__construct($cacheKey);
+        $this->cache =& $this->getCacheLocation();
+        $this->cache = array();
+    }
+
+    public function &get($args) {
+        $types = is_array($args) ? $args : array($args);
+        $gottenTypes = parent::get($types);
+        $requestedTypes = is_array($args) ? $gottenTypes : $gottenTypes[$args];
+        return $requestedTypes;
+    }
+
     function isCachingEnabled() {
         return getConfig('cacheDescribeSObject');
     }
 
-    protected function isCached($args) {
-        if (is_array($args)) {
-            throw new Exception("Bulk SObject describes not yet implemented in Workbench Context"); //TODO!!!
-        }
-
+    protected function isCached($types) {
         $describeCache =& $this->getCacheLocation();
-        return isset($describeCache[$args]);
+
+        foreach ($types as $type) {
+            if (!array_key_exists($type, $describeCache)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    protected function &fetch($args) {
-        if (is_array($args)) {
-            throw new Exception("Bulk SObject describes not yet implemented in Workbench Context"); //TODO!!!
-        }
-
+    protected function &fetch($types) {
         $describeCache =& $this->getCacheLocation();
-        return $describeCache[$args];
-    }
+        $requestedTypes =& $loadedTypes;
+        foreach ($types as $type) {
+            if (!array_key_exists($type, $describeCache)) {
+                throw new Exception("Expected $type to be in cache, but was not");
+            }
 
-    protected function store($value, $args) {
-        if (is_array($args)) {
-            throw new Exception("Bulk SObject describes not yet implemented in Workbench Context"); //TODO!!!
+            $requestedTypes[$type] = $describeCache[$type];
         }
 
+        return $requestedTypes;
+    }
+
+    protected function store($value, $types) {
         $describeCache =& $this->getCacheLocation();
-        $describeCache[$args] = $value;
+        $describeCache = array_merge($describeCache, $value);
     }
 
-    function load($args) {
-        if (is_array($args)) {
-            throw new Exception("Bulk SObject describes not yet implemented in Workbench Context"); //TODO!!!
+    function load($types) {
+        $describeCache =& $this->getCacheLocation();
+        $typesToLoad = array();
+
+        foreach ($types as $type) {
+            if (!array_key_exists($type, $describeCache)) {
+                $typesToLoad[] = $type;
+            }
         }
 
-        return WorkbenchContext::get()->getPartnerConnection()->describeSObject($args);
+        if (count($typesToLoad) > 100) {
+            throw new Exception("Too many object types to load: " . count($typesToLoad));
+        }
+
+        $rawLoadedTypes =& WorkbenchContext::get()->getPartnerConnection()->describeSObjects($typesToLoad);
+
+        $loadedTypes = array();
+        if ($rawLoadedTypes instanceof stdClass) {
+            $loadedTypes = array($rawLoadedTypes->name => $rawLoadedTypes);
+        } else if (is_array($rawLoadedTypes)) {
+            foreach ($rawLoadedTypes as $rawLoadedType) {
+                $loadedTypes[$rawLoadedType->name] = $rawLoadedType;
+            }
+        } else {
+            throw new Exception("Unknown Describe SObject results");
+        }
+
+        if (getConfig("abcOrder")) {
+            foreach ($loadedTypes as $name => $result) {
+                $loadedTypes[$name] = $this->alphaOrderFields($result);
+            }
+        }
+
+        $requestedTypes =& $loadedTypes;
+        foreach ($types as $type) {
+            if (array_key_exists($type, $describeCache)) {
+                $requestedTypes[$type] = $describeCache[$type];
+            }
+        }
+
+        return $requestedTypes;
     }
 
+    function alphaOrderFields($describeSObjectResult) {
+        //move field name out to key name and then ksort based on key for field abc order
+        if (isset($describeSObjectResult->fields)) {
+            if(!is_array($describeSObjectResult->fields)) $describeSObjectResult->fields = array($describeSObjectResult->fields);
+            foreach ($describeSObjectResult->fields as $field) {
+                $fieldNames[] = $field->name;
+            }
+
+            $describeSObjectResult->fields = array_combine($fieldNames, $describeSObjectResult->fields);
+            $describeSObjectResult->fields = natcaseksort($describeSObjectResult->fields);
+        }
+        return $describeSObjectResult;
+    }
 }
 
 ?>

@@ -349,82 +349,6 @@ function printObjectSelection($defaultObject=null, $nameId='default_object', $wi
     print "</select>\n";
 }
 
-function describeSObject($objectTypes) {
-    // if a scalar is passed to this function, change it to an array
-    if (!is_array($objectTypes)) {
-        $objectTypeArray = array($objectTypes);
-    } else {
-        $objectTypeArray = $objectTypes;
-    }
-
-    // find which objects are already in the session cache to only retreive the
-    // ones uncached ones. if caching is disabled, just retreive everything and
-    // clear the cache.
-    $objectTypesToRetreive = array();
-    if (getConfig("cacheDescribeSObject")) {
-        foreach ($objectTypeArray as $objectType) {
-            if (!isset($_SESSION['describeSObjects_results'][$objectType])) {
-                $objectTypesToRetreive[] = $objectType;
-            }
-        }
-    } else {
-        $objectTypesToRetreive = $objectTypeArray;
-        $_SESSION['describeSObjects_results'] = null;
-    }
-
-
-    // retreive uncached object descriptions from the API and return as an array.
-    if (count($objectTypesToRetreive) >= 1 && count($objectTypesToRetreive) <= 100) {
-        try {
-            $describeSObjectsResults = WorkbenchContext::get()->getPartnerConnection()->describeSObjects($objectTypesToRetreive);
-        } catch (Exception $e) {
-            displayError($e->getMessage(),false,true);
-        }
-
-        if ($describeSObjectsResults instanceof stdClass) {
-            $describeSObjectsResultsArray = array($describeSObjectsResults->name => $describeSObjectsResults);
-        } else if (is_array($objectTypes)) {
-            foreach ($describeSObjectsResults as $describeSObjectResultKey => $describeSObjectResultValue) {
-                $describeSObjectsResultsArray[$describeSObjectResultValue->name] = $describeSObjectResultValue;
-            }
-        } else {
-            throw new Exception("Unknown Describe SObject results");
-        }
-
-    } else if (count($objectTypesToRetreive) > 100) {
-        displayError("Too many polymorphic object types: " . count($objectTypesToRetreive),false,true);
-    }
-
-    // move the describe results to the session cache and then copy all the requested object descriptions from the cache
-    // if caching is disaled, the results will just be returned directly
-    if (getConfig("cacheDescribeSObject")) {
-        if (isset($describeSObjectsResultsArray)) {
-            foreach ($describeSObjectsResultsArray as $describeSObjectResultKey => $describeSObjectResult) {
-                $_SESSION['describeSObjects_results'][$describeSObjectResult->name] = $describeSObjectsResultsArray[$describeSObjectResult->name];
-            }
-        }
-
-        foreach ($objectTypeArray as $objectTypeKey => $objectTypeValue) {
-            $describeSObjectsResultsToReturn[$objectTypeValue] = $_SESSION['describeSObjects_results'][$objectTypeValue];
-        }
-    } else {
-        $describeSObjectsResultsToReturn = $describeSObjectsResultsArray;
-    }
-
-    // if alphabetize fields is enabled, alphabetize the describe results
-    if (getConfig("abcOrder")) {
-        foreach ($describeSObjectsResultsToReturn as $describeSObjectResultKey => $describeSObjectResult) {
-            $describeSObjectsResultsToReturn[$describeSObjectResultKey] = alphaOrderFields($describeSObjectResult);
-        }
-    }
-
-    //finally, return the describe results
-    if (!is_array($objectTypes)) {
-        return $describeSObjectsResultsToReturn[$objectTypes];
-    } else {
-        return $describeSObjectsResultsToReturn;
-    }
-}
 
 function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = null, $containsIds = false, $containsDates = false) {
     print "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'expand'); return false;\">Expand All</a> | " .
@@ -467,20 +391,6 @@ function printNode($node, $containsIds, $containsDates) {
             print "<li>$nodeKey<span style='font-weight:bold;'>$nodeValue</span></li>\n";
         }
     }
-}
-
-function alphaOrderFields($describeSObjectResult) {
-    //move field name out to key name and then ksort based on key for field abc order
-    if (isset($describeSObjectResult->fields)) {
-        if(!is_array($describeSObjectResult->fields)) $describeSObjectResult->fields = array($describeSObjectResult->fields);
-        foreach ($describeSObjectResult->fields as $field) {
-            $fieldNames[] = $field->name;
-        }
-
-        $describeSObjectResult->fields = array_combine($fieldNames, $describeSObjectResult->fields);
-        $describeSObjectResult->fields = natcaseksort($describeSObjectResult->fields);
-    }
-    return $describeSObjectResult;
 }
 
 function natcaseksort($array) {

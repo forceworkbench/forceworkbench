@@ -9,7 +9,7 @@ abstract class CacheableValueProvider {
         $this->cacheKey = $cacheKey;
     }
 
-    final public function &get($args) {
+    public function &get($args) {
         if ($this->isCachingEnabled()) {
             if ($this->isCached($args)) {
                 $cachedValue =& $this->fetch($args);
@@ -17,7 +17,7 @@ abstract class CacheableValueProvider {
             } else {
                 $loadedValue =& $this->load($args);
                 $this->store($loadedValue, $args);
-                return $loadedValue;
+                return $this->fetch($args);
             }
         } else {
             $loadedValue =& $this->load($args);

@@ -388,7 +388,7 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol) {
 
     if ($showRefCol && getConfig("showReferenceBy")) {
         if (isset($field->referenceTo) && isset($field->relationshipName)) {
-            $describeRefObjResult = describeSObject($field->referenceTo);  //TODO: allow for array-based describes in Ctx
+            $describeRefObjResult = WorkbenchContext::get()->describeSObjects($field->referenceTo);
             printRefField($field, $describeRefObjResult);
         } else {
             print "<td>&nbsp;</td>\n";
