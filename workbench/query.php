@@ -119,8 +119,8 @@ function displayQueryForm($queryRequest) {
                     "addFilterRow(document.getElementById('numFilters').value++);".
                     "toggleFieldDisabled();");
 
-    if ($queryRequest->getObject()) {
-        $describeSObjectResult = describeSObject($queryRequest->getObject(), true);
+    if ($queryRequest->getObject()) {;
+        $describeSObjectResult = WorkbenchContext::get()->describeSObjects($queryRequest->getObject());
 
         $fieldValuesToLabels = array();
         foreach ($describeSObjectResult->fields as $field) {

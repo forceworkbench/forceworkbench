@@ -2,14 +2,10 @@
 require_once 'context/ConnectionConfiguration.php';
 require_once 'context/CacheableValueProvider.php';
 
-abstract class AbstractConnectionProvider implements CacheableValueProvider {
+abstract class AbstractConnectionProvider extends CacheableValueProvider {
 
-    function isSerializable() {
-        return false;
-    }
-
-    function isCacheable() {
-        return true;
+    final function &getCacheLocation() {
+        return $_REQUEST['WORKBENCH_CONNECTIONS'][$this->getCacheKey()];
     }
 
     function load($connConfig) {
@@ -29,6 +25,8 @@ abstract class AbstractConnectionProvider implements CacheableValueProvider {
 
     // TODO: add getMinSupportedVersion() ?
     // TODO: add AbstractRestConnectionProvider ??
+
+    // $_REQUEST[WorkbenchContext::INSTANCE][WorkbenchContext::CACHE][$cacheKey]
 }
 
 ?>

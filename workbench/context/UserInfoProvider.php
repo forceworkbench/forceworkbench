@@ -1,20 +1,15 @@
 <?php
 require_once 'context/CacheableValueProvider.php';
 
-class UserInfoProvider implements CacheableValueProvider {
+class UserInfoProvider extends CacheableValueProvider {
 
-    function isSerializable() {
-        return true;
-    }
-
-    function isCacheable() {
+    function isCachingEnabled() {
         return getConfig('cacheGetUserInfo');
     }
 
     function load($args) {
         return WorkbenchContext::get()->getPartnerConnection()->getUserInfo();
     }
-
 }
 
 ?>

@@ -109,7 +109,7 @@ function put($action) {
             if ($action == 'upsert') {
                 print "<tr><td align='right'><label><strong>External Id:</strong> </label></td>" .
                       "<td><select name='_ext_id'>\n";
-                foreach (describeSObject($_POST['default_object'])->fields as $fields => $field) {
+                foreach (WorkbenchContext::get()->describeSObjects($_POST['default_object'])->fields as $field) {
                     if ($field->idLookup) { 
                         print   " <option value='$field->name'";
                         if($field->name == 'Id') print " selected='true'";
@@ -278,7 +278,7 @@ function displayCsvArray($csvArray) {
 function setFieldMappings($action,$csvArray) {
     if ($action == 'insert' || $action == 'upsert' || $action == 'update') {
         if (isset($_SESSION['default_object'])) {
-            $describeSObjectResult = describeSObject($_SESSION['default_object']);
+            $describeSObjectResult = WorkbenchContext::get()->describeSObjects($_SESSION['default_object']);
         } else {
             displayError("A default object is required to $action. Go to the Select page to choose a default object and try again.");
         }
@@ -388,7 +388,7 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol) {
 
     if ($showRefCol && getConfig("showReferenceBy")) {
         if (isset($field->referenceTo) && isset($field->relationshipName)) {
-            $describeRefObjResult = describeSObject($field->referenceTo);
+            $describeRefObjResult = describeSObject($field->referenceTo);  //TODO: allow for array-based describes in Ctx
             printRefField($field, $describeRefObjResult);
         } else {
             print "<td>&nbsp;</td>\n";

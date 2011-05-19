@@ -1,13 +1,9 @@
 <?php
 require_once 'context/CacheableValueProvider.php';
 
-class DescribeGlobalProvider implements CacheableValueProvider {
+class DescribeGlobalProvider extends CacheableValueProvider {
 
-    function isSerializable() {
-        return true;
-    }
-
-    function isCacheable() {
+    function isCachingEnabled() {
         return getConfig('cacheDescribeGlobal');
     }
 

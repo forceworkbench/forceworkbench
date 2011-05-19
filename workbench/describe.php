@@ -21,7 +21,7 @@ require_once 'header.php';
 
 <?php
 if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']) {
-    $describeSObjectResult = describeSObject($_SESSION['default_object']);
+    $describeSObjectResult = WorkbenchContext::get()->describeSObjects($_SESSION['default_object']);
 
     $forceCollapse = isset($_REQUEST['default_object_changed']) && $_REQUEST['default_object_changed'];
 

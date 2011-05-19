@@ -7,6 +7,7 @@ require_once 'AsyncBulkConnectionProvider.php';
 require_once 'RestDataConnectionProvider.php';
 require_once 'UserInfoProvider.php';
 require_once 'DescribeGlobalProvider.php';
+require_once 'DescribeSObjectsProvider.php';
 
 class WorkbenchContext {
     const INSTANCE = "WORKBENCH_CONTEXT";
@@ -18,10 +19,11 @@ class WorkbenchContext {
     const REST_DATA = "REST_DATA";
     const USER_INFO = "USER_INFO";
     const DESCRIBE_GLOBAL = "DESCRIBE_GLOBAL";
+    const DESCRIBE_SOBJECTS = "DESCRIBE_SOBJECTS";
 
     private $connConfig;
-    private $cacheProviders;
-    private $sessionCache;
+    private $cache;
+
 
     private function __construct(ConnectionConfiguration $connConfig) {
         if ($connConfig->getHost() == null) {
@@ -34,15 +36,14 @@ class WorkbenchContext {
 
         $this->connConfig = $connConfig;
 
-        $this->cacheProviders[self::PARTNER] = new PartnerConnectionProvider();
-        $this->cacheProviders[self::METADATA] = new MetadataConnectionProvider();
-        $this->cacheProviders[self::APEX] = new ApexConnectionProvider();
-        $this->cacheProviders[self::ASYNC_BULK] = new AsyncBulkConnectionProvider();
-        $this->cacheProviders[self::REST_DATA] = new RestDataConnectionProvider();
-        $this->cacheProviders[self::USER_INFO] = new UserInfoProvider();
-        $this->cacheProviders[self::DESCRIBE_GLOBAL] = new DescribeGlobalProvider();
-
-        $this->sessionCache;
+        $this->cache[self::PARTNER] = new PartnerConnectionProvider(self::PARTNER);
+        $this->cache[self::METADATA] = new MetadataConnectionProvider(self::METADATA);
+        $this->cache[self::APEX] = new ApexConnectionProvider(self::APEX);
+        $this->cache[self::ASYNC_BULK] = new AsyncBulkConnectionProvider(self::ASYNC_BULK);
+        $this->cache[self::REST_DATA] = new RestDataConnectionProvider(self::REST_DATA);
+        $this->cache[self::USER_INFO] = new UserInfoProvider(self::USER_INFO);
+        $this->cache[self::DESCRIBE_GLOBAL] = new DescribeGlobalProvider(self::DESCRIBE_GLOBAL);
+        $this->cache[self::DESCRIBE_SOBJECTS] = new DescribeSObjectsProvider(self::DESCRIBE_SOBJECTS);
     }
 
     /**
@@ -112,7 +113,9 @@ class WorkbenchContext {
     }
 
     function clearSessionCache() {
-        $this->sessionCache = array();
+        foreach ($this->cache as $cacheProvider) {
+            $cacheProvider->clear();
+        }
     }
 
     /**
@@ -158,45 +161,30 @@ class WorkbenchContext {
         return $this->getCacheableValue(self::DESCRIBE_GLOBAL);
     }
 
+    function describeSObjects($sObjectTypes) {
+        return $this->getCacheableValue(self::DESCRIBE_SOBJECTS, $sObjectTypes);
+    }
+
     private function getConnection($type) {
         return $this->getCacheableValue($type, $this->connConfig);
     }
 
-    private function &getCacheableValue($cacheKey, $args=null) {
-        $provider = $this->resolveCacheProvider($cacheKey);
-
-        if ($provider->isCacheable()) {
-            $cachedValue =& $this->resolveCacheLocation($provider->isSerializable(), $cacheKey);
-            if (!isset($cachedValue)) {
-                $cachedValue =& $provider->load($args);
-            }
-            return $cachedValue;
-        } else {
-            $loadedValue =& $provider->load($args);
-            return $loadedValue;
-        }
+    private function &getCacheableValue($cacheKey, $args = null) {
+        return $this->resolveCacheProvider($cacheKey)->get($args);
     }
 
     /**
-     * @param  $cacheKey
+     * @param  string $cacheKey
      * @return CacheableValueProvider
      */
     private function resolveCacheProvider($cacheKey) {
         // find the provider for the requested cache key
-        $provider = $this->cacheProviders[$cacheKey];
+        $provider = $this->cache[$cacheKey];
         if ($provider == null) {
             throw new Exception("Unknown cache key: " . $cacheKey);
         }
 
         return $provider;
-    }
-
-    private function &resolveCacheLocation($isSerializable, $cacheKey) {
-        if ($isSerializable) {
-            return $this->sessionCache[$cacheKey];
-        } else {
-            return $_REQUEST[self::INSTANCE][self::CACHE][$cacheKey];
-        }
     }
 }
 
