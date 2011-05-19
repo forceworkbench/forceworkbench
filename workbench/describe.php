@@ -39,7 +39,7 @@ if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']) {
     </div>
     <?php
 
-    printTree("describeTree", $processedResults, $forceCollapse, null, true, false);
+    printTree("describeTree", $processedResults, $forceCollapse, null, false, false);
 }
 
 require_once 'footer.php';
