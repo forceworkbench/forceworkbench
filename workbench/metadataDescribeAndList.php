@@ -78,8 +78,9 @@ if (isset($typeString)) {
     $_SESSION['defaultMetadataType'] = $typeString;
 
     $metadataComponents = listMetadata($type);
+    $componentsLabel = "Components (" . count($metadataComponents) . ")";
 
-    printTree("listMetadataTree", array("Type Description"=>$type, "Components"=>$metadataComponents), $typeStringChanged, null, true, true);
+    printTree("listMetadataTree", array("Type Description"=>$type, $componentsLabel=>$metadataComponents), $typeStringChanged, null, true, true);
 }
 
 require_once 'footer.php';
