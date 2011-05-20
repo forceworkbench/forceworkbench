@@ -36,14 +36,7 @@ class WorkbenchContext {
 
         $this->connConfig = $connConfig;
 
-        $this->cache[self::PARTNER] = new PartnerConnectionProvider(self::PARTNER);
-        $this->cache[self::METADATA] = new MetadataConnectionProvider(self::METADATA);
-        $this->cache[self::APEX] = new ApexConnectionProvider(self::APEX);
-        $this->cache[self::ASYNC_BULK] = new AsyncBulkConnectionProvider(self::ASYNC_BULK);
-        $this->cache[self::REST_DATA] = new RestDataConnectionProvider(self::REST_DATA);
-        $this->cache[self::USER_INFO] = new UserInfoProvider(self::USER_INFO);
-        $this->cache[self::DESCRIBE_GLOBAL] = new DescribeGlobalProvider(self::DESCRIBE_GLOBAL);
-        $this->cache[self::DESCRIBE_SOBJECTS] = new DescribeSObjectsProvider(self::DESCRIBE_SOBJECTS);
+        $this->initializeCache();
     }
 
     /**
@@ -112,10 +105,8 @@ class WorkbenchContext {
         return $this->connConfig->isSecure();
     }
 
-    function clearSessionCache() {
-        foreach ($this->cache as $cacheProvider) {
-            $cacheProvider->clear();
-        }
+    function clearCache() {
+        $this->initializeCache();
     }
 
     /**
@@ -163,6 +154,17 @@ class WorkbenchContext {
 
     function describeSObjects($sObjectTypes) {
         return $this->getCacheableValue(self::DESCRIBE_SOBJECTS, $sObjectTypes);
+    }
+
+    private function initializeCache() {
+        $this->cache[self::PARTNER] = new PartnerConnectionProvider(self::PARTNER);
+        $this->cache[self::METADATA] = new MetadataConnectionProvider(self::METADATA);
+        $this->cache[self::APEX] = new ApexConnectionProvider(self::APEX);
+        $this->cache[self::ASYNC_BULK] = new AsyncBulkConnectionProvider(self::ASYNC_BULK);
+        $this->cache[self::REST_DATA] = new RestDataConnectionProvider(self::REST_DATA);
+        $this->cache[self::USER_INFO] = new UserInfoProvider(self::USER_INFO);
+        $this->cache[self::DESCRIBE_GLOBAL] = new DescribeGlobalProvider(self::DESCRIBE_GLOBAL);
+        $this->cache[self::DESCRIBE_SOBJECTS] = new DescribeSObjectsProvider(self::DESCRIBE_SOBJECTS);
     }
 
     private function getConnection($type) {

@@ -25,8 +25,6 @@ abstract class AbstractConnectionProvider extends CacheableValueProvider {
 
     // TODO: add getMinSupportedVersion() ?
     // TODO: add AbstractRestConnectionProvider ??
-
-    // $_REQUEST[WorkbenchContext::INSTANCE][WorkbenchContext::CACHE][$cacheKey]
 }
 
 ?>

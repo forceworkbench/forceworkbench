@@ -14,6 +14,7 @@ class DescribeGlobalProvider extends CacheableValueProvider {
         if (isset($describeGlobalResponse->sobjects) && !isset($describeGlobalResponse->types)) {
             $describeGlobalResponse->types = array(); //create the array
             foreach ($describeGlobalResponse->sobjects as $sobject) {
+                //todo: do we really need both of these?
                 $describeGlobalResponse->types[] = $sobject->name; //migrate to pre 17.0 format
                 $describeGlobalResponse->attributeMap["$sobject->name"] = $sobject; //recreate into a map for faster lookup later
             }

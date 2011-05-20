@@ -196,8 +196,7 @@ function getApiVersion() {
 }
 
 function clearSessionCache() {
-    WorkbenchContext::get()->clearSessionCache();
-    $_SESSION['describeSObjects_results'] = null; //todo: move into ctx
+    WorkbenchContext::get()->clearCache();
 }
 
 function displayError($errors, $showHeader=false, $showFooter=false) {
