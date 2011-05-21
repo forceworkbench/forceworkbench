@@ -10,8 +10,15 @@ require_once 'DescribeGlobalProvider.php';
 require_once 'DescribeSObjectsProvider.php';
 
 class WorkbenchContext {
+    // namespace for $_SESSION instance of $this and keyed values in $_REQUEST
     const INSTANCE = "WORKBENCH_CONTEXT";
+
+    // request keys
     const CACHE = "CACHE";
+    const HAS_DEFAULT_OBJECT_CHANGED = "HAS_DEFAULT_OBJECT_CHANGED";
+    const REQUEST_START_TIME = "REQUEST_START_TIME";
+
+    // cache keys
     const PARTNER = "PARTNER";
     const METADATA = "METADATA";
     const ASYNC_BULK = "ASYNC_BULK";
@@ -21,25 +28,39 @@ class WorkbenchContext {
     const DESCRIBE_GLOBAL = "DESCRIBE_GLOBAL";
     const DESCRIBE_SOBJECTS = "DESCRIBE_SOBJECTS";
 
+
+    // session-based instance fields
     private $connConfig;
     private $cache;
+    private $defaultObject;
 
 
-    private function __construct(ConnectionConfiguration $connConfig) {
-        if ($connConfig->getHost() == null) {
-            throw new Exception("Host must set to establish Workbench Context.");
-        }
-
-        if ($connConfig->getApiVersion() == null) {
-            throw new Exception("API Version must set to establish Workbench Context.");
-        }
-
-        $this->connConfig = $connConfig;
-
-        $this->initializeCache();
+    /**
+     * @static
+     * @return bool true if Workbench Context is established
+     */
+    static function isEstablished() {
+        return isset($_SESSION[self::INSTANCE]);
     }
 
     /**
+     * Establishes a new Workbench Context.
+     *
+     * @static
+     * @param ConnectionConfiguration $connConfig
+     * @return void
+     */
+    static function establish(ConnectionConfiguration $connConfig) {
+        if (self::isEstablished()) {
+            throw new Exception("Workbench session already established. Call get() or release() instead.");
+        }
+
+        $_SESSION[self::INSTANCE] = new WorkbenchContext($connConfig);
+    }
+
+    /**
+     * Gets the current Workbench Context
+     *
      * @static
      * @return WorkbenchContext
      */
@@ -51,20 +72,19 @@ class WorkbenchContext {
         throw new Exception("Workbench Context not yet established");
     }
 
-    /**
-     * @static
-     * @return bool
-     */
-    static function isEstablished() {
-        return isset($_SESSION[self::INSTANCE]);
-    }
-
-    static function establish(ConnectionConfiguration $connConfig) {
-        if (self::isEstablished()) {
-            throw new Exception("Workbench session already established. Call get() or release() instead.");
+    private function __construct(ConnectionConfiguration $connConfig) {
+        if ($connConfig->getHost() == null) {
+            throw new Exception("Host must set to establish Workbench Context.");
         }
 
-        $_SESSION[self::INSTANCE] = new WorkbenchContext($connConfig);
+        if ($connConfig->getApiVersion() == null) {
+            throw new Exception("API Version must set to establish Workbench Context.");
+        }
+
+        $this->connConfig = $connConfig;
+        $this->initializeCache();
+        $this->defaultObject = false;
+        $this->defaultObjectChanged = false;
     }
 
     function login($username, $password, $orgId, $portalId) {
@@ -97,6 +117,14 @@ class WorkbenchContext {
         $this->connConfig->setApiVersion($apiVersion);
     }
 
+    /**
+     * @param  $minVersion
+     * @return bool
+     */
+    function isApiVersionAtLeast($minVersion) {
+        return $this->getApiVersion() >= $minVersion;
+    }
+
     function getApiVersion() {
         return $this->connConfig->getApiVersion();
     }
@@ -105,8 +133,67 @@ class WorkbenchContext {
         return $this->connConfig->isSecure();
     }
 
+    // TODO: if this becomes too many things, should we make the context observable?
+    function beginRequestHook() {
+        if (isset($_REQUEST[self::INSTANCE][self::REQUEST_START_TIME])) {
+            throw new Exception("beginRequestHook() should not be caled more than once per request");
+        }
+        $_REQUEST[self::INSTANCE][self::REQUEST_START_TIME] = microtime(true);
+
+        if (isset($_REQUEST['default_object'])) {
+            $this->setDefaultObject($_REQUEST['default_object']);
+        }
+    }
+
+    function getRequestProcessingTime() {
+        return microtime(true) - $_REQUEST[self::INSTANCE][self::REQUEST_START_TIME];
+    }
+
+    function setDefaultObject($defaultObject) {
+        if ($defaultObject != $this->defaultObject) {
+            $_REQUEST[self::INSTANCE][self::HAS_DEFAULT_OBJECT_CHANGED] = true;
+        }
+
+        return $this->defaultObject = $defaultObject;
+    }
+
+    function getDefaultObject() {
+        return $this->defaultObject;
+    }
+
+    function hasDefaultObjectChanged() {
+        return isset($_REQUEST[self::INSTANCE][self::HAS_DEFAULT_OBJECT_CHANGED])
+               && $_REQUEST[self::INSTANCE][self::HAS_DEFAULT_OBJECT_CHANGED];
+    }
+
+
+    // CACHING & CONNECTIONS
+
+    private function initializeCache() {
+        $this->cache[self::PARTNER] = new PartnerConnectionProvider(self::PARTNER);
+        $this->cache[self::METADATA] = new MetadataConnectionProvider(self::METADATA);
+        $this->cache[self::APEX] = new ApexConnectionProvider(self::APEX);
+        $this->cache[self::ASYNC_BULK] = new AsyncBulkConnectionProvider(self::ASYNC_BULK);
+        $this->cache[self::REST_DATA] = new RestDataConnectionProvider(self::REST_DATA);
+        $this->cache[self::USER_INFO] = new UserInfoProvider(self::USER_INFO);
+        $this->cache[self::DESCRIBE_GLOBAL] = new DescribeGlobalProvider(self::DESCRIBE_GLOBAL);
+        $this->cache[self::DESCRIBE_SOBJECTS] = new DescribeSObjectsProvider(self::DESCRIBE_SOBJECTS);
+    }
+
     function clearCache() {
         $this->initializeCache();
+    }
+
+    private function &getCacheableValue($cacheKey, $args = null) {
+        return $this->cache[$cacheKey]->get($args);
+    }
+
+    /**
+     * @param  $type
+     * @return AbstractConnectionProvider
+     */
+    private function getConnection($type) {
+        return $this->getCacheableValue($type, $this->connConfig);
     }
 
     /**
@@ -154,39 +241,6 @@ class WorkbenchContext {
 
     function describeSObjects($sObjectTypes) {
         return $this->getCacheableValue(self::DESCRIBE_SOBJECTS, $sObjectTypes);
-    }
-
-    private function initializeCache() {
-        $this->cache[self::PARTNER] = new PartnerConnectionProvider(self::PARTNER);
-        $this->cache[self::METADATA] = new MetadataConnectionProvider(self::METADATA);
-        $this->cache[self::APEX] = new ApexConnectionProvider(self::APEX);
-        $this->cache[self::ASYNC_BULK] = new AsyncBulkConnectionProvider(self::ASYNC_BULK);
-        $this->cache[self::REST_DATA] = new RestDataConnectionProvider(self::REST_DATA);
-        $this->cache[self::USER_INFO] = new UserInfoProvider(self::USER_INFO);
-        $this->cache[self::DESCRIBE_GLOBAL] = new DescribeGlobalProvider(self::DESCRIBE_GLOBAL);
-        $this->cache[self::DESCRIBE_SOBJECTS] = new DescribeSObjectsProvider(self::DESCRIBE_SOBJECTS);
-    }
-
-    private function getConnection($type) {
-        return $this->getCacheableValue($type, $this->connConfig);
-    }
-
-    private function &getCacheableValue($cacheKey, $args = null) {
-        return $this->resolveCacheProvider($cacheKey)->get($args);
-    }
-
-    /**
-     * @param  string $cacheKey
-     * @return CacheableValueProvider
-     */
-    private function resolveCacheProvider($cacheKey) {
-        // find the provider for the requested cache key
-        $provider = $this->cache[$cacheKey];
-        if ($provider == null) {
-            throw new Exception("Unknown cache key: " . $cacheKey);
-        }
-
-        return $provider;
     }
 }
 

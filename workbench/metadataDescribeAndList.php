@@ -3,7 +3,7 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'header.php';
 print "<p/>";
-if (!apiVersionIsAtLeast(10.0)) {
+if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
     displayError("Metadata API not supported prior to version 10.0", false, true);
     exit;
 }
@@ -11,7 +11,7 @@ if (!apiVersionIsAtLeast(10.0)) {
 require_once 'soapclient/SforceMetadataClient.php';
 
 try {
-    $describeMetadataResult = WorkbenchContext::get()->getMetadataConnection()->describeMetadata(getApiVersion());
+    $describeMetadataResult = WorkbenchContext::get()->getMetadataConnection()->describeMetadata(WorkbenchContext::get()->getApiVersion());
 } catch (Exception $e) {
     displayError($e->getMessage(), false, true);
 }
@@ -89,11 +89,11 @@ require_once 'footer.php';
 function listMetadata($type) {
     try {
         if (isset($type->childXmlName)) {
-            return processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->childXmlName, null, getApiVersion()));
+            return processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->childXmlName, null, WorkbenchContext::get()->getApiVersion()));
         }
 
         if (!$type->inFolder) {
-            return processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->xmlName, null, getApiVersion()));
+            return processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->xmlName, null, WorkbenchContext::get()->getApiVersion()));
         }
 
         $folderQueryResult = WorkbenchContext::get()->getPartnerConnection()->query("SELECT DeveloperName FROM Folder WHERE Type = '" . $type->xmlName . "' AND DeveloperName != null AND NamespacePrefix = null");
@@ -106,7 +106,7 @@ function listMetadata($type) {
             $folder = new SObject($folderRecord);
             $folderName = $folder->fields->DeveloperName;
 
-            $listMetadataResult["$folderName"] = processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->xmlName, $folder->fields->DeveloperName, getApiVersion()));
+            $listMetadataResult["$folderName"] = processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->xmlName, $folder->fields->DeveloperName, WorkbenchContext::get()->getApiVersion()));
         }
 
         return $listMetadataResult;

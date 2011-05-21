@@ -4,11 +4,11 @@ require_once 'context/WorkbenchContext.php';
 
 set_exception_handler('handleAllExceptions');
 
-if (!isset($GLOBALS['requestTimeStart'])) {
-    $GLOBALS['requestTimeStart'] = microtime(true);
-}
-
 session_start();
+
+if (WorkbenchContext::isEstablished()) {
+    WorkbenchContext::get()->beginRequestHook();
+}
 
 //clear ResultsWithData and retrievedZips from session unless downloading them
 if (isset($_SESSION['resultsWithData']) && basename($_SERVER['PHP_SELF']) != 'downloadResultsWithData.php') {
@@ -59,18 +59,6 @@ if (!$myPage->isReadOnly && isReadOnlyMode()) {
 
 if (isLoggedIn()) {
     try {
-        //setting default object to remove notices through functions
-        if (!isset($_SESSION['default_object'])) {
-            $_SESSION['default_object'] = null;
-        }
-
-        //Has the user selected a default object on? If so,
-        //pass them to the session
-        if (isset($_REQUEST['default_object'])) {
-            $_REQUEST['default_object_changed'] = $_SESSION['default_object'] != $_REQUEST['default_object'];
-            $_SESSION['default_object'] = $_REQUEST['default_object'];
-        }
-
         // todo: should this be in the ctx?
         if (isset($_SESSION['lastRequestTime'])) {
             $idleTime = microtime(true) - $_SESSION['lastRequestTime'];

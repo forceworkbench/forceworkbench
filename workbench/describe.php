@@ -8,7 +8,7 @@ require_once 'header.php';
 
 <form name='describeForm' method='POST' action='<?php print $_SERVER['PHP_SELF']; ?>'>
     <?php
-    printObjectSelection($_SESSION['default_object'], 'default_object', 30,
+    printObjectSelection(WorkbenchContext::get()->getDefaultObject(), 'default_object', 30,
         "onChange=\"document.getElementById('loadingMessage').style.visibility='visible'; document.describeForm.submit();\"");
     ?>
 
@@ -20,10 +20,10 @@ require_once 'header.php';
 <br/>
 
 <?php
-if (isset($_SESSION['default_object']) && "" !== $_SESSION['default_object']) {
-    $describeSObjectResult = WorkbenchContext::get()->describeSObjects($_SESSION['default_object']);
+if (WorkbenchContext::get()->getDefaultObject()) {
+    $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
 
-    $forceCollapse = isset($_REQUEST['default_object_changed']) && $_REQUEST['default_object_changed'];
+    $forceCollapse = WorkbenchContext::get()->hasDefaultObjectChanged();
 
     $processedResults = processResults($describeSObjectResult, "Attributes", true);
 

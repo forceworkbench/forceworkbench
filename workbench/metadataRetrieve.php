@@ -2,7 +2,7 @@
 require_once 'soapclient/SforceMetadataClient.php';
 require_once 'session.php';
 require_once 'shared.php';
-if (!apiVersionIsAtLeast(10.0)) {
+if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
     displayError("Metadata API not supported prior to version 10.0", true, true);
     exit;
 }
@@ -38,7 +38,7 @@ else if (isset($_POST['stageForRetrieval'])) {
     }
 
     $retrieveRequest = new RetrieveRequest();
-    $retrieveRequest->apiVersion = getApiVersion();
+    $retrieveRequest->apiVersion = WorkbenchContext::get()->getApiVersion();
     $retrieveRequest->singlePackage = isset($_POST['singlePackage']);
 
     if (isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] != "") {

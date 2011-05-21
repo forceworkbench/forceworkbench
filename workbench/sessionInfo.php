@@ -3,8 +3,8 @@ require_once 'session.php';
 require_once 'shared.php';
 
 if (isset($_REQUEST['switchApiVersionTo'])) {
-    $previousVersion = getApiVersion();
-    clearSessionCache(); //todo: move to ctx
+    $previousVersion = WorkbenchContext::get()->getApiVersion();
+    WorkbenchContext::get()->clearCache();
     WorkbenchContext::get()->setApiVersion($_REQUEST['switchApiVersionTo']);
     try {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
@@ -29,7 +29,7 @@ require_once 'header.php';
     print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
     foreach ($GLOBALS['API_VERSIONS'] as $v) {
         print "<option value='$v'";
-        if (getApiVersion() == $v) print " selected=\"selected\"";
+        if (WorkbenchContext::get()->getApiVersion() == $v) print " selected=\"selected\"";
         print ">" . $v . "</option>";
     }
     print "</select>";
@@ -48,7 +48,7 @@ if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
 
 $sessionInfo = array();
 $sessionInfo['Connection'] = array(
-    'API Version' => getApiVersion(),
+    'API Version' => WorkbenchContext::get()->getApiVersion(),
     'Client Id' => isset($_SESSION['tempClientId']) ? $_SESSION['tempClientId'] : getConfig('callOptions_client'), 
     'Endpoint' => WorkbenchContext::get()->getPartnerConnection()->getLocation(),
     'Session Id' => WorkbenchContext::get()->getPartnerConnection()->getSessionId(),
@@ -68,9 +68,9 @@ try {
     $errors[] = "Partner API Error: " . $e->getMessage();
 }
 
-if (apiVersionIsAtLeast(10.0)) {
+if (WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
     try {
-        foreach (WorkbenchContext::get()->getMetadataConnection()->describeMetadata(getApiVersion()) as $resultsKey => $resultsValue) {
+        foreach (WorkbenchContext::get()->getMetadataConnection()->describeMetadata(WorkbenchContext::get()->getApiVersion()) as $resultsKey => $resultsValue) {
             if ($resultsKey != 'metadataObjects' && !is_array($resultsValue)) {
                 $sessionInfo['Metadata'][$resultsKey] = $resultsValue;
             }

@@ -36,7 +36,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
         $queryRequest = $_SESSION['lastQueryRequest'];
     } else {
         $queryRequest = new QueryRequest($defaultSettings);
-        $queryRequest->setObject($_SESSION['default_object']);
+        $queryRequest->setObject(WorkbenchContext::get()->getDefaultObject());
         if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE' && !isset($_SESSION['savedQueryRequests']) && isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
             $_SESSION['savedQueryRequests'] = unserialize($_COOKIE[$persistedSavedQueryRequestsKey]);
         }

@@ -56,7 +56,7 @@ if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['rest
         }
     }
      
-    clearSessionCache();
+    WorkbenchContext::get()->clearCache();
     header("Location: $_SERVER[PHP_SELF]?saved=" . (isset($_POST['restoreDefaults']) ? "D" : "S"));
 }
 
@@ -72,7 +72,7 @@ if (isset($errors)) {
 if (isLoggedIn()) {
     $unsupportedConfigs = array();
     foreach ($config as $configKey => $configValue) {
-         if (isset($configValue['minApiVersion']) && !apiVersionIsAtLeast($configValue['minApiVersion'])) {
+         if (isset($configValue['minApiVersion']) && !WorkbenchContext::get()->isApiVersionAtLeast($configValue['minApiVersion'])) {
              $unsupportedConfigs[] = $configValue['label'] . sprintf(" (Requires %01.1f)", $configValue['minApiVersion']);
          }
     }
@@ -80,7 +80,7 @@ if (isLoggedIn()) {
     if (count($unsupportedConfigs) > 0) {
         print "<p/>";
         displayWarning(array_merge(array(
-                       "The following settings will be ignored for your current API version " . getApiVersion() . ":"),
+                       "The following settings will be ignored for your current API version " . WorkbenchContext::get()->getApiVersion() . ":"),
                        $unsupportedConfigs));
                        
         print "<p/><em style='color: orange;'>Quick Fix: <a style='color: orange;' href='sessionInfo.php' target='_blank'>Change API Version</a></em>";
@@ -101,7 +101,7 @@ foreach ($config as $configKey => $configValue) {
         $tip .= isset($configValue['minApiVersion']) ? "<br/><br/>Minimum API Version: " . sprintf("%01.1f", $configValue['minApiVersion']) : "";
         print "\t<tr onmouseover=\"Tip('$tip')\">\n";
         print "\t\t<td align='right'><label for='$configKey'" . 
-              (isLoggedIn() && isset($configValue['minApiVersion']) && !apiVersionIsAtLeast($configValue['minApiVersion']) ? " style='color:orange;'" : "") .
+              (isLoggedIn() && isset($configValue['minApiVersion']) && !WorkbenchContext::get()->isApiVersionAtLeast($configValue['minApiVersion']) ? " style='color:orange;'" : "") .
               ">" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</label></td><td>&nbsp;&nbsp;</td>\n";
         print "\t\t<td align='left'>";
         if ($configValue['dataType'] == "boolean") {

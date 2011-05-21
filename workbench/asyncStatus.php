@@ -59,7 +59,7 @@ print "<tr>" .
 
 print "<tr>" .
       "<td class='dataLabel'>Object</td><td class='dataValue'>" . $jobInfo->getObject() . "</td>" .
-      (apiVersionIsAtLeast(19.0) 
+      (WorkbenchContext::get()->isApiVersionAtLeast(19.0)
           ? "<td class='dataLabel'>Records Failed</td><td class='dataValue'>" . $jobInfo->getNumberRecordsFailed() . "</td>"
           : "<td class='dataLabel'>Content Type</td><td class='dataValue'>" . $jobInfo->getContentType() . "</td>"
       ) .
@@ -78,7 +78,7 @@ print "<tr>" .
       "<td class='dataLabel'>Batches Failed</td><td class='dataValue'>" . $jobInfo->getNumberBatchesFailed() . "</td>" .
       "</tr>";
 
-if (apiVersionIsAtLeast(19.0)) {
+if (WorkbenchContext::get()->isApiVersionAtLeast(19.0)) {
     print "<tr>" .
           "<td class='dataLabel'>API Processing</td><td class='dataValue'>" . $jobInfo->getApiActiveProcessingTime(). " ms</td>" .
           "<td class='dataLabel'>Apex Processing</td><td class='dataValue'>" . $jobInfo->getApexProcessingTime() . " ms</td>" .    
@@ -105,7 +105,7 @@ if (count($batchInfos) > 0) {
           "<th>Id</th>" .
           "<th>Status</th>" .
           "<th>Processed</th>" .
-          (apiVersionIsAtLeast(19.0) ? "<th>Failed</th>" : "") .
+          (WorkbenchContext::get()->isApiVersionAtLeast(19.0) ? "<th>Failed</th>" : "") .
           "<th>Created</th>" .
           "<th>Last Modified</th>" .    
          "</tr>";
@@ -132,18 +132,18 @@ if (count($batchInfos) > 0) {
                      "Total Processing: "  . $batchInfo->getTotalProcessingTime() .  " ms<br/>";
 
         print "<td class='dataValue'>" .
-              (apiVersionIsAtLeast(19.0)
+              (WorkbenchContext::get()->isApiVersionAtLeast(19.0)
                   ? "<a href='downloadAsyncBatch.php?op=request&jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . 
                      "' onmouseover=\"Tip('Download Batch Request')\"/>" . $batchInfo->getId() . "</a>" 
                   : $batchInfo->getId()) .
               "</td>" . 
               "<td class='dataValue'>" . $batchInfo->getState() . (($batchInfo->getStateMessage() != "") ? (": " . $batchInfo->getStateMessage()) : "") . "</td>" .
-              (apiVersionIsAtLeast(19.0) 
+              (WorkbenchContext::get()->isApiVersionAtLeast(19.0)
                   ? "<td class='dataValue pseudoLink' onmouseover=\"Tip('$processingTimeDetails')\"/>" 
                   : "<td class='dataValue'>") .
               $batchInfo->getNumberRecordsProcessed() . ($batchInfo->getNumberRecordsProcessed() == "1" ? " record" : " records") .
               "</td>" .
-              (apiVersionIsAtLeast(19.0) 
+              (WorkbenchContext::get()->isApiVersionAtLeast(19.0)
                   ? "<td class='dataValue'>" . $batchInfo->getNumberRecordsFailed() . 
                     ($batchInfo->getNumberRecordsFailed() == "1" 
                         ? " record" 

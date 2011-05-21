@@ -35,7 +35,7 @@ function addFooterScript($script) {
 function getConfig($configKey) {
     if (!isset($_SESSION["config"][$configKey]) || 
         (isset($GLOBALS["config"][$configKey]["minApiVersion"])) &&
-         !apiVersionIsAtLeast($GLOBALS["config"][$configKey]["minApiVersion"])) {
+         !WorkbenchContext::get()->isApiVersionAtLeast($GLOBALS["config"][$configKey]["minApiVersion"])) {
         
         if ($GLOBALS["config"][$configKey]["dataType"] == "boolean") {
             return false;
@@ -187,18 +187,6 @@ function getTableClass($defaultClass = 'dataTable') {
     return getConfig("areTablesSortable") ? "sortable" : $defaultClass;
 }
 
-function apiVersionIsAtLeast($minVersion) {
-    return getApiVersion() >= $minVersion;
-}
-
-function getApiVersion() {
-    return WorkbenchContext::get()->getApiVersion();
-}
-
-function clearSessionCache() {
-    WorkbenchContext::get()->clearCache();
-}
-
 function displayError($errors, $showHeader=false, $showFooter=false) {
     if ($showHeader) {
         include_once("header.php");
@@ -329,8 +317,10 @@ function describeGlobal($filter1=null, $filter2=null) {
     return $processedDescribeGlobalResponse;
 }
 
-function printObjectSelection($defaultObject=null, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null) {
-    $_SESSION['default_object'] = $defaultObject;
+function printObjectSelection($defaultObject=false, $nameId='default_object', $width=20, $extras=null, $filter1=null, $filter2=null) {
+    // todo: do we really want to set this here? seems like it should be in a request handler or something...
+    WorkbenchContext::get()->setDefaultObject($defaultObject);
+
     $describeGlobalResults = describeGlobal($filter1, $filter2);
 
     print "<select id='$nameId' name='$nameId' style='width: " . $width. "em;' $extras>\n";

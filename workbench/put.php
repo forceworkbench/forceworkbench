@@ -93,7 +93,7 @@ function put($action) {
                 exit;                
             }
             
-            if (!apiVersionIsAtLeast(20.0)) {
+            if (!WorkbenchContext::get()->isApiVersionAtLeast(20.0)) {
                 displayError("ZIP-based "  . $action . "s not supported until API 20.0", false, true);
                 exit;
             }
@@ -172,7 +172,7 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
         else if($action == "update") $filter1 = "updateable";
         else if ($action == "upsert") {$filter1 = "createable"; $filter2 = "updateable";}
 
-        printObjectSelection($_SESSION['default_object'], 'default_object', "20", null, $filter1, $filter2);
+        printObjectSelection(WorkbenchContext::get()->getDefaultObject(), 'default_object', "20", null, $filter1, $filter2);
          
         $submitLabel = 'Upload & Select Object';
     } else {
@@ -277,8 +277,8 @@ function displayCsvArray($csvArray) {
  */
 function setFieldMappings($action,$csvArray) {
     if ($action == 'insert' || $action == 'upsert' || $action == 'update') {
-        if (isset($_SESSION['default_object'])) {
-            $describeSObjectResult = WorkbenchContext::get()->describeSObjects($_SESSION['default_object']);
+        if (WorkbenchContext::get()->getDefaultObject()) {
+            $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
         } else {
             displayError("A default object is required to $action. Go to the Select page to choose a default object and try again.");
         }
@@ -550,7 +550,7 @@ function confirmFieldMappings($action, $fieldMap, $csvArray, $extId) {
         }
     } else {
         $recordCount = count($csvArray) - 1;
-        displayInfo ("The file uploaded contains $recordCount records to be added to " . $_SESSION['default_object']);
+        displayInfo ("The file uploaded contains $recordCount records to be added to " . WorkbenchContext::get()->getDefaultObject());
         print "<p class='instructions'>Confirm the mappings below:</p>";
         displayFieldMappings($fieldMap, $extId, true);
     }
@@ -660,7 +660,7 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults) {
  */
 function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
     $origCsvArray = $csvArray;//backing up for results
-    if (!($fieldMap && $csvArray && $_SESSION['default_object'])) {
+    if (!($fieldMap && $csvArray && WorkbenchContext::get()->getDefaultObject())) {
         displayError("CSV file and field mapping not initialized. Upload a new file and map fields.",true,true);
     } else {
         $csvHeader = array_shift($csvArray);
@@ -672,7 +672,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
 
             for ($row=0; $row < count($csvArrayBatch); $row++) {
                 $sObject = new SObject;
-                $sObject->type = $_SESSION['default_object'];
+                $sObject->type = WorkbenchContext::get()->getDefaultObject();
                 if(getConfig("fieldsToNull")) $sObject->fieldsToNull = array();
                 $fields = array();
 
@@ -744,12 +744,12 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
 function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType) {    
     $doingZip = isset($zipFile);
     
-    if (!$doingZip && !($fieldMap && $csvArray && $_SESSION['default_object'])) {
+    if (!$doingZip && !($fieldMap && $csvArray && WorkbenchContext::get()->getDefaultObject())) {
         displayError("CSV file and field mapping not initialized or object not selected. Upload a new file and map fields.",true,true);
     } else {
         try {
             $job = new JobInfo();
-            $job->setObject($_SESSION['default_object']);
+            $job->setObject(WorkbenchContext::get()->getDefaultObject());
             $job->setOpertion($apiCall);
             $job->setContentType(isset($contentType) ? $contentType : ($doingZip ? "ZIP_CSV" : "CSV"));
             $job->setConcurrencyMode(getConfig("asyncConcurrencyMode"));
@@ -925,12 +925,12 @@ function requiresObject($action) {
 }
 
 function supportsZips($action) {
-    return supportsBulk($action) && apiVersionIsAtLeast(20.0);
+    return supportsBulk($action) && WorkbenchContext::get()->isApiVersionAtLeast(20.0);
 }
 
 function displayBulkApiOptions($action, $forceDoAsync, $recommendDoAsync = false) {
     //Hard Delete option
-    if (apiVersionIsAtLeast(19.0) && $action == 'Confirm Delete') {
+    if (WorkbenchContext::get()->isApiVersionAtLeast(19.0) && $action == 'Confirm Delete') {
         print "<p><label><input type='checkbox' id='doHardDelete' name='doHardDelete' onClick=\"".
               "if (this.checked && " . ($forceDoAsync ? "false" : "true") . ") {" .
               "    document.getElementById('doAsync').checked = true;" . 
@@ -948,8 +948,8 @@ function displayBulkApiOptions($action, $forceDoAsync, $recommendDoAsync = false
     }
 
     //Async Options
-    if((apiVersionIsAtLeast(17.0) && in_array($action, array('Confirm Insert', 'Confirm Update', 'Confirm Upsert')))
-       || (apiVersionIsAtLeast(18.0) && $action == 'Confirm Delete')) {
+    if((WorkbenchContext::get()->isApiVersionAtLeast(17.0) && in_array($action, array('Confirm Insert', 'Confirm Update', 'Confirm Upsert')))
+       || (WorkbenchContext::get()->isApiVersionAtLeast(18.0) && $action == 'Confirm Delete')) {
         if ($forceDoAsync) {
             print "<input name='doAsync' type='hidden' value='true'/>";
         } else {
@@ -980,7 +980,7 @@ function displayBulkApiOptions($action, $forceDoAsync, $recommendDoAsync = false
             print "<div id='asyncDeleteObjectSelection' style='display: " .
                    ($forceDoAsync || $recommendDoAsync ? "inline" : "none; margin-left: 3em;") . 
                    "'>Object Type: ";
-            printObjectSelection($_SESSION['default_object']);
+            printObjectSelection(WorkbenchContext::get()->getDefaultObject());
             print "</div>";
         }
 

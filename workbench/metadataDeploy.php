@@ -2,7 +2,7 @@
 require_once 'soapclient/SforceMetadataClient.php';
 require_once 'session.php';
 require_once 'shared.php';
-if (!apiVersionIsAtLeast(10.0)) {
+if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
     displayError("Metadata API not supported prior to version 10.0", true, true);
     exit;
 }
@@ -153,7 +153,7 @@ function defaultDeployOptions() {
     $deployOptions->checkOnly = false;
     $deployOptions->ignoreWarnings = false;
     $deployOptions->performRetrieve = false;
-    if (apiVersionIsAtLeast(22.0)) { $deployOptions->purgeOnDelete = false; }
+    if (WorkbenchContext::get()->isApiVersionAtLeast(22.0)) { $deployOptions->purgeOnDelete = false; }
     $deployOptions->rollbackOnError = false;
     $deployOptions->singlePackage = false;
     $deployOptions->runAllTests = false;

@@ -24,10 +24,8 @@ if (WorkbenchContext::isEstablished() && isset($_SESSION["config"]["checkSSL"]) 
     }
 }
 
-if (isset($GLOBALS['requestTimeStart']) && isset($_SESSION["config"]["displayRequestTime"]) && $_SESSION["config"]["displayRequestTime"]) {
-    $requestTimeEnd = microtime(true);
-    $requestTimeElapsed = $requestTimeEnd - $GLOBALS['requestTimeStart'];
-    printf ("Requested in %01.3f sec<BR/>", $requestTimeElapsed);
+if (WorkbenchContext::isEstablished() && getConfig("displayRequestTime")) {
+    printf ("Requested in %01.3f sec<BR/>", WorkbenchContext::get()->getRequestProcessingTime());
 }
 
 print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKBENCH_VERSION"] : "") . "<br/>\n";

@@ -92,7 +92,7 @@ if (isLoggedIn()) {
                       "User Id:&nbsp;" . substr($userInfo->userId, 0, 15));
 
     print "<td id='myUserInfo'><a href='sessionInfo.php' onmouseover=\"Tip('". implode("<br/>", $infoTips) ."')\" >" .
-           $userInfo->userFullName . " at " . $userInfo->organizationName . " on API " . getApiVersion() . "</a></td>";
+           $userInfo->userFullName . " at " . $userInfo->organizationName . " on API " . WorkbenchContext::get()->getApiVersion() . "</a></td>";
 }
 print "</tr></table>";
 

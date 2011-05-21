@@ -2,7 +2,7 @@
 require_once 'session.php';
 require_once 'shared.php';
 
-if (!apiVersionIsAtLeast(10.0)) {
+if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
     displayError("Metadata API not supported prior to version 10.0", true, true);
     exit;
 }
