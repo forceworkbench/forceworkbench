@@ -814,7 +814,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
                 }
     
                 try {
-                    $batch = $asyncConnection->createBatch($job, convertArrayToCsv($asyncCsv));
+                    WorkbenchContext::get()->getAsyncBulkConnection()->createBatch($job, convertArrayToCsv($asyncCsv));
                 } catch (Exception $e) {
                     displayError($e->getMessage(), true, true);
                 }
@@ -822,7 +822,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
         }
 
         try {
-            $job = $asyncConnection->updateJobState($job->getId(), "Closed");
+            $job = WorkbenchContext::get()->getAsyncBulkConnection()->updateJobState($job->getId(), "Closed");
         } catch (Exception $e) {
             displayError($e->getMessage(), true, true);
         }
