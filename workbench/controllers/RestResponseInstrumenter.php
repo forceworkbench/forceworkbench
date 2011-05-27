@@ -6,6 +6,10 @@ class RestResponseInstrumenter {
     public function __construct($baseUrl) {        
         $restBasePattern = '/services/data/v\d+\.\d';
 
+        // add link url to id services
+        $this->insturmentations[] = new Insturmentation("\"https?://.*(/id/00D.*/005.*)\"",
+                                                 		"\"<a class=\'RestLinkable\' href=" . $baseUrl . "?url=$1&autoExec=1>$1</a>\"");
+
         // add link url to any rest url
         $this->insturmentations[] = new Insturmentation("\"(" . $restBasePattern . ".*)\"",
                                                  		"\"<a class=\'RestLinkable\' href=" . $baseUrl . "?url=$1&autoExec=0>$1</a>\"");

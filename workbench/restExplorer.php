@@ -5,7 +5,7 @@ require_once 'session.php';
 require_once 'shared.php';
 
 if(!isset($_SESSION['restExplorerController']) || isset($_GET['reset'])) {
-    $_SESSION['restExplorerController'] = new RestExplorerController();
+    $_SESSION['restExplorerController'] = new RestExplorerController(WorkbenchContext::get());
 }
 $c = $_SESSION['restExplorerController'];
 $c->onPageLoad();
