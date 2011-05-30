@@ -801,9 +801,10 @@ $GLOBALS["MENUS"] = array(
     ),
 
     'Queries' => array(
-        'query.php'     => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,'usesObject',true,''),
-        'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,'usesObject',true,''),
-        'bayeux.php'    => new Page('Push Topics','Push Topics',true,true,true,'usesObject',true,'')
+        'query.php'       => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,'usesObject',true,''),
+        'search.php'      => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,'usesObject',true,''),
+        'bayeux.php'      => new Page('Push Topics','Push Topics',true,false,true,'usesObject',true,''),
+        'cometdProxy.php' => new Page('CometD Proxy','CometD Proxy',false,false,false,false,false,'')
     ),
 
     'Data' => array(

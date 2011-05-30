@@ -136,7 +136,7 @@ class WorkbenchContext {
     // TODO: if this becomes too many things, should we make the context observable?
     function beginRequestHook() {
         if (isset($_REQUEST[self::INSTANCE][self::REQUEST_START_TIME])) {
-            throw new Exception("beginRequestHook() should not be caled more than once per request");
+            throw new Exception("beginRequestHook() should not be called more than once per request");
         }
         $_REQUEST[self::INSTANCE][self::REQUEST_START_TIME] = microtime(true);
 

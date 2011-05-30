@@ -7,7 +7,7 @@ class ConnectionConfiguration {
     private $apiVersion;
     private $overriddenClientId;
 
-    private function __construct($sessionId, $isSecure, $host, $apiVersion, $overriddenClientId) {
+    function __construct($sessionId, $isSecure, $host, $apiVersion, $overriddenClientId) {
         $this->sessionId = $sessionId;
         $this->isSecure = $isSecure;
         $this->host = $host;

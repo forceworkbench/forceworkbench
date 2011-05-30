@@ -364,7 +364,12 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         $portalId = isset($_GET["portalId"]) ? $_GET["clientId"] : getConfig("loginScopeHeader_portalId");
 
         WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, null, $overriddenClientId));
-        WorkbenchContext::get()->login($username, $password, $orgId, $portalId);
+        try {
+            WorkbenchContext::get()->login($username, $password, $orgId, $portalId);
+        } catch (Exception $e) {
+            WorkbenchContext::get()->release();
+            displayError($e->getMessage(), true, true);
+        }
     } else if ($sessionId && $serverUrl && !($username && $password)) {
         if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
             displayLogin('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. ' .
@@ -375,6 +380,7 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
 
         WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, $sessionId, $overriddenClientId));
     } else {
+        WorkbenchContext::get()->release();
         throw new Exception('Invalid login parameters.');
     }
 

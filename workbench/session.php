@@ -70,6 +70,7 @@ if (isLoggedIn()) {
         $_SESSION['lastRequestTime'] = microtime(true);
 
     } catch (exception $e) {
+        WorkbenchContext::get()->release();
         session_unset();
         session_destroy();
         try { include_once 'header.php'; } catch (exception $e) {}

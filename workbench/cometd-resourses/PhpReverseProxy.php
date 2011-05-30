@@ -6,7 +6,7 @@ class PhpReverseProxy{
 	private $http_code,$lastModified,$version,$resultHeader;
 	function __construct(){
 		$this->version="PHP Reverse Proxy (PRP) 1.0";
-		$this->port="8080";
+		$this->port="";
 		$this->host="127.0.0.1";
         $this->forward_path="";
 		$this->content="";
@@ -42,17 +42,19 @@ class PhpReverseProxy{
 		return substr($s1, 0, strpos($s1, $s2));
 	}
 	function preConnect(){
-		$this->user_agent=$_SERVER['HTTP_USER_AGENT'];
-		$this->request_method=$_SERVER['REQUEST_METHOD'];
-		$tempCookie="";
-		foreach ($_COOKIE as $i => $value) {
-			$tempCookie=$tempCookie." $i=$_COOKIE[$i];";
+		$this->user_agent = $_SERVER['HTTP_USER_AGENT'];
+		$this->request_method = $_SERVER['REQUEST_METHOD'];
+		$tempCookie = "";
+		foreach ($_COOKIE as $cookieName => $cookieValue) {
+            if ($cookieName == "PHPSESSID") continue;
+            if ($cookieName == "XDEBUG_SESSION") continue;
+			$tempCookie = $tempCookie." $cookieName = $cookieValue;";
 		}
-		$this->cookie=$tempCookie;
+		$this->cookie = $tempCookie;
 		if(empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
-			$this->XFF=$_SERVER['REMOTE_ADDR'];
+			$this->XFF = $_SERVER['REMOTE_ADDR'];
 		} else {
-			$this->XFF=$_SERVER['HTTP_X_FORWARDED_FOR'].", ".$_SERVER['REMOTE_ADDR'];
+			$this->XFF = $_SERVER['HTTP_X_FORWARDED_FOR'].", ".$_SERVER['REMOTE_ADDR'];
 		}
 	}
 	function connect(){
@@ -64,18 +66,9 @@ class PhpReverseProxy{
 				curl_setopt($ch, CURLOPT_POSTFIELDS,file_get_contents("php://input"));
 			}
 			curl_setopt($ch,CURLOPT_URL,$this->translateURL($this->host));
-			curl_setopt($ch,CURLOPT_HTTPHEADER, 
-				Array(
-					"X-Forwarded-For: ".$this->XFF,
-					"User-Agent: ".$this->user_agent
-				));
 
-            // TODO: should this be here?
-            $headers = array();
+            $header = array();
             foreach (getallheaders() as $key => $value) {
-                if ($key == "Host") continue;
-                if ($key == "Cookie") continue;
-
                 if (in_array($key, array("Content-Type", "Accept"))) {
                     $headers[] = "$key: $value";
                 }
@@ -89,8 +82,9 @@ class PhpReverseProxy{
 			curl_setopt($ch,CURLOPT_AUTOREFERER,true); 
 			curl_setopt($ch,CURLOPT_HEADER,true);
 			curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-			$output=curl_exec($ch);
-			$info	= curl_getinfo( $ch );			curl_close($ch);
+			$output = curl_exec($ch);
+			$info	= curl_getinfo( $ch );
+            curl_close($ch);
 			$this->postConnect($info,$output);
 		}else {
 			$this->lastModified=$_SERVER['HTTP_IF_MODIFIED_SINCE'];
