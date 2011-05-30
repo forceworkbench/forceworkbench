@@ -19,6 +19,16 @@ dojo.addOnLoad(function()
         dojo.byId('body').innerHTML += '<div>CometD Connection Closed</div>';
     }
 
+    function _subscribed(subscription)
+    {
+        dojo.byId('body').innerHTML += '<div>Subscribed to ' + subscription + '</div>';
+    }
+
+    function _error(messageStr)
+    {
+        dojo.byId('body').innerHTML += '<div style=\'color:red;\'>' + messageStr + '</div>';
+    }
+
     // Function that manages the connection status with the Bayeux server
     var _connected = false;
     function _metaConnect(message)
@@ -50,14 +60,21 @@ dojo.addOnLoad(function()
         {
             cometd.batch(function()
             {
-                cometd.subscribe('/hello', function(message)
+                cometd.subscribe('/accountsCreatedToday', function(message)
                 {
-                    dojo.byId('body').innerHTML += '<div>Server Says: ' + message.data.greeting + '</div>';
+                    dojo.byId('body').innerHTML += '<div>Server Says: ' + message + '</div>';
                 });
-                // Publish on a service channel since the message is for the server only
-                cometd.publish('/service/hello', { name: 'World' });
             });
         }
+    }
+
+    function _metaSubscribe(message) {
+        if (message.successful != true) {
+            _error("failure to subscribe to " + message.subscription);
+            return;
+        }
+
+        _subscribed(message.subscription);
     }
 
     // Disconnect when the page unloads
@@ -66,7 +83,7 @@ dojo.addOnLoad(function()
         cometd.disconnect(true);
     });
 
-     var cometURL = location.protocol + "//" + location.host + config.contextPath + "/cometd";
+    var cometURL = location.protocol + "//" + location.host + config.contextPath + "/cometd";
     cometd.configure({
         url: cometURL,
         logLevel: 'debug'
@@ -74,5 +91,6 @@ dojo.addOnLoad(function()
 
     cometd.addListener('/meta/handshake', _metaHandshake);
     cometd.addListener('/meta/connect', _metaConnect);
+    cometd.addListener('/meta/subscribe', _metaSubscribe);
     cometd.handshake();
 });
