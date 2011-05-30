@@ -3,8 +3,10 @@
 class PhpReverseProxy{
 	public $port,$host,$forward_path,$content,$content_type,$user_agent,
 		$XFF,$request_method,$IMS,$cacheTime,$cookie;
-	private $http_code,$lastModified,$version,$resultHeader;
-	function __construct(){
+
+    private $http_code,$lastModified,$version,$resultHeader;
+
+    function __construct(){
 		$this->version="PHP Reverse Proxy (PRP) 1.0";
 		$this->port="";
 		$this->host="127.0.0.1";
@@ -21,6 +23,7 @@ class PhpReverseProxy{
 		$this->lastModified=gmdate("D, d M Y H:i:s",time()-72000)." GMT";
 		$this->cookie="";
 	}
+
 	function translateURL($serverName) {
 		$this->path = $this->forward_path . str_replace(dirname($_SERVER['PHP_SELF']), "", $_SERVER['REQUEST_URI']);
 		if($_SERVER['QUERY_STRING']=="")
@@ -28,7 +31,8 @@ class PhpReverseProxy{
 		else
 		return $this->translateServer($serverName).$this->path."?".$_SERVER['QUERY_STRING'];
 	}
-	function translateServer($serverName) {
+
+    function translateServer($serverName) {
 		$s = empty($_SERVER["HTTPS"]) ? ''
 			: ($_SERVER["HTTPS"] == "on") ? "s"
 			: "";
@@ -38,10 +42,12 @@ class PhpReverseProxy{
 		else
 			return $protocol."://".$serverName.":".$this->port;
 	}
-	function left($s1, $s2) {
+
+    function left($s1, $s2) {
 		return substr($s1, 0, strpos($s1, $s2));
 	}
-	function preConnect(){
+
+    function preConnect(){
 		$this->user_agent = $_SERVER['HTTP_USER_AGENT'];
 		$this->request_method = $_SERVER['REQUEST_METHOD'];
 		$tempCookie = "";
@@ -57,7 +63,8 @@ class PhpReverseProxy{
 			$this->XFF = $_SERVER['HTTP_X_FORWARDED_FOR'].", ".$_SERVER['REMOTE_ADDR'];
 		}
 	}
-	function connect(){
+
+    function connect(){
 		if(empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])){
 			$this->preConnect();
 			$ch=curl_init();
@@ -91,28 +98,30 @@ class PhpReverseProxy{
 			$this->IMS=true;
 		}
 	}
-	function postConnect($info,$output){
-		$this->content_type=$info["content_type"];
-		$this->http_code=$info['http_code'];
-		if(!empty($info['last_modified'])){
+
+    function postConnect($info,$output){
+		$this->content_type = $info["content_type"];
+		$this->http_code = $info['http_code'];
+		if (!empty($info['last_modified'])){
 			$this->lastModified=$info['last_modified'];
 		}
-		$this->resultHeader=substr($output,0,$info['header_size']);
-		$content=substr($output,$info['header_size']);
-		if($this->http_code=='200'){
+		$this->resultHeader = substr($output,0,$info['header_size']);
+		$content = substr($output,$info['header_size']);
+		if ($this->http_code == '200'){
 			$this->content=$content;
 		} 
 	}
-	function output(){
+
+    function output(){
 		$currentTimeString=gmdate("D, d M Y H:i:s",time());
 		$expiredTime=gmdate("D, d M Y H:i:s",(time()+$this->cacheTime));
-		if($this->IMS){
+		if ($this->IMS){
 			header("HTTP/1.1 304 Not Modified");
 			header("Date: Wed, $currentTimeString GMT");
 			header("Last-Modified: $this->lastModified");
 			header("Server: $this->version");
-		}else{
-			header("HTTP/1.1 200 OK");
+		} else {
+			header("HTTP/1.1 200 OK"); //todo: shoulnd't this be set to what the server actually responded???
 			header("Date: Wed, $currentTimeString GMT");
 			header("Content-Type: ".$this->content_type);
 			header("Last-Modified: $this->lastModified");

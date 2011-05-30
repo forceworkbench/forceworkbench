@@ -35,4 +35,4 @@ php_flag register_globals off
 </IfModule>
 
 RewriteEngine on
-RewriteRule cometd/(.*) cometdProxy.php
+RewriteRule cometd/(.*) sfdcProxy.php
