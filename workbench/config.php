@@ -802,7 +802,8 @@ $GLOBALS["MENUS"] = array(
 
     'Queries' => array(
         'query.php'     => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,'usesObject',true,''),
-        'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,'usesObject',true,'')
+        'search.php'    => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,'usesObject',true,''),
+        'bayeux.php'    => new Page('Push Topics','Push Topics',true,true,true,'usesObject',true,'')
     ),
 
     'Data' => array(
@@ -811,7 +812,7 @@ $GLOBALS["MENUS"] = array(
         'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,false,true,'usesObject',true,''),
         'delete.php'    => new Page('Delete','Moves records listed in a CSV file to the Recycle Bin. Note, some objects cannot be undeleted',true,false,true,true,true,''),
         'undelete.php'  => new Page('Undelete','Restores records listed in a CSV file from the Recycle Bin. Note, some objects cannot be undeleted.',true,false,true,true,true,''),
-        'purge.php'     => new Page('Purge','Permenantly deletes records listed in a CSV file from your Recycle Bin.',true,false,true,true,true,'')
+        'purge.php'     => new Page('Purge','Permanently deletes records listed in a CSV file from your Recycle Bin.',true,false,true,true,true,'')
      ),
 
     'Migration' => array(
