@@ -72,7 +72,7 @@ dojo.addOnLoad(function()
 
     function _metaSubscribe(message) {
         if (message.successful != true) {
-            _error("failure to subscribe to " + message.subscription);
+            _error("failure to subscribe to " + message.subscription + ":<br/>" + message.error);
             return;
         }
 
