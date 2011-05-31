@@ -68,13 +68,17 @@ class PhpReverseProxy {
     function preConnect() {
         $this->user_agent = $_SERVER['HTTP_USER_AGENT'];
         $this->request_method = $_SERVER['REQUEST_METHOD'];
+
+        global $config;
         $tempCookie = "";
         foreach ($_COOKIE as $cookieName => $cookieValue) {
             if ($cookieName == "PHPSESSID") continue;
             if ($cookieName == "XDEBUG_SESSION") continue;
+            if (array_key_exists($cookieName, $config)) continue;
             $tempCookie = $tempCookie . " $cookieName = $cookieValue;";
         }
         $this->cookie = $tempCookie;
+        
         if (empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $this->XFF = $_SERVER['REMOTE_ADDR'];
         } else {
