@@ -60,11 +60,11 @@ dojo.addOnLoad(function()
         {
             cometd.batch(function()
             {
-//                cometd.subscribe('/accountsCreatedToday', function(message)
-                cometd.subscribe('/hello', function(message)
+                cometd.subscribe('/accountsCreatedToday', function(message)
+//                cometd.subscribe('/hello', function(message)
                 {
-//                    dojo.byId('streamBody').innerHTML += '<div>Server Says: ' + message + '</div>';
-                    dojo.byId('streamBody').innerHTML += '<div>Server Says: ' + message.data.greeting + '</div>';
+                    dojo.byId('streamBody').innerHTML += '<div>Server Says: ' + message + '</div>';
+//                    dojo.byId('streamBody').innerHTML += '<div>Server Says: ' + message.data.greeting + '</div>';
                 });
             });
         }
