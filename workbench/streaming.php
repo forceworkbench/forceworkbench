@@ -8,6 +8,22 @@ addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath(
 addFooterScript("<script type='text/javascript'>var config = { contextPath: '" . dirname(parse_url($_SERVER["PHP_SELF"], PHP_URL_PATH)) . "' };</script>");
 ?>
 
+<p>
+<!--    <form>-->
+<!--        Topic: <input id="topicName"/>-->
+<!--        <input type="button"-->
+<!--               value="Subscribe"-->
+<!--               onclick="dojox.cometd.subscribe('chromeAccounts', wbUtil.handleSubscription);"/>-->
+<!--    </form>-->
+</p>
+
+<style>
+    #streamBody div {
+        padding: 10px;
+        background-color: #bbb;
+    }
+</style>
+
 <div id="streamBody" style="padding-top:10px;"></div>
 
 <?php

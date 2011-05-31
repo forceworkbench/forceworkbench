@@ -58,26 +58,20 @@ dojo.addOnLoad(function()
     {
         if (handshake.successful === true)
         {
-            cometd.batch(function()
-            {
-                cometd.subscribe('/accountsCreatedToday', function(message)
-//                cometd.subscribe('/hello', function(message)
-                {
-                    dojo.byId('streamBody').innerHTML += '<div>Server Says: ' + message + '</div>';
-//                    dojo.byId('streamBody').innerHTML += '<div>Server Says: ' + message.data.greeting + '</div>';
-                });
-            });
+            cometd.subscribe('/chromeAccounts', wbUtil.handleSubscription);
         }
     }
 
     function _metaSubscribe(message) {
         if (message.successful != true) {
-            _error("failure to subscribe to " + message.subscription + ":<br/>" + message.error);
+            _error("Failure to subscribe to " + message.subscription + ":<br/>" + message.error);
             return;
         }
 
         _subscribed(message.subscription);
     }
+
+
 
     // Disconnect when the page unloads
     dojo.addOnUnload(function()
@@ -96,3 +90,26 @@ dojo.addOnLoad(function()
     cometd.addListener('/meta/subscribe', _metaSubscribe);
     cometd.handshake();
 });
+
+var wbUtil = {
+    handleSubscription: function (message) {
+        document.getElementById('streamBody').innerHTML += '<div><em>Received from server:</em><br/>' + wbUtil.printObject(message) + '</div>';
+    },
+
+    printObject: function (obj, maxDepth, prefix) {
+       var result = '';
+       if (!prefix) prefix='';
+       for(var key in obj){
+           if (typeof obj[key] == 'object'){
+               if (maxDepth !== undefined && maxDepth <= 1){
+                   result += (prefix + key + '=object [max depth reached]\n');
+               } else {
+                   result += wbUtil.printObject(obj[key], (maxDepth) ? maxDepth - 1: maxDepth, prefix + key + '.');
+               }
+           } else {
+               result += (prefix + key + '=' + obj[key] + '<br/>');
+           }
+       }
+       return result;
+    }
+};
