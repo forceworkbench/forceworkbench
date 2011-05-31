@@ -1,19 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <script type="text/javascript" src="cometd-resourses/dojo/dojo.js.uncompressed.js"></script>
-    <script type="text/javascript" src="cometd-resourses/bayeux.js"></script>
+<?php
+require_once "session.php";
+require_once "shared.php";
+require_once "header.php";
 
-    <script type="text/javascript">
-        var config = {
-            contextPath: "<?php echo dirname(parse_url($_SERVER["PHP_SELF"], PHP_URL_PATH)); ?>"
-        };
-    </script>
-</head>
-<body>
+addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/dojo/dojo/dojo.js'></script>");
+addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/streamingClient.js'></script>");
+addFooterScript("<script type='text/javascript'>var config = { contextPath: '" . dirname(parse_url($_SERVER["PHP_SELF"], PHP_URL_PATH)) . "' };</script>");
+?>
 
-    <div id="body"></div>
+<div id="streamBody" style="padding-top:10px;"></div>
 
-</body>
-</html>
+<?php
+include_once "footer.php";
+?>

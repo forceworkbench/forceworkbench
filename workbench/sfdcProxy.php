@@ -1,6 +1,6 @@
 <?php
 require_once "context/WorkbenchContext.php";
-require_once "cometd-resourses/PhpReverseProxy.php";
+require_once "streaming/PhpReverseProxy.php";
 require_once "session.php";
 
 if (!WorkbenchContext::isEstablished()) {

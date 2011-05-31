@@ -6,27 +6,27 @@ dojo.addOnLoad(function()
 
     function _connectionEstablished()
     {
-        dojo.byId('body').innerHTML += '<div>CometD Connection Established</div>';
+        dojo.byId('streamBody').innerHTML += '<div>CometD Connection Established</div>';
     }
 
     function _connectionBroken()
     {
-        dojo.byId('body').innerHTML += '<div>CometD Connection Broken</div>';
+        dojo.byId('streamBody').innerHTML += '<div>CometD Connection Broken</div>';
     }
 
     function _connectionClosed()
     {
-        dojo.byId('body').innerHTML += '<div>CometD Connection Closed</div>';
+        dojo.byId('streamBody').innerHTML += '<div>CometD Connection Closed</div>';
     }
 
     function _subscribed(subscription)
     {
-        dojo.byId('body').innerHTML += '<div>Subscribed to ' + subscription + '</div>';
+        dojo.byId('streamBody').innerHTML += '<div>Subscribed to ' + subscription + '</div>';
     }
 
     function _error(messageStr)
     {
-        dojo.byId('body').innerHTML += '<div style=\'color:red;\'>' + messageStr + '</div>';
+        dojo.byId('streamBody').innerHTML += '<div style=\'color:red;\'>' + messageStr + '</div>';
     }
 
     // Function that manages the connection status with the Bayeux server
@@ -62,7 +62,7 @@ dojo.addOnLoad(function()
             {
                 cometd.subscribe('/accountsCreatedToday', function(message)
                 {
-                    dojo.byId('body').innerHTML += '<div>Server Says: ' + message + '</div>';
+                    dojo.byId('streamBody').innerHTML += '<div>Server Says: ' + message + '</div>';
                 });
             });
         }
