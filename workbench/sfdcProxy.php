@@ -2,6 +2,11 @@
 require_once "context/WorkbenchContext.php";
 require_once "session.php";
 
+
+// TODO: do we really care about the ctx?
+// we can just set a cookie for the host and sid on streaming.php and not have to deal w/ sessions at all
+// this could also be a big perf win so multiple connects are more possible. test this out.        
+
 if (!WorkbenchContext::isEstablished()) {
     header('HTTP/1.0 401 Unauthorized');
     echo "SFDC Proxy only available if Workbench Context has been established.";
@@ -96,7 +101,7 @@ class PhpReverseProxy {
         curl_setopt($ch, CURLOPT_URL, $this->translateURL($this->host));
 
         $headers = array();
-        foreach (getallheaders() as $key => $value) {
+        foreach (getallheaders() as $key => $value) { // TODO: IIS doesn't support getallheaders() -- replace w/ custom impl
             if (in_array($key, array("Content-Type", "Accept"))) {
                 $headers[] = "$key: $value";
             }
@@ -130,7 +135,7 @@ class PhpReverseProxy {
     }
 
     function output() {
-        header_remove();
+        // todo: removed header_remove() because IIS doesn't support it. does it really matter?
 
         $headerWhitelist = array("HTTP", "Date", "Content-Type", "Set-Cookie");
         foreach (explode("\r\n",$this->resultHeader) as $h) {
