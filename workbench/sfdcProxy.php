@@ -101,9 +101,9 @@ class PhpReverseProxy {
         curl_setopt($ch, CURLOPT_URL, $this->translateURL($this->host));
 
         $headers = array();
-        foreach (getallheaders() as $key => $value) { // TODO: IIS doesn't support getallheaders() -- replace w/ custom impl
+        foreach (self::getAllRequestHeaders() as $key => $value) {
             if (in_array($key, array("Content-Type", "Accept"))) {
-                $headers[] = "$key: " . str_replace("text/json", "application/json", $value);
+                $headers[] = "$key: " . str_replace("text/json", "application/json", $value); // todo: did this for old version compatibility
             }
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -135,8 +135,6 @@ class PhpReverseProxy {
     }
 
     function output() {
-        // todo: removed header_remove() because IIS doesn't support it. does it really matter?
-
         $headerWhitelist = array("HTTP", "Date", "Content-Type", "Set-Cookie");
         foreach (explode("\r\n",$this->resultHeader) as $h) {
             foreach ($headerWhitelist as $whl) {
@@ -151,6 +149,23 @@ class PhpReverseProxy {
             }
         }
         echo $this->content ;
+    }
+
+    static function getAllRequestHeaders() {
+        if (function_exists('getallheaders')) {
+            return getallheaders();
+        }
+
+        $out = array();
+        foreach ($_SERVER as $key => $value) {
+            if (substr($key, 0, 5) == "HTTP_") {
+                $key = str_replace(" ", "-", ucwords(strtolower(str_replace("_", " ", substr($key, 5)))));
+                $out[$key] = $value;
+            } else {
+                $out[$key] = $value;
+            }
+        }
+        return $out;
     }
 }
 ?>
