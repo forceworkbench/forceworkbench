@@ -2,6 +2,7 @@
 require_once "context/WorkbenchContext.php";
 require_once "session.php";
 
+// todo add proxy error handler with 401 error
 
 // TODO: do we really care about the ctx?
 // we can just set a cookie for the host and sid on streaming.php and not have to deal w/ sessions at all
@@ -25,7 +26,6 @@ $proxy->host = $host;
 //$proxy->forward_path = "/dojo-jetty7-primer";
 $proxy->connect();
 $proxy->output();
-
 
 
 class PhpReverseProxy {
@@ -103,7 +103,7 @@ class PhpReverseProxy {
         $headers = array();
         foreach (getallheaders() as $key => $value) { // TODO: IIS doesn't support getallheaders() -- replace w/ custom impl
             if (in_array($key, array("Content-Type", "Accept"))) {
-                $headers[] = "$key: $value";
+                $headers[] = "$key: " . str_replace("text/json", "application/json", $value);
             }
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);

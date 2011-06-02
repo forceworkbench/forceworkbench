@@ -58,7 +58,7 @@ dojo.addOnLoad(function()
     {
         if (handshake.successful === true)
         {
-            cometd.subscribe('/chromeAccounts', wbUtil.handleSubscription);
+//            cometd.subscribe('/chromeAccounts', handleSubscription);
         }
     }
 
@@ -71,32 +71,11 @@ dojo.addOnLoad(function()
         _subscribed(message.subscription);
     }
 
+    function handleSubscription(message) {
+        document.getElementById('streamBody').innerHTML += '<div><em>Received from server:</em><br/>' + printObject(message) + '</div>';
+    }
 
-
-    // Disconnect when the page unloads
-    dojo.addOnUnload(function()
-    {
-        cometd.disconnect(true);
-    });
-
-    var cometURL = location.protocol + "//" + location.host + config.contextPath + "/cometd";
-    cometd.configure({
-        url: cometURL,
-        logLevel: 'debug'
-    });
-
-    cometd.addListener('/meta/handshake', _metaHandshake);
-    cometd.addListener('/meta/connect', _metaConnect);
-    cometd.addListener('/meta/subscribe', _metaSubscribe);
-    cometd.handshake();
-});
-
-var wbUtil = {
-    handleSubscription: function (message) {
-        document.getElementById('streamBody').innerHTML += '<div><em>Received from server:</em><br/>' + wbUtil.printObject(message) + '</div>';
-    },
-
-    printObject: function (obj, maxDepth, prefix) {
+    function printObject(obj, maxDepth, prefix) {
        var result = '';
        if (!prefix) prefix='';
        for(var key in obj){
@@ -104,7 +83,7 @@ var wbUtil = {
                if (maxDepth !== undefined && maxDepth <= 1){
                    result += (prefix + key + '=object [max depth reached]\n');
                } else {
-                   result += wbUtil.printObject(obj[key], (maxDepth) ? maxDepth - 1: maxDepth, prefix + key + '.');
+                   result += printObject(obj[key], (maxDepth) ? maxDepth - 1: maxDepth, prefix + key + '.');
                }
            } else {
                result += (prefix + key + '=' + obj[key] + '<br/>');
@@ -112,4 +91,25 @@ var wbUtil = {
        }
        return result;
     }
-};
+
+    // Disconnect when the page unloads
+    dojo.addOnUnload(function()
+    {
+        cometd.disconnect(true);
+    });
+
+    var cometURL = location.protocol + "//" + location.host + cometdConfig.contextPath + "/cometd";
+    cometd.configure({
+        url: cometURL,
+        logLevel: 'debug'
+    });
+
+    window.console.log('start');
+    dojo.byId('subBtn').addEventListener('click', function(){cometd.subscribe(dojo.byId('topicName').value, handleSubscription);}, false);
+    window.console.log('stop');
+
+    cometd.addListener('/meta/handshake', _metaHandshake);
+    cometd.addListener('/meta/connect', _metaConnect);
+    cometd.addListener('/meta/subscribe', _metaSubscribe);
+    cometd.handshake();
+});
