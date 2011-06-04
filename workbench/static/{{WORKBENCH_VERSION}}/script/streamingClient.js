@@ -1,5 +1,7 @@
 dojo.require("dojox.cometd");
 
+var topicName = null;
+
 dojo.addOnLoad(function()
 {
     var cometd = dojox.cometd;
@@ -58,7 +60,7 @@ dojo.addOnLoad(function()
     {
         if (handshake.successful === true)
         {
-//            cometd.subscribe('/chromeAccounts', handleSubscription);
+            cometd.subscribe(topicName, handleSubscription);
         }
     }
 
@@ -72,24 +74,7 @@ dojo.addOnLoad(function()
     }
 
     function handleSubscription(message) {
-        document.getElementById('streamBody').innerHTML += '<div><em>Received from server:</em><br/>' + printObject(message) + '</div>';
-    }
-
-    function printObject(obj, maxDepth, prefix) {
-       var result = '';
-       if (!prefix) prefix='';
-       for(var key in obj){
-           if (typeof obj[key] == 'object'){
-               if (maxDepth !== undefined && maxDepth <= 1){
-                   result += (prefix + key + '=object [max depth reached]\n');
-               } else {
-                   result += printObject(obj[key], (maxDepth) ? maxDepth - 1: maxDepth, prefix + key + '.');
-               }
-           } else {
-               result += (prefix + key + '=' + obj[key] + '<br/>');
-           }
-       }
-       return result;
+        document.getElementById('streamBody').innerHTML += '<div><em>Received from server:</em><br/>' + wbUtil.printObject(message) + '</div>';
     }
 
     // Disconnect when the page unloads
@@ -98,18 +83,36 @@ dojo.addOnLoad(function()
         cometd.disconnect(true);
     });
 
-    var cometURL = location.protocol + "//" + location.host + cometdConfig.contextPath + "/cometd";
+    var cometURL = location.protocol + "//" + location.host + streamingConfig.contextPath + "/cometd";
     cometd.configure({
         url: cometURL,
         logLevel: 'debug'
     });
 
-    window.console.log('start');
-    dojo.byId('subBtn').addEventListener('click', function(){cometd.subscribe(dojo.byId('topicName').value, handleSubscription);}, false);
-    window.console.log('stop');
-
     cometd.addListener('/meta/handshake', _metaHandshake);
     cometd.addListener('/meta/connect', _metaConnect);
     cometd.addListener('/meta/subscribe', _metaSubscribe);
-    cometd.handshake();
+
+    dojo.byId('subBtn').addEventListener('click', function(){ topicName = '/chromeAccounts'; cometd.handshake(); }, false);
 });
+
+var wbUtil = {
+
+
+    printObject: function (obj, maxDepth, prefix) {
+       var result = '';
+       if (!prefix) prefix='';
+       for(var key in obj){
+           if (typeof obj[key] == 'object'){
+               if (maxDepth !== undefined && maxDepth <= 1){
+                   result += (prefix + key + '=object [max depth reached]\n');
+               } else {
+                   result += wbUtil.printObject(obj[key], (maxDepth) ? maxDepth - 1: maxDepth, prefix + key + '.');
+               }
+           } else {
+               result += (prefix + key + '=' + obj[key] + '<br/>');
+           }
+       }
+       return result;
+    }
+};
