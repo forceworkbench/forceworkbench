@@ -60,7 +60,7 @@ dojo.addOnLoad(function()
     {
         if (handshake.successful === true)
         {
-            cometd.subscribe(topicName, handleSubscription);
+//            cometd.subscribe(topicName, handleSubscription);
         }
     }
 
@@ -74,7 +74,7 @@ dojo.addOnLoad(function()
     }
 
     function handleSubscription(message) {
-        document.getElementById('streamBody').innerHTML += '<div><em>Received from server:</em><br/>' + wbUtil.printObject(message) + '</div>';
+        dojo.byId('streamBody').innerHTML += '<div><em>Received from server:</em><br/>' + wbUtil.printObject(message) + '</div>';
     }
 
     // Disconnect when the page unloads
@@ -92,8 +92,12 @@ dojo.addOnLoad(function()
     cometd.addListener('/meta/handshake', _metaHandshake);
     cometd.addListener('/meta/connect', _metaConnect);
     cometd.addListener('/meta/subscribe', _metaSubscribe);
+    cometd.handshake();
 
-    dojo.byId('subBtn').addEventListener('click', function(){ topicName = '/chromeAccounts'; cometd.handshake(); }, false);
+    dojo.byId('subBtn').addEventListener('click', function() {
+        topicName = dojo.byId('topicName').value;
+        cometd.subscribe(topicName, handleSubscription);
+    }, false);
 });
 
 var wbUtil = {

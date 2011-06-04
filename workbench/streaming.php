@@ -10,7 +10,7 @@ addFooterScript("<script type='text/javascript'>var streamingConfig = { contextP
 
 <p>
 <!--    <form>-->
-<!--        Topic: <input id="topicName"/>-->
+        Topic: <input id="topicName"/>
         <input id="subBtn"
                 type="button"
                value="Subscribe"
