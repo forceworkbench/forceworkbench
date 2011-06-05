@@ -6,10 +6,11 @@ require_once "controllers/StreamingController.php";
 $c = new StreamingController();
 
 require_once "header.php";
-
-$c->printMessages();
-
 ?>
+
+<div id="messages">
+    <?php $c->printMessages(); ?>
+</div>
 
 <div id="pushTopicContainer">
     <label for="selectedTopic">Push Topic:</label>
@@ -61,7 +62,10 @@ $c->printMessages();
     </div>
 </div>
 
-<div id="streamBody"></div>
+<div id="streamContainer">
+    <h3>Data Stream</h3>
+    <div id="streamBody"></div>
+</div>
 
 <script type="text/javascript">
 

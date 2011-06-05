@@ -341,7 +341,6 @@ table.sortable tr.sortBottom td {
     border-radius: 5px;
 }
 
-
 #pushTopicDmlForm * {
     vertical-align: middle;
     margin: 3px;
@@ -356,17 +355,22 @@ table.sortable tr.sortBottom td {
 }
 
 #pushTopicDmlForm_Btns #loadingMessage {
-    visibility:hidden;
-    color:#888;
+    visibility: hidden;
+    color: #888;
 }
 
-#streamBody {
+#streamContainer {
     margin-top: 15px;
     border-color: #888;
     border-style: solid;
     border-width: thin;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    display: none;
+}
+
+#streamContainer h3 {
+    margin-left: 10px;
 }
 
 #streamBody div {
@@ -375,4 +379,12 @@ table.sortable tr.sortBottom td {
     border-radius: 5px;
     margin: 5px;
     padding: 5px;
+}
+
+#streamBody div span.heading {
+    font-weight: bold;
+}
+
+#streamBody div.error {
+    color: red;
 }

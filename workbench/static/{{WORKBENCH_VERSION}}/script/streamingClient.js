@@ -2,96 +2,66 @@ dojo.require("dojox.cometd");
 
 var topicName = null;
 
-dojo.addOnLoad(function()
-{
+dojo.addOnLoad(function() {
     var cometd = dojox.cometd;
-
-    function _connectionEstablished()
-    {
-        dojo.byId('streamBody').innerHTML += '<div>CometD Connection Established</div>';
-    }
-
-    function _connectionBroken()
-    {
-        dojo.byId('streamBody').innerHTML += '<div>CometD Connection Broken</div>';
-    }
-
-    function _connectionClosed()
-    {
-        dojo.byId('streamBody').innerHTML += '<div>CometD Connection Closed</div>';
-    }
-
-    function _subscribed(subscription)
-    {
-        dojo.byId('streamBody').innerHTML += '<div>Subscribed to ' + subscription + '</div>';
-    }
-
-    function _error(messageStr)
-    {
-        dojo.byId('streamBody').innerHTML += '<div style=\'color:red;\'>' + messageStr + '</div>';
-    }
-
-    // Function that manages the connection status with the Bayeux server
     var _connected = false;
-    function _metaConnect(message)
-    {
-        if (cometd.isDisconnected())
-        {
+
+    function _metaConnect(message) {
+        if (cometd.isDisconnected()) {
             _connected = false;
-            _connectionClosed();
+            postToStream("Connection Closed", message);
             return;
         }
 
         var wasConnected = _connected;
         _connected = message.successful === true;
-        if (!wasConnected && _connected)
-        {
-            _connectionEstablished();
+        if (!wasConnected && _connected) {
+            postToStream("Connection Established", message);
         }
-        else if (wasConnected && !_connected)
-        {
-            _connectionBroken();
+        else if (wasConnected && !_connected) {
+            postToStream("Connection Broken", message);
+        } else {
+            postToStream("Poll Completed", message);
         }
     }
 
     // Function invoked when first contacting the server and
     // when the server has lost the state of this client
-    function _metaHandshake(handshake)
-    {
-        if (handshake.successful === true)
-        {
-//            cometd.subscribe(topicName, handleSubscription);
+    function _metaHandshake(message) {
+        if (message.successful === true) {
+            postToStream("Handshake Successful", message);
+        } else {
+            postErrorToStream("Handshake Failure", message);
         }
     }
 
     function _metaSubscribe(message) {
         if (message.successful != true) {
-            _error("Failure to subscribe to " + message.subscription + ":<br/>" + message.error);
-            return;
+            postErrorToStream("Subscription Failure: " + message.error, message);
+        } else {
+            postToStream("Subscribed to " + message.subscription, message);
         }
-
-        _subscribed(message.subscription);
     }
 
     function handleSubscription(message) {
-        dojo.byId('streamBody').innerHTML += '<div><em>Received from server:</em><br/>' + printObject(message) + '</div>';
+        postToStream("Message received from: " + message.channel, message);
     }
 
     function printObject(obj, maxDepth, prefix) {
-       var result = '';
-       if (!prefix) prefix='';
-       for(var key in obj){
-           if (typeof obj[key] == 'object'){
-               if (maxDepth !== undefined && maxDepth <= 1){
-                   result += (prefix + key + '=object [max depth reached]\n');
-               } else {
-                   result += printObject(obj[key], (maxDepth) ? maxDepth - 1: maxDepth, prefix + key + '.');
-               }
-           } else {
-               result += (prefix + key + '=' + obj[key] + '<br/>');
-           }
-       }
-       return result;
+        var result = '';
+        if (!prefix) prefix = '';
+        for (var key in obj) {
+            if (typeof obj[key] == 'object') {
+                if (maxDepth !== undefined && maxDepth <= 1) {
+                    result += (prefix + key + '=object [max depth reached]\n');
+                } else {
+                    result += printObject(obj[key], (maxDepth) ? maxDepth - 1 : maxDepth, prefix + key + '.');
+                }
+            } else {
+                result += (prefix + key + '=' + obj[key] + '<br/>');
+            }
+        }
+        return result;
     }
 
     function togglePushTopicDmlContainer(forceShow) {
@@ -103,6 +73,10 @@ dojo.addOnLoad(function()
         }
     }
 
+    function hideMessages() {
+        dojo.byId("messages").style.display = "none";
+    }
+
     function copyDetails() {
         var details = dojo.byId('selectedTopic').value;
 
@@ -111,7 +85,7 @@ dojo.addOnLoad(function()
         }
 
         details = JSON.parse(details);
-        
+
         if (details.Name === null) {
             togglePushTopicDmlContainer(true);
         }
@@ -122,9 +96,30 @@ dojo.addOnLoad(function()
         dojo.byId("pushTopicDmlForm_Query").value = details.Query;
     }
 
+    function postToStream(heading, message, msgClass) {
+        dojo.byId("streamContainer").style.display = "block";
+
+        if (msgClass === undefined) {
+            msgClass = "std";
+        }
+
+        if (message.id !== undefined) {
+            heading = message.id + ". " + heading;
+        }
+
+        dojo.byId('streamBody').innerHTML = '<div class=' + msgClass + '>' +
+                                                '<span class=\'heading\'>' + heading + '</span><br/>' +
+                                                '<span class=\'body\'>' + printObject(message) + '</span>' +
+                                            '</div>' +
+                                            dojo.byId('streamBody').innerHTML;
+    }
+
+    function postErrorToStream(heading, message) {
+        postToStream(heading, messageStr, "error");
+    }
+
     // Disconnect when the page unloads
-    dojo.addOnUnload(function()
-    {
+    dojo.addOnUnload(function() {
         cometd.disconnect(true);
     });
 
@@ -138,23 +133,29 @@ dojo.addOnLoad(function()
     cometd.addListener('/meta/handshake', _metaHandshake);
     cometd.addListener('/meta/connect', _metaConnect);
     cometd.addListener('/meta/subscribe', _metaSubscribe);
-//    cometd.handshake();
+    cometd.handshake();
 
     // Copy the details of the selected topic into details section
     dojo.byId("selectedTopic").addEventListener("change", copyDetails, false);
 
-    // Soggle the details section
-    dojo.byId("pushTopicDetailsBtn").addEventListener("click", function() { togglePushTopicDmlContainer(false); }, false);
+    // Hide the error/info messages when user does another action
+    dojo.byId("selectedTopic").addEventListener("change", hideMessages, false);
+    dojo.byId("pushTopicSubscribeBtn").addEventListener("click", hideMessages, false);
+
+    // Toggle the details section
+    dojo.byId("pushTopicDetailsBtn").addEventListener("click", function() {
+        togglePushTopicDmlContainer(false);
+    }, false);
 
     // Subscribe to the given topic
     dojo.byId('pushTopicSubscribeBtn').addEventListener('click', function() {
         topicName = JSON.parse(dojo.byId('selectedTopic').value).Name;
 
-        if (topicName === null) {
+        if (topicName === null || topicName === "") {
             alert("Choose a topic to subscribe or create a new one.");
             return;
         }
 
-        cometd.subscribe(topicName, handleSubscription);
+        cometd.subscribe("/" + topicName, handleSubscription);
     }, false);
 });
