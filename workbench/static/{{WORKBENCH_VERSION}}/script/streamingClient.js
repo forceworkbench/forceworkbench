@@ -52,6 +52,11 @@ dojo.addOnLoad(function() {
         }
     }
 
+    function _metaUnsuccessful(message) {
+        postErrorToStream("Unknown Failure", message);
+    }
+
+
     function handleSubscription(message) {
         postToStream("Message received from: " + message.channel, message);
     }
@@ -124,7 +129,7 @@ dojo.addOnLoad(function() {
     }
 
     function postErrorToStream(heading, message) {
-        postToStream(heading, messageStr, "error");
+        postToStream(heading, message, "error");
     }
 
     // Disconnect when the page unloads
@@ -139,6 +144,18 @@ dojo.addOnLoad(function() {
     });
 
     copyDetails();
+
+    cometd.onListenerException = function(exception, subscriptionHandle, isListener, message) {
+        postErrorToStream("Unknown exception occurred. Removing offending listener or subscription.", [message, exception]);
+
+        if (isListener) {
+            this.removeListener(subscriptionHandle);
+        } else {
+            this.unsubscribe(subscriptionHandle);
+        }
+    }
+
+    cometd.addListener('/meta/unsuccessful', _metaUnsuccessful);
     cometd.addListener('/meta/handshake', _metaHandshake);
     cometd.addListener('/meta/connect', _metaConnect);
     cometd.addListener('/meta/subscribe', _metaSubscribe);
