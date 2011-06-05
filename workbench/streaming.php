@@ -1,19 +1,17 @@
 <?php
 require_once "session.php";
 require_once "shared.php";
-require_once "header.php";
+require_once "controllers/StreamingController.php";
 
-addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/dojo/dojo/dojo.js'></script>");
-addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/streamingClient.js'></script>");
-addFooterScript("<script type='text/javascript'>var streamingConfig = { contextPath: '" . dirname(parse_url($_SERVER["PHP_SELF"], PHP_URL_PATH)) . "' };</script>");
+$c = new StreamingController();
+
+require_once "header.php";
 ?>
 
 <div id="pushTopicContainer">
     <label for="selectedTopic">Push Topic:</label>
     <select id="selectedTopic">
-        <option value='{"id":null, "name":null, "apiVersion":null, "query":null}'>-- Create New --</option>
-        <option value='{"id":"0IFP00000004C9SOAU", "name":"/accounts", "apiVersion": "22.0", "query":"SELECT Id FROM Accounts WHERE ..."}'>/accounts</option>
-        <option value='{"id":"0IFP00000004C9NOAU", "name":"/chromeAccounts", "apiVersion": "22.0", "query":"SELECT Id FROM Accounts WHERE Name = Chrome"}'>/chromeAccounts</option>
+        <?php $c->printPushTopicOptions(); ?>
     </select>
 
     <input id="pushTopicSubscribeBtn"
@@ -33,8 +31,7 @@ addFooterScript("<script type='text/javascript'>var streamingConfig = { contextP
 
                 <label for="pushTopicDmlForm_ApiVersion">API Version:</label>
                 <select id="pushTopicDmlForm_ApiVersion">
-                    <option value="22.0">22.0</option>
-                    <option value="21.0">21.0</option>
+                    <?php $c->printApiVersionOptions(); ?>
                 </select>
             </div>
             <div>
@@ -67,5 +64,8 @@ addFooterScript("<script type='text/javascript'>var streamingConfig = { contextP
 
 
 <?php
-include_once "footer.php";
+addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/dojo/dojo/dojo.js'></script>");
+addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/streamingClient.js'></script>");
+addFooterScript("<script type='text/javascript'>var streamingConfig = { contextPath: '" . dirname(parse_url($_SERVER["PHP_SELF"], PHP_URL_PATH)) . "' };</script>");
+require_once "footer.php";
 ?>

@@ -104,16 +104,22 @@ dojo.addOnLoad(function()
     }
 
     function copyDetails() {
-        var details = JSON.parse(dojo.byId('selectedTopic').value);
+        var details = dojo.byId('selectedTopic').value;
 
-        if (details.name === null) {
+        if (details === null) {
+            return;
+        }
+
+        details = JSON.parse(details);
+        
+        if (details.Name === null) {
             togglePushTopicDmlContainer(true);
         }
 
-        dojo.byId("pushTopicDmlForm_Id").value = details.id;
-        dojo.byId("pushTopicDmlForm_Name").value = details.name;
-        dojo.byId("pushTopicDmlForm_ApiVersion").value = details.apiVersion;
-        dojo.byId("pushTopicDmlForm_Query").value = details.query;
+        dojo.byId("pushTopicDmlForm_Id").value = details.Id;
+        dojo.byId("pushTopicDmlForm_Name").value = details.Name;
+        dojo.byId("pushTopicDmlForm_ApiVersion").value = details.ApiVersion;
+        dojo.byId("pushTopicDmlForm_Query").value = details.Query;
     }
 
     // Disconnect when the page unloads
@@ -141,7 +147,7 @@ dojo.addOnLoad(function()
 
     // Subscribe to the given topic
     dojo.byId('pushTopicSubscribeBtn').addEventListener('click', function() {
-        topicName = JSON.parse(dojo.byId('selectedTopic').value).name;
+        topicName = JSON.parse(dojo.byId('selectedTopic').value).Name;
 
         if (topicName === null) {
             alert("Choose a topic to subscribe or create a new one.");
