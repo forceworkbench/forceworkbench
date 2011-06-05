@@ -76,7 +76,16 @@ dojo.addOnLoad(function() {
         var result = '';
         if (!prefix) prefix = '';
         for (var key in obj) {
-            if (typeof obj[key] == 'object') {
+            var objType;
+            try {
+                // this can fail on XHR and who knows what else. try, log, and keep moving...
+                objType = typeof obj[key];
+            } catch (e) {
+                window.console.debug("Problem finding typeof " + obj + " at key [" + key + "]");
+                continue;
+            }
+
+            if (objType == 'object') {
                 if (maxDepth !== undefined && maxDepth <= 1) {
                     result += (prefix + key + '=object [max depth reached]\n');
                 } else {
@@ -241,6 +250,10 @@ dojo.addOnLoad(function() {
         dojo.byId('streamBody').innerHTML = "";
     }
 
+    function displayWaitingIndicator() {
+        dojo.byId('waitingIndicator').style.display = 'inline';
+    }
+
     // INITIALIZATION
 
     setStatus("Initializing");
@@ -270,8 +283,10 @@ dojo.addOnLoad(function() {
     dojo.byId('pushTopicSubscribeBtn').addEventListener('click', subscribe, false);
     dojo.byId('pushTopicUnsubscribeBtn').addEventListener('click', unsubscribe, false);
     dojo.byId('clearStream').addEventListener('click', clearStream, false);
+    dojo.byId('pushTopicSaveBtn').addEventListener('click', displayWaitingIndicator, false);
+    dojo.byId('pushTopicDeleteBtn').addEventListener('click', displayWaitingIndicator, false);
 
-    cometd.addListener('/meta/unsuccessful', metaUnsuccessful);
+//    cometd.addListener('/meta/unsuccessful', metaUnsuccessful);
     cometd.addListener('/meta/handshake', metaHandshake);
     cometd.addListener('/meta/connect', metaConnect);
     cometd.addListener('/meta/subscribe', metaSubscribe);

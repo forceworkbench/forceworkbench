@@ -68,6 +68,11 @@ require_once "header.php";
                        name="PUSH_TOPIC_DML_DELETE"
                        type="submit"
                        value="Delete"/>
+
+                <span id='waitingIndicator'>
+                    <img src='<?php print getStaticResourcesPath(); ?>/images/wait16trans.gif'/>
+                    Processing...
+                </span>
             </div>
         </form>
     </div>

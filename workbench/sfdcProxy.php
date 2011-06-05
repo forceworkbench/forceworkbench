@@ -2,12 +2,6 @@
 require_once "context/WorkbenchContext.php";
 require_once "session.php";
 
-// todo add proxy error handler with 401 error
-
-// TODO: do we really care about the ctx?
-// we can just set a cookie for the host and sid on streaming.php and not have to deal w/ sessions at all
-// this could also be a big perf win so multiple connects are more possible. test this out.        
-
 if (!WorkbenchContext::isEstablished()) {
     header('HTTP/1.0 401 Unauthorized');
     echo "SFDC Proxy only available if Workbench Context has been established.";
@@ -21,9 +15,6 @@ session_write_close();
 
 $proxy = new PhpReverseProxy();
 $proxy->host = $host;
-//$proxy->host = "localhost";
-//$proxy->port = "8080";
-//$proxy->forward_path = "/dojo-jetty7-primer";
 $proxy->connect();
 $proxy->output();
 
@@ -32,10 +23,9 @@ class PhpReverseProxy {
     public $port, $host, $forward_path, $content, $content_type, $user_agent,
     $XFF, $request_method, $cookie;
 
-    private $http_code, $version, $resultHeader;
+    private $http_code, $resultHeader;
 
     function __construct() {
-        $this->version = "PHP Reverse Proxy (PRP) 1.0";
         $this->port = "";
         $this->host = "";
         $this->forward_path = "";
