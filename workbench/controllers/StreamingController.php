@@ -52,7 +52,7 @@ class StreamingController {
             $queryResponse = $this->restApi->send("GET", $url, null, null, false);
 
             if (strpos($queryResponse->header, "404 Not Found") > 0) {
-                $this->errors[] = "Could not load Push Topics. Check Streaming API is enabled for this organization.";
+                $this->errors[] = "Could not load Push Topics. Ensure the Streaming API is enabled for this organization.";
                 $this->handshakeOnLoad = false;
                 return;
             }
