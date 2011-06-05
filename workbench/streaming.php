@@ -8,6 +8,8 @@ $c = new StreamingController();
 require_once "header.php";
 ?>
 
+<p class='instructions'>Subscribe to a Push Topic to stream query updates:</p>
+
 <div id="messages">
     <?php $c->printMessages(); ?>
 </div>
