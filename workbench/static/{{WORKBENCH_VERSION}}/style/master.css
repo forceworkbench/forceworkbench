@@ -326,3 +326,53 @@ table.sortable tr.sortBottom td {
     background-color: #ccc;
     font-weight: bold;
 }
+
+#pushTopicContainer {
+    margin-top: 10px;
+}
+
+#pushTopicDmlContainer {
+    display: none;
+    margin-top: 10px;
+    border-color: #888;
+    border-style: solid;
+    border-width: thin;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+
+#pushTopicDmlForm * {
+    vertical-align: middle;
+    margin: 5px;
+}
+
+#pushTopicDmlForm_Query {
+    font-family: monospace;
+}
+
+#pushTopicDmlForm_Btns {
+    margin-left: 5em;
+}
+
+#pushTopicDmlForm_Btns #loadingMessage {
+    visibility:hidden;
+    color:#888;
+}
+
+#streamBody {
+    margin-top: 15px;
+    border-color: #888;
+    border-style: solid;
+    border-width: thin;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#streamBody div {
+    border: solid thin rgb(66, 150, 231);
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 5px;
+}

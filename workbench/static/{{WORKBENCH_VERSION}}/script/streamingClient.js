@@ -94,6 +94,28 @@ dojo.addOnLoad(function()
        return result;
     }
 
+    function togglePushTopicDmlContainer(forceShow) {
+        var cont = dojo.byId("pushTopicDmlContainer");
+        if (cont.style.display != "block" || forceShow) {
+            cont.style.display = "block";
+        } else {
+            cont.style.display = "none";
+        }
+    }
+
+    function copyDetails() {
+        var details = JSON.parse(dojo.byId('selectedTopic').value);
+
+        if (details.name === null) {
+            togglePushTopicDmlContainer(true);
+        }
+
+        dojo.byId("pushTopicDmlForm_Id").value = details.id;
+        dojo.byId("pushTopicDmlForm_Name").value = details.name;
+        dojo.byId("pushTopicDmlForm_ApiVersion").value = details.apiVersion;
+        dojo.byId("pushTopicDmlForm_Query").value = details.query;
+    }
+
     // Disconnect when the page unloads
     dojo.addOnUnload(function()
     {
@@ -111,8 +133,21 @@ dojo.addOnLoad(function()
     cometd.addListener('/meta/subscribe', _metaSubscribe);
     cometd.handshake();
 
-    dojo.byId('subBtn').addEventListener('click', function() {
-        topicName = dojo.byId('topicName').value;
+    // Copy the details of the selected topic into details section
+    dojo.byId("selectedTopic").addEventListener("change", copyDetails, false);
+
+    // Soggle the details section
+    dojo.byId("pushTopicDetailsBtn").addEventListener("click", function() { togglePushTopicDmlContainer(false); }, false);
+
+    // Subscribe to the given topic
+    dojo.byId('pushTopicSubscribeBtn').addEventListener('click', function() {
+        topicName = JSON.parse(dojo.byId('selectedTopic').value).name;
+
+        if (topicName === null) {
+            alert("Choose a topic to subscribe or create a new one.");
+            return;
+        }
+
         cometd.subscribe(topicName, handleSubscription);
     }, false);
 });

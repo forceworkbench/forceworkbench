@@ -803,7 +803,7 @@ $GLOBALS["MENUS"] = array(
     'Queries' => array(
         'query.php'       => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file',true,true,true,'usesObject',true,''),
         'search.php'      => new Page('SOSL Search','Search the data in your organization across multiple objects',true,true,true,'usesObject',true,''),
-        'streaming.php'   => new Page('Streaming Push Topics','Streaming queries using CometD push topics',true,false,true,'usesObject',true,''),
+        'streaming.php'   => new Page('Streaming Queries','Streaming queries using CometD push topics',true,false,true,'usesObject',true,''),
     ),
 
     'Data' => array(
