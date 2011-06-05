@@ -5,15 +5,32 @@ class StreamingController {
 
     private $pushTopics;
 
+    const restBaseUrl = "/services/data/v22.0";
+
     function __construct() {
+        if (isset($_REQUEST['PUSH_TOPIC_DML_DELETE'])) {
+            $this->deletePushTopic($_REQUEST['pushTopicDmlForm_Id']);
+        }
+
+        $this->refreshPushTopics();
+    }
+
+    private function refreshPushTopics() {
         $pushTopicSoql = "SELECT Id, Name, Query, ApiVersion FROM PushTopic";
         // hard coding API version for getting PushTopics because not available in prior versions
         //even their internal queries are available for all versions (i think)
-        $url = "/services/data/v22.0/query?" . http_build_query(array("q" => $pushTopicSoql));
+        $url = self::restBaseUrl . "/query?" . http_build_query(array("q" => $pushTopicSoql));
         $queryResponse = WorkbenchContext::get()->getRestDataConnection()->send("GET", $url, null, null, false);
         $this->pushTopics = json_decode($queryResponse->body)->records;
     }
 
+    function deletePushTopic($id) {
+        $url = self::restBaseUrl . "/sobjects/PushTopic/" . $id;
+        $response = WorkbenchContext::get()->getRestDataConnection()->send("DELETE", $url, null, null, false);
+        if (strpos($response->header, "204 No Content") === false) {
+            throw new Exception("Failed to delete: $id");
+        }
+    }
 
     function printPushTopicOptions() {
         print "<option></option>\n";

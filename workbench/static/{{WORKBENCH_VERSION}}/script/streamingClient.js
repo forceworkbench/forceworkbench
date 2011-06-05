@@ -137,7 +137,7 @@ dojo.addOnLoad(function()
     cometd.addListener('/meta/handshake', _metaHandshake);
     cometd.addListener('/meta/connect', _metaConnect);
     cometd.addListener('/meta/subscribe', _metaSubscribe);
-    cometd.handshake();
+//    cometd.handshake();
 
     // Copy the details of the selected topic into details section
     dojo.byId("selectedTopic").addEventListener("change", copyDetails, false);

@@ -23,28 +23,30 @@ require_once "header.php";
            value="Details"/>
 
     <div id="pushTopicDmlContainer">
-        <form id="pushTopicDmlForm" action="TODO">
-            <input id="pushTopicDmlForm_Id" type="hidden">
+        <form id="pushTopicDmlForm" method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>">
+            <input id="pushTopicDmlForm_Id" name="pushTopicDmlForm_Id" type="hidden">
             <div>
                 <label for="pushTopicDmlForm_Name">Name:</label>
-                <input id="pushTopicDmlForm_Name"/>
+                <input id="pushTopicDmlForm_Name" name="pushTopicDmlForm_Name"/>
 
                 <label for="pushTopicDmlForm_ApiVersion">API Version:</label>
-                <select id="pushTopicDmlForm_ApiVersion">
+                <select id="pushTopicDmlForm_ApiVersion" name="pushTopicDmlForm_ApiVersion">
                     <?php $c->printApiVersionOptions(); ?>
                 </select>
             </div>
             <div>
                 <label for="pushTopicDmlForm_Query">Query:</label>
-                <textarea id="pushTopicDmlForm_Query" cols="50" rows="3"></textarea>
+                <textarea id="pushTopicDmlForm_Query" name="pushTopicDmlForm_Query" cols="50" rows="3"></textarea>
             </div>
             <div id="pushTopicDmlForm_Btns">
                 <input id="pushTopicSaveBtn"
-                       type="button"
+                       name="PUSH_TOPIC_DML_SAVE"
+                       type="submit"
                        value="Save"/>
 
                 <input id="pushTopicDeleteBtn"
-                       type="button"
+                       name="PUSH_TOPIC_DML_DELETE"
+                       type="submit"
                        value="Delete"/>
 
                 <span id='loadingMessage'>
