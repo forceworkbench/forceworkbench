@@ -8,15 +8,16 @@ class StreamingController {
     private $pushTopics;
     private $infos;
     private $errors;
+    private $handshakeOnLoad;
 
     // hard coding API version for getting PushTopics because not available in prior versions
     const restBaseUrl = "/services/data/v22.0";
 
     function __construct() {
         $this->restApi = WorkbenchContext::get()->getRestDataConnection();
-
         $this->infos = array();
         $this->errors = array();
+        $this->handshakeOnLoad = true;
 
         if (get_magic_quotes_gpc()) {
             foreach ($_REQUEST as $fieldName => &$r) {
@@ -49,6 +50,13 @@ class StreamingController {
 
         try {
             $queryResponse = $this->restApi->send("GET", $url, null, null, false);
+
+            if (strpos($queryResponse->header, "404 Not Found") > 0) {
+                $this->errors[] = "Could not load Push Topics. Check Streaming API is enabled for this organization.";
+                $this->handshakeOnLoad = false;
+                return;
+            }
+
             $this->pushTopics = json_decode($queryResponse->body)->records;
         } catch (Exception $e) {
             $this->errors[] = "Unknown Error Fetching Push Topics:\n" . $e->getMessage();
@@ -117,6 +125,20 @@ class StreamingController {
         foreach($GLOBALS['API_VERSIONS'] as $v) {
             print "<option value='$v'>$v</option>\n";
         }
+    }
+
+    function getStreamingConfig() {
+        $streamingConfig["handshakeOnLoad"] = $this->handshakeOnLoad;
+
+        // configs in "$streamingConfig["cometdConfig"]" are loaded into CometD in JS and need to match their format
+        $streamingConfig["cometdConfig"]["logLevel"] = "info";
+        $streamingConfig["cometdConfig"]["url"] =
+            "http". (isset($_SERVER['HTTPS']) ? "s" : "") . "://" .
+            $_SERVER['HTTP_HOST'] .
+            dirname($_SERVER['PHP_SELF']) .
+            "/cometd";
+
+        return json_encode($streamingConfig);
     }
 }
 

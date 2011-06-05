@@ -38,6 +38,8 @@ dojo.addOnLoad(function() {
             postToStream("Handshake Successful", message);
             setStatus("Handshake Successful");
         } else {
+            
+
             postErrorToStream("Handshake Failure", message);
             setStatus("Handshake Failure");
         }
@@ -272,15 +274,10 @@ dojo.addOnLoad(function() {
     copySelectedTopic();
     toggleSubUnSubButtons();
 
-    var cometURL = location.protocol + "//" + location.host + streamingConfig.contextPath + "/cometd";
-    cometd.configure({
-         url: cometURL
-//        ,logLevel: 'debug'
-    });
-
+    // config CometD -- this gets passed in from the controller via streaming.php
+    cometd.configure(wbStreaming.cometdConfig);
 
     // Add various listeners
-
     cometd.onListenerException = listenerExceptionHandler;
 
     dojo.addOnUnload(disconnect);
@@ -304,6 +301,12 @@ dojo.addOnLoad(function() {
     cometd.addListener('/meta/unsubscribe', metaUnsubscribe);
     cometd.addListener('/meta/*', metaAny);
 
-    cometd.handshake();
-    setStatus("Handshaking");
+    setStatus("Initialized");
+
+    if (wbStreaming.handshakeOnLoad) {
+        setStatus("Handshaking");
+        cometd.handshake();
+    } else {
+        setStatus("Suspended");
+    }
 });
