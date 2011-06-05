@@ -6,6 +6,9 @@ require_once "controllers/StreamingController.php";
 $c = new StreamingController();
 
 require_once "header.php";
+
+$c->printMessages();
+
 ?>
 
 <div id="pushTopicContainer">

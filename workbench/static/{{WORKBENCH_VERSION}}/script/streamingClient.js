@@ -106,7 +106,7 @@ dojo.addOnLoad(function()
     function copyDetails() {
         var details = dojo.byId('selectedTopic').value;
 
-        if (details === null) {
+        if (details === null || details === "") {
             return;
         }
 
@@ -134,6 +134,7 @@ dojo.addOnLoad(function()
         logLevel: 'debug'
     });
 
+    copyDetails();
     cometd.addListener('/meta/handshake', _metaHandshake);
     cometd.addListener('/meta/connect', _metaConnect);
     cometd.addListener('/meta/subscribe', _metaSubscribe);
