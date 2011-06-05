@@ -391,13 +391,19 @@ table.sortable tr.sortBottom td {
     color: red;
 }
 
-#streamContainer #status {
+#streamContainer #status, #streamContainer #pollIndicator {
     margin-left: 10px;
     font-weight: bold;
     font-size: x-small;
     color: rgb(66, 150, 231);
 }
 
-#toggleShowPolling{
+#toggleShowPolling, #clearStream{
     float: right;
+    margin-left: 5px;
+}
+
+#streamContainer #pollIndicator {
+    margin-left: 2px;
+    display: none;
 }

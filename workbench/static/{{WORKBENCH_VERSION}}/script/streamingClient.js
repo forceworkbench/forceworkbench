@@ -6,6 +6,11 @@ dojo.addOnLoad(function() {
     var showPolling = false;
     var subscriptions = new Array();
 
+
+    function metaAny(message) {
+        flashPollIndicator();
+    }
+
     function metaConnect(message) {
         if (cometd.isDisconnected()) {
             isConnected = false;
@@ -17,8 +22,7 @@ dojo.addOnLoad(function() {
         isConnected = message.successful === true;
         if (!wasConnected && isConnected) {
             postToStream("Connection Established", message);
-        }
-        else if (wasConnected && !isConnected) {
+        } else if (wasConnected && !isConnected) {
             postToStream("Connection Broken", message);
         } else if (showPolling) {
             postToStream("Poll Completed", message);
@@ -37,6 +41,9 @@ dojo.addOnLoad(function() {
             postErrorToStream("Handshake Failure", message);
             setStatus("Handshake Failure");
         }
+
+        subscriptions = new Array();
+        toggleSubUnSubButtons();
     }
 
     function metaSubscribe(message) {
@@ -61,6 +68,7 @@ dojo.addOnLoad(function() {
 
 
     function handleSubscription(message) {
+        flashPollIndicator();
         postToStream("Message received from: " + message.channel, message);
     }
 
@@ -95,11 +103,16 @@ dojo.addOnLoad(function() {
         dojo.byId("status").innerHTML = status;
     }
 
+    function flashPollIndicator() {
+            dojo.byId("pollIndicator").style.display = "inline";
+            setTimeout(function() {dojo.byId("pollIndicator").style.display = 'none'}, 500);
+    }
+
     function hideMessages() {
         dojo.byId("messages").style.display = "none";
     }
 
-    function copyDetails() {
+    function copySelectedTopic() {
         var details = dojo.byId('selectedTopic').value;
 
         if (details === null || details === "") {
@@ -107,8 +120,21 @@ dojo.addOnLoad(function() {
         }
 
         details = JSON.parse(details);
+        copyDetails(details, details.Name === null);
+    }
 
-        if (details.Name === null) {
+    function copyPartiallySavedTopic() {
+        var pst = dojo.byId('partialSavedTopic').innerHTML;
+        if (pst === undefined || pst === null || pst === "") {
+            return;
+        }
+
+        var details = JSON.parse(pst);
+        copyDetails(details, true);
+    }
+
+    function copyDetails(details, displayDetails) {
+        if (displayDetails) {
             togglePushTopicDmlContainer_Internal(true);
         }
 
@@ -117,6 +143,7 @@ dojo.addOnLoad(function() {
         dojo.byId("pushTopicDmlForm_ApiVersion").value = details.ApiVersion;
         dojo.byId("pushTopicDmlForm_Query").value = details.Query;
     }
+
 
     function postToStream(heading, message, msgClass) {
         dojo.byId("streamContainer").style.display = "block";
@@ -210,12 +237,15 @@ dojo.addOnLoad(function() {
         dojo.byId("pushTopicUnsubscribeBtn").disabled = true;
     }
 
+    function clearStream() {
+        dojo.byId('streamBody').innerHTML = "";
+    }
+
     // INITIALIZATION
 
-    setStatus("Initialing");
-
-    copyDetails();
-
+    setStatus("Initializing");
+    copyPartiallySavedTopic();
+    copySelectedTopic();
     toggleSubUnSubButtons();
 
     var cometURL = location.protocol + "//" + location.host + streamingConfig.contextPath + "/cometd";
@@ -230,7 +260,7 @@ dojo.addOnLoad(function() {
     cometd.onListenerException = listenerExceptionHandler;
 
     dojo.addOnUnload(disconnect);
-    dojo.byId("selectedTopic").addEventListener("change", copyDetails, false);
+    dojo.byId("selectedTopic").addEventListener("change", copySelectedTopic, false);
     dojo.byId("selectedTopic").addEventListener("change", hideMessages, false);
     dojo.byId("selectedTopic").addEventListener("change", toggleSubUnSubButtons, false);
     dojo.byId("pushTopicSubscribeBtn").addEventListener("click", hideMessages, false);
@@ -239,12 +269,14 @@ dojo.addOnLoad(function() {
     dojo.byId("toggleShowPolling").addEventListener("click", toggleShowPolling, false);
     dojo.byId('pushTopicSubscribeBtn').addEventListener('click', subscribe, false);
     dojo.byId('pushTopicUnsubscribeBtn').addEventListener('click', unsubscribe, false);
+    dojo.byId('clearStream').addEventListener('click', clearStream, false);
 
     cometd.addListener('/meta/unsuccessful', metaUnsuccessful);
     cometd.addListener('/meta/handshake', metaHandshake);
     cometd.addListener('/meta/connect', metaConnect);
     cometd.addListener('/meta/subscribe', metaSubscribe);
     cometd.addListener('/meta/unsubscribe', metaUnsubscribe);
+    cometd.addListener('/meta/*', metaAny);
 
     cometd.handshake();
     setStatus("Handshaking");

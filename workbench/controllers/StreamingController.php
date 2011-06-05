@@ -48,7 +48,7 @@ class StreamingController {
     }
 
     private function save() {
-        if ($this->selectedTopic->Id != null) {
+        if ($this->selectedTopic->Id != null && $this->selectedTopic->Id != "undefined") {
             $this->dml("PATCH", "Updated", "Updating", "/" . $this->selectedTopic->Id, $this->selectedTopic->toJson(false));
         } else {
             $this->dml("POST", "Created", "Creating", "", $this->selectedTopic->toJson(false));
@@ -81,12 +81,23 @@ class StreamingController {
     function printMessages() {
         if (count($this->errors) > 0) displayError($this->errors);
         if (count($this->infos) > 0)  displayInfo($this->infos);
+
+        print "<div id='partialSavedTopic' style='display:none;'>";
+        if (count($this->errors) > 0) {
+            $pst = $this->selectedTopic;
+            $pst->Name = htmlspecialchars($pst->Name, ENT_QUOTES);
+            $pst->Query = htmlspecialchars($pst->Query, ENT_QUOTES);
+            $pst->ApiVersion = htmlspecialchars(strpos($pst->ApiVersion, ".") === false ? $pst->ApiVersion.".0" : $pst->ApiVersion, ENT_QUOTES);
+            print $this->selectedTopic->toJson();
+        }
+        print "</div>";
     }
 
     function printPushTopicOptions() {
         print "<option></option>\n";
         print "<option value='". PushTopic::template()->toJson() . "'>--Create New--</option>\n";
         foreach($this->pushTopics as $topic) {
+            $topic->Name = htmlspecialchars($topic->Name, ENT_QUOTES);
             $topic->Query = htmlspecialchars($topic->Query, ENT_QUOTES);
             $topic->ApiVersion = strpos($topic->ApiVersion, ".") === false ? $topic->ApiVersion.".0" : $topic->ApiVersion;
             $selected = $topic->Name == $this->selectedTopic->Name ? "selected='selected'" : "";

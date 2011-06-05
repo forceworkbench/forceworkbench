@@ -34,6 +34,9 @@ require_once "header.php";
            type="button"
            value="Details"/>
 
+    <input id="clearStream"
+           type="button"
+           value="Clear"/>
 
     <input id="toggleShowPolling"
            type="button"
@@ -44,7 +47,7 @@ require_once "header.php";
             <input id="pushTopicDmlForm_Id" name="pushTopicDmlForm_Id" type="hidden">
             <div>
                 <label for="pushTopicDmlForm_Name">Name:</label>
-                <input id="pushTopicDmlForm_Name" name="pushTopicDmlForm_Name"/>
+                <input id="pushTopicDmlForm_Name" name="pushTopicDmlForm_Name" size="30"/>
 
                 <label for="pushTopicDmlForm_ApiVersion">API Version:</label>
                 <select id="pushTopicDmlForm_ApiVersion" name="pushTopicDmlForm_ApiVersion">
@@ -65,18 +68,13 @@ require_once "header.php";
                        name="PUSH_TOPIC_DML_DELETE"
                        type="submit"
                        value="Delete"/>
-
-                <span id='loadingMessage'>
-                    <img src='<?php print getStaticResourcesPath(); ?>/images/wait16trans.gif' align='absmiddle'/>
-                    Loading...
-                </span>
             </div>
         </form>
     </div>
 </div>
 
 <div id="streamContainer">
-    <div><span id="status"></span></div>
+    <div><span id="status"></span><span id="pollIndicator">&bull;</span></div>
     <div id="streamBody"></div>
 </div>
 
