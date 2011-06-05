@@ -74,7 +74,24 @@ dojo.addOnLoad(function()
     }
 
     function handleSubscription(message) {
-        dojo.byId('streamBody').innerHTML += '<div><em>Received from server:</em><br/>' + wbUtil.printObject(message) + '</div>';
+        dojo.byId('streamBody').innerHTML += '<div><em>Received from server:</em><br/>' + printObject(message) + '</div>';
+    }
+
+    function printObject(obj, maxDepth, prefix) {
+       var result = '';
+       if (!prefix) prefix='';
+       for(var key in obj){
+           if (typeof obj[key] == 'object'){
+               if (maxDepth !== undefined && maxDepth <= 1){
+                   result += (prefix + key + '=object [max depth reached]\n');
+               } else {
+                   result += printObject(obj[key], (maxDepth) ? maxDepth - 1: maxDepth, prefix + key + '.');
+               }
+           } else {
+               result += (prefix + key + '=' + obj[key] + '<br/>');
+           }
+       }
+       return result;
     }
 
     // Disconnect when the page unloads
@@ -99,24 +116,3 @@ dojo.addOnLoad(function()
         cometd.subscribe(topicName, handleSubscription);
     }, false);
 });
-
-var wbUtil = {
-
-
-    printObject: function (obj, maxDepth, prefix) {
-       var result = '';
-       if (!prefix) prefix='';
-       for(var key in obj){
-           if (typeof obj[key] == 'object'){
-               if (maxDepth !== undefined && maxDepth <= 1){
-                   result += (prefix + key + '=object [max depth reached]\n');
-               } else {
-                   result += wbUtil.printObject(obj[key], (maxDepth) ? maxDepth - 1: maxDepth, prefix + key + '.');
-               }
-           } else {
-               result += (prefix + key + '=' + obj[key] + '<br/>');
-           }
-       }
-       return result;
-    }
-};
