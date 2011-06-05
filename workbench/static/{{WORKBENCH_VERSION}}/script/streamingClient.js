@@ -23,7 +23,7 @@ dojo.addOnLoad(function() {
         if (!wasConnected && isConnected) {
             postToStream("Connection Established", message);
         } else if (wasConnected && !isConnected) {
-            postToStream("Connection Broken", message);
+            postErrorToStream("Connection Broken", message);
         } else if (showPolling) {
             postToStream("Poll Completed", message);
         }
@@ -47,23 +47,23 @@ dojo.addOnLoad(function() {
     }
 
     function metaSubscribe(message) {
-        if (message.successful != true) {
-            postErrorToStream("Subscription Failure: " + message.error, message);
-        } else {
+        if (message.successful === true) {
             postToStream("Subscribed to " + message.subscription, message);
+        } else {
+            postErrorToStream("Subscription Failure: " + message.error, message);
         }
     }
 
     function metaUnsubscribe(message) {
-        if (message.successful != true) {
-            postErrorToStream("Unsubscription Failure: " + message.error, message);
-        } else {
+        if (message.successful === true) {
             postToStream("Unsubscribed from " + message.subscription, message);
+        } else {
+            postErrorToStream("Unsubscription Failure: " + message.error, message);
         }
     }
 
     function metaUnsuccessful(message) {
-        postErrorToStream("Unknown Failure", message);
+//        postErrorToStream("Unknown Failure", message);
     }
 
 
@@ -73,6 +73,17 @@ dojo.addOnLoad(function() {
     }
 
     function printObject(obj, maxDepth, prefix) {
+        if (maxDepth === undefined && prefix === undefined) {
+            try {
+                var ppJson = dojo.toJson(obj, true);
+                ppJson = ppJson.replace(/\n/g, "<br/>");
+                ppJson = ppJson.replace(/\t/g, "&nbsp;&nbsp;");
+                return ppJson;
+            } catch (e) {
+                window.console.debug("Problem writing to JSON. Falling back to old printer.");
+            }
+        }
+
         var result = '';
         if (!prefix) prefix = '';
         for (var key in obj) {
@@ -286,7 +297,7 @@ dojo.addOnLoad(function() {
     dojo.byId('pushTopicSaveBtn').addEventListener('click', displayWaitingIndicator, false);
     dojo.byId('pushTopicDeleteBtn').addEventListener('click', displayWaitingIndicator, false);
 
-//    cometd.addListener('/meta/unsuccessful', metaUnsuccessful);
+    cometd.addListener('/meta/unsuccessful', metaUnsuccessful);
     cometd.addListener('/meta/handshake', metaHandshake);
     cometd.addListener('/meta/connect', metaConnect);
     cometd.addListener('/meta/subscribe', metaSubscribe);

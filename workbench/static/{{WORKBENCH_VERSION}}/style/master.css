@@ -388,6 +388,10 @@ table.sortable tr.sortBottom td {
     font-weight: bold;
 }
 
+#streamBody div span.body {
+    font-family: monospace;
+}
+
 #streamBody div.error {
     color: red;
 }
