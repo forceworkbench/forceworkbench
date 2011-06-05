@@ -5,6 +5,7 @@ var topicName = null;
 dojo.addOnLoad(function() {
     var cometd = dojox.cometd;
     var _connected = false;
+    var subscriptions = new Array();
 
     function _metaConnect(message) {
         if (cometd.isDisconnected()) {
@@ -40,6 +41,14 @@ dojo.addOnLoad(function() {
             postErrorToStream("Subscription Failure: " + message.error, message);
         } else {
             postToStream("Subscribed to " + message.subscription, message);
+        }
+    }
+
+    function _metaUnsubscribe(message) {
+        if (message.successful != true) {
+            postErrorToStream("Unsubscription Failure: " + message.error, message);
+        } else {
+            postToStream("Unsubscribed from " + message.subscription, message);
         }
     }
 
@@ -133,6 +142,7 @@ dojo.addOnLoad(function() {
     cometd.addListener('/meta/handshake', _metaHandshake);
     cometd.addListener('/meta/connect', _metaConnect);
     cometd.addListener('/meta/subscribe', _metaSubscribe);
+    cometd.addListener('/meta/unsubscribe', _metaUnsubscribe);
     cometd.handshake();
 
     // Copy the details of the selected topic into details section
@@ -156,6 +166,25 @@ dojo.addOnLoad(function() {
             return;
         }
 
-        cometd.subscribe("/" + topicName, handleSubscription);
+        subscriptions[topicName] = cometd.subscribe("/" + topicName, handleSubscription);
+        
+    }, false);
+
+    // Unsubscribe to the given topic
+    dojo.byId('pushTopicUnsubscribeBtn').addEventListener('click', function() {
+        topicName = JSON.parse(dojo.byId('selectedTopic').value).Name;
+
+        if (topicName === null || topicName === "") {
+            alert("Choose a topic to unsubscribe.");
+            return;
+        }
+
+        if (subscriptions[topicName] === undefined) {
+            alert("Cannot unsubscribe without first subscribing.");
+            return;
+        }
+
+        cometd.unsubscribe(subscriptions[topicName]);
+        subscriptions[topicName] = undefined;
     }, false);
 });

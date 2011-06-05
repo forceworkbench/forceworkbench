@@ -22,6 +22,10 @@ require_once "header.php";
            type="button"
            value="Subscribe"/>
 
+    <input id="pushTopicUnsubscribeBtn"
+           type="button"
+           value="Unsubscribe"/>
+
     <input id="pushTopicDetailsBtn"
            type="button"
            value="Details"/>
