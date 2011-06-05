@@ -22,17 +22,18 @@ require_once "header.php";
     
     <input id="pushTopicSubscribeBtn"
            type="button"
+           disabled="disabled"
            value="Subscribe"/>
 
     <input id="pushTopicUnsubscribeBtn"
            type="button"
+           disabled="disabled"
            value="Unsubscribe"/>
 
     <input id="pushTopicDetailsBtn"
            type="button"
            value="Details"/>
 
-    &nbsp;&nbsp;
 
     <input id="toggleShowPolling"
            type="button"
@@ -75,7 +76,7 @@ require_once "header.php";
 </div>
 
 <div id="streamContainer">
-    <div><h3>Data Stream</h3><span id="status"></span></div>
+    <div><span id="status"></span></div>
     <div id="streamBody"></div>
 </div>
 

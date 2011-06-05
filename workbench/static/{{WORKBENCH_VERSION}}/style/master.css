@@ -392,9 +392,12 @@ table.sortable tr.sortBottom td {
 }
 
 #streamContainer #status {
-    margin-right: 15px;
-    float: right;
+    margin-left: 10px;
     font-weight: bold;
-    font-size: xx-small;
-    color: #888;
+    font-size: x-small;
+    color: rgb(66, 150, 231);
+}
+
+#toggleShowPolling{
+    float: right;
 }

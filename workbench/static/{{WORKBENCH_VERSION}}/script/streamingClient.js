@@ -148,50 +148,23 @@ dojo.addOnLoad(function() {
             this.removeListener(subscriptionHandle);
         } else {
             this.unsubscribe(subscriptionHandle);
+            toggleSubUnSubButtons();
         }
     }
 
     function subscribe() {
         var topic = dojo.byId('selectedTopic').value;
-
-        if (topic === null || topic === "") {
-            alert("Choose a topic to subscribe or create a new one.");
-            return;
-        }
-
         var topicName = JSON.parse(topic).Name;
-
-        if (topicName === null || topicName === "") {
-            alert("Choose a topic to subscribe or create a new one.");
-            return;
-        }
-
         subscriptions[topicName] = cometd.subscribe("/" + topicName, handleSubscription);
-
+        toggleSubUnSubButtons();
     }
 
     function unsubscribe() {
         var topic = dojo.byId('selectedTopic').value;
-
-        if (topic === null || topic === "") {
-            alert("Choose a topic to unsubscribe or create a new one.");
-            return;
-        }
-
         var topicName = JSON.parse(topic).Name;
-
-        if (topicName === null || topicName === "") {
-            alert("Choose a topic to unsubscribe or create a new one.");
-            return;
-        }
-
-        if (subscriptions[topicName] === undefined) {
-            alert("Cannot unsubscribe without first subscribing.");
-            return;
-        }
-
         cometd.unsubscribe(subscriptions[topicName]);
         subscriptions[topicName] = undefined;
+        toggleSubUnSubButtons();
     }
 
     function disconnect() {
@@ -208,12 +181,42 @@ dojo.addOnLoad(function() {
         togglePushTopicDmlContainer_Internal(false);
     }
 
+    function toggleSubUnSubButtons() {
+        var topic = dojo.byId('selectedTopic').value;
+
+        if (topic === null || topic === "") {
+            dojo.byId("pushTopicSubscribeBtn").disabled = true;
+            dojo.byId("pushTopicUnsubscribeBtn").disabled = true;
+            return;
+        }
+
+        var selectedTopicName = JSON.parse(topic).Name;
+
+        if (selectedTopicName === null || selectedTopicName === "") {
+            dojo.byId("pushTopicSubscribeBtn").disabled = true;
+            dojo.byId("pushTopicUnsubscribeBtn").disabled = true;
+            return;
+        }
+
+        for (var subName in subscriptions) {
+            if (selectedTopicName === subName && subscriptions[subName] !== undefined) {
+                console.log("Found subscription to " + subName);
+                dojo.byId("pushTopicSubscribeBtn").disabled = true;
+                dojo.byId("pushTopicUnsubscribeBtn").disabled = false;
+                return;
+            }
+        }
+        dojo.byId("pushTopicSubscribeBtn").disabled = false;
+        dojo.byId("pushTopicUnsubscribeBtn").disabled = true;
+    }
 
     // INITIALIZATION
 
     setStatus("Initialing");
 
     copyDetails();
+
+    toggleSubUnSubButtons();
 
     var cometURL = location.protocol + "//" + location.host + streamingConfig.contextPath + "/cometd";
     cometd.configure({
@@ -229,7 +232,9 @@ dojo.addOnLoad(function() {
     dojo.addOnUnload(disconnect);
     dojo.byId("selectedTopic").addEventListener("change", copyDetails, false);
     dojo.byId("selectedTopic").addEventListener("change", hideMessages, false);
+    dojo.byId("selectedTopic").addEventListener("change", toggleSubUnSubButtons, false);
     dojo.byId("pushTopicSubscribeBtn").addEventListener("click", hideMessages, false);
+    dojo.byId("pushTopicUnsubscribeBtn").addEventListener("click", hideMessages, false);
     dojo.byId("pushTopicDetailsBtn").addEventListener("click", togglePushTopicDmlContainer, false);
     dojo.byId("toggleShowPolling").addEventListener("click", toggleShowPolling, false);
     dojo.byId('pushTopicSubscribeBtn').addEventListener('click', subscribe, false);
