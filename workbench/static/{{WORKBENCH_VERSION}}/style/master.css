@@ -367,10 +367,12 @@ table.sortable tr.sortBottom td {
     -moz-border-radius: 5px;
     border-radius: 5px;
     display: none;
+    padding: 2px;
 }
 
 #streamContainer h3 {
     margin-left: 10px;
+    display: inline;
 }
 
 #streamBody div {
@@ -387,4 +389,12 @@ table.sortable tr.sortBottom td {
 
 #streamBody div.error {
     color: red;
+}
+
+#streamContainer #status {
+    margin-right: 15px;
+    float: right;
+    font-weight: bold;
+    font-size: xx-small;
+    color: #888;
 }

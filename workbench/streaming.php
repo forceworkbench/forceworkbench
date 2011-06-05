@@ -18,6 +18,8 @@ require_once "header.php";
         <?php $c->printPushTopicOptions(); ?>
     </select>
 
+    &nbsp;
+    
     <input id="pushTopicSubscribeBtn"
            type="button"
            value="Subscribe"/>
@@ -29,6 +31,12 @@ require_once "header.php";
     <input id="pushTopicDetailsBtn"
            type="button"
            value="Details"/>
+
+    &nbsp;&nbsp;
+
+    <input id="toggleShowPolling"
+           type="button"
+           value="Show Polling"/>
 
     <div id="pushTopicDmlContainer">
         <form id="pushTopicDmlForm" method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>">
@@ -67,7 +75,7 @@ require_once "header.php";
 </div>
 
 <div id="streamContainer">
-    <h3>Data Stream</h3>
+    <div><h3>Data Stream</h3><span id="status"></span></div>
     <div id="streamBody"></div>
 </div>
 
