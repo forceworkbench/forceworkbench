@@ -404,7 +404,7 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
     }
 
     if (isset($_REQUEST['autoLogin'])) {
-        $actionJump .= "?autoLogin=1";
+        $actionJump .= (strpos($actionJump, "?") > -1 ? "&" :  "?") . "autoLogin=1";
         if (isset($_REQUEST['skipVC'])) $actionJump .= "&skipVC=1";
         if (isset($_GET['clientId'])) $_SESSION['tempClientId'] = $_GET['clientId'];
     }
