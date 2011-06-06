@@ -55,8 +55,11 @@ if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['rest
             setcookie($configKey,NULL,time()-3600);
         }
     }
-     
-    WorkbenchContext::get()->clearCache();
+
+    if (WorkbenchContext::isEstablished()) {
+        WorkbenchContext::get()->clearCache();
+    }
+    
     header("Location: $_SERVER[PHP_SELF]?saved=" . (isset($_POST['restoreDefaults']) ? "D" : "S"));
 }
 
