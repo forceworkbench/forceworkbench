@@ -354,7 +354,7 @@ table.sortable tr.sortBottom td {
     margin-left: 5em;
 }
 
-#pushTopicDmlForm_Btns #waitingIndicator {
+#waitingIndicator {
     display: none;
     color: #888;
     vertical-align: middle;

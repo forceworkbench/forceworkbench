@@ -52,6 +52,10 @@ if ($c->errors != null) {
 	        type="button" 
 			value="Up"
 			onclick="upUrl();"/>
+    &nbsp;
+    <span id='waitingIndicator'>
+        <img src='<?php print getStaticResourcesPath(); ?>/images/wait16trans.gif'/> Processing...
+    </span>
     </p>
 
     <input id="urlInput" 
@@ -111,6 +115,20 @@ if (isset($c->autoExec) && !$c->autoExec) {
 
 <?php } ?>
 
+<script type="text/javascript">
+    var restExplorer = function() {
+        function showWaitingIndicator() {
+            document.getElementById('waitingIndicator').style.display = 'inline';
+        }
+        
+        document.getElementById('execBtn').addEventListener('click', showWaitingIndicator, false);
+
+        var linkables = document.getElementsByClassName('RestLinkable');
+        for (var link in linkables) {
+            linkables[link].addEventListener('click', showWaitingIndicator, false);
+        }
+    }();
+</script>
 
 <?php
 require_once 'footer.php';
