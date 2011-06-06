@@ -33,7 +33,7 @@ class WorkbenchContext {
     private $connConfig;
     private $cache;
     private $defaultObject;
-
+    private $sfdcUiSidLikelySet;
 
     /**
      * @static
@@ -85,6 +85,7 @@ class WorkbenchContext {
         $this->initializeCache();
         $this->defaultObject = false;
         $this->defaultObjectChanged = false;
+        $this->sfdcUiSidLikelySet = false;
     }
 
     function login($username, $password, $orgId, $portalId) {
@@ -166,6 +167,16 @@ class WorkbenchContext {
                && $_REQUEST[self::INSTANCE][self::HAS_DEFAULT_OBJECT_CHANGED];
     }
 
+    function setIsUiSessionLikelySet($sfdcUiSidLikelySet) {
+        $this->sfdcUiSidLikelySet = $sfdcUiSidLikelySet;
+    }
+
+    /**
+     * @return bool
+     */
+    function isUiSessionLikelySet() {
+        return $this->sfdcUiSidLikelySet;
+    }
 
     // CACHING & CONNECTIONS
 

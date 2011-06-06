@@ -379,6 +379,7 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         }
 
         WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, $sessionId, $overriddenClientId));
+        WorkbenchContext::get()->setIsUiSessionLikelySet(true);
     } else {
         WorkbenchContext::get()->release();
         throw new Exception('Invalid login parameters.');
@@ -393,9 +394,6 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         }
         exit;
     }
-
-    //todo: put in WbCtx
-    $_SESSION['sfdcUiSidLikelySet'] = isset($_GET['sid']);
 
     if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'on') {
         setcookie('user',$username,time()+60*60*24*7,'','','',TRUE);

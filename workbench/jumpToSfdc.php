@@ -26,8 +26,8 @@ if ($sfdcApiHost[3] != null) {
     $sfdcUiHost = $sfdcApiHost[1];
 }
 
-if (getConfig("useSfdcFrontdoor") == 'ALWAYS' || (getConfig("useSfdcFrontdoor") == 'AUTO' && !$_SESSION['sfdcUiSidLikelySet'])) {
-    $_SESSION['sfdcUiSidLikelySet'] = true;
+if (getConfig("useSfdcFrontdoor") == 'ALWAYS' || (getConfig("useSfdcFrontdoor") == 'AUTO' && !WorkbenchContext::get()->isUiSessionLikelySet())) {
+    WorkbenchContext::get()->setIsUiSessionLikelySet(true);
     $jumpUrl = "$sfdcUiHost/secur/frontdoor.jsp?sid=". WorkbenchContext::get()->getSessionId() . "&retURL=%2F" . $_GET['startUrl'];
 } else {
     $jumpUrl = "$sfdcUiHost/" . $_GET['startUrl'];
