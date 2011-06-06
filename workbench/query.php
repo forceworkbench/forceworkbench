@@ -658,14 +658,24 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
             $records = array($records);
         }
 
+        $memLimitBytes = toBytes(ini_get("memory_limit"));
+        $memWarningThreshold = getConfig("memoryUsageWarningThreshold") / 100;
         while(($suppressScreenOutput || getConfig("autoRunQueryMore")) && !$queryResponse->done) {
+
+            if ($memLimitBytes != 0 && (memory_get_usage() / $memLimitBytes > $memWarningThreshold)) {
+                displayError("Workbench almost exhausted all its memory after only processing " . count($records) . " rows of data.
+                When performing a large queries, it is recommended to export as Bulk CSV or Bulk XML.",
+                $suppressScreenOutput, true);
+                return; // bail out
+            }
+
             $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryMore($queryResponse->queryLocator);
 
             if (!is_array($queryResponse->records)) {
                 $queryResponse->records = array($queryResponse->records);
             }
 
-            $records = array_merge($records,$queryResponse->records); //todo: do memory check here
+            $records = array_merge($records, $queryResponse->records); //todo: do memory check here
         }
 
         return $records;
