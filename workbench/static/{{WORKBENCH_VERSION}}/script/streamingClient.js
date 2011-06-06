@@ -146,7 +146,8 @@ dojo.addOnLoad(function() {
     }
 
     function copyPartiallySavedTopic() {
-        var pst = dojo.byId('partialSavedTopic').innerHTML;
+        var pstElem = dojo.byId('partialSavedTopic');
+        var pst = pstElem.innerText || pstElem.textContent;
         if (pst === undefined || pst === null || pst === "") {
             return;
         }

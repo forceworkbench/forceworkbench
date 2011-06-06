@@ -100,10 +100,6 @@ class StreamingController {
 
         print "<div id='partialSavedTopic' style='display:none;'>";
         if (count($this->errors) > 0) {
-            $pst = $this->selectedTopic;
-            $pst->Name = htmlspecialchars($pst->Name, ENT_QUOTES);
-            $pst->Query = htmlspecialchars($pst->Query, ENT_QUOTES);
-            $pst->ApiVersion = htmlspecialchars(strpos($pst->ApiVersion, ".") === false ? $pst->ApiVersion.".0" : $pst->ApiVersion, ENT_QUOTES);
             print $this->selectedTopic->toJson();
         }
         print "</div>";
