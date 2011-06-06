@@ -9,6 +9,7 @@ class StreamingController {
     private $infos;
     private $errors;
     private $enabled;
+    private $isAjax;
 
     // hard coding API version for getting PushTopics because not available in prior versions
     const restBaseUrl = "/services/data/v22.0";
@@ -18,6 +19,7 @@ class StreamingController {
         $this->infos = array();
         $this->errors = array();
         $this->enabled = true;
+        $this->isAjax = false;
 
         if (get_magic_quotes_gpc()) {
             foreach ($_REQUEST as $fieldName => &$r) {
@@ -33,12 +35,14 @@ class StreamingController {
             isset($_REQUEST['pushTopicDmlForm_ApiVersion']) ? $_REQUEST['pushTopicDmlForm_ApiVersion'] : null,
             isset($_REQUEST['pushTopicDmlForm_Query'])      ? $_REQUEST['pushTopicDmlForm_Query']      : null);
 
-        if (isset($_REQUEST['PUSH_TOPIC_DML_SAVE'])) {
-            $this->save();
-        }
+        if (isset($_REQUEST['PUSH_TOPIC_DML'])) {
+            $this->isAjax = true;
 
-        if (isset($_REQUEST['PUSH_TOPIC_DML_DELETE'])) {
-            $this->delete();
+            if ($_REQUEST['PUSH_TOPIC_DML'] == "SAVE") {
+                $this->save();
+            } else if ($_REQUEST['PUSH_TOPIC_DML'] == "DELETE") {
+                $this->delete();
+            }
         }
 
         $this->refresh();
@@ -94,34 +98,46 @@ class StreamingController {
         }
     }
 
-    function printMessages() {
+    function getMessages() {
+        $messages = "";
+
+        ob_start();
         if (count($this->errors) > 0) displayError($this->errors);
         if (count($this->infos) > 0)  displayInfo($this->infos);
-
-        print "<div id='partialSavedTopic' style='display:none;'>";
+        $messages .= ob_get_clean();
+        
+        $messages .= "<div id='partialSavedTopic' style='display:none;'>";
         if (count($this->errors) > 0) {
-            print $this->selectedTopic->toJson();
+            $messages .= $this->selectedTopic->toJson();
         }
-        print "</div>";
+        $messages .= "</div>";
+
+        return $messages;
     }
 
-    function printPushTopicOptions() {
-        print "<option></option>\n";
+    function getPushTopicOptions() {
+        $options = "";
+
+        $options .= "<option></option>\n";
         $selected = count($this->pushTopics) == 0 ? "selected='selected'" : "";
-        print "<option value='". PushTopic::template()->toJson() . "' $selected>--Create New--</option>\n";
+        $options .= "<option value='". PushTopic::template()->toJson() . "' $selected>--Create New--</option>\n";
         foreach($this->pushTopics as $topic) {
             $topic->Name = htmlspecialchars($topic->Name, ENT_QUOTES);
             $topic->Query = htmlspecialchars($topic->Query, ENT_QUOTES);
             $topic->ApiVersion = strpos($topic->ApiVersion, ".") === false ? $topic->ApiVersion.".0" : $topic->ApiVersion;
             $selected = $topic->Name == $this->selectedTopic->Name ? "selected='selected'" : "";
-            print "<option value='". json_encode($topic) . "' $selected>" . $topic->Name . "</option>\n";
+            $options .= "<option value='". json_encode($topic) . "' $selected>" . $topic->Name . "</option>\n";
         }
+
+        return $options;
     }
 
-    function printApiVersionOptions() {
+    function getApiVersionOptions() {
+        $options = "";
         foreach($GLOBALS['API_VERSIONS'] as $v) {
-            print "<option value='$v'>$v</option>\n";
+            $options .= "<option value='$v'>$v</option>\n";
         }
+        return $options;
     }
 
     function getStreamingConfig() {
@@ -140,6 +156,17 @@ class StreamingController {
 
     function isEnabled() {
         return$this->enabled;
+    }
+
+    function isAjax() {
+        return $this->isAjax;
+    }
+
+    function getAjaxResponse() {
+        $ajaxResponse['messages'] = $this->getMessages();
+        $ajaxResponse['pushTopicOptions'] = $this->getPushTopicOptions();
+
+        return json_encode($ajaxResponse);
     }
 }
 

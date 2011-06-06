@@ -264,8 +264,28 @@ dojo.addOnLoad(function() {
         dojo.byId('streamBody').innerHTML = "";
     }
 
-    function displayWaitingIndicator() {
+    function postTopicDml(dmlAction) {
+        dojo.byId("pushTopicSaveBtn").disabled = true;
+        dojo.byId("pushTopicDeleteBtn").disabled = true;
         dojo.byId('waitingIndicator').style.display = 'inline';
+
+        dojo.xhrPost({
+            form: "pushTopicDmlForm",
+            handleAs: "json",
+            content: {"PUSH_TOPIC_DML":dmlAction},
+            load: function(content) {
+                dojo.byId("pushTopicSaveBtn").disabled = false;
+                dojo.byId("pushTopicDeleteBtn").disabled = false;
+                dojo.byId('waitingIndicator').style.display = 'none';
+                dojo.byId('messages').innerHTML = content.messages;
+                dojo.byId("messages").style.display = "block";
+                dojo.byId('selectedTopic').innerHTML = content.pushTopicOptions;
+
+                copySelectedTopic();
+                copyPartiallySavedTopic();
+                toggleSubUnSubButtons();
+            }
+        });
     }
 
     // INITIALIZATION
@@ -292,8 +312,8 @@ dojo.addOnLoad(function() {
     dojo.byId("pushTopicDetailsBtn").addEventListener("click", togglePushTopicDmlContainer, false);
     dojo.byId("toggleShowPolling").addEventListener("click", toggleShowPolling, false);
     dojo.byId('clearStream').addEventListener('click', clearStream, false);
-    dojo.byId('pushTopicSaveBtn').addEventListener('click', displayWaitingIndicator, false);
-    dojo.byId('pushTopicDeleteBtn').addEventListener('click', displayWaitingIndicator, false);
+    dojo.byId('pushTopicSaveBtn').addEventListener('click', function() { postTopicDml("SAVE"); }, false);
+    dojo.byId('pushTopicDeleteBtn').addEventListener('click', function() { postTopicDml("DELETE"); }, false);
 
     cometd.addListener('/meta/unsuccessful', metaUnsuccessful);
     cometd.addListener('/meta/handshake', metaHandshake);
