@@ -14,7 +14,7 @@ require_once "header.php";
     <?php $c->printMessages(); ?>
 </div>
 
-<div id="pushTopicContainer">
+<div id="pushTopicContainer" style="display: <?php echo $c->isEnabled() ? "block" : "none"?>;">
     <label for="selectedTopic">Push Topic:</label>
     <select id="selectedTopic">
         <?php $c->printPushTopicOptions(); ?>
@@ -91,8 +91,10 @@ require_once "header.php";
 
 
 <?php
-addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/dojo/dojo/dojo.js'></script>");
-addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/streamingClient.js'></script>");
-addFooterScript("<script type='text/javascript'>var wbStreaming = ". $c->getStreamingConfig() . ";</script>");
+if ($c->isEnabled()) {
+    addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/dojo/dojo/dojo.js'></script>");
+    addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/streamingClient.js'></script>");
+    addFooterScript("<script type='text/javascript'>var wbStreaming = ". $c->getStreamingConfig() . ";</script>");
+}
 require_once "footer.php";
 ?>

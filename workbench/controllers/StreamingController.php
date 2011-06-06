@@ -8,7 +8,7 @@ class StreamingController {
     private $pushTopics;
     private $infos;
     private $errors;
-    private $handshakeOnLoad;
+    private $enabled;
 
     // hard coding API version for getting PushTopics because not available in prior versions
     const restBaseUrl = "/services/data/v22.0";
@@ -17,7 +17,7 @@ class StreamingController {
         $this->restApi = WorkbenchContext::get()->getRestDataConnection();
         $this->infos = array();
         $this->errors = array();
-        $this->handshakeOnLoad = true;
+        $this->enabled = true;
 
         if (get_magic_quotes_gpc()) {
             foreach ($_REQUEST as $fieldName => &$r) {
@@ -53,7 +53,7 @@ class StreamingController {
 
             if (strpos($queryResponse->header, "404 Not Found") > 0) {
                 $this->errors[] = "Could not load Push Topics. Ensure the Streaming API is enabled for this organization.";
-                $this->handshakeOnLoad = false;
+                $this->enabled = false;
                 return;
             }
 
@@ -111,7 +111,8 @@ class StreamingController {
 
     function printPushTopicOptions() {
         print "<option></option>\n";
-        print "<option value='". PushTopic::template()->toJson() . "'>--Create New--</option>\n";
+        $selected = count($this->pushTopics) == 0 ? "selected='selected'" : "";
+        print "<option value='". PushTopic::template()->toJson() . "' $selected>--Create New--</option>\n";
         foreach($this->pushTopics as $topic) {
             $topic->Name = htmlspecialchars($topic->Name, ENT_QUOTES);
             $topic->Query = htmlspecialchars($topic->Query, ENT_QUOTES);
@@ -128,17 +129,21 @@ class StreamingController {
     }
 
     function getStreamingConfig() {
-        $streamingConfig["handshakeOnLoad"] = $this->handshakeOnLoad;
+        $streamingConfig["handshakeOnLoad"] = true; // TODO: make this configurable
 
         // configs in "$streamingConfig["cometdConfig"]" are loaded into CometD in JS and need to match their format
         $streamingConfig["cometdConfig"]["logLevel"] = "info";
         $streamingConfig["cometdConfig"]["url"] =
-            "http". (isset($_SERVER['HTTPS']) ? "s" : "") . "://" .
+            "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? "s" : "") . "://" .
             $_SERVER['HTTP_HOST'] .
             dirname($_SERVER['PHP_SELF']) .
             "/cometd";
 
         return json_encode($streamingConfig);
+    }
+
+    function isEnabled() {
+        return$this->enabled;
     }
 }
 

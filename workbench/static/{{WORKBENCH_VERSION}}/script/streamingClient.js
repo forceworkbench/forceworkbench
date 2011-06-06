@@ -286,10 +286,10 @@ dojo.addOnLoad(function() {
     dojo.byId("selectedTopic").addEventListener("change", toggleSubUnSubButtons, false);
     dojo.byId("pushTopicSubscribeBtn").addEventListener("click", hideMessages, false);
     dojo.byId("pushTopicUnsubscribeBtn").addEventListener("click", hideMessages, false);
-    dojo.byId("pushTopicDetailsBtn").addEventListener("click", togglePushTopicDmlContainer, false);
-    dojo.byId("toggleShowPolling").addEventListener("click", toggleShowPolling, false);
     dojo.byId('pushTopicSubscribeBtn').addEventListener('click', subscribe, false);
     dojo.byId('pushTopicUnsubscribeBtn').addEventListener('click', unsubscribe, false);
+    dojo.byId("pushTopicDetailsBtn").addEventListener("click", togglePushTopicDmlContainer, false);
+    dojo.byId("toggleShowPolling").addEventListener("click", toggleShowPolling, false);
     dojo.byId('clearStream').addEventListener('click', clearStream, false);
     dojo.byId('pushTopicSaveBtn').addEventListener('click', displayWaitingIndicator, false);
     dojo.byId('pushTopicDeleteBtn').addEventListener('click', displayWaitingIndicator, false);
@@ -306,7 +306,5 @@ dojo.addOnLoad(function() {
     if (wbStreaming.handshakeOnLoad) {
         setStatus("Handshaking");
         cometd.handshake();
-    } else {
-        setStatus("Suspended");
     }
 });
