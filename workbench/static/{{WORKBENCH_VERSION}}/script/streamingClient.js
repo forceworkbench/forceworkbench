@@ -4,7 +4,7 @@ dojo.addOnLoad(function() {
     var cometd = dojox.cometd;
     var isConnected = false;
     var showPolling = false;
-    var subscriptions = new Array();
+    var subscriptions = [];
 
 
     function metaAny(message) {
@@ -44,7 +44,7 @@ dojo.addOnLoad(function() {
             setStatus("Handshake Failure");
         }
 
-        subscriptions = new Array();
+        subscriptions = [];
         toggleSubUnSubButtons();
     }
 
@@ -81,31 +81,38 @@ dojo.addOnLoad(function() {
                 ppJson = ppJson.replace(/\n/g, "<br/>");
                 ppJson = ppJson.replace(/\t/g, "&nbsp;&nbsp;");
                 return ppJson;
-            } catch (e) {
+            } catch (e1) {
                 window.console.debug("Problem writing to JSON. Falling back to old printer.");
             }
         }
 
         var result = '';
-        if (!prefix) prefix = '';
-        for (var key in obj) {
-            var objType;
-            try {
-                // this can fail on XHR and who knows what else. try, log, and keep moving...
-                objType = typeof obj[key];
-            } catch (e) {
-                window.console.debug("Problem finding typeof " + obj + " at key [" + key + "]");
-                continue;
-            }
+        var key;
 
-            if (objType == 'object') {
-                if (maxDepth !== undefined && maxDepth <= 1) {
-                    result += (prefix + key + '=object [max depth reached]\n');
-                } else {
-                    result += printObject(obj[key], (maxDepth) ? maxDepth - 1 : maxDepth, prefix + key + '.');
+        if (!prefix) {
+            prefix = '';
+        }
+
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                var objType;
+                try {
+                    // this can fail on XHR and who knows what else. try, log, and keep moving...
+                    objType = typeof obj[key];
+                } catch (e2) {
+                    window.console.debug("Problem finding typeof " + obj + " at key [" + key + "]");
+                    continue;
                 }
-            } else {
-                result += (prefix + key + '=' + obj[key] + '<br/>');
+
+                if (objType === 'object') {
+                    if (maxDepth !== undefined && maxDepth <= 1) {
+                        result += (prefix + key + '=object [max depth reached]\n');
+                    } else {
+                        result += printObject(obj[key], (maxDepth) ? maxDepth - 1 : maxDepth, prefix + key + '.');
+                    }
+                } else {
+                    result += (prefix + key + '=' + obj[key] + '<br/>');
+                }
             }
         }
         return result;
@@ -113,7 +120,7 @@ dojo.addOnLoad(function() {
 
     function togglePushTopicDmlContainer_Internal(forceShow) {
         var cont = dojo.byId("pushTopicDmlContainer");
-        if (cont.style.display != "block" || forceShow) {
+        if (cont.style.display !== "block" || forceShow) {
             cont.style.display = "block";
         } else {
             cont.style.display = "none";
@@ -127,7 +134,7 @@ dojo.addOnLoad(function() {
 
     function flashPollIndicator() {
             dojo.byId("pollIndicator").style.display = "inline";
-            setTimeout(function() {dojo.byId("pollIndicator").style.display = 'none'}, 500);
+            setTimeout(function() { dojo.byId("pollIndicator").style.display = 'none'; }, 500);
     }
 
     function hideMessages() {
@@ -232,6 +239,7 @@ dojo.addOnLoad(function() {
     }
 
     function toggleSubUnSubButtons() {
+        var subName;
         var topic = dojo.byId('selectedTopic').value;
 
         if (topic === null || topic === "") {
@@ -248,7 +256,7 @@ dojo.addOnLoad(function() {
             return;
         }
 
-        for (var subName in subscriptions) {
+        for (subName in subscriptions) {
             if (selectedTopicName === subName && subscriptions[subName] !== undefined) {
                 console.log("Found subscription to " + subName);
                 dojo.byId("pushTopicSubscribeBtn").disabled = true;
