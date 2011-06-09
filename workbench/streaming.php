@@ -13,7 +13,7 @@ if ($c->isAjax()) {
 require_once "header.php";
 ?>
 
-<p class='instructions'>Subscribe to a Push Topic to stream query updates:</p>
+<p class="instructions">Subscribe to a Push Topic to stream query updates:</p>
 
 <div id="messages">
     <?php echo $c->getMessages(); ?>
@@ -50,7 +50,7 @@ require_once "header.php";
            value="Show Polling"/>
 
     <div id="pushTopicDmlContainer">
-        <form id="pushTopicDmlForm" method="DOJO_AJAX" action="<?php echo $_SERVER['PHP_SELF'] ?>">
+        <form id="pushTopicDmlForm" method="DOJO_AJAX" action="<?php echo $_SERVER["PHP_SELF"] ?>">
             <input id="pushTopicDmlForm_Id" name="pushTopicDmlForm_Id" type="hidden">
             <div>
                 <label for="pushTopicDmlForm_Name">Name:</label>
@@ -76,8 +76,8 @@ require_once "header.php";
                        type="button"
                        value="Delete"/>
 
-                <span id='waitingIndicator'>
-                    <img src='<?php echo getStaticResourcesPath(); ?>/images/wait16trans.gif'/>
+                <span id="waitingIndicator">
+                    <img src="<?php echo getStaticResourcesPath(); ?>/images/wait16trans.gif"/>
                     Processing...
                 </span>
             </div>
