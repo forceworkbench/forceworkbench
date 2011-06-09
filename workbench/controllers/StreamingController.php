@@ -149,7 +149,7 @@ class StreamingController {
             "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? "s" : "") . "://" .
             $_SERVER['HTTP_HOST'] .
             str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])) .
-			strlen(dirname($_SERVER['PHP_SELF'])) == 1 ? "" : "/" . 
+			(strlen(dirname($_SERVER['PHP_SELF'])) == 1 ? "" : "/") .
             "cometd";
 
         return json_encode($streamingConfig);
