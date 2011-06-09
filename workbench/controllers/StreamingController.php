@@ -145,6 +145,7 @@ class StreamingController {
 
         // configs in "$streamingConfig["cometdConfig"]" are loaded into CometD in JS and need to match their format
         $streamingConfig["cometdConfig"]["logLevel"] = "info";
+        $streamingConfig["cometdConfig"]["appendMessageTypeToURL"] = false;
         $streamingConfig["cometdConfig"]["url"] =
             "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? "s" : "") . "://" .
             $_SERVER['HTTP_HOST'] .

@@ -1,7 +1,7 @@
 <?php
  
 class PhpReverseProxy {
-    public $port, $host, $forward_path, $content, $content_type, $user_agent,
+    public $port, $host, $forward_path, $is_forward_path_static, $content, $content_type, $user_agent,
     $XFF, $request_method, $cookie;
 
     private $http_code, $resultHeader;
@@ -21,8 +21,13 @@ class PhpReverseProxy {
     }
 
     function translateURL($serverName) {
-        $this->path = $this->forward_path . str_replace(dirname($_SERVER['PHP_SELF']), "", $_SERVER['REQUEST_URI']);
         $server = $this->translateServer($serverName);
+
+        if ($this->is_forward_path_static) {
+            return $server . $this->forward_path;
+        }
+
+        $this->path = $this->forward_path . str_replace(dirname($_SERVER['PHP_SELF']), "", $_SERVER['REQUEST_URI']);
         $queryString = ($_SERVER['QUERY_STRING'] == "")
                 ? ""
                 : "?" . $_SERVER['QUERY_STRING'];

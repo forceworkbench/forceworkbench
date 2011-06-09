@@ -17,6 +17,7 @@ session_write_close();
 $proxy = new PhpReverseProxy();
 $proxy->host = $host;
 $proxy->forward_path = "/cometd";
+$proxy->is_forward_path_static = true;
 $proxy->connect();
 $proxy->output();
 ?>
