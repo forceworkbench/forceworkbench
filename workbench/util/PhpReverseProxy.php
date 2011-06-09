@@ -111,7 +111,11 @@ class PhpReverseProxy {
             foreach ($headerWhitelist as $whl) {
                 if (stripos($h, $whl) > -1) {
                     if (stripos("Set-Cookie", $whl) > -1) {
-                        $h = preg_replace("`path=([^;]*)$this->forward_path`", "path=".dirname($_SERVER['PHP_SELF'])."$1", $h);
+                        $h = preg_replace("`path=([^;]*)$this->forward_path`", 
+						                  "path=". ((strlen(dirname($_SERVER['PHP_SELF'])) == 1)
+										             ? "$1"
+											         : (dirname($_SERVER['PHP_SELF'])."$1"))
+										   , $h);
                     }
 
                     header($h, true);
