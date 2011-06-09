@@ -150,7 +150,7 @@ class StreamingController {
             $_SERVER['HTTP_HOST'] .
             str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])) .
 			(strlen(dirname($_SERVER['PHP_SELF'])) == 1 ? "" : "/") .
-            "cometd";
+            "cometdProxy.php";
 
         return json_encode($streamingConfig);
     }

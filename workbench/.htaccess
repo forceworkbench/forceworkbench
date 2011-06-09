@@ -33,6 +33,3 @@ php_flag register_globals off
     mod_gzip_item_include file \.csv$
     mod_gzip_item_include mime ^application/csv$
 </IfModule>
-
-RewriteEngine on
-RewriteRule cometd($|/\w*) sfdcProxy.php

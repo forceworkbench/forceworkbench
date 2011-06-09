@@ -1,24 +1,5 @@
 <?php
-require_once "context/WorkbenchContext.php";
-require_once "session.php";
-
-if (!WorkbenchContext::isEstablished()) {
-    header('HTTP/1.0 401 Unauthorized');
-    echo "SFDC Proxy only available if Workbench Context has been established.";
-    exit;
-}
-
-$host = WorkbenchContext::get()->getHost();
-$sessionId = WorkbenchContext::get()->getSessionId();
-$_COOKIE['sid'] = $sessionId;
-session_write_close();
-
-$proxy = new PhpReverseProxy();
-$proxy->host = $host;
-$proxy->connect();
-$proxy->output();
-
-
+ 
 class PhpReverseProxy {
     public $port, $host, $forward_path, $content, $content_type, $user_agent,
     $XFF, $request_method, $cookie;
@@ -73,7 +54,7 @@ class PhpReverseProxy {
             $tempCookie = $tempCookie . " $cookieName = $cookieValue;";
         }
         $this->cookie = $tempCookie;
-        
+
         if (empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $this->XFF = $_SERVER['REMOTE_ADDR'];
         } else {
@@ -93,7 +74,7 @@ class PhpReverseProxy {
         $headers = array();
         foreach (self::getAllRequestHeaders() as $key => $value) {
             if (in_array($key, array("Content-Type", "Accept"))) {
-                $headers[] = "$key: " . str_replace("text/json", "application/json", $value); // todo: did this for old version compatibility
+                $headers[] = "$key: " . $value;
             }
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -130,7 +111,7 @@ class PhpReverseProxy {
             foreach ($headerWhitelist as $whl) {
                 if (stripos($h, $whl) > -1) {
                     if (stripos("Set-Cookie", $whl) > -1) {
-                        $h = preg_replace("/path=([^;]*)/", "path=".dirname($_SERVER['PHP_SELF'])."$1", $h);
+                        $h = preg_replace("`path=([^;]*)$this->forward_path`", "path=".dirname($_SERVER['PHP_SELF'])."$1", $h);
                     }
 
                     header($h, true);
@@ -158,4 +139,5 @@ class PhpReverseProxy {
         return $out;
     }
 }
+
 ?>
