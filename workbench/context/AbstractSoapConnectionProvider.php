@@ -3,6 +3,11 @@ require_once "context/AbstractConnectionProvider.php";
 
 abstract class AbstractSoapConnectionProvider extends AbstractConnectionProvider {
 
+    protected function buildEndpoint(ConnectionConfiguration $connConfig) {
+        return parent::buildEndpoint($connConfig) .
+               ($connConfig->getSessionId() != null ? ("/" . substr($connConfig->getSessionId(), 0, 15)) : "");
+    }
+
     protected abstract function getWsdlType();
 
     protected function buildWsdlPath(ConnectionConfiguration $connConfig) {
