@@ -152,7 +152,7 @@
 		  <classpath refid="classpath.test.java"/>
 
      	  <sysproperty key="baseUrl" value="http://localhost:8888/workbench-trunk/workbench/"/>
-		  <sysproperty key="browser" value="*firefox"/>
+		  <sysproperty key="browser" value="*firefox /Applications/Firefox 3.app/Contents/MacOS/firefox-bin"/>
 			
 		  <formatter type="plain"/>
 
