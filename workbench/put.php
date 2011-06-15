@@ -617,7 +617,7 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults) {
     } else {
 
         $idArray =  array();
-        $idCol = array_search($fieldMap['Id'],$csvArray[0]);
+        $idCol = array_search($fieldMap['Id']['csvField'],$csvArray[0]);
 
         for ($row=1; $row < count($csvArray); $row++) {
             if ($csvArray[$row][$idCol]) {
