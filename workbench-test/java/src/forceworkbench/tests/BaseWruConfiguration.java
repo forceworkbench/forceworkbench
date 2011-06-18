@@ -12,7 +12,7 @@ public class BaseWruConfiguration extends Configuration {
 		setLoginInstance("Login: Production/Developer");
 				
 		setIgnoredInstances(new java.util.ArrayList<String>());
-//		getIgnoredInstances().add("NA8");
+		getIgnoredInstances().add("CS11");
 //		getIgnoredInstances().add("Sandbox CS4");
 //		getIgnoredInstances().add("Sandbox CS6");
 //		getIgnoredInstances().add("Sandbox CS7");
