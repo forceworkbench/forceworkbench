@@ -122,11 +122,11 @@ if (isset($c->autoExec) && !$c->autoExec) {
             document.getElementById('waitingIndicator').style.display = 'inline';
         }
         
-        document.getElementById('execBtn').addEventListener('click', showWaitingIndicator, false);
+        bindEvent(document.getElementById('execBtn'), 'click', showWaitingIndicator);
 
         var linkables = document.getElementsByClassName('RestLinkable');
         for (var link in linkables) {
-            linkables[link].addEventListener('click', showWaitingIndicator, false);
+            bindEvent(linkables[link], 'click', showWaitingIndicator);
         }
     }();
 </script>
