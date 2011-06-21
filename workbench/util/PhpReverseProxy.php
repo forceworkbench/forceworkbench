@@ -2,7 +2,7 @@
  
 class PhpReverseProxy {
     public $port, $host, $forward_path, $is_forward_path_static, $content, $content_type, $user_agent,
-    $XFF, $request_method, $cookie;
+    $XFF, $request_method, $cookie, $proxy_settings;
 
     private $http_code, $resultHeader;
 
@@ -75,6 +75,12 @@ class PhpReverseProxy {
             curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents("php://input"));
         }
         curl_setopt($ch, CURLOPT_URL, $this->translateURL($this->host));
+
+        if ($this->proxy_settings != null) {
+            curl_setopt($ch, CURLOPT_PROXY, $this->proxy_settings["proxy_host"]);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxy_settings["proxy_port"]);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->proxy_settings["proxy_username"] . ":" . $this->proxy_settings["proxy_password"]);
+        }
 
         $headers = array();
         foreach (self::getAllRequestHeaders() as $key => $value) {

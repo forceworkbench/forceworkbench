@@ -65,8 +65,8 @@ class RestApiClient {
             "User-Agent: " . $this->userAgent,
             "X-PrettyPrint: true",
             "Expect:"
-            );
-        
+        );
+
         if (isset($additionalHeaders)) {
             $httpHeaders = array_merge($httpHeaders, $additionalHeaders);
         }
@@ -75,11 +75,11 @@ class RestApiClient {
             case 'HEAD':
                 curl_setopt($ch, CURLOPT_NOBODY, 1);
                 break;
-            case 'GET': 
+            case 'GET':
                 // do nothing
                 break;
-            case 'DELETE': 
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method); 
+            case 'DELETE':
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
                 break;
             case 'POST':
                 curl_setopt($ch, CURLOPT_POST, 1);
@@ -93,7 +93,7 @@ class RestApiClient {
             default:
                 throw new Exception($method . ' method not supported.');
         }
-        
+
         curl_setopt($ch, CURLOPT_URL, $this->baseUrl . $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $httpHeaders);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, $expectBinary ? 0 : 1);
@@ -107,7 +107,7 @@ class RestApiClient {
             curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxySettings["proxy_port"]);
             curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->proxySettings["proxy_username"] . ":" . $this->proxySettings["proxy_password"]);
         }
-        
+
         if ($this->compressionEnabled) {
             curl_setopt($ch, CURLOPT_ENCODING, "gzip");   //TODO: add  outbound compression support
         }
@@ -116,15 +116,25 @@ class RestApiClient {
 
         $chResponse = curl_exec($ch);
         $this->log("RESPONSE \n" . htmlentities($chResponse));
-        
+
         if (curl_error($ch) != null) {
             $this->log("ERROR \n" . htmlentities(curl_error($ch)));
             throw new Exception(curl_error($ch));
         }
 
+        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        if ($this->proxySettings != null) {
+            $proxyHeader = "HTTP/1.0 200 Connection established";
+            if (strpos($chResponse, $proxyHeader) === 0) {
+                $headerSize += strlen($proxyHeader);
+            }
+        }
+
+        $httpResponse = new HttpResponse($chResponse, $headerSize, $expectBinary);
+        
         curl_close($ch);
 
-        return new HttpResponse($chResponse, $expectBinary);
+        return $httpResponse;
     }
 
     //LOGGING FUNCTIONS
@@ -161,13 +171,12 @@ class HttpResponse {
     public $header;
     public $body;
     
-    public function __construct($curlResponse, $expectBinary) {
+    public function __construct($curlResponse, $headerSize, $expectBinary) {
         if ($expectBinary) {
             $this->body = $curlResponse;
         } else {
-            $exprResponse = explode("\n\r", $curlResponse, 2);
-            $this->header = $exprResponse[0];
-            $this->body = $exprResponse[1];
+            $this->header = substr($curlResponse, 0, $headerSize);
+            $this->body = substr($curlResponse, $headerSize);
         }
     }
 }
