@@ -124,9 +124,11 @@ if (isset($c->autoExec) && !$c->autoExec) {
         
         bindEvent(document.getElementById('execBtn'), 'click', showWaitingIndicator);
 
-        var linkables = document.getElementsByClassName('RestLinkable');
-        for (var link in linkables) {
-            bindEvent(linkables[link], 'click', showWaitingIndicator);
+        if (document.getElementsByClassName) {
+            var linkables = document.getElementsByClassName('RestLinkable');
+            for (var link in linkables) {
+                bindEvent(linkables[link], 'click', showWaitingIndicator);
+            }
         }
     }();
 </script>
