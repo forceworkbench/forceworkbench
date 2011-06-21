@@ -34,6 +34,7 @@ class WorkbenchContext {
     private $cache;
     private $defaultObject;
     private $sfdcUiSidLikelySet;
+    private $csrfToken;
 
     /**
      * @static
@@ -86,6 +87,7 @@ class WorkbenchContext {
         $this->defaultObject = false;
         $this->defaultObjectChanged = false;
         $this->sfdcUiSidLikelySet = false;
+        $this->csrfToken = uniqid();
     }
 
     function login($username, $password, $orgId, $portalId) {
@@ -141,14 +143,6 @@ class WorkbenchContext {
         }
         $_REQUEST[self::INSTANCE][self::REQUEST_START_TIME] = microtime(true);
 
-        // PATH_INFO can include malicious scripts and never used purposely in Workbench.
-        if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") {
-            header('HTTP/1.0 400 Bad Request');
-            print "<h1>400 Bad Request</h1>";
-            print "Path info trailing script name in URI not allowed.";
-            exit;
-        }
-
         if (isset($_REQUEST['default_object'])) {
             $this->setDefaultObject($_REQUEST['default_object']);
         }
@@ -177,6 +171,10 @@ class WorkbenchContext {
 
     function setIsUiSessionLikelySet($sfdcUiSidLikelySet) {
         $this->sfdcUiSidLikelySet = $sfdcUiSidLikelySet;
+    }
+
+    function getCsrfToken() {
+        return $this->csrfToken;
     }
 
     /**

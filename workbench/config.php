@@ -832,7 +832,7 @@ $GLOBALS["MENUS"] = array(
         'downloadResultsWithData.php' => new Page('Download DML Results','Downloads DML results',true,true,false,false,true,''),
         'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload',true,true,false,false,true,''),
         'jumpToSfdc.php'              => new Page('Jump to SFDC','Jumps to SFDC',true,true,false,false,true,''),
-        'cometdProxy.php'             => new Page('CometD Proxy','CometD Proxy',false,false,false,false,false,'')
+        'cometdProxy.php'             => new Page('CometD Proxy','CometD Proxy',true,true,false,false,false,'')
      )
 );
 ?>

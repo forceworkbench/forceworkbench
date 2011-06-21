@@ -4,6 +4,11 @@ require_once 'context/WorkbenchContext.php';
 
 set_exception_handler('handleAllExceptions');
 
+// PATH_INFO can include malicious scripts and never used purposely in Workbench.
+if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") {
+    httpError("400 Bad Request", "Path info trailing script name in URI not allowed.");
+}
+
 session_start();
 
 if (WorkbenchContext::isEstablished()) {
@@ -54,6 +59,15 @@ if (!isLoggedIn() && $myPage->requiresSfdcSession) {
 }
 if (!$myPage->isReadOnly && isReadOnlyMode()) {
     throw new Exception("This page is not accessible in read-only mode");
+}
+
+if (WorkbenchContext::isEstablished()
+    && !$myPage->isReadOnly
+    && $_SERVER['REQUEST_METHOD'] == 'POST'
+    && (!isset($_POST['CSRF_TOKEN'])
+        || $_POST['CSRF_TOKEN'] != WorkbenchContext::get()->getCsrfToken())) {
+
+        httpError("403 Forbidden", "Invalid CSRF Token" . $_SERVER['QUERY_STRING']);
 }
 
 

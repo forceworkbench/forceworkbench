@@ -20,8 +20,8 @@ if (isset($_POST['execute'])) {
 
 
 ?>
-<form id="executeForm" action="<?php echo $_SERVER['PHP_SELF'] ?>"
-    method="POST">
+<form id="executeForm" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+<?php print getCsrfFormTag(); ?>
 <table border="0">
     <tr>
         <td>

@@ -60,8 +60,9 @@ else if (isset($_POST['stageForDeployment'])) {
     ?>
 <p class='instructions'>Confirm the following deployment options:</p>
 <form id='deployForm' name='deployForm' method='POST'
-    action='<?php print $_SERVER['PHP_SELF']; ?>'><input type='hidden'
-    name='deployFileTmpName' value='<?php print $deployFileTmpName; ?>' />
+    action='<?php print $_SERVER['PHP_SELF']; ?>'>
+    <?php print getCsrfFormTag(); ?>
+    <input type='hidden' name='deployFileTmpName' value='<?php print $deployFileTmpName; ?>' />
 <p />
     <?php printTree("deployOptionsTree", $_SESSION[$deployFileTmpName . "_OPTIONS"], true, null, false, false); ?>
 <p />
@@ -85,8 +86,9 @@ options:</p>
 <form id='deployForm' name='deployForm' method='POST'
     action='<?php print $_SERVER['PHP_SELF']; ?>'
     enctype='multipart/form-data'><input type='file' name='deployFile'
-    size='44' /> <input type='hidden' name='MAX_FILE_SIZE'
-    value='<?php print getConfig("maxFileSize"); ?>' />
+    size='44' />
+    <?php print getCsrfFormTag(); ?>
+    <input type='hidden' name='MAX_FILE_SIZE' value='<?php print getConfig("maxFileSize"); ?>' />
     <img onmouseover="Tip('Choose a ZIP file containing a project manifest, a file named package.xml, and a set of directories that contain the components to deploy.  See Salesforce.com Metadata API Developers guide more information about working with ZIP files for deployment.')"
      align='absmiddle' src='<?php echo getStaticResourcesPath(); ?>/images/help16.png' />
 <p />

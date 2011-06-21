@@ -1,4 +1,16 @@
 <?php
+
+function httpError($code, $reason) {
+    header("HTTP/1.0 $code");
+    print "<h1>$code</h1>";
+    print $reason;
+    exit;
+}
+
+function getCsrfFormTag() {
+    return "\n<input type='hidden' name='CSRF_TOKEN' value='" . WorkbenchContext::get()->getCsrfToken() . "'/>\n";
+}
+
 function toBytes ($size_str) {
     switch (substr ($size_str, -1)) {
         case 'G': case 'g': $size_str *= 1024;

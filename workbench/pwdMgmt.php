@@ -42,6 +42,7 @@ function displayForm($infos=null, $errors=null) {
 
 <form name='passwordChange' method='post'
     action='<?php $_SERVER['PHP_SELF'] ?>'>
+<?php print getCsrfFormTag(); ?>
 <table border='0'>
 
     <tr>

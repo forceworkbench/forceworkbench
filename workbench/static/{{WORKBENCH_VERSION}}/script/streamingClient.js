@@ -280,7 +280,7 @@ dojo.addOnLoad(function() {
         dojo.xhrPost({
             form: "pushTopicDmlForm",
             handleAs: "json",
-            content: {"PUSH_TOPIC_DML":dmlAction},
+            content: {"PUSH_TOPIC_DML":dmlAction, "CSRF_TOKEN":wbStreaming.csrfToken},
             load: function(content) {
                 dojo.byId("pushTopicSaveBtn").disabled = false;
                 dojo.byId("pushTopicDeleteBtn").disabled = false;
@@ -292,6 +292,13 @@ dojo.addOnLoad(function() {
                 copySelectedTopic();
                 copyPartiallySavedTopic();
                 toggleSubUnSubButtons();
+            },
+            error: function (error) {
+                dojo.byId("pushTopicSaveBtn").disabled = false;
+                dojo.byId("pushTopicDeleteBtn").disabled = false;
+                dojo.byId("waitingIndicator").style.display = "none";
+                dojo.byId("messages").innerHTML = "<div style='color:red;' class='displayErrors'>" + error + "</div>";
+                dojo.byId("messages").style.display = "block";
             }
         });
     }
