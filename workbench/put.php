@@ -491,7 +491,7 @@ function convertFieldMapToArray($fieldMap) {
     $fields = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject())->fields;
 
     foreach ($fieldMap as $fieldMapKey=>$fieldMapValue) {
-        if (!isset($fields[$fieldMapKey])) continue;
+        if ($fieldMapKey == "CSRF_TOKEN") continue;
 
         if (preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)) {
             if (preg_match('/^(\w+).(\w+).(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches)) {
