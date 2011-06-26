@@ -582,7 +582,7 @@ QUERY_BUILDER_SCRIPT;
         $filterRowNum++ . ", " .
         "\"" . $filter->getField()     . "\", " . 
         "\"" . $filter->getCompOper()  . "\", " . 
-        "\"" . $filter->getValue()     . "\"" .
+        "\"" . htmlentities($filter->getValue(), ENT_QUOTES)     . "\"" .
         ");</script>";
     }
 
