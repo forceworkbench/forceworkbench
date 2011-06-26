@@ -258,7 +258,6 @@ dojo.addOnLoad(function() {
 
         for (subName in subscriptions) {
             if (selectedTopicName === subName && subscriptions[subName] !== undefined) {
-                console.log("Found subscription to " + subName);
                 dojo.byId("pushTopicSubscribeBtn").disabled = true;
                 dojo.byId("pushTopicUnsubscribeBtn").disabled = false;
                 return;
