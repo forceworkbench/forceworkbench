@@ -7,7 +7,7 @@ require_once 'header.php';
 <p>Workbench is a powerful, web-based suite of tools designed for
 adminstrators and developers to interact with Salesforce.com
 organizations via the Force.com APIs. Workbench includes robust support
-for the Force.com Partner, Bulk, Rest, Metadata, and Apex APIs that allows
+for the Force.com Partner, Bulk, Rest, Streaming, Metadata, and Apex APIs that allows
 users to describe, query, manipulate, and migrate both data and metadata
 in Salesforce.com organizations directly in their web browser with a
 simple and intuitive user interface. Workbench also provides many
