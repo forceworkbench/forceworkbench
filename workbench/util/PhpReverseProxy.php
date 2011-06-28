@@ -147,6 +147,10 @@ class PhpReverseProxy {
             if (substr($key, 0, 5) == "HTTP_") {
                 $key = str_replace(" ", "-", ucwords(strtolower(str_replace("_", " ", substr($key, 5)))));
                 $out[$key] = $value;
+            } else if ($key == "CONTENT_TYPE") {
+                $out["Content-Type"] = $value;
+            } else if ($key == "CONTENT_LENGTH") {
+                $out["Content-Length"] = $value;
             } else {
                 $out[$key] = $value;
             }
