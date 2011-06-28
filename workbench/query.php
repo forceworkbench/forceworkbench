@@ -626,6 +626,10 @@ QUERY_BUILDER_SCRIPT;
 
 function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false) {
     try {
+        if (!getConfig("allowParentRelationshipQueries") && preg_match("/SELECT.*?(\w+\.\w+).*FROM/", $soqlQuery, $matches)) {
+            throw new Exception("Parent relationship queries are not allowed: " . $matches[1]);
+        }
+
         if ($queryAction == 'Query') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->query($soqlQuery);
         if ($queryAction == 'QueryAll') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryAll($soqlQuery);
         if ($queryAction == 'QueryMore' && isset($queryLocator)) $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryMore($queryLocator);
