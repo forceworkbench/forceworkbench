@@ -49,6 +49,31 @@ if ($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_
     $_SESSION['config']['callOptions_client'] = getWorkbenchUserAgent();
 }
 
+if (getConfig("enableRequestLogging")) {
+    $sfdcHost = "";
+    $orgId = "";
+    $userId = "";
+    if (WorkbenchContext::isEstablished()) {
+        $info = WorkbenchContext::get()->getUserInfo();
+        $orgId = $info->organizationId;
+        $userId = $info->userId;
+        $sfdcHost = WorkbenchContext::get()->getHost();
+    }
+
+    openlog("forceworkbench", LOG_ODELAY, getConfig("syslogFacility"));
+    syslog(LOG_INFO, implode("`",
+                     array(getWorkbenchUserAgent(),
+                           $_SERVER['REMOTE_ADDR'],
+                           $_SERVER['REQUEST_METHOD'],
+                           $_SERVER['SCRIPT_NAME'],
+                           $sfdcHost,
+                           $orgId,
+                           $userId,
+                     )));
+    closelog();
+}
+
+
 //kick user back to login page for any page that requires a session and one isn't established
 $myPage = getMyPage();
 if (!isLoggedIn() && $myPage->requiresSfdcSession) {
@@ -65,7 +90,6 @@ if (!$myPage->isReadOnly && isReadOnlyMode()) {
 if (WorkbenchContext::isEstablished() && !$myPage->isReadOnly  && $_SERVER['REQUEST_METHOD'] == 'POST') {
     WorkbenchContext::get()->validateCsrfToken();
 }
-
 
 if (isLoggedIn()) {
     try {

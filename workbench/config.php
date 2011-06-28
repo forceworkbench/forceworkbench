@@ -151,7 +151,23 @@ $config["header_General"] = array(
         "minValue" => 1,
         "maxValue" => 100
     );
-    
+
+    $config["enableRequestLogging"] = array(
+        "label" => "Enable Request Logging",
+        "description" => "Enables logging to syslog",
+        "default" => false,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
+    $config["syslogFacility"] = array(
+        "label" => "Syslog Facility",
+        "description" => "Syslog facility to which to log",
+        "default" => LOG_LOCAL0,
+        "overrideable" => false,
+        "dataType" => "int"
+    );
+
 $config["header_LoginOptions"] = array(
     "label" => "Login Options",
     "display" => true,
