@@ -57,17 +57,13 @@ if (!isLoggedIn() && $myPage->requiresSfdcSession) {
     header('Location: login.php');
     exit;
 }
+
 if (!$myPage->isReadOnly && isReadOnlyMode()) {
     throw new Exception("This page is not accessible in read-only mode");
 }
 
-if (WorkbenchContext::isEstablished()
-    && !$myPage->isReadOnly
-    && $_SERVER['REQUEST_METHOD'] == 'POST'
-    && (!isset($_POST['CSRF_TOKEN'])
-        || $_POST['CSRF_TOKEN'] != WorkbenchContext::get()->getCsrfToken())) {
-
-        httpError("403 Forbidden", "Invalid CSRF Token" . $_SERVER['QUERY_STRING']);
+if (WorkbenchContext::isEstablished() && !$myPage->isReadOnly  && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    WorkbenchContext::get()->validateCsrfToken();
 }
 
 

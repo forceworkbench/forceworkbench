@@ -4,8 +4,7 @@ require_once "util/PhpReverseProxy.php";
 require_once "session.php";
 
 if (!WorkbenchContext::isEstablished()) {
-    header('HTTP/1.0 401 Unauthorized');
-    echo "CometD Proxy only available if Workbench Context has been established.";
+    httpError("401 Unauthorized", "CometD Proxy only available if Workbench Context has been established.");
     exit;
 }
 

@@ -57,6 +57,10 @@ class RestExplorerController {
     }
 
     private function execute() {
+        if ($this->requestMethod !== 'GET') {
+            $this->wbCtx->validateCsrfToken();
+        }
+
         try {
             // clear any old values, in case we don't populate them on this request
             $this->rawResponse = null;

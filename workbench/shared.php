@@ -1,7 +1,7 @@
 <?php
 
 function httpError($code, $reason) {
-    header("HTTP/1.0 $code");
+    header("HTTP/1.1 $code");
     print "<h1>$code</h1>";
     print $reason;
     exit;
@@ -188,6 +188,8 @@ function getMyPage() {
             }
         }
     }
+
+    throw new Exception("Invalid page definition.");
 }
 
 function getMyTitle() {

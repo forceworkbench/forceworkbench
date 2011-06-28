@@ -177,6 +177,12 @@ class WorkbenchContext {
         return $this->csrfToken;
     }
 
+    function validateCsrfToken() {
+       if (!isset($_REQUEST['CSRF_TOKEN']) || $_REQUEST['CSRF_TOKEN'] != $this->getCsrfToken()) {
+           httpError("403 Forbidden", "Invalid or missing required CSRF token");
+       }
+    }
+
     /**
      * @return bool
      */
