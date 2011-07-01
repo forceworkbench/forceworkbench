@@ -28,20 +28,26 @@ require_once 'config.php';
 if(is_file('configOverrides.php')) require_once 'configOverrides.php';
 
 foreach ($config as $configKey => $configValue) {
-    //only process non-headers
-    if (!isset($configValue['isHeader'])) {
-        //check if the setting is NOT overrideable and if so clear the cookie
-        //this is done to clear previously set cookeies
-        if (!$configValue['overrideable'] && isset($_COOKIE[$configKey])) {
-            setcookie($configKey,NULL,time()-3600);
-        }
+    // skip headers
+    if (isset($configValue['isHeader'])) {
+        continue;
+    }
 
-        //check if user has cookies that override defaults
-        if (isset($_COOKIE[$configKey])) {
+    // does the user have an override?
+    else if (isset($_COOKIE[$configKey])) {
+        // override the session value with that of the cookie
+        if ($configValue['overrideable']) {
             $_SESSION['config'][$configKey] = $_COOKIE[$configKey];
-        } else {
+        }
+        // remove the override if not actually overridable and set to default
+        else {
+            setcookie($configKey,NULL,time()-3600);
             $_SESSION['config'][$configKey] = $configValue['default'];
         }
+    }
+    // otherwise, just use the default
+    else {
+        $_SESSION['config'][$configKey] = $configValue['default'];
     }
 }
 
@@ -49,30 +55,8 @@ if ($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_
     $_SESSION['config']['callOptions_client'] = getWorkbenchUserAgent();
 }
 
-if (getConfig("enableRequestLogging")) {
-    $sfdcHost = "";
-    $orgId = "";
-    $userId = "";
-    if (WorkbenchContext::isEstablished()) {
-        $info = WorkbenchContext::get()->getUserInfo();
-        $orgId = $info->organizationId;
-        $userId = $info->userId;
-        $sfdcHost = WorkbenchContext::get()->getHost();
-    }
-
-    openlog("forceworkbench", LOG_ODELAY, getConfig("syslogFacility"));
-    syslog(LOG_INFO, implode("`",
-                     array(getWorkbenchUserAgent(),
-                           $_SERVER['REMOTE_ADDR'],
-                           $_SERVER['REQUEST_METHOD'],
-                           $_SERVER['SCRIPT_NAME'],
-                           $sfdcHost,
-                           $orgId,
-                           $userId,
-                     )));
-    closelog();
-}
-
+// log for every request. needs to be after configs load
+workbenchLog(LOG_INFO, "U");
 
 //kick user back to login page for any page that requires a session and one isn't established
 $myPage = getMyPage();
@@ -84,7 +68,7 @@ if (!isLoggedIn() && $myPage->requiresSfdcSession) {
 }
 
 if (!$myPage->isReadOnly && isReadOnlyMode()) {
-    throw new Exception("This page is not accessible in read-only mode");
+    throw new WorkbenchHandledException("This page is not accessible in read-only mode");
 }
 
 if (WorkbenchContext::isEstablished() && !$myPage->isReadOnly  && $_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -92,32 +76,14 @@ if (WorkbenchContext::isEstablished() && !$myPage->isReadOnly  && $_SERVER['REQU
 }
 
 if (isLoggedIn()) {
-    try {
-        // todo: should this be in the ctx?
-        if (isset($_SESSION['lastRequestTime'])) {
-            $idleTime = microtime(true) - $_SESSION['lastRequestTime'];
-            if ($idleTime > (getConfig("sessionIdleMinutes") * 60)) {
-                // ping SFDC to check if session is still alive
-                WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
-            }
+    // todo: should this be in the ctx?
+    if (isset($_SESSION['lastRequestTime'])) {
+        $idleTime = microtime(true) - $_SESSION['lastRequestTime'];
+        if ($idleTime > (getConfig("sessionIdleMinutes") * 60)) {
+            // ping SFDC to check if session is still alive
+            WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
         }
-        $_SESSION['lastRequestTime'] = microtime(true);
-
-    } catch (exception $e) {
-        WorkbenchContext::get()->release();
-        session_unset();
-        session_destroy();
-        try { include_once 'header.php'; } catch (exception $e) {}
-
-        if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
-            displayError("Your Salesforce session is invalid or has expired. Please login again.", false, false);
-        } else {
-            displayError("Fatal error connecting to Salesforce. Please login again.\n\nERROR: " . $e->getMessage(), false, false);
-        }
-
-        print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\",3000);</script>";
-        include_once 'footer.php';
-        exit;
     }
+    $_SESSION['lastRequestTime'] = microtime(true);
 }
 ?>

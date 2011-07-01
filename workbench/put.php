@@ -195,7 +195,7 @@ function resolveFileType($file) {
     } else if (endsWith($file['name'],'.zip', true)) {
         return "zip";
     } else {
-        throw new Exception("Unknown file type. Only CSV and ZIP files are allowed.");
+        throw new WorkbenchHandledException("Unknown file type. Only CSV and ZIP files are allowed.");
     }
 }
 

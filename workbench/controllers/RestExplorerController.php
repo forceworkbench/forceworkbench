@@ -71,7 +71,7 @@ class RestExplorerController {
             $this->url = str_replace(' ', '+', trim($this->url));
             
             if (in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) && trim($this->requestBody) == "") {
-                throw new Exception("Must include a Request Body.");
+                throw new WorkbenchHandledException("Must include a Request Body.");
             }
 
             $expectBinary = $this->prepareBinaryResponseAsDownload();
@@ -85,10 +85,10 @@ class RestExplorerController {
 
             if (stripos($this->rawResponse->header, "HTTP/1.1 404") !== false) {
                 $this->showResponse = false;
-                throw new Exception("Service not found at: " . $this->url);
+                throw new WorkbenchHandledException("Service not found at: " . $this->url);
             } if (stripos($this->rawResponse->header, "Content-Type: text/html") !== false) {
                 $this->showResponse = false;
-                throw new Exception("Got HTML at: " . $this->url);
+                throw new WorkbenchHandledException("Got HTML at: " . $this->url);
             } else if ($expectBinary) {
                 return;
             } else if (stripos($this->rawResponse->header, "Content-Type: application/json") !== false) {                                              

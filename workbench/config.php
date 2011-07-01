@@ -152,10 +152,10 @@ $config["header_General"] = array(
         "maxValue" => 100
     );
 
-    $config["enableRequestLogging"] = array(
-        "label" => "Enable Request Logging",
+    $config["enableLogging"] = array(
+        "label" => "Enable Logging",
         "description" => "Enables logging to syslog",
-        "default" => false,
+        "default" => true,
         "overrideable" => false,
         "dataType" => "boolean"
     );

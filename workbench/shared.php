@@ -1,5 +1,39 @@
 <?php
 
+function workbenchLog($logLevel, $type, $message = "") {
+    if (!getConfig("enableLogging")) {
+        return;
+    }
+
+    $sfdcHost = "";
+    $orgId = "";
+    $userId = "";
+    if (WorkbenchContext::isEstablished()) {
+        try {
+            $sfdcHost = WorkbenchContext::get()->getHost();
+            $info = WorkbenchContext::get()->getUserInfo();
+            $orgId = $info->organizationId;
+            $userId = $info->userId;
+        } catch (Exception $e) {
+            // ignore and just use defaults
+        }
+    }
+
+    openlog("forceworkbench", LOG_ODELAY, getConfig("syslogFacility"));
+    syslog($logLevel, implode("`",
+                     array($type,
+                           $_SERVER['REMOTE_ADDR'],
+                           $_SERVER['REQUEST_METHOD'],
+                           getWorkbenchUserAgent(),
+                           $_SERVER['SCRIPT_NAME'],
+                           $sfdcHost,
+                           $orgId,
+                           $userId,
+                           $message
+                     )));
+    closelog();
+}
+
 function httpError($code, $reason) {
     header("HTTP/1.1 $code");
     print "<h1>$code</h1>";
@@ -88,11 +122,36 @@ function explodeCommaSeparated($css) {
     return $exploded;
 }
 
-
+/**
+ * @param  Exception $e
+ * @return void
+ */
 function handleAllExceptions($e) {
-    displayError("UNKNOWN ERROR: " . $e->getMessage(), true, true);
+    if ($e instanceof WorkbenchHandledException) {
+        workbenchLog(LOG_WARNING, "H", $e->getCode().":".$e->getMessage());
+        displayError($e->getMessage(), false, true);
+        return;
+    }
+
+    workbenchLog(LOG_ERR, "G", $e->getCode().":".$e->getMessage()."\n".
+                               $e->getTraceAsString());
+
+    try { include_once 'header.php'; } catch (exception $e) {}
+    print "<p/>";
+
+    if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
+        WorkbenchContext::get()->release();
+        displayError("Your Salesforce session is invalid or has expired. Please login again.", false, false);
+        print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\",3000);</script>";
+        include_once 'footer.php';
+        exit;
+    }
+
+    displayError("UNKNOWN ERROR: " . $e->getMessage(), false, true);
     exit;
 }
+
+class WorkbenchHandledException extends Exception {}
 
 function processResults($raw, $groupTopLevelScalarsIn = null, $unCamelCaseKeys = false, $parentRawKey = null) {
     $systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp");

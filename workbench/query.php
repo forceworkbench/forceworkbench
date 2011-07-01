@@ -627,7 +627,7 @@ QUERY_BUILDER_SCRIPT;
 function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false) {
     try {
         if (!getConfig("allowParentRelationshipQueries") && preg_match("/SELECT.*?(\w+\.\w+).*FROM/", $soqlQuery, $matches)) {
-            throw new Exception("Parent relationship queries are not allowed: " . $matches[1]);
+            throw new WorkbenchHandledException("Parent relationship queries are not allowed: " . $matches[1]);
         }
 
         if ($queryAction == 'Query') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->query($soqlQuery);
@@ -962,7 +962,7 @@ function exportQueryAsCsv($records,$queryAction) {
 
 function queryAsync($queryRequest) {
     if ($queryRequest->getQueryAction() == "QueryAll") {
-        throw new Exception("Including deleted and archived records not supported by Bulk Queries.");
+        throw new WorkbenchHandledException("Including deleted and archived records not supported by Bulk Queries.");
     }
 
     $asyncConnection = WorkbenchContext::get()->getAsyncBulkConnection();

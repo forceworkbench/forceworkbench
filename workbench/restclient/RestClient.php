@@ -49,7 +49,7 @@ class RestApiClient {
         preg_match("!(https?://.*)/services/Soap/u/(\d{1,2}\.\d)(/.*)?!", $partnerEndpoint, $matches);
         
         if ($matches[2] < 20.0) {
-            throw new Exception("REST API operations only supported in API 20.0 and higher.");
+            throw new WorkbenchHandledException("REST API operations only supported in API 20.0 and higher.");
         }
         
         return $matches[1];
