@@ -9,6 +9,7 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") {
     httpError("400 Bad Request", "Path info trailing script name in URI not allowed.");
 }
 
+ini_set("session.cookie_httponly", "1");
 session_start();
 
 if (WorkbenchContext::isEstablished()) {
