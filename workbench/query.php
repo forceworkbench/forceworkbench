@@ -626,7 +626,7 @@ QUERY_BUILDER_SCRIPT;
 
 function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false) {
     try {
-        if (!getConfig("allowParentRelationshipQueries") && preg_match("/SELECT.*?(\w+\.\w+).*FROM/", $soqlQuery, $matches)) {
+        if (!getConfig("allowParentRelationshipQueries") && preg_match("/SELECT.*?(\w+\.\w+).*FROM/i", $soqlQuery, $matches)) {
             throw new WorkbenchHandledException("Parent relationship queries are not allowed: " . $matches[1]);
         }
 
