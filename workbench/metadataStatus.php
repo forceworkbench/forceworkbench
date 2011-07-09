@@ -98,7 +98,7 @@ try {
                        "</a></p>";
         }
 
-        $tree = new ExpandableTree("metadataStatusResultsTree", processResults($results));
+        $tree = new ExpandableTree("metadataStatusResultsTree", ExpandableTree::processResults($results));
         $tree->setForceCollapse(true);
         $tree->setAdditionalMenus($zipLink);
         $tree->setContainsIds(true);

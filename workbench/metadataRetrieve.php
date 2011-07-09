@@ -72,7 +72,7 @@ else if (isset($_POST['stageForRetrieval'])) {
     ?>
 <p class='instructions'>Confirm the following retrieve request:</p>
     <?php
-        $tree = new ExpandableTree("retrieveRequestTree", processResults($_SESSION[$retrieveRequestId]));
+        $tree = new ExpandableTree("retrieveRequestTree", ExpandableTree::processResults($_SESSION[$retrieveRequestId]));
         $tree->setForceCollapse(true);
         $tree->printTree();
     ?>

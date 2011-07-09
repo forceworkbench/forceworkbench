@@ -25,7 +25,7 @@ if (WorkbenchContext::get()->getDefaultObject()) {
 
     $forceCollapse = WorkbenchContext::get()->hasDefaultObjectChanged();
 
-    $processedResults = processResults($describeSObjectResult, "Attributes", true);
+    $processedResults = ExpandableTree::processResults($describeSObjectResult, "Attributes", true);
 
     ?>
     <div class="legend">

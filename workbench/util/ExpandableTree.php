@@ -73,6 +73,57 @@ class ExpandableTree {
         }
     }
 
+    public static function processResults($raw, $groupTopLevelScalarsIn = null, $unCamelCaseKeys = false, $parentRawKey = null) {
+        $systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp");
+        $processed = array();
+
+        foreach (array(true, false) as $scalarProcessing) {
+            foreach ($raw as $rawKey => $rawValue) {
+                if (is_array($rawValue) || is_object($rawValue)) {
+                    if ($scalarProcessing) continue;
+
+                    $processedSubResults = self::processResults($rawValue, null, $unCamelCaseKeys, $rawKey);
+                    $subCount = " (" . count($processedSubResults) . ")";
+
+                    if (isset($rawValue->name) && $rawValue->name != "") {
+                        $nameKey = $rawValue->name;
+                        if (isset($parentRawKey) && $parentRawKey == "fields") {
+                            if (in_array($rawValue->name, $systemFields)) {
+                                $nameKey = "<span class='highlightSystemField'>$rawValue->name</span>";
+                            } else if ($rawValue->custom) {
+                                $nameKey = "<span class='highlightCustomField'>$rawValue->name</span>";
+                            }
+                        }
+                        $processed[$nameKey] = $processedSubResults;
+                    } else if (isset($rawValue->fileName) && $rawValue->fileName != "") {
+                        $processed[$rawValue->fileName] = $processedSubResults;
+                    } else if (isset($rawValue->fullName) && $rawValue->fullName != "") {
+                        $processed[$rawValue->fullName] = $processedSubResults;
+                    } else if (isset($rawValue->label) && $rawValue->label != "") {
+                        $processed[$rawValue->label] = $processedSubResults;
+                    } else if (isset($rawValue->column) && isset($rawValue->line)) {
+                        $processed[$rawValue->column . ":" . $rawValue->line] = $processedSubResults;
+                        krsort($processed);
+                    } else if (isset($rawValue->childSObject) && isset($rawValue->field)) {
+                        $processed[$rawValue->childSObject . "." . $rawValue->field] = $processedSubResults;
+                    } else if ($unCamelCaseKeys) {
+                        $processed[unCamelCase($rawKey) . $subCount] = $processedSubResults;
+                    } else {
+                        $processed[$rawKey . $subCount] = $processedSubResults;
+                    }
+                } else {
+                    if ($groupTopLevelScalarsIn != null) {
+                        $processed[$groupTopLevelScalarsIn][$rawKey] = $rawValue;
+                    } else {
+                        $processed[$rawKey] = $rawValue;
+                    }
+                }
+            }
+        }
+
+        return $processed;
+    }
+
 }
 
 ?>
