@@ -8,7 +8,7 @@ if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
 }
 
 if (isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
-    $retrieveRequestId = htmlentities($_POST["retrieveRequestId"]);
+    $retrieveRequestId = htmlspecialchars($_POST["retrieveRequestId"]);
 
     if (!isset($_SESSION[$retrieveRequestId])) {
         displayError("No retrieve request found. To re-retrieve, create a new retrieve request.", true, true);
@@ -58,7 +58,7 @@ else if (isset($_POST['stageForRetrieval'])) {
 
     if (isset($_POST['packageNames']) && $_POST['packageNames'] != "") {
         $encodedPackageNames = array();
-        foreach(explodeCommaSeparated(htmlentities($_POST['packageNames'])) as $p) {
+        foreach(explodeCommaSeparated(htmlspecialchars($_POST['packageNames'])) as $p) {
             $encodedPackageNames[] = urlencode($p);
         }
         $retrieveRequest->packageNames = $encodedPackageNames;

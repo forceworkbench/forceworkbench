@@ -45,7 +45,7 @@ if (isset($_POST['execute'])) {
         <td colspan="2"><textarea id='scriptInput' name='scriptInput'
             cols='100'
             rows='<?php print getConfig("textareaRows") ?>'
-            style='overflow: auto; font-family: monospace, courier;'><?php echo htmlspecialchars(isset($_SESSION['scriptInput'])?$_SESSION['scriptInput']:null,ENT_QUOTES,'UTF-8'); ?></textarea>
+            style='overflow: auto; font-family: monospace, courier;'><?php echo htmlspecialchars(isset($_SESSION['scriptInput'])?$_SESSION['scriptInput']:null,ENT_QUOTES); ?></textarea>
         <p />
         <input type='submit' name="execute" value='Execute' /> <input
             type='reset' value='Reset' /></td>
@@ -72,7 +72,7 @@ if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptIn
 
     if ($executeAnonymousResultWithDebugLog->executeAnonymousResult->success) {
         if (isset($executeAnonymousResultWithDebugLog->debugLog) && $executeAnonymousResultWithDebugLog->debugLog != "") {
-            print("<pre>" . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
+            print("<pre>" . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES)) . '</pre>');
         } else {
             displayInfo("Execution was successful, but returned no results. Confirm log category and level.");
         }
@@ -103,7 +103,7 @@ if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptIn
 
         displayError($error);
 
-        print('<pre style="color: red;">' . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
+        print('<pre style="color: red;">' . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES)) . '</pre>');
     }
 
     //    print('<pre>');

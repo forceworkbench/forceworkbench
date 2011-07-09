@@ -557,7 +557,7 @@ function prettyPrintXml($xml, $htmlOutput=FALSE)
 
     $xml = join("
 ", $newXmlLines);
-    return ($htmlOutput) ? '<pre>' . htmlentities($xml) . '</pre>' : $xml;
+    return ($htmlOutput) ? '<pre>' . htmlspecialchars($xml) . '</pre>' : $xml;
 }
 
 
@@ -642,19 +642,19 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<div id='partner_soap_container'  class='debugContainer'>";
 
                 print "<strong>LAST REQUEST HEADER</strong>\n";
-                print htmlspecialchars(WorkbenchContext::get()->getPartnerConnection()->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getPartnerConnection()->getLastRequestHeaders(),ENT_QUOTES);
                 print "<hr/>";
 
                 print "<strong>LAST REQUEST</strong>\n";
-                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getPartnerConnection()->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getPartnerConnection()->getLastRequest()),ENT_QUOTES);
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE HEADER</strong>\n";
-                print htmlspecialchars(WorkbenchContext::get()->getPartnerConnection()->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getPartnerConnection()->getLastResponseHeaders(),ENT_QUOTES);
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE</strong>\n";
-                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getPartnerConnection()->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getPartnerConnection()->getLastResponse()),ENT_QUOTES);
                 print "<hr/>";
 
                 print "</div>";
@@ -671,19 +671,19 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<div id='metadata_soap_container' class='debugContainer'>";
 
                 print "<strong>LAST REQUEST HEADER</strong>\n";
-                print htmlspecialchars(WorkbenchContext::get()->getMetadataConnection()->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getMetadataConnection()->getLastRequestHeaders(),ENT_QUOTES);
                 print "<hr/>";
 
                 print "<strong>LAST REQUEST</strong>\n";
-                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getMetadataConnection()->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getMetadataConnection()->getLastRequest()),ENT_QUOTES);
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE HEADER</strong>\n";
-                print htmlspecialchars(WorkbenchContext::get()->getMetadataConnection()->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getMetadataConnection()->getLastResponseHeaders(),ENT_QUOTES);
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE</strong>\n";
-                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getMetadataConnection()->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getMetadataConnection()->getLastResponse()),ENT_QUOTES);
                 print "<hr/>";
 
                 print "</div>";
@@ -700,19 +700,19 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 print "<div id='apex_soap_container' class='debugContainer'>";
 
                 print "<strong>LAST REQUEST HEADER</strong>\n";
-                print htmlspecialchars(WorkbenchContext::get()->getApexConnection()->getLastRequestHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getApexConnection()->getLastRequestHeaders(),ENT_QUOTES);
                 print "<hr/>";
 
                 print "<strong>LAST REQUEST</strong>\n";
-                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getApexConnection()->getLastRequest()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getApexConnection()->getLastRequest()),ENT_QUOTES);
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE HEADER</strong>\n";
-                print htmlspecialchars(WorkbenchContext::get()->getApexConnection()->getLastResponseHeaders(),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(WorkbenchContext::get()->getApexConnection()->getLastResponseHeaders(),ENT_QUOTES);
                 print "<hr/>";
 
                 print "<strong>LAST RESPONSE</strong>\n";
-                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getApexConnection()->getLastResponse()),ENT_QUOTES,'UTF-8');
+                print htmlspecialchars(prettyPrintXml(WorkbenchContext::get()->getApexConnection()->getLastResponse()),ENT_QUOTES);
                 print "<hr/>";
 
                 print "</div>";

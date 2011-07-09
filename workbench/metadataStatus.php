@@ -20,7 +20,7 @@ if (!isset($_GET['asyncProcessId'])) {
     exit;
 }
 
-$asyncProcessId = htmlentities($_GET['asyncProcessId']);
+$asyncProcessId = htmlspecialchars($_GET['asyncProcessId']);
 
 if (isset($_GET['downloadZip'])) {
     if (!isset($_SESSION['retrievedZips'][$asyncProcessId])) {
@@ -76,7 +76,7 @@ try {
         print "<p>&nbsp;</p><h3>Results</h3>";
 
         //if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
-        $operation = isset($_REQUEST['op']) ? htmlentities($_REQUEST['op']) : (isset($asyncResults->checkOnly) ? "D" : "R");
+        $operation = isset($_REQUEST['op']) ? htmlspecialchars($_REQUEST['op']) : (isset($asyncResults->checkOnly) ? "D" : "R");
 
         $results = $operation == "D" ? WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, $debugInfo) : WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
 
@@ -102,7 +102,7 @@ try {
 
         if (isset($debugInfo["DebuggingInfo"]->debugLog)) {
             print "<p>&nbsp;</p><h3>Debug Logs</h3>";
-            print("<pre>" . addLinksToUiForIds(htmlspecialchars($debugInfo["DebuggingInfo"]->debugLog,ENT_QUOTES,'UTF-8')) . '</pre>');
+            print("<pre>" . addLinksToUiForIds(htmlspecialchars($debugInfo["DebuggingInfo"]->debugLog,ENT_QUOTES)) . '</pre>');
         }
     }
 } catch (Exception $e) {

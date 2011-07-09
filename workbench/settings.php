@@ -98,14 +98,14 @@ print "<tr> <td colspan='3' align='left'><input type='submit' name='submitConfig
 
 foreach ($config as $configKey => $configValue) {
     if (isset($configValue['isHeader']) && $configValue['display']) {
-        print "\t<tr><th align='left' colspan='3'><br/>" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</th></tr>\n";
+        print "\t<tr><th align='left' colspan='3'><br/>" . htmlspecialchars($configValue['label'],ENT_QUOTES) . "</th></tr>\n";
     } else if (isset($configValue['overrideable']) && $configValue['overrideable']==true) {
-        $tip = htmlspecialchars(addslashes($configValue['description']),ENT_NOQUOTES,'UTF-8');
+        $tip = htmlspecialchars(addslashes($configValue['description']),ENT_NOQUOTES);
         $tip .= isset($configValue['minApiVersion']) ? "<br/><br/>Minimum API Version: " . sprintf("%01.1f", $configValue['minApiVersion']) : "";
         print "\t<tr onmouseover=\"Tip('$tip')\">\n";
         print "\t\t<td align='right'><label for='$configKey'" . 
               (isLoggedIn() && isset($configValue['minApiVersion']) && !WorkbenchContext::get()->isApiVersionAtLeast($configValue['minApiVersion']) ? " style='color:orange;'" : "") .
-              ">" . htmlspecialchars($configValue['label'],ENT_QUOTES,'UTF-8') . "</label></td><td>&nbsp;&nbsp;</td>\n";
+              ">" . htmlspecialchars($configValue['label'],ENT_QUOTES) . "</label></td><td>&nbsp;&nbsp;</td>\n";
         print "\t\t<td align='left'>";
         if ($configValue['dataType'] == "boolean") {
             print "<input name='$configKey' id='$configKey' type='checkbox' ";

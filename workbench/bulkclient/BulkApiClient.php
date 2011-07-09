@@ -366,14 +366,14 @@ class BulkApiClient {
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         }
 
-        $this->log("REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlentities($data));
+        $this->log("REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlspecialchars($data));
 
         $chResponse = curl_exec($ch);
 
-        $this->log("RESPONSE \n" . (isset($toFile) ? ("Sent to file: " . $toFile) : htmlentities($chResponse)));
+        $this->log("RESPONSE \n" . (isset($toFile) ? ("Sent to file: " . $toFile) : htmlspecialchars($chResponse)));
 
         if (curl_error($ch) != null) {
-            $this->log("ERROR \n" . htmlentities(curl_error($ch)));
+            $this->log("ERROR \n" . htmlspecialchars(curl_error($ch)));
             throw new Exception(curl_error($ch));
         }
 

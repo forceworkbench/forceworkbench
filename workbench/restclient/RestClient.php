@@ -112,13 +112,13 @@ class RestApiClient {
             curl_setopt($ch, CURLOPT_ENCODING, "gzip");   //TODO: add  outbound compression support
         }
 
-        $this->log("REQUEST \n METHOD: $method \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlentities($data));
+        $this->log("REQUEST \n METHOD: $method \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlspecialchars($data));
 
         $chResponse = curl_exec($ch);
-        $this->log("RESPONSE \n" . htmlentities($chResponse));
+        $this->log("RESPONSE \n" . htmlspecialchars($chResponse));
 
         if (curl_error($ch) != null) {
-            $this->log("ERROR \n" . htmlentities(curl_error($ch)));
+            $this->log("ERROR \n" . htmlspecialchars(curl_error($ch)));
             throw new Exception(curl_error($ch));
         }
 

@@ -45,7 +45,7 @@ if (isset($_POST['clearAllSr']) && $_POST['clearAllSr'] == 'Clear All') {
 
 //save as named search
 if (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST['saveSr']) && strlen($_REQUEST['saveSr']) > 0) {
-    $_SESSION['savedSearchRequests'][htmlspecialchars($_REQUEST['saveSr'],ENT_QUOTES,'UTF-8')] = $lastSr;
+    $_SESSION['savedSearchRequests'][htmlspecialchars($_REQUEST['saveSr'],ENT_QUOTES)] = $lastSr;
     if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
         setcookie($persistedSavedSearchRequestsKey,serialize($_SESSION['savedSearchRequests']),time()+60*60*24*7);
     }
@@ -238,7 +238,7 @@ SEARCH_BUILDER_SCRIPT;
     print "<p class='instructions'>Enter a search string and optionally select the objects and fields to return to build a SOSL search below:</p>\n";
     print "<table id='search_form_table' border='0' width='1'>\n<tr>\n";
 
-    print "<td NOWRAP>Search for </td><td NOWRAP colspan='2'><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . htmlspecialchars($searchRequest->getSearchString(),ENT_QUOTES,'UTF-8') . "\" size='37' onKeyUp='buildSearch();' /> in ";
+    print "<td NOWRAP>Search for </td><td NOWRAP colspan='2'><input type='text' id='SB_searchString' name='SB_searchString' value=\"" . htmlspecialchars($searchRequest->getSearchString(),ENT_QUOTES) . "\" size='37' onKeyUp='buildSearch();' /> in ";
 
     $fieldTypeSelectOptions = array(
         'ALL FIELDS' => 'All Fields',
@@ -254,10 +254,10 @@ SEARCH_BUILDER_SCRIPT;
         }
         print "</select>";
 
-        print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . htmlspecialchars($searchRequest->getLimit(),ENT_QUOTES,'UTF-8') . "' size='5' onKeyUp='buildSearch();' /> maximum records</td></tr>\n";
+        print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . htmlspecialchars($searchRequest->getLimit(),ENT_QUOTES) . "' size='5' onKeyUp='buildSearch();' /> maximum records</td></tr>\n";
 
         print "<tr id='sosl_search_textarea_row'><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
-        "<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='100' rows='" . getConfig("textareaRows") . "' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($searchRequest->getSoslSearch(),ENT_QUOTES,'UTF-8') . "</textarea>" .
+        "<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='100' rows='" . getConfig("textareaRows") . "' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($searchRequest->getSoslSearch(),ENT_QUOTES) . "</textarea>" .
       "</td></tr>";
 
         print "<tr><td><input type='submit' name='searchSubmit' value='Search' />";
@@ -276,7 +276,7 @@ SEARCH_BUILDER_SCRIPT;
         }
         print "</select>";
 
-        print "&nbsp;&nbsp;Save as: <input type='text' id='saveSr' name='saveSr' value='" . htmlspecialchars($searchRequest->getName(),ENT_QUOTES,'UTF-8') . "' style='width: 10em;'/>\n";
+        print "&nbsp;&nbsp;Save as: <input type='text' id='saveSr' name='saveSr' value='" . htmlspecialchars($searchRequest->getName(),ENT_QUOTES) . "' style='width: 10em;'/>\n";
 
         print "<input type='submit' name='doSaveSr' value='Save' onclick='return doesSearchHaveName();' />\n";
         print "<input type='submit' name='clearAllSr' value='Clear All'/>\n";
@@ -357,7 +357,7 @@ function displaySearchResult($records, $searchTimeElapsed) {
                 if ($record0->fields) {
                     foreach ($record0->fields->children() as $field) {
                         print "<th>";
-                        print htmlspecialchars($field->getName(),ENT_QUOTES,'UTF-8');
+                        print htmlspecialchars($field->getName(),ENT_QUOTES);
                         print "</th>";
                     }
                 } else {
@@ -379,7 +379,7 @@ function displaySearchResult($records, $searchTimeElapsed) {
                         foreach ($record->fields as $datum) {
                             print "<td>";
                             if ($datum) {
-                                print localizeDateTimes(addLinksToUiForIds(htmlspecialchars($datum,ENT_QUOTES,'UTF-8')));
+                                print localizeDateTimes(addLinksToUiForIds(htmlspecialchars($datum,ENT_QUOTES)));
                             } else {
                                 print "&nbsp;";
                             }

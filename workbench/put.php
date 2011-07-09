@@ -245,7 +245,7 @@ function displayCsvArray($csvArray) {
     print "<tr><th>&nbsp;</th>";
     for ($col=0; $col < count($csvArray[0]); $col++) {
         print "<th>";
-        print htmlspecialchars($csvArray[0][$col],ENT_QUOTES,'UTF-8');
+        print htmlspecialchars($csvArray[0][$col],ENT_QUOTES);
         print "</th>";
     }
     print "</tr>\n";
@@ -254,7 +254,7 @@ function displayCsvArray($csvArray) {
         for ($col=0; $col < count($csvArray[0]); $col++) {
             print "<td>";
             if ($csvArray[$row][$col]) {
-                print addLinksToUiForIds(htmlspecialchars($csvArray[$row][$col],ENT_QUOTES,'UTF-8'));
+                print addLinksToUiForIds(htmlspecialchars($csvArray[$row][$col],ENT_QUOTES));
             } else {
                 print "&nbsp;";
             }
@@ -685,13 +685,13 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
                         $refSObject->type = $fieldMapArray['relatedObjectName'];
                         $col = array_search($fieldMapArray['csvField'],$csvHeader);
                         if ($csvArrayBatch[$row][$col] != "") {
-                            $refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
+                            $refSObject->fields = array($fieldMapArray['relatedFieldName'] => htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES));
                         }
                         $field = array($fieldMapArray['relationshipName'] => $refSObject);
                     } else if (isset($salesforceField) && isset($fieldMapArray['csvField'])) {
                         $col = array_search($fieldMapArray['csvField'],$csvHeader);
                         if ($csvArrayBatch[$row][$col] != "") {
-                            $field = array($salesforceField => htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8'));
+                            $field = array($salesforceField => htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES));
                         } else if (getConfig("fieldsToNull")) {
                             $sObject->fieldsToNull[] = $salesforceField;
                         }
@@ -807,7 +807,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
                             if ($csvArrayBatch[$row][$col] == "" && getConfig("fieldsToNull")) {
                                 $asyncCsvRow[] = "#N/A";
                             } else {
-                                $asyncCsvRow[] = htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES,'UTF-8');
+                                $asyncCsvRow[] = htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES);
                             }
                         }
                     }

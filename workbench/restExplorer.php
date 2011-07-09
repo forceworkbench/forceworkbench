@@ -60,7 +60,7 @@ if ($c->errors != null) {
     </p>
 
     <input id="urlInput" 
-           name="url" value="<?php echo htmlentities($c->url); ?>"
+           name="url" value="<?php echo htmlspecialchars($c->url); ?>"
     	   style="width: 35em; height: 1.2em; font-size: 18px; font-weight: bold;"
     	   onKeyPress="if (checkEnter(event)) {document.getElementById('execBtn').click(); return false;}" />
     &nbsp; 
@@ -70,7 +70,7 @@ if ($c->errors != null) {
         <p>
             <strong>Request Headers</strong>
         </p>
-        <textarea id="requestHeaders" name="requestHeaders" style="width: 100%; height: 4em; font-family: courier, monotype;"><?php echo htmlentities($c->requestHeaders); ?></textarea>
+        <textarea id="requestHeaders" name="requestHeaders" style="width: 100%; height: 4em; font-family: courier, monotype;"><?php echo htmlspecialchars($c->requestHeaders); ?></textarea>
         <a id="requestHeadersDefaulter" class="miniLink pseudoLink" style="float: right;"
            onClick="document.getElementById('requestHeaders').value='<?php echo str_replace("\n", "\\n", $c->getDefaultRequestHeaders()); ?>';">Restore Default Headers</a>
         <br/>
@@ -80,7 +80,7 @@ if ($c->errors != null) {
         <p>
             <strong>Request Body</strong>
         </p>
-        <textarea name="requestBody" style="width: 100%; height: 10em; font-family: courier, monotype;"><?php echo htmlentities($c->requestBody); ?></textarea>
+        <textarea name="requestBody" style="width: 100%; height: 10em; font-family: courier, monotype;"><?php echo htmlspecialchars($c->requestBody); ?></textarea>
         <br/>
     </div>
 </form>
@@ -110,7 +110,7 @@ if (isset($c->autoExec) && !$c->autoExec) {
 
 <div id="codeViewPortContainer" style="display: <?php echo trim($c->instResponse) != "" ? "none; right:10px;" : "block"  ?>;">
     <strong>Raw Response</strong> 
-    <p id="codeViewPort"><?php echo htmlentities($c->rawResponse->header); ?><br /><?php echo htmlentities($c->rawResponse->body); ?></p>
+    <p id="codeViewPort"><?php echo htmlspecialchars($c->rawResponse->header); ?><br /><?php echo htmlspecialchars($c->rawResponse->body); ?></p>
 </div>
 
 

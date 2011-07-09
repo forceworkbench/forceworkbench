@@ -8,7 +8,7 @@ if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
 }
 
 if (isset($_POST['deploymentConfirmed']) && isset($_POST["deployFileTmpName"])) {
-    $deployFileTmpName = htmlentities($_POST["deployFileTmpName"]);
+    $deployFileTmpName = htmlspecialchars($_POST["deployFileTmpName"]);
 
     if (!isset($_SESSION[$deployFileTmpName])) {
         displayError("No zip file currently staged for deployment. To re-deploy, create a new deploy request.", true, true);
@@ -111,7 +111,7 @@ function deserializeDeployOptions($request) {
         if (is_bool($optionValue)) {
             $deployOptions->$optionName = isset($request[$optionName]);
         } else if (is_array($optionValue)) {
-            $deployOptions->$optionName = (isset($request[$optionName]) && $request[$optionName] != "") ? explodeCommaSeparated(htmlentities($request[$optionName])) : null;
+            $deployOptions->$optionName = (isset($request[$optionName]) && $request[$optionName] != "") ? explodeCommaSeparated(htmlspecialchars($request[$optionName])) : null;
         }
     }
 

@@ -52,7 +52,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
 
     //save as named query
     if (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' && isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0) {
-        $_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES,'UTF-8')] = $lastQr;
+        $_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES)] = $lastQr;
         if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
             setcookie($persistedSavedQueryRequestsKey,serialize($_SESSION['savedQueryRequests']),time()+60*60*24*7);
         }
@@ -569,7 +569,7 @@ QUERY_BUILDER_SCRIPT;
     }
     print "</select></td>\n";
 
-    print "<td><input type='text' id='QB_limit_txt' size='10' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() != null ? $queryRequest->getLimit() : null,ENT_QUOTES,'UTF-8') . "' onkeyup='buildQuery();' /></td>\n";
+    print "<td><input type='text' id='QB_limit_txt' size='10' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() != null ? $queryRequest->getLimit() : null,ENT_QUOTES) . "' onkeyup='buildQuery();' /></td>\n";
 
     print "</tr>\n";
 
@@ -582,13 +582,13 @@ QUERY_BUILDER_SCRIPT;
         $filterRowNum++ . ", " .
         "\"" . $filter->getField()     . "\", " . 
         "\"" . $filter->getCompOper()  . "\", " . 
-        "\"" . htmlentities($filter->getValue(), ENT_QUOTES)     . "\"" .
+        "\"" . htmlspecialchars($filter->getValue(), ENT_QUOTES)     . "\"" .
         ");</script>";
     }
 
 
     print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-        "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . getConfig("textareaRows") . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES,'UTF-8') . "</textarea>\n" .
+        "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . getConfig("textareaRows") . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES) . "</textarea>\n" .
       "</td></tr>\n";
 
 
@@ -610,7 +610,7 @@ QUERY_BUILDER_SCRIPT;
     print "</select>";
 
 
-    print "&nbsp;&nbsp;Save as: <input type='text' id='saveQr' name='saveQr' value='" . htmlspecialchars($queryRequest->getName(),ENT_QUOTES,'UTF-8') . "' style='width: 10em;'/>\n";
+    print "&nbsp;&nbsp;Save as: <input type='text' id='saveQr' name='saveQr' value='" . htmlspecialchars($queryRequest->getName(),ENT_QUOTES) . "' style='width: 10em;'/>\n";
 
     print "<input type='submit' name='doSaveQr' value='Save' onclick='return doesQueryHaveName();' />\n";
     print "<input type='submit' name='clearAllQr' value='Clear All'/>\n";
@@ -701,13 +701,13 @@ function getQueryResultHeaders($sobject, $tail="") {
 
     if (isset($sobject->fields)) {
         foreach ($sobject->fields->children() as $field) {
-            $headerBufferArray[] = $tail . htmlspecialchars($field->getName(),ENT_QUOTES,'UTF-8');
+            $headerBufferArray[] = $tail . htmlspecialchars($field->getName(),ENT_QUOTES);
         }
     }
 
     if (isset($sobject->sobjects)) {
         foreach ($sobject->sobjects as $sobjects) {
-            $recurse = getQueryResultHeaders($sobjects, $tail . htmlspecialchars($sobjects->type,ENT_QUOTES,'UTF-8') . ".");
+            $recurse = getQueryResultHeaders($sobjects, $tail . htmlspecialchars($sobjects->type,ENT_QUOTES) . ".");
             $headerBufferArray = array_merge($headerBufferArray, $recurse);
         }
     }
@@ -734,7 +734,7 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true) {
 
     if (isset($sobject->fields)) {
         foreach ($sobject->fields as $datum) {
-            $rowBuffer[] = ($escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES,'UTF-8') : $datum);
+            $rowBuffer[] = ($escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES) : $datum);
         }
     }
 
@@ -767,7 +767,7 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
                 continue;
             }
 
-            $data .= "<em>$fieldName:</em>  " . htmlentities($fieldValue,ENT_QUOTES,'UTF-8') . "<br/>";
+            $data .= "<em>$fieldName:</em>  " . htmlspecialchars($fieldValue,ENT_QUOTES) . "<br/>";
         }
 
         foreach ($record->fields as $rowName => $rowValue) {
