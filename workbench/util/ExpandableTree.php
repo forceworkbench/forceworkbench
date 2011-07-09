@@ -59,11 +59,12 @@ class ExpandableTree {
                 $this->printNode($nodeValue);
                 print "</ul></li>\n";
             } else {
-                $nodeKey = is_numeric($nodeKey) ? "" : $nodeKey . ": ";
+                $nodeKey = is_numeric($nodeKey) ? "" : htmlspecialchars($nodeKey) . ": ";
 
                 if (is_bool($nodeValue)) {
                     $nodeValue = $nodeValue == 1 ? "<span class='trueColor'>true</span>" : "<span class='falseColor'>false</span>";
                 } else {
+                    $nodeValue = htmlspecialchars($nodeValue);
                     $nodeValue = $this->containsDates ? localizeDateTimes($nodeValue) : $nodeValue;
                     $nodeValue = $this->containsIds ? addLinksToUiForIds($nodeValue) : $nodeValue;
                 }

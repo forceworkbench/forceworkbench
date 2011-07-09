@@ -42,8 +42,6 @@ if (WorkbenchContext::get()->getDefaultObject()) {
     $tree = new ExpandableTree("describeTree", $processedResults);
     $tree->setForceCollapse($forceCollapse);
     $tree->printTree();
-
-//    printTree("describeTree", $processedResults, $forceCollapse, null, false, false);
 }
 
 require_once 'footer.php';

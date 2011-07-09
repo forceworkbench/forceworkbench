@@ -86,7 +86,10 @@ if (count($errors) > 0) {
     print "</p>";
 }
 
-printTree("sessionInfoTree", $sessionInfo, false, null, true, true);
+$tree = new ExpandableTree("sessionInfoTree", $sessionInfo);
+$tree->setContainsDates(true);
+$tree->setContainsIds(true);
+$tree->printTree();
 
 print "</div>";
 require_once 'footer.php';
