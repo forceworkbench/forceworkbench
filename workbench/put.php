@@ -524,7 +524,9 @@ function confirmFieldMappings($action, $fieldMap, $csvArray, $extId) {
         exit;
     } 
 
-    $recommendDoAsync = extension_loaded('curl') && count($csvArray) >= getConfig("asyncRecommendationThreshold");
+    $recommendDoAsync = extension_loaded('curl')
+                        && count($csvArray) >= getConfig("asyncRecommendationThreshold")
+                        && !in_array($action, array('Confirm Undelete', 'Confirm Purge'));
 
     if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
         if (!isset($fieldMap['Id'])) {
