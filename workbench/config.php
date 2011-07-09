@@ -155,7 +155,7 @@ $config["header_General"] = array(
     $config["enableLogging"] = array(
         "label" => "Enable Logging",
         "description" => "Enables logging to syslog",
-        "default" => true,
+        "default" => false,
         "overrideable" => false,
         "dataType" => "boolean"
     );
@@ -163,7 +163,7 @@ $config["header_General"] = array(
     $config["syslogFacility"] = array(
         "label" => "Syslog Facility",
         "description" => "Syslog facility to which to log",
-        "default" => LOG_LOCAL0,
+        "default" => LOG_USER,
         "overrideable" => false,
         "dataType" => "int"
     );
