@@ -767,13 +767,13 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
                 continue;
             }
 
-            $data .= "<em>$fieldName:</em>  " . htmlspecialchars($fieldValue,ENT_QUOTES) . "<br/>";
+            $data .= "<em>" . htmlspecialchars($fieldName) . ":</em>  " . htmlspecialchars($fieldValue,ENT_QUOTES) . "<br/>";
         }
 
         foreach ($record->fields as $rowName => $rowValue) {
             if ($rowName != $matrixRows) continue;
             foreach ($record->fields as $colName => $colValue) {
-                if($colName != $matrixCols) continue;
+                if ($colName != $matrixCols) continue;
                 $allColNames["$colValue"] = $colValue;
                 $allRowNames["$rowValue"] = $rowValue;
                 $matrix["$rowValue"]["$colValue"][] = $data;
@@ -793,17 +793,16 @@ function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
         if (!$hw) {
             $table .= "<tr><td></td>";
             foreach ($allColNames as $colName) {
-                $table .= "<th>$colName</th>";
+                $table .= "<th>" . htmlspecialchars($colName) . "</th>";
             }
             $table .= "</tr>";
             $hw = true;
         }
 
         $table .= "<tr>";
-        $table .= "<th>$rowName</th>";
+        $table .= "<th>" . htmlspecialchars($rowName) . "</th>";
 
         foreach ($allColNames as $colName) {
-
             $table .= "<td>";
 
             if (isset($matrix["$rowName"]["$colName"])) {
