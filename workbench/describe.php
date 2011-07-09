@@ -39,7 +39,11 @@ if (WorkbenchContext::get()->getDefaultObject()) {
     </div>
     <?php
 
-    printTree("describeTree", $processedResults, $forceCollapse, null, false, false);
+    $tree = new ExpandableTree("describeTree", $processedResults);
+    $tree->setForceCollapse($forceCollapse);
+    $tree->printTree();
+
+//    printTree("describeTree", $processedResults, $forceCollapse, null, false, false);
 }
 
 require_once 'footer.php';

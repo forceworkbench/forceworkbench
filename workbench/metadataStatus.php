@@ -98,7 +98,12 @@ try {
                        "</a></p>";
         }
 
-        printTree("metadataStatusResultsTree", processResults($results), true, $zipLink, true, true);
+        $tree = new ExpandableTree("metadataStatusResultsTree", processResults($results));
+        $tree->setForceCollapse(true);
+        $tree->setAdditionalMenus($zipLink);
+        $tree->setContainsIds(true);
+        $tree->setContainsDates(true);
+        $tree->printTree();
 
         if (isset($debugInfo["DebuggingInfo"]->debugLog)) {
             print "<p>&nbsp;</p><h3>Debug Logs</h3>";

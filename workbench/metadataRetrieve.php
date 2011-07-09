@@ -71,7 +71,11 @@ else if (isset($_POST['stageForRetrieval'])) {
     displayInfo("Successfully staged retrieve request.");
     ?>
 <p class='instructions'>Confirm the following retrieve request:</p>
-    <?php printTree("retrieveRequestTree", processResults($_SESSION[$retrieveRequestId]), true); ?>
+    <?php
+        $tree = new ExpandableTree("retrieveRequestTree", processResults($_SESSION[$retrieveRequestId]));
+        $tree->setForceCollapse(true);
+        $tree->printTree();
+    ?>
 <form id='retrieveForm' name='retrieveForm' method='POST'
     action='<?php print $_SERVER['PHP_SELF']; ?>'><input type='hidden'
     name='retrieveRequestId' value='<?php print $retrieveRequestId; ?>' />

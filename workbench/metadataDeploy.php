@@ -64,7 +64,11 @@ else if (isset($_POST['stageForDeployment'])) {
     <?php print getCsrfFormTag(); ?>
     <input type='hidden' name='deployFileTmpName' value='<?php print $deployFileTmpName; ?>' />
 <p />
-    <?php printTree("deployOptionsTree", $_SESSION[$deployFileTmpName . "_OPTIONS"], true, null, false, false); ?>
+    <?php
+        $tree = new ExpandableTree("deployOptionsTree", $_SESSION[$deployFileTmpName . "_OPTIONS"]);
+        $tree->setForceCollapse(true);
+        $tree->printTree();
+    ?>
 <p />
     <?php
     if (!isset($_POST['checkOnly'])) {

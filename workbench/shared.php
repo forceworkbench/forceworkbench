@@ -1,4 +1,5 @@
 <?php
+require_once "util/ExpandableTree.php";
 
 function workbenchLog($logLevel, $type, $message = "") {
     if (!getConfig("enableLogging")) {
@@ -409,50 +410,6 @@ function printObjectSelection($defaultObject=false, $nameId='default_object', $w
         print ">$type</option> \n";
     }
     print "</select>\n";
-}
-
-
-function printTree($tableId, $nodes, $forceCollapse = false, $additionalMenus = null, $containsIds = false, $containsDates = false) {
-    print "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'expand'); return false;\">Expand All</a> | " .
-          "<a class=\"pseudoLink\" onclick=\"javascript:ddtreemenu.flatten('$tableId', 'collapse'); return false;\">Collapse All</a>\n";
-
-    if (isset($additionalMenus)) {
-        print $additionalMenus;
-    }
-
-    print "<ul id='$tableId' class='treeview'>";
-
-    printNode($nodes, $containsIds, $containsDates);
-    
-    print "</ul>\n";
-    
-    addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/simpletreemenu.js'></script>");
-                        
-    addFooterScript("<script type='text/javascript'>" . 
-                       "ddtreemenu.createTree('$tableId', true);" . 
-                        ($forceCollapse ? "ddtreemenu.flatten('$tableId', 'collapse');" : "") .
-                    "</script>");
-}
-
-function printNode($node, $containsIds, $containsDates) {
-    foreach ($node as $nodeKey => $nodeValue) {
-        if (is_array($nodeValue) || is_object($nodeValue)) {
-            print "<li>$nodeKey<ul style='display:none;'>\n";
-            printNode($nodeValue, $containsIds, $containsDates);
-            print "</ul></li>\n";
-        } else {
-            $nodeKey = is_numeric($nodeKey) ? "" : $nodeKey . ": ";
-
-            if (is_bool($nodeValue)) {
-                $nodeValue = $nodeValue == 1 ? "<span class='trueColor'>true</span>" : "<span class='falseColor'>false</span>";
-            } else {
-                $nodeValue = $containsDates ? localizeDateTimes($nodeValue) : $nodeValue;
-                $nodeValue = $containsIds ? addLinksToUiForIds($nodeValue) : $nodeValue;
-            }
-            
-            print "<li>$nodeKey<span style='font-weight:bold;'>$nodeValue</span></li>\n";
-        }
-    }
 }
 
 function natcaseksort($array) {

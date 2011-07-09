@@ -80,7 +80,11 @@ if (isset($typeString)) {
     $metadataComponents = listMetadata($type);
     $componentsLabel = "Components (" . count($metadataComponents) . ")";
 
-    printTree("listMetadataTree", array("Type Description"=>$type, $componentsLabel=>$metadataComponents), $typeStringChanged, null, true, true);
+    $tree = new ExpandableTree("listMetadataTree",  array("Type Description"=>$type, $componentsLabel=>$metadataComponents));
+    $tree->setForceCollapse($typeStringChanged);
+    $tree->setContainsIds(true);
+    $tree->setContainsDates(true);
+    $tree->printTree();
 }
 
 require_once 'footer.php';
