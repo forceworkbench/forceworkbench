@@ -52,14 +52,30 @@ class ExpandableTree {
                         "</script>");
     }
 
-    private function printNode($node) {
+    private function printNode($node, $parentKey = null) {
+        $systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp");
+
         foreach ($node as $nodeKey => $nodeValue) {
+            $nodeKey = htmlspecialchars($nodeKey);
+
+            // TODO: replace special case with client defined strategies
+            if ($this->name == "describeTree") {
+                if (isset($parentKey) && strpos($parentKey, "Fields") > -1) {
+                    if (in_array($nodeKey, $systemFields)) {
+                        $nodeKey = "<span class='highlightSystemField'>$nodeKey</span>";
+                    }
+                    else if (substr_compare($nodeKey, "__c", -3) == 0) {
+                        $nodeKey = "<span class='highlightCustomField'>$nodeKey</span>";
+                    }
+                }
+            }
+
             if (is_array($nodeValue) || is_object($nodeValue)) {
                 print "<li>$nodeKey<ul style='display:none;'>\n";
-                $this->printNode($nodeValue);
+                $this->printNode($nodeValue, $nodeKey);
                 print "</ul></li>\n";
             } else {
-                $nodeKey = is_numeric($nodeKey) ? "" : htmlspecialchars($nodeKey) . ": ";
+                $nodeKey = is_numeric($nodeKey) ? "" : $nodeKey . ": ";
 
                 if (is_bool($nodeValue)) {
                     $nodeValue = $nodeValue == 1 ? "<span class='trueColor'>true</span>" : "<span class='falseColor'>false</span>";
@@ -74,8 +90,7 @@ class ExpandableTree {
         }
     }
 
-    public static function processResults($raw, $groupTopLevelScalarsIn = null, $unCamelCaseKeys = false, $parentRawKey = null) {
-        $systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp");
+    public static function processResults($raw, $groupTopLevelScalarsIn = null, $unCamelCaseKeys = false) {
         $processed = array();
 
         foreach (array(true, false) as $scalarProcessing) {
@@ -83,19 +98,11 @@ class ExpandableTree {
                 if (is_array($rawValue) || is_object($rawValue)) {
                     if ($scalarProcessing) continue;
 
-                    $processedSubResults = self::processResults($rawValue, null, $unCamelCaseKeys, $rawKey);
+                    $processedSubResults = self::processResults($rawValue, null, $unCamelCaseKeys);
                     $subCount = " (" . count($processedSubResults) . ")";
 
                     if (isset($rawValue->name) && $rawValue->name != "") {
-                        $nameKey = $rawValue->name;
-                        if (isset($parentRawKey) && $parentRawKey == "fields") {
-                            if (in_array($rawValue->name, $systemFields)) {
-                                $nameKey = "<span class='highlightSystemField'>$rawValue->name</span>";
-                            } else if ($rawValue->custom) {
-                                $nameKey = "<span class='highlightCustomField'>$rawValue->name</span>";
-                            }
-                        }
-                        $processed[$nameKey] = $processedSubResults;
+                        $processed[$rawValue->name] = $processedSubResults;
                     } else if (isset($rawValue->fileName) && $rawValue->fileName != "") {
                         $processed[$rawValue->fileName] = $processedSubResults;
                     } else if (isset($rawValue->fullName) && $rawValue->fullName != "") {
