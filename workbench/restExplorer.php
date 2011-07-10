@@ -29,7 +29,7 @@ if ($c->errors != null) {
 }
 ?>
 
-<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
+<form action="" method="POST">
     <?php print getCsrfFormTag(); ?>
     <p><em>Choose an HTTP method to perform on the REST API service URI
     below:</em>

@@ -7,9 +7,9 @@ print "<p/>";
 if (!isset($_GET['jobId']) || $_GET['jobId'] == "") {
     displayInfo("Parameter 'jobId' must be specified.",false,false);
     print     "<p/>" .
-            "<form action='$_SERVER[PHP_SELF]' method='GET'>" . 
+            "<form action='' method='GET'>" .
             "Job Id: <input type='text' name='jobId'/> &nbsp;" .  
-            "<input type='submit' value='Get Status'".
+            "<input type='submit' value='Get Status'/>".
             "</form>";
     include_once 'footer.php';
     exit;

@@ -50,7 +50,7 @@ require_once "header.php";
            value="Show Polling"/>
 
     <div id="pushTopicDmlContainer">
-        <form id="pushTopicDmlForm" method="DOJO_AJAX" action="<?php echo $_SERVER["PHP_SELF"] ?>">
+        <form id="pushTopicDmlForm" method="" action="">
             <input id="pushTopicDmlForm_Id" name="pushTopicDmlForm_Id" type="hidden">
             <div>
                 <label for="pushTopicDmlForm_Name">Name:</label>

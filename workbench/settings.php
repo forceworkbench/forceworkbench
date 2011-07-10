@@ -60,7 +60,7 @@ if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['rest
         WorkbenchContext::get()->clearCache();
     }
     
-    header("Location: $_SERVER[PHP_SELF]?saved=" . (isset($_POST['restoreDefaults']) ? "D" : "S"));
+    header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']) . "?saved=" . (isset($_POST['restoreDefaults']) ? "D" : "S"));
 }
 
 
@@ -90,7 +90,7 @@ if (isLoggedIn()) {
     }
 }
 
-print "<p/><form id='settings_form' method='post' action='$_SERVER[PHP_SELF]'>\n";
+print "<p/><form id='settings_form' method='post' action=''>\n";
 
 print "<table border='0' cellspacing='5' style='border-width-top: 1'>\n";
 

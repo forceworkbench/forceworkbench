@@ -60,7 +60,7 @@ else if (isset($_POST['stageForDeployment'])) {
     ?>
 <p class='instructions'>Confirm the following deployment options:</p>
 <form id='deployForm' name='deployForm' method='POST'
-    action='<?php print $_SERVER['PHP_SELF']; ?>'>
+    action=''>
     <?php print getCsrfFormTag(); ?>
     <input type='hidden' name='deployFileTmpName' value='<?php print $deployFileTmpName; ?>' />
 <p />
@@ -88,7 +88,7 @@ else {
 options:</p>
 
 <form id='deployForm' name='deployForm' method='POST'
-    action='<?php print $_SERVER['PHP_SELF']; ?>'
+    action=''
     enctype='multipart/form-data'><input type='file' name='deployFile'
     size='44' />
     <?php print getCsrfFormTag(); ?>

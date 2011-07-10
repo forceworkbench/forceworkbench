@@ -77,7 +77,7 @@ else if (isset($_POST['stageForRetrieval'])) {
         $tree->printTree();
     ?>
 <form id='retrieveForm' name='retrieveForm' method='POST'
-    action='<?php print $_SERVER['PHP_SELF']; ?>'><input type='hidden'
+    action=''><input type='hidden'
     name='retrieveRequestId' value='<?php print $retrieveRequestId; ?>' />
 <input type='submit' name='retrievalConfirmed' value='Retrieve' /></form>
     <?php
@@ -90,7 +90,7 @@ else {
 'package.xml'), provide a comma-separated list of package names, or both
 to define a retrieve request along with any applicable options:</p>
 <form id='retrieveForm' name='retrieveForm' method='POST'
-    action='<?php print $_SERVER['PHP_SELF']; ?>'
+    action=''
     enctype='multipart/form-data'><input type='hidden'
     name='MAX_FILE_SIZE'
     value='<?php print getConfig("maxFileSize"); ?>' />

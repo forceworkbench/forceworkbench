@@ -715,19 +715,21 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "boolean"
     );
 
+    // This should never be overrideable by end users; instead, admins can override default in configOverrides.php
     $config["loginCsrfEnabled"] = array(
         "label" => "Enable CSRF Protection for Login",
-        "description" => "Enable CSRF Protection for Login",
+        "description" => "Enable CSRF (Cross-Site Request Forgery) protection for login",
         "default" => false,
-        "overrideable" => false, // This should always be false so not visible to end users; instead, override in configOverrides.php
+        "overrideable" => false,
         "dataType" => "boolean"
     );
 
+    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
     $config["csrfSecret"] = array(
         "label" => "CSRF Salting Secret",
-        "description" => "Used for salting the CSRF tokens",
+        "description" => "Used for salting the CSRF (Cross-Site Request Forgery) tokens",
         "default" => "5f47270e-e425-4eb0-b8c6-a515eadc71c9",
-        "overrideable" => false, // This should always be false so not visable to end users; instead, override in configOverrides.php
+        "overrideable" => false,
         "dataType" => "string"
     );
 

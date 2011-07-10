@@ -449,9 +449,9 @@ QUERY_BUILDER_SCRIPT;
 
 
         if (getConfig("autoJumpToResults")) {
-            print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]#qr'>\n";
+            print "<form method='POST' id='query_form' name='query_form' action='#qr'>\n";
         } else {
-            print "<form method='POST' id='query_form' name='query_form' action='$_SERVER[PHP_SELF]'>\n";
+            print "<form method='POST' id='query_form' name='query_form' action=''>\n";
         }
         print "<input type='hidden' name='justUpdate' value='0' />";
         print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";

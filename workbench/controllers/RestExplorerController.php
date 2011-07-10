@@ -92,7 +92,7 @@ class RestExplorerController {
             } else if ($expectBinary) {
                 return;
             } else if (stripos($this->rawResponse->header, "Content-Type: application/json") !== false) {                                              
-                $insturmenter = new RestResponseInstrumenter($_SERVER['PHP_SELF']);
+                $insturmenter = new RestResponseInstrumenter(htmlspecialchars($_SERVER['PHP_SELF']));
                 $this->instResponse = $insturmenter->instrument($this->rawResponse->body);
                 $this->showResponse = true;
             } else {

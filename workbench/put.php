@@ -102,7 +102,7 @@ function put($action) {
             displayInfo(array("Successfully staged " . ceil(($_FILES["file"]["size"] / 1024)) . " KB zip file " . $_FILES["file"]["name"] . " for $action via the Bulk API. ", 
                         "Note, custom field mappings are not available for ZIP-based requests."));
             print "<br/>";
-            print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>" . getCsrfFormTag() .
+            print "<form method='POST' action=''>" . getCsrfFormTag() .
                   "<div class='instructions'>Choose the options below and confirm the $action:<p/></div>" . 
                   "<table border='0'>"; 
             
@@ -162,7 +162,7 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
           (supportsZips($action) ? " Zipped requests must contain a CSV or XML-formatted manifest called request.txt, which may reference included binary files."  : "") . 
           "</p>\n";
     
-    print "<form enctype='multipart/form-data' method='post' action='" . $_SERVER['PHP_SELF'] . "'>\n" . getCsrfFormTag();
+    print "<form enctype='multipart/form-data' method='post' action=''>\n" . getCsrfFormTag();
     print "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' />\n";
     print "<p><input type='file' name='$fileInputName' size=44 /></p>\n";
     if (requiresObject($action)) {
@@ -288,7 +288,7 @@ function setFieldMappings($action,$csvArray) {
 
     print "<div id='setFieldMappingster_block' style='display:none;'>";
 
-    print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>" . getCsrfFormTag();
+    print "<form method='POST' action=''>" . getCsrfFormTag();
 
     if ($action == 'upsert') {
         print "<p class='instructions'>Choose the Salesforce field to use as the External Id. Be sure to also map this field below:</p>\n";
@@ -560,7 +560,7 @@ function confirmFieldMappings($action, $fieldMap, $csvArray, $extId) {
         displayFieldMappings($fieldMap, $extId, true);
     }
 
-    print "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>" . getCsrfFormTag();
+    print "<form method='POST' action=''>" . getCsrfFormTag();
     displayBulkApiOptions($action, false, $recommendDoAsync);
     print "<p>&nbsp;</p><p><input type='submit' name='action' value='$action' /></p>\n";
     print "</form>\n";

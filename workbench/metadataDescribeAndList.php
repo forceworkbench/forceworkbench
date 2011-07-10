@@ -33,12 +33,12 @@ foreach ($describeMetadataResult as $resultsKey => $resultsValue) {
 
                     $childType = new stdClass();
                     $childType->parentXmlName = $metadataResultsValue->xmlName .
-                        " <a href='" . $_SERVER['PHP_SELF'] . "?type=$metadataResultsValue->xmlName' class='miniLink' onClick=\"document.getElementById('loadingMessage').style.visibility='visible';\">[INFO]</a>";
+                        " <a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?type=$metadataResultsValue->xmlName' class='miniLink' onClick=\"document.getElementById('loadingMessage').style.visibility='visible';\">[INFO]</a>";
                     $childType->childXmlName = $childName;
                     $metadataTypeMap[$childName] = $childType;
 
                     $metadataTypeMap[$metadataResultsValue->xmlName]->childXmlNames[$childNameKey] = $childName .
-                        " <a href='" . $_SERVER['PHP_SELF'] . "?type=$childName' class='miniLink' onClick=\"document.getElementById('loadingMessage').style.visibility='visible';\">[INFO]</a>";
+                        " <a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?type=$childName' class='miniLink' onClick=\"document.getElementById('loadingMessage').style.visibility='visible';\">[INFO]</a>";
                 }
             }
         }
@@ -56,7 +56,7 @@ $typeStringChanged = $currentTypeString != null && $previousTypeString != $curre
 <p class='instructions'>Choose a metadata type describe and list its
 components:</p>
 <form id="metadataTypeSelectionForm" name="metadataTypeSelectionForm"
-    method="GET" action="<?php print $_SERVER['PHP_SELF']; ?>"><select
+    method="GET" action=""><select
     id="type" name="type"
     onChange="document.getElementById('loadingMessage').style.visibility='visible'; document.metadataTypeSelectionForm.submit();">
     <?php printSelectOptions($metadataTypesSelectOptions, $typeString); ?>

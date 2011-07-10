@@ -12,9 +12,9 @@ if (!isset($_GET['asyncProcessId'])) {
     print "<p/>";
     displayInfo("Parameter 'asyncProcessId' must be specified.",false,false);
     print     "<p/>" .
-            "<form action='$_SERVER[PHP_SELF]' method='GET'>" . 
+            "<form action='' method='GET'>" .
             "Async Process Id: <input type='text' name='asyncProcessId'/> &nbsp;" .  
-            "<input type='submit' value='Get Status'".
+            "<input type='submit' value='Get Status'/>".
             "</form>";
     include_once 'footer.php';
     exit;
@@ -99,7 +99,7 @@ try {
             displayInfo("Retrieve result ZIP file is ready for download.");
             print "<p/>";
 
-            $zipLink = " | <a id='zipLink' href='$_SERVER[PHP_SELF]?asyncProcessId=$asyncResults->id&downloadZip' onclick='undownloadedZip=false;' style='text-decoration:none;'>" .
+            $zipLink = " | <a id='zipLink' href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?asyncProcessId=$asyncResults->id&downloadZip' onclick='undownloadedZip=false;' style='text-decoration:none;'>" .
                        "<span style='text-decoration:underline;'>Download ZIP File</span> <img src='" . getStaticResourcesPath() ."/images/downloadIconCompleted.gif' border='0'/>" . 
                        "</a></p>";
         }

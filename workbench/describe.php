@@ -6,7 +6,7 @@ require_once 'header.php';
 
 <p class='instructions'>Choose an object to describe:</p>
 
-<form name='describeForm' method='POST' action='<?php print $_SERVER['PHP_SELF']; ?>'>
+<form name='describeForm' method='POST' action=''>
     <?php
     printObjectSelection(WorkbenchContext::get()->getDefaultObject(), 'default_object', 30,
         "onChange=\"document.getElementById('loadingMessage').style.visibility='visible'; document.describeForm.submit();\"");

@@ -34,7 +34,7 @@
 
         <p>Provide the details below to run a sample script:</p> 
         
-        <form method="GET" action="<?php print $_SERVER["PHP_SELF"]; ?>">
+        <form method="GET" action="">
             <p><label>Session Id:<br/><input name="sessionId"
                                              type="text"
                                              value="<?php print isset($_REQUEST['sessionId']) ? htmlspecialchars($_REQUEST['sessionId']) : ""; ?>"/></label></p>

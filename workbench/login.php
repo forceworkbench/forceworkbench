@@ -214,7 +214,7 @@ function checkCaps( pwcapsDivId, e ) {
 
 <div id='loginBlockContainer'>
 <div id='loginBlock'>
-    <form id='login_form' action='$_SERVER[PHP_SELF]' method='post'>
+    <form id='login_form' action='' method='post'>
         <div id='login_become_select' style='text-align: right;'>
             <input type='radio' id='login_become_std' name='login_type' value='std' onClick='toggleLoginFormToStd();' checked='true' /><label for='login_become_std'>Standard</label>
             <input type='radio' id='login_become_adv' name='login_type' value='adv' onClick='toggleLoginFormToAdv();' /><label for='login_become_adv'>Advanced</label>

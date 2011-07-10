@@ -49,7 +49,7 @@ function displaySelectForm() {
         <?php
 
         try {
-            print "<form method='post' action='$_SERVER[PHP_SELF]'>\n";
+            print "<form method='post' action=''>\n";
             print "<p class='instructions'>Select a default object and action:</p>\n";
 
             //Display a list of actions as submit buttons. Jump to the selected

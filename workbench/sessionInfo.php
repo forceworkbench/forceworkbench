@@ -11,7 +11,7 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
     } catch (Exception $e) {
         if (stripos($e->getMessage(), 'UNSUPPORTED_API_VERSION') > -1) {
             
-            header("Location: $_SERVER[PHP_SELF]?switchApiVersionTo=" . $previousVersion . "&" . 'UNSUPPORTED_API_VERSION');
+            header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']) . "?switchApiVersionTo=" . $previousVersion . "&" . 'UNSUPPORTED_API_VERSION');
         } else {
             throw $e;
         }
@@ -24,7 +24,7 @@ require_once 'header.php';
 <p />
 <p class='instructions'>Below is information regarding the current user session:</p>
 <div style='float: right;'>
-    <form name="changeApiVersionForm" action="<?php $_SERVER['PHP_SELF'] ?>">
+    <form name="changeApiVersionForm" action="">
     Change API Version: <?php
     print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
     foreach ($GLOBALS['API_VERSIONS'] as $v) {

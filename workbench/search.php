@@ -228,9 +228,9 @@ function addReturningObjectRow(rowNum, defaultObject, defaultFields) {
 SEARCH_BUILDER_SCRIPT;
 
     if (getConfig("autoJumpToResults")) {
-        print "<form method='POST' name='search_form' action='$_SERVER[PHP_SELF]#sr'>\n";
+        print "<form method='POST' name='search_form' action='#sr'>\n";
     } else {
-        print "<form method='POST' name='search_form' action='$_SERVER[PHP_SELF]#sr'>\n";
+        print "<form method='POST' name='search_form' action='#sr'>\n";
     }
 
     print "<input type='hidden' id='numReturningObjects' name='numReturningObjects' value='" . count($searchRequest->getReturningObjects()) ."' />";

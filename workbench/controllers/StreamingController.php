@@ -150,8 +150,8 @@ class StreamingController {
         $streamingConfig["cometdConfig"]["url"] =
             "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? "s" : "") . "://" .
             $_SERVER['HTTP_HOST'] .
-            str_replace('\\', '/', dirname($_SERVER['PHP_SELF'])) .
-			(strlen(dirname($_SERVER['PHP_SELF'])) == 1 ? "" : "/") .
+            str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
+			(strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/") .
             "cometdProxy.php";
 
         return json_encode($streamingConfig);
