@@ -54,15 +54,6 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
-    $config["invalidateSessionOnLogout"] = array(
-        "label" => "Invalidate Session on Logout",
-        "description" => "Invalidates the current API session when logging out of Workbench.",
-        "default" => true,
-        "overrideable" => true,
-        "dataType" => "boolean",
-        "minApiVersion" => 13.0
-    );
-
     $config["displayRequestTime"] = array(
         "label" => "Display Request Time",
         "description" => "Display the time to render the page in the footer.",
@@ -71,27 +62,11 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
-    $config["checkSSL"] = array(
-        "label" => "Check for Secure Connection",
-        "description" => "Display a warning to users in the footer if an unsecure connection to between this computer and the Workbench server OR between Workbench server and Salesforce API is detected.",
-        "default" => true,
-        "overrideable" => false,
-        "dataType" => "boolean"
-    );
-
     $config["debug"] = array(
         "label" => "Debug Mode",
         "description" => "Enables debugging mode for showing supervariables and SOAP messages.",
         "default" => false,
-        "overrideable" => true,
-        "dataType" => "boolean"
-    );
-
-    $config["readOnlyMode"] = array(
-        "label" => "Read Only Mode",
-        "description" => "Disable access to pages that can change data or metadata. Do not use as a replacement for server-side validation.",
-        "default" => false,
-        "overrideable" => false,
+        "overrideable" => false, // Only enable in trusted environment, as internal information can be exposed
         "dataType" => "boolean"
     );
 
@@ -267,14 +242,6 @@ $config["header_LoginOptions"] = array(
             "ALWAYS"  => "Always",
             "NEVER "  => "Never"
         )
-    );
-
-    $config["useHTTPS"] = array(
-        "label" => "Connect to Salesforce over HTTPS",
-        "description" => "Use HTTPS to connect to Salesforce API from Workbench server. Does not guarantee HTTPS will be used from this computer to Workbench server. Disabling this setting will also change redirect Server URLs returned from Salesforce to use HTTP. Must login again for changes to take effect.",
-        "default" => true,
-        "overrideable" => true,
-        "dataType" => "boolean"
     );
 
     $config["fuzzyServerUrlLookup"] = array(
@@ -606,11 +573,11 @@ $config["header_Execute"] = array(
         )
     );
 
-    $config["header_Performance"] = array(
-        "label" => "Performance Options",
-        "display" => true,
-        "isHeader" => true
-    );
+$config["header_Performance"] = array(
+    "label" => "Performance Options",
+    "display" => true,
+    "isHeader" => true
+);
 
     $config["cacheGetUserInfo"] = array(
         "label" => "Cache User Info",
@@ -709,6 +676,61 @@ $config["header_Execute"] = array(
         "minValue" => 1
     );
 
+$config["header_SecurityOptions"] = array(
+    "label" => "Security Options",
+    "display" => true,
+    "isHeader" => true
+);
+
+    $config["invalidateSessionOnLogout"] = array(
+        "label" => "Invalidate Session on Logout",
+        "description" => "Invalidates the current API session when logging out of Workbench.",
+        "default" => true,
+        "overrideable" => true,
+        "dataType" => "boolean",
+        "minApiVersion" => 13.0
+    );
+
+    $config["checkSSL"] = array(
+        "label" => "Check for Secure Connection",
+        "description" => "Display a warning to users in the footer if an unsecure connection to between this computer and the Workbench server OR between Workbench server and Salesforce API is detected.",
+        "default" => true,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
+    $config["useHTTPS"] = array(
+        "label" => "Connect to Salesforce over HTTPS",
+        "description" => "Use HTTPS to connect to Salesforce API from Workbench server. Does not guarantee HTTPS will be used from this computer to Workbench server. Disabling this setting will also change redirect Server URLs returned from Salesforce to use HTTP. Must login again for changes to take effect.",
+        "default" => true,
+        "overrideable" => true,
+        "dataType" => "boolean"
+    );
+
+    $config["readOnlyMode"] = array(
+        "label" => "Read Only Mode",
+        "description" => "Disable access to pages that can change data or metadata. Do not use as a replacement for server-side validation.",
+        "default" => false,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
+    $config["loginCsrfEnabled"] = array(
+        "label" => "Enable CSRF Protection for Login",
+        "description" => "Enable CSRF Protection for Login",
+        "default" => false,
+        "overrideable" => false, // This should always be false so not visible to end users; instead, override in configOverrides.php
+        "dataType" => "boolean"
+    );
+
+    $config["csrfSecret"] = array(
+        "label" => "CSRF Salting Secret",
+        "description" => "Used for salting the CSRF tokens",
+        "default" => "5f47270e-e425-4eb0-b8c6-a515eadc71c9",
+        "overrideable" => false, // This should always be false so not visable to end users; instead, override in configOverrides.php
+        "dataType" => "string"
+    );
+
 $config["header_proxyOptions"] = array(
     "label" => "Proxy Options",
     "display" => false,
@@ -760,11 +782,11 @@ $config["header_proxyOptions"] = array(
         "dataType" => "password"
     );
 
-    $config["header_internal"] = array(
-        "label" => "Internal Only",
-        "display" => false,
-        "isHeader" => true
-    );
+$config["header_internal"] = array(
+    "label" => "Internal Only",
+    "display" => false,
+    "isHeader" => true
+);
 
     $config["mockClients"] = array(
         "label" => "Connect with Mocked API Client",

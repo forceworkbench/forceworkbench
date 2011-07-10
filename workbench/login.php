@@ -2,7 +2,11 @@
 require_once 'session.php';
 require_once 'shared.php';
 
-//main login
+// allows Workbench Tools to get CSRF token prior to login
+if (isset($_GET['getCsrfToken'])) {
+    print getCsrfToken();
+    exit;
+}
 
 /*
  * For auto-login by GET params, allow users to either provide un/pw or sid, and optionally serverUrl and/or api version.
@@ -280,6 +284,8 @@ LOGIN_FORM_PART_2;
         print "<input name='actionJumpAdv' type='hidden' value='select.php'/>";
     }
 
+    print getCsrfFormTag();
+
     //submit button
     print "</div><div id='login_submit' style='text-align: right;'>" .
             "<input type='submit' name='loginClick' value='Login'>" . 
@@ -315,6 +321,10 @@ LOGIN_FORM_PART_2;
 
 
 function processLogin($username, $password, $serverUrl, $sessionId, $actionJump) {
+    if (getConfig("loginCsrfEnabled")) {
+        validateCsrfToken();
+    }
+
     $username = htmlspecialchars(trim($username));
     $password = htmlspecialchars(trim($password));
     $serverUrl = htmlspecialchars(trim($serverUrl));

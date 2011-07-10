@@ -34,7 +34,6 @@ class WorkbenchContext {
     private $cache;
     private $defaultObject;
     private $sfdcUiSidLikelySet;
-    private $csrfToken;
 
     /**
      * @static
@@ -87,7 +86,6 @@ class WorkbenchContext {
         $this->defaultObject = false;
         $this->defaultObjectChanged = false;
         $this->sfdcUiSidLikelySet = false;
-        $this->csrfToken = uniqid();
     }
 
     function login($username, $password, $orgId, $portalId) {
@@ -171,16 +169,6 @@ class WorkbenchContext {
 
     function setIsUiSessionLikelySet($sfdcUiSidLikelySet) {
         $this->sfdcUiSidLikelySet = $sfdcUiSidLikelySet;
-    }
-
-    function getCsrfToken() {
-        return $this->csrfToken;
-    }
-
-    function validateCsrfToken() {
-       if (!isset($_REQUEST['CSRF_TOKEN']) || $_REQUEST['CSRF_TOKEN'] != $this->getCsrfToken()) {
-           httpError("403 Forbidden", "Invalid or missing required CSRF token");
-       }
     }
 
     /**

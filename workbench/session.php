@@ -73,7 +73,7 @@ if (!$myPage->isReadOnly && isReadOnlyMode()) {
 }
 
 if (WorkbenchContext::isEstablished() && !$myPage->isReadOnly  && $_SERVER['REQUEST_METHOD'] == 'POST') {
-    WorkbenchContext::get()->validateCsrfToken();
+    validateCsrfToken();
 }
 
 if (isLoggedIn()) {

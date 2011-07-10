@@ -142,7 +142,7 @@ class StreamingController {
 
     function getStreamingConfig() {
         $streamingConfig["handshakeOnLoad"] = true; // TODO: make this configurable
-        $streamingConfig["csrfToken"] = WorkbenchContext::get()->getCsrfToken();
+        $streamingConfig["csrfToken"] = getCsrfToken();
 
         // configs in "$streamingConfig["cometdConfig"]" are loaded into CometD in JS and need to match their format
         $streamingConfig["cometdConfig"]["logLevel"] = "info";

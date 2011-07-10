@@ -42,8 +42,17 @@ function httpError($code, $reason) {
     exit;
 }
 
+function getCsrfToken() {
+    return md5(getConfig("csrfSecret") . session_id() . $_SERVER['SCRIPT_NAME']);
+}
+
+function validateCsrfToken() {
+   if (!isset($_REQUEST['CSRF_TOKEN']) || $_REQUEST['CSRF_TOKEN'] != getCsrfToken()) {
+       httpError("403 Forbidden", "Invalid or missing required CSRF token");
+   }
+}
 function getCsrfFormTag() {
-    return "\n<input type='hidden' name='CSRF_TOKEN' value='" . WorkbenchContext::get()->getCsrfToken() . "'/>\n";
+    return "\n<input type='hidden' name='CSRF_TOKEN' value='" . getCsrfToken() . "'/>\n";
 }
 
 function toBytes ($size_str) {
