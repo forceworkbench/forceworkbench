@@ -691,6 +691,16 @@ $config["header_SecurityOptions"] = array(
         "minApiVersion" => 13.0
     );
 
+    // This should never be overrideable by end users; instead, admins can override default in configOverrides.php
+    $config["requireSSL"] = array(
+        "label" => "Requires a Secure Connection",
+        "description" => "Requires a secure connection to between this computer and the Workbench server AND between Workbench server and Salesforce API. Returns an HTTP 403.4 error if not satisfied.",
+        "default" => false,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
+    // same as requireSSL, but only displays a warning
     $config["checkSSL"] = array(
         "label" => "Check for Secure Connection",
         "description" => "Display a warning to users in the footer if an unsecure connection to between this computer and the Workbench server OR between Workbench server and Salesforce API is detected.",

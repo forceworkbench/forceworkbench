@@ -59,6 +59,14 @@ if ($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_
 // log for every request. needs to be after configs load
 workbenchLog(LOG_INFO, "U");
 
+if (getConfig("requireSSL") && !usingSSL()) {
+    if (WorkbenchContext::isEstablished()) {
+        WorkbenchContext::get()->release();
+    }
+
+    httpError("403.4 SSL Required", "Connection to Workbench and Salesforce required"); //TODO: what do we want to do here?
+}
+
 //kick user back to login page for any page that requires a session and one isn't established
 $myPage = getMyPage();
 if (!isLoggedIn() && $myPage->requiresSfdcSession) {

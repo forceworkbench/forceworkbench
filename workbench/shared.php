@@ -51,8 +51,19 @@ function validateCsrfToken() {
        httpError("403 Forbidden", "Invalid or missing required CSRF token");
    }
 }
+
 function getCsrfFormTag() {
     return "\n<input type='hidden' name='CSRF_TOKEN' value='" . getCsrfToken() . "'/>\n";
+}
+
+function usingSSL() {
+    // was the request to Workbench secure?
+    $secureLocal2Wb = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+
+    // is connection secure from Workbench to Salesforce?
+    $secureWb2sfdc = !WorkbenchContext::isEstablished() || WorkbenchContext::get()->isSecure();
+
+    return $secureLocal2Wb && $secureWb2sfdc;
 }
 
 function toBytes ($size_str) {
