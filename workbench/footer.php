@@ -7,7 +7,7 @@ include_once 'shared.php';
 
 <?php
 if (getConfig("checkSSL") && !usingSSL()) {
-    print "<span style='font-size: 8pt; color: red;'>WARNING: Unsecure connection detected";
+    print "<div style='font-size: 8pt; color: orange;'>WARNING: Unsecure connection detected</div>";
 }
 
 if (WorkbenchContext::isEstablished() && getConfig("displayRequestTime")) {
