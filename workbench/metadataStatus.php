@@ -76,9 +76,15 @@ try {
         print "<p>&nbsp;</p><h3>Results</h3>";
 
         //if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
-        $operation = isset($_REQUEST['op']) ? htmlspecialchars($_REQUEST['op']) : (isset($asyncResults->checkOnly) ? "D" : "R");
+        $operation = isset($_REQUEST['op'])
+                        ? htmlspecialchars($_REQUEST['op'])
+                        : (isset($asyncResults->checkOnly)
+                            ? "D"
+                            : "R");
 
-        $results = $operation == "D" ? WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, $debugInfo) : WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
+        $results = $operation == "D"
+                    ? WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, $debugInfo)
+                    : WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
 
         $zipLink = null;
         if (isset($results->zipFile) || isset($results->retrieveResult->zipFile) ) {
@@ -108,6 +114,11 @@ try {
         if (isset($debugInfo["DebuggingInfo"]->debugLog)) {
             print "<p>&nbsp;</p><h3>Debug Logs</h3>";
             print("<pre>" . addLinksToUiForIds(htmlspecialchars($debugInfo["DebuggingInfo"]->debugLog,ENT_QUOTES)) . '</pre>');
+        }
+
+        // if metadata changes were deployed, clear the cache because describe results will probably be different
+        if ($operation == "D") {
+            WorkbenchContext::get()->clearCache();
         }
     }
 } catch (Exception $e) {
