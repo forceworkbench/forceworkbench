@@ -66,8 +66,8 @@ $batchResults = $myBulkApiConnection->getBatchResults($job->getId(), $batch->get
 print "<pre>" .
       "PHP BULK API CLIENT SAMPLE CODE OUTPUT\n" . 
       "This is the output of the PHP Bulk API Client Sample Code. View the source code for step-by-step explanations.\n\n";
-print "== CSV DATA == \n" . $csvData . "\n\n";
-print "== BATCH RESULTS == \n" . $batchResults . "\n\n";
+print "== CSV DATA == \n" . htmlspecialchars($csvData) . "\n\n";
+print "== BATCH RESULTS == \n" . htmlspecialchars($batchResults) . "\n\n";
 print "== CLIENT LOGS == \n" . $myBulkApiConnection->getLogs() . "\n\n";
 $myBulkApiConnection->clearLogs(); //clear log buffer
 print "</pre>";

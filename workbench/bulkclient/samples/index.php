@@ -37,11 +37,11 @@
         <form method="GET" action="<?php print $_SERVER["PHP_SELF"]; ?>">
             <p><label>Session Id:<br/><input name="sessionId"
                                              type="text"
-                                             value="<?php print isset($_REQUEST['sessionId']) ? $_REQUEST['sessionId'] : ""; ?>"/></label></p>
+                                             value="<?php print isset($_REQUEST['sessionId']) ? htmlspecialchars($_REQUEST['sessionId']) : ""; ?>"/></label></p>
             <p><label>Partner API Endpoint:<br/><input name="partnerApiEndpoint"
                                                        type="text"
                                                        value="<?php print isset($_REQUEST['partnerApiEndpoint']) ?
-                                                               $_REQUEST['partnerApiEndpoint'] : ""; ?>"/></label></p>
+                                                               htmlspecialchars($_REQUEST['partnerApiEndpoint']) : ""; ?>"/></label></p>
             <p>
                 <label>Sample Script File:<br/> 
                     <select name="sampleFile">
@@ -50,9 +50,9 @@
                             $thisDir = dirname($_SERVER["SCRIPT_FILENAME"]);
                             foreach (scandir($thisDir) as $file) {
                                 if (stristr($file, ".php") && $file != $thisFile) {
-                                    print "<option value=\"$file\"" .
+                                    print "<option value=\"" . htmlspecialchars($file) . "\"" .
                                           (($_REQUEST['sampleFile'] == $file) ? "selected='selected'" : "") .
-                                          ">$file</option>";
+                                          ">" . htmlspecialchars($file) . "</option>";
                                 }
                             }
                         ?>
@@ -72,7 +72,7 @@
             try {
                 require_once($_REQUEST["sampleFile"]);
             } catch (Exception $e) {
-                print "<span class='error'><label>Error: </label>" . $e->getMessage() . "</span>";
+                print "<span class='error'><label>Error: </label>" . htmlspecialchars($e->getMessage()) . "</span>";
             }
             ?>
         </div>
