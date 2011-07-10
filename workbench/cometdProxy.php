@@ -9,12 +9,14 @@ if (!WorkbenchContext::isEstablished()) {
 }
 
 $host = WorkbenchContext::get()->getHost();
+$forceSSL = WorkbenchContext::get()->isSecure();
 $sessionId = WorkbenchContext::get()->getSessionId();
 $_COOKIE['sid'] = $sessionId;
 session_write_close();
 
 $proxy = new PhpReverseProxy();
 $proxy->host = $host;
+$proxy->forceSSL = $forceSSL;
 $proxy->forward_path = "/cometd";
 $proxy->proxy_settings = getProxySettings();
 $proxy->is_forward_path_static = true;

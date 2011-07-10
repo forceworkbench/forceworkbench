@@ -1,14 +1,15 @@
 <?php
  
 class PhpReverseProxy {
-    public $port, $host, $forward_path, $is_forward_path_static, $content, $content_type, $user_agent,
+    public $host, $port, $forceSSL, $forward_path, $is_forward_path_static, $content, $content_type, $user_agent,
     $XFF, $request_method, $cookie, $proxy_settings;
 
     private $http_code, $resultHeader;
 
     function __construct() {
-        $this->port = "";
         $this->host = "";
+        $this->port = "";
+        $this->forceSSL = false;
         $this->forward_path = "";
         $this->content = "";
         $this->path = "";
@@ -36,8 +37,9 @@ class PhpReverseProxy {
     }
 
     function translateServer($serverName) {
+        // use SSL if forced on proxy or original request was using SSL
         $protocol = "http" .
-                    ((isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
+                    ($this->forceSSL || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
                         ? "s"
                         : "");
 
@@ -76,6 +78,9 @@ class PhpReverseProxy {
         }
         curl_setopt($ch, CURLOPT_URL, $this->translateURL($this->host));
 
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); //TODO: use ca-bundle instead
+
         if ($this->proxy_settings != null) {
             curl_setopt($ch, CURLOPT_PROXY, $this->proxy_settings["proxy_host"]);
             curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxy_settings["proxy_port"]);
@@ -100,6 +105,7 @@ class PhpReverseProxy {
         $output = curl_exec($ch);
         $info = curl_getinfo($ch);
         $this->postConnect($ch, $info, $output);
+        syslog(LOG_WARNING, print_r($info, true));
         curl_close($ch);
     }
 
