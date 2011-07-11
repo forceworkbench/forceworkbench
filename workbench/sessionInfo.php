@@ -18,11 +18,6 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
 
 }
 
-if (isset($_REQUEST['clearCache'])) {
-    WorkbenchContext::get()->clearCache();
-    $cacheCleared = true;
-}
-
 require_once 'header.php';
 
 if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
@@ -94,9 +89,7 @@ if (count($errors) > 0) {
 $tree = new ExpandableTree("sessionInfoTree", $sessionInfo);
 $tree->setContainsDates(true);
 $tree->setContainsIds(true);
-$tree->setAdditionalMenus(" | <a href='?clearCache' style='text-decoration:none;'>" .
-                                "<span style='text-decoration:underline;'>Clear Cache</span> <img src='" . getStaticResourcesPath() ."/images/sweep.png' border='0' align='top'/>" .
-                              "</a>");
+$tree->setAdditionalMenus(ExpandableTree::getClearCacheMenu());
 $tree->printTree();
 
 print "</div>";

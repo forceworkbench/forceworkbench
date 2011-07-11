@@ -2,11 +2,16 @@
 require_once 'session.php';
 require_once 'shared.php';
 require_once 'header.php';
+
+if (isset($cacheCleared)) {
+    displayInfo("Cache Cleared Successfully");
+    print "<p/>";
+}
 ?>
 
 <p class='instructions'>Choose an object to describe:</p>
 
-<form name='describeForm' method='POST' action=''>
+<form name='describeForm' method='POST' action='describe.php'>
     <?php
     printObjectSelection(WorkbenchContext::get()->getDefaultObject(), 'default_object', 30,
         "onChange=\"document.getElementById('loadingMessage').style.visibility='visible'; document.describeForm.submit();\"");
@@ -41,6 +46,7 @@ if (WorkbenchContext::get()->getDefaultObject()) {
 
     $tree = new ExpandableTree("describeTree", $processedResults);
     $tree->setForceCollapse($forceCollapse);
+    $tree->setAdditionalMenus(ExpandableTree::getClearCacheMenu());
     $tree->printTree();
 }
 

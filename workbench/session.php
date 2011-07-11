@@ -24,6 +24,11 @@ if (isset($_SESSION['retrievedZips']) && basename($_SERVER['PHP_SELF']) != 'meta
     unset($_SESSION['retrievedZips']);
 }
 
+if (isset($_REQUEST['clearCache'])) {
+    WorkbenchContext::get()->clearCache();
+    $cacheCleared = true;
+}
+
 //load default config values and then any custom overrides.
 require_once 'config.php';
 if(is_file('configOverrides.php')) require_once 'configOverrides.php';

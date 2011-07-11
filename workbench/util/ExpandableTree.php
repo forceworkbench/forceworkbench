@@ -55,8 +55,11 @@ class ExpandableTree {
     private function printNode($node, $parentKey = null) {
         $systemFields = array("Id","IsDeleted","CreatedById","CreatedDate","LastModifiedById","LastModifiedDate","SystemModstamp");
 
+        // TODO: remove this hacky special casing
+        $escape = !($this->name == "listMetadataTree" && ($parentKey == "parentXmlName" || $parentKey == "childXmlNames"));
+
         foreach ($node as $nodeKey => $nodeValue) {
-            $nodeKey = htmlspecialchars($nodeKey);
+            $nodeKey = $escape ? htmlspecialchars($nodeKey) : $nodeKey;
 
             // TODO: replace special case with client defined strategies
             if ($this->name == "describeTree") {
@@ -80,7 +83,7 @@ class ExpandableTree {
                 if (is_bool($nodeValue)) {
                     $nodeValue = $nodeValue == 1 ? "<span class='trueColor'>true</span>" : "<span class='falseColor'>false</span>";
                 } else {
-                    $nodeValue = htmlspecialchars($nodeValue);
+                    $nodeValue = $escape ? htmlspecialchars($nodeValue) : $nodeValue;
                     $nodeValue = $this->containsDates ? localizeDateTimes($nodeValue) : $nodeValue;
                     $nodeValue = $this->containsIds ? addLinksToUiForIds($nodeValue) : $nodeValue;
                 }
@@ -130,6 +133,13 @@ class ExpandableTree {
         }
 
         return $processed;
+    }
+
+    public static function getClearCacheMenu() {
+        return " | <a href='?clearCache' style='text-decoration:none;'>" .
+                    "<span style='text-decoration:underline;'>Clear Cache</span> <img src='" .
+                     getStaticResourcesPath() ."/images/sweep.png' border='0' align='top'/>" .
+                  "</a>";
     }
 
 }
