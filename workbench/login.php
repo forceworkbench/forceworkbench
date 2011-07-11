@@ -391,8 +391,7 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
         WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, $sessionId, $overriddenClientId));
         WorkbenchContext::get()->setIsUiSessionLikelySet(true);
     } else {
-        WorkbenchContext::get()->release();
-        throw new Exception('Invalid login parameters.');
+        displayError('Invalid login parameters.', true, true);
     }
 
     // todo: put in WbCtx?
