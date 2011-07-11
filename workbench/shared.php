@@ -160,7 +160,7 @@ function handleAllExceptions($e) {
     $fullMessage = "";
     while ($cause != null) {
         $fullMessage .= $cause->getCode().":".$cause->getMessage()."\n".$e->getTraceAsString()."\n";
-        $cause = $cause->getPrevious();
+        $cause = method_exists($cause,"getPrevious") ? $cause->getPrevious() : null;
     }
 
     if ($e instanceof WorkbenchHandledException || $e->getMessage() == "Could not connect to host") {
