@@ -743,6 +743,24 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "string"
     );
 
+    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    $config["orgIdWhiteList"] = array(
+        "label" => "Organization Id Whitelist",
+        "description" => "A comma-separated list of organization ids which are the only ones allowed to connect to Workbench",
+        "default" => "",
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
+    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    $config["orgIdBlackList"] = array(
+        "label" => "Organization Id Blacklist",
+        "description" => "A comma-separated list of organization ids which are not allowed to connect to Workbench",
+        "default" => "",
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
 $config["header_proxyOptions"] = array(
     "label" => "Proxy Options",
     "display" => false,

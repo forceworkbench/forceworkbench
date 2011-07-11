@@ -90,6 +90,34 @@ if (WorkbenchContext::isEstablished() && !$myPage->isReadOnly  && $_SERVER['REQU
 }
 
 if (isLoggedIn()) {
+    $orgId15 = substr(WorkbenchContext::get()->getUserInfo()->organizationId,0,15);
+    $orgIdWhiteList = array_map('trim',explode(",",getConfig("orgIdWhiteList")));
+    $orgIdBlackList = array_map('trim',explode(",",getConfig("orgIdBlackList")));
+    $isAllowed = true;
+    foreach ($orgIdWhiteList as $allowedOrgId) {
+        if ($allowedOrgId === "") {
+            continue;
+        } else if ($orgId15 ===  substr($allowedOrgId,0,15)) {
+            $isAllowed = true;
+            break;
+        } else {
+            // there is something on the whitelist that's not us
+            // disallow and keep looking until we find our org id
+            $isAllowed = false;
+        }
+    }
+    foreach ($orgIdBlackList as $disallowedOrgId) {
+        if ($orgId15 ===  substr($disallowedOrgId,0,15)) {
+            $isAllowed = false;
+            break;
+        }
+    }
+    if (!$isAllowed) {
+        WorkbenchContext::get()->release();
+        httpError("403 Not Authorized", "Requests for organization $orgId15 are not allowed");
+    }
+
+
     // todo: should this be in the ctx?
     if (isset($_SESSION['lastRequestTime'])) {
         $idleTime = microtime(true) - $_SESSION['lastRequestTime'];
