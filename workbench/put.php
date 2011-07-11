@@ -16,7 +16,15 @@ function put($action) {
         if (isset($_POST['sourceType']) && $_POST['sourceType'] == "singleRecord") {
             $singleRecordCsv = array();
             $singleRecordFieldMap = convertFieldMapToArray($_POST);
-            $fields = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject())->fields;
+
+            if (requiresObject($action)) {
+                $fields = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject())->fields;
+            } else {
+                $idField = new stdClass();
+                $idField->name = "Id";
+                $fields['Id'] = $idField;
+            }
+            
             $anySet = false;
             foreach ($fields as $field) {
                 if (isset($_POST[$field->name])) {
