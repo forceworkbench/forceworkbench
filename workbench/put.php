@@ -304,6 +304,29 @@ function displayCsvArray($csvArray) {
     print "</table>\n";
 }
 
+function queryCurrentRecord($describeSObjectResult, $id) {
+    $fieldNames = array();
+    foreach ($describeSObjectResult->fields as $field) {
+        $fieldNames[] = $field->name;
+    }
+
+    $soql = "SELECT " .
+            implode(",", $fieldNames) .
+            " FROM " . WorkbenchContext::get()->getDefaultObject() .
+            " WHERE Id = '" . $id . "'";
+
+    try {
+        $queryResponse = WorkbenchContext::get()->getPartnerConnection()->query($soql);
+        if ($queryResponse->size == 1) {
+            return new SObject($queryResponse->records[0]);
+        }
+    } catch (Exception $e) {
+        return null;
+    }
+
+    return null;
+}
+
 //ALL FIELD MAPPING FUNCTIONS
 
 /**
@@ -320,6 +343,15 @@ function setFieldMappings($action,$csvArray) {
             $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
         } else {
             displayError("Must choose an object to $action.", false, true);
+        }
+    }
+
+    $currRecord = null;
+    if (!$csvArray && isset($_REQUEST['id'])) {
+        $id = htmlspecialchars($_REQUEST['id'], ENT_QUOTES);
+        $currRecord = queryCurrentRecord($describeSObjectResult, $id);
+        if ($currRecord == null) {
+            displayWarning("Could not load data for an existing " . WorkbenchContext::get()->getDefaultObject() . " with id [$id]");
         }
     }
 
@@ -365,38 +397,38 @@ function setFieldMappings($action,$csvArray) {
     }
 
     if (getConfig("showReferenceBy") && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
-    print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/></th>";
+    print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided can be automatically matched to their corresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only standard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/></th>";
     print "</tr>\n";
 
     if ($action == 'insert') {
         foreach ($describeSObjectResult->fields as $fields => $field) {
             if ($field->createable) {
-                printPutFieldForMapping($field, $csvArray, true);
+                printPutFieldForMapping($field, $csvArray, true, null);
             }
         }
     }
 
     if ($action == 'update') {
-        printPutFieldForMappingId($csvArray, true);
+        printPutFieldForMappingId($csvArray, true, $currRecord);
         foreach ($describeSObjectResult->fields as $fields => $field) {
             if ($field->updateable) {
-                printPutFieldForMapping($field, $csvArray, true);
+                printPutFieldForMapping($field, $csvArray, true, $currRecord);
             }
         }
     }
 
     if ($action == 'upsert') {
-        printPutFieldForMappingId($csvArray, true);
+        printPutFieldForMappingId($csvArray, true, $currRecord);
         foreach ($describeSObjectResult->fields as $fields => $field) {
             if ($field->updateable && $field->createable) {
-                printPutFieldForMapping($field, $csvArray, true);
+                printPutFieldForMapping($field, $csvArray, true, $currRecord);
             }
         }
     }
 
 
     if ($action == 'delete' || $action == 'undelete' || $action == 'purge') {
-        printPutFieldForMappingId($csvArray, false);
+        printPutFieldForMappingId($csvArray, false, $currRecord);
     }
 
 
@@ -416,13 +448,14 @@ function setFieldMappings($action,$csvArray) {
     print "<script>document.getElementById('setFieldMappingster_block').style.display = 'block';</script>";
 }
 
-function printPutFieldForMappingId($csvArray, $showRefCol) {
+function printPutFieldForMappingId($csvArray, $showRefCol, $currentRecord) {
     $idField = new stdClass();
     $idField->nillable = false;
     $idField->defaultedOnCreate = false;
     $idField->name = "Id";
+    $idField->type = "id";
 
-    printPutFieldForMapping($idField, $csvArray, $showRefCol);
+    printPutFieldForMapping($idField, $csvArray, $showRefCol, $currentRecord);
 }
 
 /**
@@ -432,10 +465,10 @@ function printPutFieldForMappingId($csvArray, $showRefCol) {
  * @param $field
  * @param $csvArray
  */
-function printPutFieldForMapping($field, $csvArray, $showRefCol) {
+function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord) {
     print "<tr";
     if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
-    print "><td>$field->name</td>";
+    print "><td style='cursor: pointer;' onmouseover=\"Tip('Label: $field->label <br/> Type: $field->type <br/> Length: $field->length')\">$field->name</td>";
 
     if ($csvArray) {
         print "<td><select name='$field->name' style='width: 100%;'>";
@@ -447,7 +480,12 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol) {
         }
         print "</select></td>";
     } else {
-        print "<td><input name='$field->name' style='width: 97%;'></td>";
+        $fieldName = $field->name;
+        $fieldValue = "";
+        if ($currentRecord != null && isset($currentRecord->fields->$fieldName)) {
+            $fieldValue = htmlspecialchars($currentRecord->fields->$fieldName);
+        }
+        print "<td><input name='$field->name' style='width: 97%;' value=\"$fieldValue\"/></td>";
     }
 
     if ($showRefCol && getConfig("showReferenceBy")) {

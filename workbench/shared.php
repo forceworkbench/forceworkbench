@@ -407,7 +407,9 @@ function natcaseksort($array) {
 
 function addLinksToUiForIds($inputStr) {
     if (getConfig('linkIdToUi')) {
-        return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='" . getJumpToSfdcUrlPrefix() . "$1' target='sfdcUi'>$1</a>", $inputStr);
+        return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='" . getJumpToSfdcUrlPrefix() . "$1' target='sfdcUi'>$1</a>".
+                                                     " <a class='miniLink' href='update.php?sourceType=singleRecord&id=$1'>[UPDATE]</a>",
+                             $inputStr);
     } else {
         return $inputStr;
     }
