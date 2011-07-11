@@ -130,7 +130,7 @@ $config["header_General"] = array(
     $config["enableLogging"] = array(
         "label" => "Enable Logging",
         "description" => "Enables logging to syslog",
-        "default" => false,
+        "default" => true,
         "overrideable" => false,
         "dataType" => "boolean"
     );

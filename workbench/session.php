@@ -2,32 +2,8 @@
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
 
-set_exception_handler('handleAllExceptions');
-
-// PATH_INFO can include malicious scripts and never used purposely in Workbench.
-if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") {
-    httpError("400 Bad Request", "Path info trailing script name in URI not allowed.");
-}
-
 ini_set("session.cookie_httponly", "1");
 session_start();
-
-if (WorkbenchContext::isEstablished()) {
-    WorkbenchContext::get()->beginRequestHook();
-}
-
-//clear ResultsWithData and retrievedZips from session unless downloading them
-if (isset($_SESSION['resultsWithData']) && basename($_SERVER['PHP_SELF']) != 'downloadResultsWithData.php') {
-    unset($_SESSION['resultsWithData']);
-}
-if (isset($_SESSION['retrievedZips']) && basename($_SERVER['PHP_SELF']) != 'metadataStatus.php') {
-    unset($_SESSION['retrievedZips']);
-}
-
-if (isset($_REQUEST['clearCache'])) {
-    WorkbenchContext::get()->clearCache();
-    $cacheCleared = true;
-}
 
 //load default config values and then any custom overrides.
 require_once 'config.php';
@@ -61,8 +37,34 @@ if ($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_
     $_SESSION['config']['callOptions_client'] = getWorkbenchUserAgent();
 }
 
-// log for every request. needs to be after configs load
+// must come after configs are loaded...lets hope there's not a problem above
+set_exception_handler('handleAllExceptions');
+set_error_handler('handleAllErrors', E_ALL^E_NOTICE);
+
 workbenchLog(LOG_INFO, "U");
+
+if (WorkbenchContext::isEstablished()) {
+    WorkbenchContext::get()->beginRequestHook();
+}
+
+//clear ResultsWithData and retrievedZips from session unless downloading them
+if (isset($_SESSION['resultsWithData']) && basename($_SERVER['PHP_SELF']) != 'downloadResultsWithData.php') {
+    unset($_SESSION['resultsWithData']);
+}
+
+if (isset($_SESSION['retrievedZips']) && basename($_SERVER['PHP_SELF']) != 'metadataStatus.php') {
+    unset($_SESSION['retrievedZips']);
+}
+
+if (isset($_REQUEST['clearCache'])) {
+    WorkbenchContext::get()->clearCache();
+    $cacheCleared = true;
+}
+
+// PATH_INFO can include malicious scripts and never used purposely in Workbench.
+if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") {
+    httpError("400 Bad Request", "Path info trailing script name in URI not allowed.");
+}
 
 if (getConfig("requireSSL") && !usingSSL()) {
     if (WorkbenchContext::isEstablished()) {
@@ -128,4 +130,5 @@ if (isLoggedIn()) {
     }
     $_SESSION['lastRequestTime'] = microtime(true);
 }
+file_get_contents("asdf");
 ?>

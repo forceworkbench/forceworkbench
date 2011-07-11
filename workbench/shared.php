@@ -143,6 +143,11 @@ function explodeCommaSeparated($css) {
     return $exploded;
 }
 
+function handleAllErrors($errno, $errstr, $errfile, $errline, $errcontext) {
+    $errorId = basename($errfile, ".php") . "-$errline-" . uniqid();
+    throw new Exception("A fatal error occurred. Contact your administrator and provide the following error id:\n [$errorId]", 0, new Exception("$errstr at $errfile ($errline)", $errno));
+}
+
 /**
  * @param  Exception $e
  * @return void
@@ -151,8 +156,15 @@ function handleAllExceptions($e) {
     try { include_once 'header.php'; } catch (exception $e) {}
     print "<p/>";
 
+    $cause = $e;
+    $fullMessage = "";
+    while ($cause != null) {
+        $fullMessage .= $cause->getCode().":".$cause->getMessage()."\n".$e->getTraceAsString()."\n";
+        $cause = $cause->getPrevious();
+    }
+
     if ($e instanceof WorkbenchHandledException || $e->getMessage() == "Could not connect to host") {
-        workbenchLog(LOG_WARNING, "H", $e->getCode().":".$e->getMessage());
+        workbenchLog(LOG_WARNING, "H", $fullMessage);
         displayError($e->getMessage(), false, true);
         return;
     }
@@ -165,8 +177,7 @@ function handleAllExceptions($e) {
         exit;
     }
 
-    workbenchLog(LOG_ERR, "G", $e->getCode().":".$e->getMessage()."\n".
-                               $e->getTraceAsString());
+    workbenchLog(LOG_ERR, "G", $fullMessage);
 
     displayError("UNKNOWN ERROR: " . $e->getMessage(), false, true);
     exit;
