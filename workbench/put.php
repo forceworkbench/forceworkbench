@@ -12,6 +12,22 @@ function put($action) {
     $confirmAction = 'Confirm ' . ucwords($action);
 
     if (isset($_POST['action']) && $_POST['action'] == $confirmAction) {
+
+        if (isset($_POST['sourceType']) && $_POST['sourceType'] == "singleRecord") {
+            $singleRecordCsv = array();
+            $singleRecordFieldMap = convertFieldMapToArray($_POST);
+            $fields = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject())->fields;
+            foreach ($fields as $field) {
+                if (isset($_POST[$field->name])) {
+                    $singleRecordCsv[0][] = $field->name;
+                    $singleRecordCsv[1][] = $_POST[$field->name];
+                    $singleRecordFieldMap[$field->name]["csvField"] = $field->name;
+                }
+            }
+            $_SESSION['csv_array'] = $singleRecordCsv;
+            $_SESSION['field_map'] = $singleRecordFieldMap;
+        }
+
         if ($action == 'upsert' && (isset($_SESSION['_ext_id']) || isset($_POST['_ext_id']))) {
             $extId = isset($_SESSION['_ext_id']) ? $_SESSION['_ext_id'] : $_POST['_ext_id'];
         } else {
@@ -39,7 +55,7 @@ function put($action) {
                 $apiCall,
                 $extId,
                 isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null,
-                isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] :  null,
+                isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] : null,
                 true);
             } else {
                 putSyncIdOnly($action,$_SESSION['field_map'],$_SESSION['csv_array'],true);
@@ -62,11 +78,17 @@ function put($action) {
             isset($_SESSION['_ext_id'])?$_SESSION['_ext_id']:null
         );
         include_once 'footer.php';
-    } else if (isset($_FILES['file'])) {
+    } else if (isset($_REQUEST['sourceType']) && $_REQUEST['sourceType'] == "singleRecord") {
         require_once 'header.php';
-                
+        setFieldMappings($action, false);
+        include_once 'footer.php';
+    } else if (isset($_REQUEST['sourceType']) && $_REQUEST['sourceType'] == "file" && isset($_FILES['file'])) {
+        require_once 'header.php';
+
         $validationResult = validateUploadedFile($_FILES['file']);
-        $fileType = resolveFileType($_FILES['file']);
+        if ($validationResult === 0) {
+            $fileType = resolveFileType($_FILES['file']);
+        }
         
         if ($validationResult || ($fileType != "csv" && $fileType != "zip")) {
             displayError($validationResult);
@@ -163,8 +185,7 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
           "</p>\n";
     
     print "<form enctype='multipart/form-data' method='post' action=''>\n" . getCsrfFormTag();
-    print "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' />\n";
-    print "<p><input type='file' name='$fileInputName' size=44 /></p>\n";
+
     if (requiresObject($action)) {
         $filter1 = null;
         $filter2 = null;
@@ -173,12 +194,15 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
         else if ($action == "upsert") {$filter1 = "createable"; $filter2 = "updateable";}
 
         printObjectSelection(WorkbenchContext::get()->getDefaultObject(), 'default_object', "20", null, $filter1, $filter2);
-         
-        $submitLabel = 'Upload & Select Object';
-    } else {
-        $submitLabel = 'Upload';
     }
-    print "<p><input type='submit' name='action' value='$submitLabel' /></p>\n";
+    
+    print "<p><label><input type='radio' id='sourceType_file' name='sourceType' value='file' checked='checked' />From File:</label>&nbsp;\n";
+    print "<input type='file' name='$fileInputName' size='44' onchange='document.getElementById(\"sourceType_file\").checked=true;' /></p>\n";
+    print "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' />\n";
+
+    print "<p><label><input type='radio' id='sourceType_singleRecord' name='sourceType' value='singleRecord'  />Single Record</label></p>\n";
+
+    print "<p><input type='submit' name='action' value='Next' /></p>\n";
     print "</form>\n";
     
     include_once 'footer.php';
@@ -311,7 +335,13 @@ function setFieldMappings($action,$csvArray) {
     print "<p class='instructions'>Map the Salesforce fields to the columns from the uploaded CSV:</p>\n";
     print "<table class='fieldMapping'>\n";
     print "<tr><th>Salesforce Field</th>";
-    print "<th>CSV Field</th>";
+
+    if ($csvArray) {
+        print "<th>CSV Field</th>";
+    } else {
+        print "<th>Field Value</th>";
+    }
+
     if (getConfig("showReferenceBy") && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
     print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided in the CSV file and can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/></th>";
     print "</tr>\n";
@@ -349,8 +379,16 @@ function setFieldMappings($action,$csvArray) {
 
 
     print "</table>\n";
-    print "<p><input type='submit' name='action' value='Map Fields' />\n";
-    print "<input type='button' value='Preview CSV' onClick='window.open(" . '"csv_preview.php"' . ")'></p>\n";
+
+    if ($csvArray) {
+        print "<p><input type='submit' name='action' value='Map Fields' />\n";
+        print "<input type='button' value='Preview CSV' onClick='window.open(" . '"csv_preview.php"' . ")'></p>\n";
+    } else {
+        print "<input type='hidden' name='sourceType' value='singleRecord' />\n";
+        print "<p><input type='submit' name='action' value='Confirm " . ucwords($action) . "' />\n";
+    }
+
+
     print "</form>\n</div>\n";
     print "<script>document.getElementById('setFieldMappingster_block_loading').style.display = 'none';</script>";
     print "<script>document.getElementById('setFieldMappingster_block').style.display = 'block';</script>";
@@ -377,14 +415,18 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol) {
     if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
     print "><td>$field->name</td>";
 
-    print "<td><select name='$field->name' style='width: 100%;'>";
-    print "    <option value=''></option>\n";
-    foreach ($csvArray[0] as $col) {
-        print   "<option value='$col'";
-        if (strtolower($col) == strtolower($field->name)) print " selected='true' ";
-        print ">$col</option>\n";
+    if ($csvArray) {
+        print "<td><select name='$field->name' style='width: 100%;'>";
+        print "    <option value=''></option>\n";
+        foreach ($csvArray[0] as $col) {
+            print   "<option value='$col'";
+            if (strtolower($col) == strtolower($field->name)) print " selected='true' ";
+            print ">$col</option>\n";
+        }
+        print "</select></td>";
+    } else {
+        print "<td><input name='$field->name' style='width: 97%;'></td>";
     }
-    print "</select></td>";
 
     if ($showRefCol && getConfig("showReferenceBy")) {
         if (isset($field->referenceTo) && isset($field->relationshipName)) {
@@ -488,7 +530,6 @@ function printRefField($field, $describeRefObjResult) {
  */
 function convertFieldMapToArray($fieldMap) {
     $fieldMapArray = array();
-    $fields = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject())->fields;
 
     foreach ($fieldMap as $fieldMapKey=>$fieldMapValue) {
         if ($fieldMapKey == "CSRF_TOKEN") continue;
@@ -699,10 +740,12 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
                         }
                     }
 
-                    if (!$fields) {
-                        $fields = $field;
-                    } else {
-                        $fields = array_merge($fields,$field);
+                    if (isset($field)) {
+                        if (!$fields) {
+                            $fields = $field;
+                        } else {
+                            $fields = array_merge($fields,$field);
+                        }
                     }
                 }
 
