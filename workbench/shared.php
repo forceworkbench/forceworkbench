@@ -148,17 +148,14 @@ function explodeCommaSeparated($css) {
  * @return void
  */
 function handleAllExceptions($e) {
-    if ($e instanceof WorkbenchHandledException) {
+    try { include_once 'header.php'; } catch (exception $e) {}
+    print "<p/>";
+
+    if ($e instanceof WorkbenchHandledException || $e->getMessage() == "Could not connect to host") {
         workbenchLog(LOG_WARNING, "H", $e->getCode().":".$e->getMessage());
         displayError($e->getMessage(), false, true);
         return;
     }
-
-    workbenchLog(LOG_ERR, "G", $e->getCode().":".$e->getMessage()."\n".
-                               $e->getTraceAsString());
-
-    try { include_once 'header.php'; } catch (exception $e) {}
-    print "<p/>";
 
     if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
         WorkbenchContext::get()->release();
@@ -167,6 +164,9 @@ function handleAllExceptions($e) {
         include_once 'footer.php';
         exit;
     }
+
+    workbenchLog(LOG_ERR, "G", $e->getCode().":".$e->getMessage()."\n".
+                               $e->getTraceAsString());
 
     displayError("UNKNOWN ERROR: " . $e->getMessage(), false, true);
     exit;
