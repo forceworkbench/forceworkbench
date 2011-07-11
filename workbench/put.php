@@ -17,12 +17,17 @@ function put($action) {
             $singleRecordCsv = array();
             $singleRecordFieldMap = convertFieldMapToArray($_POST);
             $fields = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject())->fields;
+            $anySet = false;
             foreach ($fields as $field) {
                 if (isset($_POST[$field->name])) {
+                    $anySet |= $_POST[$field->name] != "";
                     $singleRecordCsv[0][] = $field->name;
                     $singleRecordCsv[1][] = $_POST[$field->name];
                     $singleRecordFieldMap[$field->name]["csvField"] = $field->name;
                 }
+            }
+            if (!$anySet) {
+                displayError("Must set a value for at least one field to $action.", true, true);
             }
             $_SESSION['csv_array'] = $singleRecordCsv;
             $_SESSION['field_map'] = $singleRecordFieldMap;
@@ -306,7 +311,7 @@ function setFieldMappings($action,$csvArray) {
         if (WorkbenchContext::get()->getDefaultObject()) {
             $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
         } else {
-            displayError("A default object is required to $action. Go to the Select page to choose a default object and try again.");
+            displayError("You must choose an object to $action.", false, true);
         }
     }
 
@@ -334,7 +339,14 @@ function setFieldMappings($action,$csvArray) {
 
     } //end if upsert
 
-    print "<p class='instructions'>Map the Salesforce fields to the columns from the uploaded CSV:</p>\n";
+
+    if ($csvArray) {
+        $instructions = "Map the Salesforce fields to the columns from the uploaded CSV:";
+    } else {
+        $instructions = "Provide values for the " . WorkbenchContext::get()->getDefaultObject() . " fields below:";
+    }
+    print "<p class='instructions'>$instructions</p>\n";
+
     print "<table class='fieldMapping'>\n";
     print "<tr><th>Salesforce Field</th>";
 
@@ -345,7 +357,7 @@ function setFieldMappings($action,$csvArray) {
     }
 
     if (getConfig("showReferenceBy") && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
-    print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided in the CSV file and can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/></th>";
+    print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided can be automatically matched to their cooresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only stardard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/></th>";
     print "</tr>\n";
 
     if ($action == 'insert') {
