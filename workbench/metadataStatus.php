@@ -99,7 +99,7 @@ try {
             displayInfo("Retrieve result ZIP file is ready for download.");
             print "<p/>";
 
-            $zipLink = " | <a id='zipLink' href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?asyncProcessId=$asyncResults->id&downloadZip' onclick='undownloadedZip=false;' style='text-decoration:none;'>" .
+            $zipLink = " | <a id='zipLink' href='?asyncProcessId=$asyncResults->id&downloadZip' onclick='undownloadedZip=false;' style='text-decoration:none;'>" .
                        "<span style='text-decoration:underline;'>Download ZIP File</span> <img src='" . getStaticResourcesPath() ."/images/downloadIconCompleted.gif' border='0'/>" . 
                        "</a></p>";
         }

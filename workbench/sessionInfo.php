@@ -10,7 +10,6 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
     } catch (Exception $e) {
         if (stripos($e->getMessage(), 'UNSUPPORTED_API_VERSION') > -1) {
-            
             header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']) . "?switchApiVersionTo=" . $previousVersion . "&" . 'UNSUPPORTED_API_VERSION');
         } else {
             throw $e;
@@ -19,12 +18,26 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
 
 }
 
+if (isset($_REQUEST['clearCache'])) {
+    WorkbenchContext::get()->clearCache();
+    $cacheCleared = true;
+}
+
 require_once 'header.php';
+
+if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
+    displayError("Selected API version is not supported by this Salesforce organization. Automatically reverted to prior version.");
+    print "<p/>";
+} else if (isset($cacheCleared)) {
+    displayInfo("Cache Cleared Successfully");
+    print "<p/>";
+}
 ?>
-<p />
+
+<div>
 <p class='instructions'>Below is information regarding the current user session:</p>
 <div style='float: right;'>
-    <form name="changeApiVersionForm" action="">
+    <form name="changeApiVersionForm" action="" method="POST">
     Change API Version: <?php
     print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
     foreach ($GLOBALS['API_VERSIONS'] as $v) {
@@ -37,14 +50,6 @@ require_once 'header.php';
 </div>
 
 <?php
-
-if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
-    print "<div style='margin-top: 3em;'>";
-    displayError("Selected API version is not supported by this Salesforce organization. Automatically reverted to prior version.",false,false);
-    print "<p/>";
-} else {
-    print "<div>";
-}
 
 $sessionInfo = array();
 $sessionInfo['Connection'] = array(
@@ -89,8 +94,12 @@ if (count($errors) > 0) {
 $tree = new ExpandableTree("sessionInfoTree", $sessionInfo);
 $tree->setContainsDates(true);
 $tree->setContainsIds(true);
+$tree->setAdditionalMenus(" | <a href='?clearCache' style='text-decoration:none;'>" .
+                                "<span style='text-decoration:underline;'>Clear Cache</span> <img src='" . getStaticResourcesPath() ."/images/sweep.png' border='0' align='top'/>" .
+                              "</a>");
 $tree->printTree();
 
 print "</div>";
 require_once 'footer.php';
 ?>
+

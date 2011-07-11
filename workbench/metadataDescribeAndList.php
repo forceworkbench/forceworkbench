@@ -33,12 +33,12 @@ foreach ($describeMetadataResult as $resultsKey => $resultsValue) {
 
                     $childType = new stdClass();
                     $childType->parentXmlName = $metadataResultsValue->xmlName .
-                        " <a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?type=$metadataResultsValue->xmlName' class='miniLink' onClick=\"document.getElementById('loadingMessage').style.visibility='visible';\">[INFO]</a>";
+                        " <a href='?type=$metadataResultsValue->xmlName' class='miniLink' onClick=\"document.getElementById('loadingMessage').style.visibility='visible';\">[INFO]</a>";
                     $childType->childXmlName = $childName;
                     $metadataTypeMap[$childName] = $childType;
 
                     $metadataTypeMap[$metadataResultsValue->xmlName]->childXmlNames[$childNameKey] = $childName .
-                        " <a href='" . htmlspecialchars($_SERVER['PHP_SELF']) . "?type=$childName' class='miniLink' onClick=\"document.getElementById('loadingMessage').style.visibility='visible';\">[INFO]</a>";
+                        " <a href='?type=$childName' class='miniLink' onClick=\"document.getElementById('loadingMessage').style.visibility='visible';\">[INFO]</a>";
                 }
             }
         }
