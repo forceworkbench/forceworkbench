@@ -311,7 +311,7 @@ function setFieldMappings($action,$csvArray) {
         if (WorkbenchContext::get()->getDefaultObject()) {
             $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
         } else {
-            displayError("You must choose an object to $action.", false, true);
+            displayError("Must choose an object to $action.", false, true);
         }
     }
 
