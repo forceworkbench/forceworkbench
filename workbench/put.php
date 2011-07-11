@@ -180,30 +180,32 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
           (requiresObject($action) ? "an object and " : "") .
           "  a CSV " .
           (supportsZips($action) ? "or ZIP "  : "") . 
-          " file containing records to $action." . 
-          (supportsZips($action) ? " Zipped requests must contain a CSV or XML-formatted manifest called request.txt, which may reference included binary files."  : "") . 
+          " file containing records to $action, or provide data to $action a single record." .
+          (supportsZips($action) ? " Zipped requests must contain a CSV or XML-formatted manifest called request.txt, which may reference included binary files."  : "") .
           "</p>\n";
     
     print "<form enctype='multipart/form-data' method='post' action=''>\n" . getCsrfFormTag();
 
+    print "<table>";
     if (requiresObject($action)) {
         $filter1 = null;
         $filter2 = null;
         if($action == "insert") $filter1 = "createable";
         else if($action == "update") $filter1 = "updateable";
         else if ($action == "upsert") {$filter1 = "createable"; $filter2 = "updateable";}
-
+        print "<tr><td>Object Type</td><td>";
         printObjectSelection(WorkbenchContext::get()->getDefaultObject(), 'default_object', "20", null, $filter1, $filter2);
+        print "</td></tr>\n<tr><td colspan='2'></td></tr>\n";
     }
     
-    print "<p><label><input type='radio' id='sourceType_file' name='sourceType' value='file' checked='checked' />From File:</label>&nbsp;\n";
-    print "<input type='file' name='$fileInputName' size='44' onchange='document.getElementById(\"sourceType_file\").checked=true;' /></p>\n";
-    print "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' />\n";
+    print "<tr><td style='width: 10em;'><label><input type='radio' id='sourceType_file' name='sourceType' value='file' checked='checked' />From File</label></td>\n" .
+          "<td><input type='file' name='$fileInputName' size='44' onchange='document.getElementById(\"sourceType_file\").checked=true;' />\n" .
+          "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' /></td></tr>\n";
 
-    print "<p><label><input type='radio' id='sourceType_singleRecord' name='sourceType' value='singleRecord'  />Single Record</label></p>\n";
+    print "<tr><td colspan='2'><label><input type='radio' id='sourceType_singleRecord' name='sourceType' value='singleRecord'  />Single Record</label></td></tr>\n";
 
-    print "<p><input type='submit' name='action' value='Next' /></p>\n";
-    print "</form>\n";
+    print "<tr><td colspan='2'><br/><input type='submit' name='action' value='Next' /></td></tr>\n";
+    print "</table></form>\n";
     
     include_once 'footer.php';
 }
