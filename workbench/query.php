@@ -499,9 +499,11 @@ QUERY_BUILDER_SCRIPT;
         if ($queryRequest->getExportTo() == 'matrix') print "checked='true'";
         print " onClick='toggleMatrixSortSelectors(true);'>Matrix</label>";
 
-        print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
-        if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
-        print " onClick='toggleMatrixSortSelectors(true);'>CSV</label>&nbsp;";
+        if (getConfig("allowQueryCsvExport")) {
+            print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
+            if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
+            print " onClick='toggleMatrixSortSelectors(true);'>CSV</label>&nbsp;";
+        }
 
         print "<label><input type='radio' id='export_action_async_csv' name='export_action' value='async_CSV' ";
         if ($queryRequest->getExportTo() == 'async_CSV') print "checked='true'";
@@ -928,6 +930,10 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
 
 //Export the above query to a CSV file
 function exportQueryAsCsv($records,$queryAction) {
+    if (!getConfig("allowQueryCsvExport")) {
+        throw new Exception("Export to CSV not allowed");
+    }
+
     if ($records) {
         try {
             $csvFile = fopen('php://output','w') or die("Error opening php://output");

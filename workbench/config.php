@@ -460,6 +460,14 @@ $config["header_queryAndSearchOptions"] = array(
         "dataType" => "boolean"
     );
 
+    $config["allowQueryCsvExport"] = array(
+        "label" => "Allows Query CSV Export",
+        "description" => "Allows queries to export to CSV. Does not affect Bulk CSV export.",
+        "default" => false,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
     $config["queryOptions_batchSize"] = array(
         "label" => "Preferred Query Batch Size",
         "description" => "Requested query batch size. This is not a guaranteed value and depends on the data set being returned.",
@@ -491,6 +499,7 @@ $config["header_queryAndSearchOptions"] = array(
         "overrideable" => false,
         "dataType" => "boolean"
     );
+
 
 $config["header_PackageVersion"] = array(
     "label" => "Package Version",
