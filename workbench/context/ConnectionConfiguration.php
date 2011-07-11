@@ -45,8 +45,8 @@ class ConnectionConfiguration {
     }
 
     static function fromUrl($serviceUrl, $sessionId, $clientId) {
-        if (preg_match("!http(s?)://(.*)/services/Soap/u/(\d{1,2}\.\d)!", $serviceUrl, $serviceUrlMatches) == 0) {
-            throw new Exception("Invalid Service URL format: " . $serviceUrl);
+        if (preg_match("!http(s?)://(.*)/services/Soap/[uc]/(\d{1,2}\.\d)!", $serviceUrl, $serviceUrlMatches) == 0) {
+            throw new WorkbenchHandledException("Invalid Service URL format. Must be formatted as either Partner or Enterprise URL.\n" . $serviceUrl);
         }
 
         return new ConnectionConfiguration(

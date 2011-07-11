@@ -74,11 +74,11 @@ class WorkbenchContext {
 
     private function __construct(ConnectionConfiguration $connConfig) {
         if ($connConfig->getHost() == null) {
-            throw new Exception("Host must set to establish Workbench Context.");
+            throw new Exception("Host must be set to establish Workbench Context.");
         }
 
         if ($connConfig->getApiVersion() == null) {
-            throw new Exception("API Version must set to establish Workbench Context.");
+            throw new Exception("API Version must be set to establish Workbench Context.");
         }
 
         $this->connConfig = $connConfig;
