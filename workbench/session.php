@@ -130,5 +130,4 @@ if (isLoggedIn()) {
     }
     $_SESSION['lastRequestTime'] = microtime(true);
 }
-file_get_contents("asdf");
 ?>
