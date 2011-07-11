@@ -69,7 +69,7 @@ if (getConfig("requireSSL") && !usingSSL()) {
         WorkbenchContext::get()->release();
     }
 
-    httpError("403.4 SSL Required", "Connection to Workbench and Salesforce required"); //TODO: what do we want to do here?
+    httpError("403.4 SSL Required", "Secure connection to Workbench and Salesforce required"); //TODO: what do we want to do here?
 }
 
 //kick user back to login page for any page that requires a session and one isn't established
@@ -114,7 +114,7 @@ if (isLoggedIn()) {
     }
     if (!$isAllowed) {
         WorkbenchContext::get()->release();
-        httpError("403 Not Authorized", "Requests for organization $orgId15 are not allowed");
+        displayError("Requests for organization $orgId15 are not allowed", true, true);
     }
 
 
