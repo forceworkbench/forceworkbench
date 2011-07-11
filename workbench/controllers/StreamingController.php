@@ -119,6 +119,11 @@ class StreamingController {
         $options = "";
 
         $options .= "<option></option>\n";
+
+        if (!$this->isEnabled()) {
+            return $options;
+        }
+
         $selected = count($this->pushTopics) == 0 ? "selected='selected'" : "";
         $options .= "<option value='". PushTopic::template()->toJson() . "' $selected>--Create New--</option>\n";
         foreach($this->pushTopics as $topic) {
@@ -158,7 +163,7 @@ class StreamingController {
     }
 
     function isEnabled() {
-        return$this->enabled;
+        return $this->enabled;
     }
 
     function isAjax() {

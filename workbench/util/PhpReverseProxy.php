@@ -105,7 +105,6 @@ class PhpReverseProxy {
         $output = curl_exec($ch);
         $info = curl_getinfo($ch);
         $this->postConnect($ch, $info, $output);
-        syslog(LOG_WARNING, print_r($info, true));
         curl_close($ch);
     }
 
