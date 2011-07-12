@@ -468,7 +468,10 @@ function printPutFieldForMappingId($csvArray, $showRefCol, $currentRecord) {
 function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord) {
     print "<tr";
     if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
-    print "><td style='cursor: pointer;' onmouseover=\"Tip('Label: $field->label <br/> Type: $field->type <br/> Length: $field->length')\">$field->name</td>";
+    print "><td style='cursor: pointer;' onmouseover=\"Tip('Label: " . htmlspecialchars($field->label, ENT_QUOTES) .
+                                                      " <br/> Type: " . htmlspecialchars($field->type, ENT_QUOTES) .
+                                                      " <br/> Length: " .htmlspecialchars($field->length, ENT_QUOTES) . "')\">" .
+          htmlspecialchars($field->name, ENT_QUOTES) . "</td>";
 
     if ($csvArray) {
         print "<td><select name='$field->name' style='width: 100%;'>";
@@ -480,7 +483,7 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord)
         }
         print "</select></td>";
     } else {
-        $fieldName = $field->name;
+        $fieldName = htmlspecialchars($field->name, ENT_QUOTES);
         $fieldValue = "";
         if ($currentRecord != null && isset($currentRecord->fields->$fieldName)) {
             $fieldValue = htmlspecialchars($currentRecord->fields->$fieldName);
