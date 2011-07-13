@@ -494,6 +494,10 @@ function printPutFieldForMappingId($csvArray, $showRefCol, $currentRecord) {
     $idField->name = "Id";
     $idField->type = "id";
 
+    if (!isset($currentRecord->fields->Id) && isset($currentRecord->Id[0])) {
+        $currentRecord->fields->Id = $currentRecord->Id[0];
+    }
+
     printPutFieldForMapping($idField, $csvArray, $showRefCol, $currentRecord);
 }
 
