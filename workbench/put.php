@@ -494,8 +494,9 @@ function printPutFieldForMappingId($csvArray, $showRefCol, $currentRecord) {
     $idField->name = "Id";
     $idField->type = "id";
 
-    if (!isset($currentRecord->fields->Id) && isset($currentRecord->Id[0])) {
-        $currentRecord->fields->Id = $currentRecord->Id[0];
+    // fix an IIS issue where the id is not in fields
+    if (!isset($currentRecord->fields->Id) && isset($currentRecord->Id)) {
+        $currentRecord->fields->Id = $currentRecord->Id;
     }
 
     printPutFieldForMapping($idField, $csvArray, $showRefCol, $currentRecord);
