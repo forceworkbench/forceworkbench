@@ -406,9 +406,15 @@ function natcaseksort($array) {
 
 
 function addLinksToUiForIds($inputStr) {
+    $dmlTip = "onmouseover=\"Tip('Choose an action:<br/>";
+    $dmlTip .= "<a href=\'" . getJumpToSfdcUrlPrefix() . "$1\' target=\'sfdcUi\'>View</a>&nbsp;&nbsp;";
+    foreach (array("Update", "Delete", "Undelete", "Purge") as $dmlAction) {
+        $dmlTip .= "<a href=\'" . lcfirst($dmlAction) .".php?sourceType=singleRecord&id=$1\'>$dmlAction</a>&nbsp;&nbsp;";
+    }
+    $dmlTip .= "', STICKY, true)\"";
+    
     if (getConfig('linkIdToUi')) {
-        return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='" . getJumpToSfdcUrlPrefix() . "$1' target='sfdcUi'>$1</a>".
-                                                     " <a class='miniLink' href='update.php?sourceType=singleRecord&id=$1'>[UPDATE]</a>",
+        return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='" . getJumpToSfdcUrlPrefix() . "$1' target='sfdcUi' $dmlTip>$1</a>",
                              $inputStr);
     } else {
         return $inputStr;

@@ -17,6 +17,7 @@ class DescribeGlobalProvider extends CacheableValueProvider {
                 //todo: do we really need both of these?
                 $describeGlobalResponse->types[] = $sobject->name; //migrate to pre 17.0 format
                 $describeGlobalResponse->attributeMap["$sobject->name"] = $sobject; //recreate into a map for faster lookup later
+                $describeGlobalResponse->byKeyPrefix["$sobject->keyPrefix"] = $sobject->name; //recreate into a map for faster lookup later
             }
             unset($describeGlobalResponse->sobjects); //remove from array, since not needed
         }

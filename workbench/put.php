@@ -15,7 +15,6 @@ function put($action) {
 
         if (isset($_POST['sourceType']) && $_POST['sourceType'] == "singleRecord") {
             $singleRecordCsv = array();
-            $singleRecordFieldMap = convertFieldMapToArray($_POST);
 
             if (requiresObject($action)) {
                 $fields = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject())->fields;
@@ -24,13 +23,15 @@ function put($action) {
                 $idField->name = "Id";
                 $fields['Id'] = $idField;
             }
+
+            $singleRecordFieldMap = convertFieldMapToArray($_POST, fieldsToNameArray($fields));
             
             $anySet = false;
             foreach ($fields as $field) {
                 if (isset($_POST[$field->name])) {
                     $anySet |= $_POST[$field->name] != "";
                     $singleRecordCsv[0][] = $field->name;
-                    $singleRecordCsv[1][] = $_POST[$field->name];
+                    $singleRecordCsv[1][] = trim($_POST[$field->name]);
                     $singleRecordFieldMap[$field->name]["csvField"] = $field->name;
                 }
             }
@@ -61,7 +62,6 @@ function put($action) {
                 isset($_POST['contentType']) ? $_POST['contentType'] :  null);
         } else {
             require_once 'header.php';
-            print "<h1>" . ucwords($action) . " Results</h1>";
             $apiCall = ($action == 'insert') ? 'create' : $action;
             if ($action == "insert" || $action == "update" || $action == "upsert") {
                 putSync(
@@ -83,7 +83,8 @@ function put($action) {
             $_SESSION['_ext_id'] = $_POST['_ext_id'];
             $_POST['_ext_id'] = NULL;
         }
-        $_SESSION['field_map'] = convertFieldMapToArray($_POST);
+        $fieldNames = fieldsToNameArray(WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject())->fields);
+        $_SESSION['field_map'] = convertFieldMapToArray($_POST, $fieldNames);
         confirmFieldMappings(
             $confirmAction,
             $_SESSION['field_map'],
@@ -173,7 +174,7 @@ function put($action) {
         include_once 'footer.php';
     } else {
         unset($_SESSION['field_map'],$_SESSION['csv_array'],$_SESSION['_ext_id'],$_SESSION['file_tmp_name'],$_SESSION['tempZipFile']);
-        displayUploadFileWithObjectSelectionForm('file', $action);
+        displayUploadFileWithObjectSelectionForm($action);
     }
 }
 
@@ -183,20 +184,25 @@ function put($action) {
 /**
  * Form to upload CSV for all PUT functions
  *
- * @param $fileInputName
  * @param $action
  */
-function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
+function displayUploadFileWithObjectSelectionForm($action, $id = null, $warning = null) {
     require_once 'header.php';
     print "<p class='instructions'>" . 
           "Select " . 
           (requiresObject($action) ? "an object and " : "") .
           "  a CSV " .
           (supportsZips($action) ? "or ZIP "  : "") . 
-          " file containing records to $action, or provide data to $action a single record." .
+          " file containing records to $action, or " . ($action != "insert" ? "provide an id " : "choose ") ." to $action a single record." .
           (supportsZips($action) ? " Zipped requests must contain a CSV or XML-formatted manifest called request.txt, which may reference included binary files."  : "") .
           "</p>\n";
-    
+
+
+    if ($warning) {
+        displayWarning($warning);
+        print "<p/>";
+    }
+
     print "<form enctype='multipart/form-data' method='post' action=''>\n" . getCsrfFormTag();
 
     print "<table>";
@@ -210,12 +216,16 @@ function displayUploadFileWithObjectSelectionForm($fileInputName, $action) {
         printObjectSelection(WorkbenchContext::get()->getDefaultObject(), 'default_object', "20", null, $filter1, $filter2);
         print "</td></tr>\n<tr><td colspan='2'></td></tr>\n";
     }
-    
+
     print "<tr><td style='width: 10em;'><label><input type='radio' id='sourceType_file' name='sourceType' value='file' checked='checked' />From File</label></td>\n" .
-          "<td><input type='file' name='$fileInputName' size='44' onchange='document.getElementById(\"sourceType_file\").checked=true;' />\n" .
+          "<td><input type='file' name='file' size='44' onchange='document.getElementById(\"sourceType_file\").checked=true;' />\n" .
           "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' /></td></tr>\n";
 
-    print "<tr><td colspan='2'><label><input type='radio' id='sourceType_singleRecord' name='sourceType' value='singleRecord'  />Single Record</label></td></tr>\n";
+    print "<tr><td><label><input type='radio' id='sourceType_singleRecord' name='sourceType' value='singleRecord' " .
+          ($id != null ? "checked=checked" : "") .
+          "/>Single Record</label></td><td>" .
+          ($id != null || $action != "insert" ? "<input type='text' name='id' value='" . htmlspecialchars($_REQUEST['id']) .
+                                                "' onfocus='document.getElementById(\"sourceType_singleRecord\").checked=true;' />" : "") ."</td></tr>\n";
 
     print "<tr><td colspan='2'><br/><input type='submit' name='action' value='Next' /></td></tr>\n";
     print "</table></form>\n";
@@ -304,14 +314,18 @@ function displayCsvArray($csvArray) {
     print "</table>\n";
 }
 
-function queryCurrentRecord($describeSObjectResult, $id) {
+
+function fieldsToNameArray($fields) {
     $fieldNames = array();
-    foreach ($describeSObjectResult->fields as $field) {
+    foreach ($fields as $field) {
         $fieldNames[] = $field->name;
     }
+    return $fieldNames;
+}
 
+function queryCurrentRecord($describeSObjectResult, $id) {
     $soql = "SELECT " .
-            implode(",", $fieldNames) .
+            implode(",", fieldsToNameArray($describeSObjectResult->fields)) .
             " FROM " . WorkbenchContext::get()->getDefaultObject() .
             " WHERE Id = '" . $id . "'";
 
@@ -338,21 +352,43 @@ function queryCurrentRecord($describeSObjectResult, $id) {
  * @param $csvArray
  */
 function setFieldMappings($action,$csvArray) {
-    if ($action == 'insert' || $action == 'upsert' || $action == 'update') {
-        if (WorkbenchContext::get()->getDefaultObject()) {
-            $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
-        } else {
-            displayError("Must choose an object to $action.", false, true);
-        }
-    }
 
     $currRecord = null;
-    if (!$csvArray && isset($_REQUEST['id'])) {
-        $id = htmlspecialchars($_REQUEST['id'], ENT_QUOTES);
-        $currRecord = queryCurrentRecord($describeSObjectResult, $id);
-        if ($currRecord == null) {
-            displayWarning("Could not load data for an existing " . WorkbenchContext::get()->getDefaultObject() . " with id [$id]");
+    $id = trim(htmlspecialchars($_REQUEST['id'], ENT_QUOTES));
+
+    if (requiresObject($action)) {
+        // if an object is not explicitly given, infer from the id, if that was given
+        if (!isset($_REQUEST['default_object'])) {
+            $keyPrefix = substr($id, 0, 3);
+            if (!empty($keyPrefix)) {
+                $describeGlobal = WorkbenchContext::get()->describeGlobal();
+                $objectType = $describeGlobal->byKeyPrefix[$keyPrefix];
+                WorkbenchContext::get()->setDefaultObject($objectType);
+            }
         }
+
+        if (WorkbenchContext::get()->getDefaultObject()) {
+            $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
+            if (!$csvArray && !empty($_REQUEST['id'])) {
+                $currRecord = queryCurrentRecord($describeSObjectResult, $id);
+                if ($currRecord == null) {
+                    displayUploadFileWithObjectSelectionForm($action, $id,
+                                                             "An existing " . WorkbenchContext::get()->getDefaultObject() .
+                                                             " could not found with the id '$id'. Confirm both the object type and id are correct.");
+                    exit;
+                }
+            }
+        } else {
+            if (!$csvArray && !empty($_REQUEST['id'])) {
+                displayUploadFileWithObjectSelectionForm($action, $id, "The object type of id '$id' is unknown. Choose an object type and confirm the id is correct.");
+                exit;
+            }
+
+            displayError("Must choose an object to $action.", false, true);
+        }
+    } else if (!$csvArray && $id) {
+        $currRecord = new SObject();
+        $currRecord->fields->Id = $id;
     }
 
     print "<div id='setFieldMappingster_block_loading' style='display:block; color:#888;'><img src='" . getStaticResourcesPath() ."/images/wait16trans.gif' align='absmiddle'/> Loading...</div>";
@@ -382,9 +418,12 @@ function setFieldMappings($action,$csvArray) {
 
     if ($csvArray) {
         $instructions = "Map the Salesforce fields to the columns from the uploaded CSV:";
-    } else {
+    } else if (requiresObject($action)) {
         $instructions = "Provide values for the " . WorkbenchContext::get()->getDefaultObject() . " fields below:";
+    } else {
+        $instructions = "Confirm the id to $action below:";
     }
+
     print "<p class='instructions'>$instructions</p>\n";
 
     print "<table class='fieldMapping'>\n";
@@ -401,7 +440,7 @@ function setFieldMappings($action,$csvArray) {
     print "</tr>\n";
 
     if ($action == 'insert') {
-        foreach ($describeSObjectResult->fields as $fields => $field) {
+        foreach ($describeSObjectResult->fields as $field) {
             if ($field->createable) {
                 printPutFieldForMapping($field, $csvArray, true, null);
             }
@@ -410,7 +449,7 @@ function setFieldMappings($action,$csvArray) {
 
     if ($action == 'update') {
         printPutFieldForMappingId($csvArray, true, $currRecord);
-        foreach ($describeSObjectResult->fields as $fields => $field) {
+        foreach ($describeSObjectResult->fields as $field) {
             if ($field->updateable) {
                 printPutFieldForMapping($field, $csvArray, true, $currRecord);
             }
@@ -419,7 +458,7 @@ function setFieldMappings($action,$csvArray) {
 
     if ($action == 'upsert') {
         printPutFieldForMappingId($csvArray, true, $currRecord);
-        foreach ($describeSObjectResult->fields as $fields => $field) {
+        foreach ($describeSObjectResult->fields as $field) {
             if ($field->updateable && $field->createable) {
                 printPutFieldForMapping($field, $csvArray, true, $currRecord);
             }
@@ -587,15 +626,14 @@ function printRefField($field, $describeRefObjResult) {
  * Convert the field map $POST to a PHP array
  * by decomposing the relationship map, if SmartLookup
  * is being used.
- *
- * @param unknown_type $fieldMap
- * @return unknown
  */
-function convertFieldMapToArray($fieldMap) {
+function convertFieldMapToArray($fieldMap, $fieldNames) {
     $fieldMapArray = array();
 
     foreach ($fieldMap as $fieldMapKey=>$fieldMapValue) {
-        if ($fieldMapKey == "CSRF_TOKEN") continue;
+        if (!fieldMapKeyMatchesFields($fieldMapKey, $fieldNames)) {
+            continue;
+        }
 
         if (preg_match('/^(\w+):(\w+)$/',$fieldMapKey,$keyMatches)) {
             if (preg_match('/^(\w+).(\w+).(\w+).(\w+).(\w+)$/',$fieldMapValue,$valueMatches)) {
@@ -610,6 +648,22 @@ function convertFieldMapToArray($fieldMap) {
     }
 
     return $fieldMapArray;
+}
+
+function fieldMapKeyMatchesFields($fieldMapKey, $fieldNames) {
+    // this should be faster for normal fields, so try this first
+    if (in_array($fieldMapKey, $fieldNames)){
+        return true;
+    }
+
+    // now iterate for SmartLookup mappings
+    foreach ($fieldNames as $fieldName) {
+        if (strpos($fieldMapKey, $fieldName) === 0) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -1018,7 +1072,7 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
     }
     print "</table><br/>";
     $resultsTable = ob_get_clean();
-    displayInfo("There were $successCount successes and $errorCount errors.");
+    displayInfo("There " . ($successCount == 1 ? "was" : "were") . " $successCount success" . ($successCount == 1 ? "" : "es") . " and $errorCount error" . ($errorCount == 1 ? "" : "s"));
 
     print "<br/><form action='downloadResultsWithData.php' method='GET'><input type='hidden' name='action' value='$apiCall'/><input type='submit' value='Download Full Results'/></form>";
 
