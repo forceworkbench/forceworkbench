@@ -145,7 +145,8 @@ function explodeCommaSeparated($css) {
 
 function handleAllErrors($errno, $errstr, $errfile, $errline, $errcontext) {
     $errorId = basename($errfile, ".php") . "-$errline-" . uniqid();
-    throw new Exception("A fatal error occurred. Contact your administrator and provide the following error id:\n [$errorId]", 0, new Exception("$errstr at $errfile ($errline)", $errno));
+    workbenchLog(LOG_CRIT, "F", $errorId . ":" . print_r(debug_backtrace(), true));
+    throw new WorkbenchHandledException("A fatal error occurred. Contact your administrator and provide the following error id:\n [$errorId]", 0);
 }
 
 /**
@@ -413,8 +414,8 @@ function addLinksToUiForIds($inputStr) {
     if (getConfig("showIdActionsHover")) {
         $dmlTip = "onmouseover=\"Tip('Choose an action:<br/>";
         if (getConfig('linkIdToUi')) $dmlTip .= "<a " . str_replace("'", "\'", $uiHref) .">View</a>&nbsp;&nbsp;";
-        foreach (array("Update", "Delete", "Undelete", "Purge") as $dmlAction) {
-            $dmlTip .= "<a href=\'" . lcfirst($dmlAction) .".php?sourceType=singleRecord&id=$1\'>$dmlAction</a>&nbsp;&nbsp;";
+        foreach (array("update", "delete", "undelete", "purge") as $dmlAction) {
+            $dmlTip .= "<a href=\'$dmlAction.php?sourceType=singleRecord&id=$1\'>" . ucfirst($dmlAction) . "</a>&nbsp;&nbsp;";
         }
         $dmlTip .= "', STICKY, true)\"";
     }
