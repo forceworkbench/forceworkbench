@@ -493,6 +493,8 @@ function printPutFieldForMappingId($csvArray, $showRefCol, $currentRecord) {
     $idField->defaultedOnCreate = false;
     $idField->name = "Id";
     $idField->type = "id";
+    $idField->label = "Id";
+    $idField->length = 18;
 
     // fix an IIS issue where the id is not in fields
     if (!isset($currentRecord->fields->Id) && isset($currentRecord->Id)) {
@@ -512,7 +514,7 @@ function printPutFieldForMappingId($csvArray, $showRefCol, $currentRecord) {
 function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord) {
     print "<tr";
     if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
-    print "><td style='cursor: pointer;' onmouseover=\"Tip('Label: " . htmlspecialchars($field->label, ENT_QUOTES) .
+    print "><td style='cursor: pointer;' onmouseover=\"Tip('Label: " . str_replace("'", "\'", htmlspecialchars($field->label, ENT_COMPAT)) .
                                                       " <br/> Type: " . htmlspecialchars($field->type, ENT_QUOTES) .
                                                       " <br/> Length: " .htmlspecialchars($field->length, ENT_QUOTES) . "')\">" .
           htmlspecialchars($field->name, ENT_QUOTES) . "</td>";
