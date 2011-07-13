@@ -24,7 +24,15 @@ $config["header_General"] = array(
 
     $config["linkIdToUi"] = array(
         "label" => "Link Ids to Record Detail",
-        "description" => "Display queried Id fields as hyperlinks to their corresponding record in the Salesforce user interface. Note, links to objects without detail pages will fail.",
+        "description" => "Display Id fields as hyperlinks to their corresponding record in the Salesforce user interface. Note, links to objects without detail pages will fail.",
+        "default" => true,
+        "overrideable" => true,
+        "dataType" => "boolean"
+    );
+
+    $config["showIdActionsHover"] = array(
+        "label" => "Show Ids Actions Hover",
+        "description" => "Display menu on Id fields with links to actions.",
         "default" => true,
         "overrideable" => true,
         "dataType" => "boolean"

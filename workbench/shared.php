@@ -406,16 +406,23 @@ function natcaseksort($array) {
 
 
 function addLinksToUiForIds($inputStr) {
-    $dmlTip = "onmouseover=\"Tip('Choose an action:<br/>";
-    $dmlTip .= "<a href=\'" . getJumpToSfdcUrlPrefix() . "$1\' target=\'sfdcUi\'>View</a>&nbsp;&nbsp;";
-    foreach (array("Update", "Delete", "Undelete", "Purge") as $dmlAction) {
-        $dmlTip .= "<a href=\'" . lcfirst($dmlAction) .".php?sourceType=singleRecord&id=$1\'>$dmlAction</a>&nbsp;&nbsp;";
+    $idMatcher = "/\b(\w{4}000\w{11})\b/";
+    $uiHref = "href='" . getJumpToSfdcUrlPrefix() . "$1' target='sfdcUi' ";
+    $dmlTip = "";
+
+    if (getConfig("showIdActionsHover")) {
+        $dmlTip = "onmouseover=\"Tip('Choose an action:<br/>";
+        if (getConfig('linkIdToUi')) $dmlTip .= "<a " . str_replace("'", "\'", $uiHref) .">View</a>&nbsp;&nbsp;";
+        foreach (array("Update", "Delete", "Undelete", "Purge") as $dmlAction) {
+            $dmlTip .= "<a href=\'" . lcfirst($dmlAction) .".php?sourceType=singleRecord&id=$1\'>$dmlAction</a>&nbsp;&nbsp;";
+        }
+        $dmlTip .= "', STICKY, true)\"";
     }
-    $dmlTip .= "', STICKY, true)\"";
-    
+
     if (getConfig('linkIdToUi')) {
-        return preg_replace("/\b(\w{4}000\w{11})\b/","<a href='" . getJumpToSfdcUrlPrefix() . "$1' target='sfdcUi' $dmlTip>$1</a>",
-                             $inputStr);
+        return preg_replace($idMatcher,"<a $uiHref $dmlTip>$1</a>", $inputStr);
+    } else if (getConfig("showIdActionsHover")) {
+        return preg_replace($idMatcher,"<span style='cursor: pointer;' $dmlTip>$1</span>", $inputStr);
     } else {
         return $inputStr;
     }
