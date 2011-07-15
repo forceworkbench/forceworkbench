@@ -23,8 +23,8 @@ $config["header_General"] = array(
 );
 
     $config["linkIdToUi"] = array(
-        "label" => "Link Ids to Record Detail",
-        "description" => "Display Id fields as hyperlinks to their corresponding record in the Salesforce user interface. Note, links to objects without detail pages will fail.",
+        "label" => "Allow Viewing Records in Salesforce",
+        "description" => "Display links on ids to view the corresponding record in the Salesforce user interface. Note, links to objects without detail pages will fail.",
         "default" => true,
         "overrideable" => true,
         "dataType" => "boolean"
@@ -900,6 +900,7 @@ $GLOBALS["MENUS"] = array(
     ),
 
     'Data' => array(
+        'retrieve.php'  => new Page('Retrieve','View a record',true,true,false,false,false,''),
         'insert.php'    => new Page('Insert','Creates new records from a CSV file',true,false,true,'usesObject',true,''),
         'update.php'    => new Page('Update','Updates existing records from a CSV file',true,false,true,'usesObject',true,''),
         'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records from a CSV file based on a unique External Id',true,false,true,'usesObject',true,''),

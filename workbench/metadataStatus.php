@@ -113,7 +113,7 @@ try {
 
         if (isset($debugInfo["DebuggingInfo"]->debugLog)) {
             print "<p>&nbsp;</p><h3>Debug Logs</h3>";
-            print("<pre>" . addLinksToUiForIds(htmlspecialchars($debugInfo["DebuggingInfo"]->debugLog,ENT_QUOTES)) . '</pre>');
+            print("<pre>" . addLinksToIds(htmlspecialchars($debugInfo["DebuggingInfo"]->debugLog,ENT_QUOTES)) . '</pre>');
         }
 
         // if metadata changes were deployed, clear the cache because describe results will probably be different

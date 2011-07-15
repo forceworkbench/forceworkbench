@@ -85,7 +85,7 @@ class ExpandableTree {
                 } else {
                     $nodeValue = $escape ? htmlspecialchars($nodeValue) : $nodeValue;
                     $nodeValue = $this->containsDates ? localizeDateTimes($nodeValue) : $nodeValue;
-                    $nodeValue = $this->containsIds ? addLinksToUiForIds($nodeValue) : $nodeValue;
+                    $nodeValue = $this->containsIds ? addLinksToIds($nodeValue) : $nodeValue;
                 }
 
                 print "<li>$nodeKey<span style='font-weight:bold;'>$nodeValue</span></li>\n";

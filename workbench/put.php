@@ -188,15 +188,17 @@ function put($action) {
  */
 function displayUploadFileWithObjectSelectionForm($action, $id = null, $warning = null) {
     require_once 'header.php';
-    print "<p class='instructions'>" . 
-          "Select " . 
-          (requiresObject($action) ? "an object and " : "") .
-          "  a CSV " .
-          (supportsZips($action) ? "or ZIP "  : "") . 
-          " file containing records to $action, or " . ($action != "insert" ? "provide an id " : "choose ") ." to $action a single record." .
-          (supportsZips($action) ? " Zipped requests must contain a CSV or XML-formatted manifest called request.txt, which may reference included binary files."  : "") .
-          "</p>\n";
 
+    if ($action != "retrieve") {
+        print "<p class='instructions'>" .
+              "Select " .
+              (requiresObject($action) ? "an object and " : "") .
+              "  a CSV " .
+              (supportsZips($action) ? "or ZIP "  : "") .
+              " file containing records to $action, or " . ($action != "insert" ? "provide an id " : "choose ") ." to $action a single record." .
+              (supportsZips($action) ? " Zipped requests must contain a CSV or XML-formatted manifest called request.txt, which may reference included binary files."  : "") .
+              "</p>\n";
+    }
 
     if ($warning) {
         displayWarning($warning);
@@ -217,9 +219,11 @@ function displayUploadFileWithObjectSelectionForm($action, $id = null, $warning 
         print "</td></tr>\n<tr><td colspan='2'></td></tr>\n";
     }
 
-    print "<tr><td style='width: 10em;'><label><input type='radio' id='sourceType_file' name='sourceType' value='file' checked='checked' />From File</label></td>\n" .
-          "<td><input type='file' name='file' size='44' onchange='document.getElementById(\"sourceType_file\").checked=true;' />\n" .
-          "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' /></td></tr>\n";
+    if ($action !== "retrieve") {
+        print "<tr><td style='width: 10em;'><label><input type='radio' id='sourceType_file' name='sourceType' value='file' checked='checked' />From File</label></td>\n" .
+              "<td><input type='file' name='file' size='44' onchange='document.getElementById(\"sourceType_file\").checked=true;' />\n" .
+              "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' /></td></tr>\n";
+    }
 
     print "<tr><td><label><input type='radio' id='sourceType_singleRecord' name='sourceType' value='singleRecord' " .
           ($id != null ? "checked=checked" : "") .
@@ -303,7 +307,7 @@ function displayCsvArray($csvArray) {
         for ($col=0; $col < count($csvArray[0]); $col++) {
             print "<td>";
             if ($csvArray[$row][$col]) {
-                print addLinksToUiForIds(htmlspecialchars($csvArray[$row][$col],ENT_QUOTES));
+                print addLinksToIds(htmlspecialchars($csvArray[$row][$col],ENT_QUOTES));
             } else {
                 print "&nbsp;";
             }
@@ -416,23 +420,38 @@ function setFieldMappings($action,$csvArray) {
     } //end if upsert
 
 
-    if ($csvArray) {
-        $instructions = "Map the Salesforce fields to the columns from the uploaded CSV:";
-    } else if (requiresObject($action)) {
-        $instructions = "Provide values for the " . WorkbenchContext::get()->getDefaultObject() . " fields below:";
+    if ($action == "retrieve") {
+        if (isset($currRecord->fields->Name)) {
+            print "<h3 style='margin:0px;'>" . htmlentities($objectType) . "</h3>";
+            print "<h1 style='margin-top:0px;'>" . htmlentities($currRecord->fields->Name) . "</h1>";
+
+            foreach (array("update", "delete", "undelete", "purge") as $dmlAction) {
+                print "<input type=\"button\" onclick=\"window.location.href='$dmlAction.php?sourceType=singleRecord&id=$id'\" value=\"" . ucfirst($dmlAction) . "\"/>&nbsp;&nbsp;";
+            }
+            if (getConfig('linkIdToUi')) {
+                print "<input type=\"button\" onclick=\"window.open('" . getJumpToSfdcUrlPrefix() . "$id')\" value=\"View in Salesforce\"/>&nbsp;&nbsp;";
+            }
+            print "<p/>";
+        }
     } else {
-        $instructions = "Confirm the id to $action below:";
+        if ($csvArray) {
+            $instructions = "Map the Salesforce fields to the columns from the uploaded CSV:";
+        } else if (requiresObject($action)) {
+            $instructions = "Provide values for the " . WorkbenchContext::get()->getDefaultObject() . " fields below:";
+        } else {
+            $instructions = "Confirm the id to $action below:";
+        }
+
+        print "<p class='instructions'>$instructions</p>\n";
     }
 
-    print "<p class='instructions'>$instructions</p>\n";
-
     print "<table class='fieldMapping'>\n";
-    print "<tr><th>Salesforce Field</th>";
+    print "<tr><th>Field</th>";
 
     if ($csvArray) {
         print "<th>CSV Field</th>";
     } else {
-        print "<th>Field Value</th>";
+        print "<th>Value</th>";
     }
 
     if (getConfig("showReferenceBy") && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
@@ -470,13 +489,18 @@ function setFieldMappings($action,$csvArray) {
         printPutFieldForMappingId($csvArray, false, $currRecord);
     }
 
+    if ($action == "retrieve") {
+        foreach ($describeSObjectResult->fields as $field) {
+            printPutFieldForMapping($field, false, false, $currRecord, false);
+        }
+    }
 
     print "</table>\n";
 
     if ($csvArray) {
         print "<p><input type='submit' name='action' value='Map Fields' />\n";
         print "<input type='button' value='Preview CSV' onClick='window.open(" . '"csv_preview.php"' . ")'></p>\n";
-    } else {
+    } else if ($action !== "retrieve") {
         print "<input type='hidden' name='sourceType' value='singleRecord' />\n";
         print "<p><input type='submit' name='action' value='Confirm " . ucwords($action) . "' />\n";
     }
@@ -511,9 +535,9 @@ function printPutFieldForMappingId($csvArray, $showRefCol, $currentRecord) {
  * @param $field
  * @param $csvArray
  */
-function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord) {
+function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord, $editable = true) {
     print "<tr";
-    if (!$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
+    if ($editable && !$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
     print "><td style='cursor: pointer;' onmouseover=\"Tip('Label: " . str_replace("'", "\'", htmlspecialchars($field->label, ENT_COMPAT)) .
                                                       " <br/> Type: " . htmlspecialchars($field->type, ENT_QUOTES) .
                                                       " <br/> Length: " .htmlspecialchars($field->length, ENT_QUOTES) . "')\">" .
@@ -534,7 +558,7 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord)
         if ($currentRecord != null && isset($currentRecord->fields->$fieldName)) {
             $fieldValue = htmlspecialchars($currentRecord->fields->$fieldName);
         }
-        print "<td><input name='$field->name' style='width: 97%;' value=\"$fieldValue\"/></td>";
+        print "<td>" . ($editable ? "<input name='$field->name' style='width: 97%;' value=\"$fieldValue\"/>"  : addLinksToIds($fieldValue)) . "</td>";
     }
 
     if ($showRefCol && getConfig("showReferenceBy")) {
@@ -1035,7 +1059,7 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
             $successCount++;
             print "<tr>";
             print "<td>" . $excelRow . "</td>";
-            print "<td>" . addLinksToUiForIds($results[$row]->id) . "</td>";
+            print "<td>" . addLinksToIds($results[$row]->id) . "</td>";
             $_SESSION['resultsWithData'][$row+1][0] = $results[$row]->id;
             print "<td>Success</td>";
             $_SESSION['resultsWithData'][$row+1][1] = "Success";
@@ -1060,10 +1084,10 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
 
             if (!isset($results[$row]->id) && isset($idArray)) {
                 $_SESSION['resultsWithData'][$row+1][0] = $idArray[$row]; //add id from idArray for id-only calls
-                print "<td>" . addLinksToUiForIds($idArray[$row]) . "</td>";
+                print "<td>" . addLinksToIds($idArray[$row]) . "</td>";
             } else {
                 $_SESSION['resultsWithData'][$row+1][0] = $results[$row]->id; //add id from results for everything else
-                print "<td>" . addLinksToUiForIds($results[$row]->id) . "</td>";
+                print "<td>" . addLinksToIds($results[$row]->id) . "</td>";
             }
 
             print "<td>" . ucwords($results[$row]->errors->message) . "</td>";
@@ -1093,7 +1117,7 @@ function supportsBulk($action) {
 }
 
 function requiresObject($action) {
-    return in_array($action, array("insert", "update", "upsert"));    
+    return in_array($action, array("insert", "update", "upsert", "retrieve"));
 }
 
 function supportsZips($action) {

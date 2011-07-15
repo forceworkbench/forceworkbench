@@ -907,7 +907,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
             }
 
-            print addLinksToUiForIds($queryRequest->getExportTo() == 'matrix' ?
+            print addLinksToIds($queryRequest->getExportTo() == 'matrix' ?
             createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
             createQueryResultTable($records, $rowNum));
 

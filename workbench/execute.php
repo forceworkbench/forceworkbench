@@ -72,7 +72,7 @@ if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptIn
 
     if ($executeAnonymousResultWithDebugLog->executeAnonymousResult->success) {
         if (isset($executeAnonymousResultWithDebugLog->debugLog) && $executeAnonymousResultWithDebugLog->debugLog != "") {
-            print("<pre>" . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES)) . '</pre>');
+            print("<pre>" . addLinksToIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES)) . '</pre>');
         } else {
             displayInfo("Execution was successful, but returned no results. Confirm log category and level.");
         }
@@ -103,7 +103,7 @@ if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptIn
 
         displayError($error);
 
-        print('<pre style="color: red;">' . addLinksToUiForIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES)) . '</pre>');
+        print('<pre style="color: red;">' . addLinksToIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES)) . '</pre>');
     }
 
     //    print('<pre>');

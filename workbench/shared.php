@@ -406,27 +406,22 @@ function natcaseksort($array) {
 }
 
 
-function addLinksToUiForIds($inputStr) {
+function addLinksToIds($inputStr) {
     $idMatcher = "/\b(\w{4}000\w{11})\b/";
     $uiHref = "href='" . getJumpToSfdcUrlPrefix() . "$1' target='sfdcUi' ";
+
     $dmlTip = "";
 
     if (getConfig("showIdActionsHover")) {
         $dmlTip = "onmouseover=\"Tip('Choose an action:<br/>";
-        if (getConfig('linkIdToUi')) $dmlTip .= "<a " . str_replace("'", "\'", $uiHref) .">View</a>&nbsp;&nbsp;";
         foreach (array("update", "delete", "undelete", "purge") as $dmlAction) {
             $dmlTip .= "<a href=\'$dmlAction.php?sourceType=singleRecord&id=$1\'>" . ucfirst($dmlAction) . "</a>&nbsp;&nbsp;";
         }
-        $dmlTip .= "', STICKY, true)\"";
+        if (getConfig('linkIdToUi')) $dmlTip .= "<a " . str_replace("'", "\'", $uiHref) .">View in Salesforce</a>&nbsp;&nbsp;";
+        $dmlTip .= "', STICKY, true, WIDTH, 300)\"";
     }
 
-    if (getConfig('linkIdToUi')) {
-        return preg_replace($idMatcher,"<a $uiHref $dmlTip>$1</a>", $inputStr);
-    } else if (getConfig("showIdActionsHover")) {
-        return preg_replace($idMatcher,"<span style='cursor: pointer;' $dmlTip>$1</span>", $inputStr);
-    } else {
-        return $inputStr;
-    }
+    return preg_replace($idMatcher,"<a href='retrieve.php?id=$1' $dmlTip>$1</a>", $inputStr);
 }
 
 function getJumpToSfdcUrlPrefix() {

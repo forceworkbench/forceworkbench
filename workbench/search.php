@@ -372,14 +372,14 @@ function displaySearchResult($records, $searchTimeElapsed) {
                     $rowNum++;
                     //Another check if there are ID columns in the body
                     if (isset($record->Id)) {
-                        print "<td>" . addLinksToUiForIds($record->Id) . "</td>";
+                        print "<td>" . addLinksToIds($record->Id) . "</td>";
                     }
                     //Print the non-ID fields
                     if (isset($record->fields)) {
                         foreach ($record->fields as $datum) {
                             print "<td>";
                             if ($datum) {
-                                print localizeDateTimes(addLinksToUiForIds(htmlspecialchars($datum,ENT_QUOTES)));
+                                print localizeDateTimes(addLinksToIds(htmlspecialchars($datum,ENT_QUOTES)));
                             } else {
                                 print "&nbsp;";
                             }

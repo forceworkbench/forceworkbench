@@ -40,7 +40,7 @@ foreach ($batchInfos as $batchInfo) {
     }
 }
 
-print "<h3>Job: " . addLinksToUiForIds($jobInfo->getId()) . "</h3>";
+print "<h3>Job: " . addLinksToIds($jobInfo->getId()) . "</h3>";
 
 if ($jobInfo->getStateMessage() != "") {
     displayInfo($jobInfo->getStateMessage());
