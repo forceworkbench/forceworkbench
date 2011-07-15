@@ -562,7 +562,10 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord,
         if ($currentRecord != null && isset($currentRecord->fields->$fieldName)) {
             $fieldValue = htmlspecialchars($currentRecord->fields->$fieldName);
         }
-        print "<td>" . ($editable ? "<input name='$field->name' style='width: 97%;' value=\"$fieldValue\"/>"  : addLinksToIds($fieldValue)) . "</td>";
+        print "<td>" . ($editable
+                ? "<input name='$field->name' style='width: 97%;' value=\"$fieldValue\"/>"
+                : (($field->type == 'datetime') ? localizeDateTimes($fieldValue) : addLinksToIds($fieldValue))) .
+              "</td>";
     }
 
     if ($showRefCol && getConfig("showReferenceBy")) {
