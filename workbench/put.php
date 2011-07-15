@@ -491,6 +491,10 @@ function setFieldMappings($action,$csvArray) {
 
     if ($action == "retrieve") {
         foreach ($describeSObjectResult->fields as $field) {
+            // fix an IIS issue where the id is not in fields
+            if (!isset($currRecord->fields->Id) && isset($currRecord->Id)) {
+                $currRecord->fields->Id = $currRecord->Id;
+            }
             printPutFieldForMapping($field, false, false, $currRecord, false);
         }
     }
