@@ -78,6 +78,11 @@ dojo.addOnLoad(function() {
         if (maxDepth === undefined && prefix === undefined) {
             try {
                 var ppJson = dojo.toJson(obj, true);
+                ppJson = ppJson.replace(/&/g, "&amp;");
+                ppJson = ppJson.replace(/</g, "&lt;");
+                ppJson = ppJson.replace(/>/g, "&gt;");
+                ppJson = ppJson.replace(/"/g, "&quot;");
+                ppJson = ppJson.replace(/\b(\w{4}0{3}\w{11})\b/g, "<a href='retrieve.php?id=$1' target='retrieves'>$1</a>");
                 ppJson = ppJson.replace(/\n/g, "<br/>");
                 ppJson = ppJson.replace(/\t/g, "&nbsp;&nbsp;");
                 return ppJson;
