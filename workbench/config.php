@@ -2,10 +2,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    TO CONFIGURE WORKBENCH FOR ALL YOUR USERS, ADJUST THE "DEFAULT" VALUES FOR THE KEYS BELOW.
-//  FOR EASIER UPGRADING, YOU MAY IT IS RECOMMENDE TO MAKE THESE CHANGES TO THE configOverrides.php FILE
-//  WHICH ARE APPLIED AFTER LOADING CONFIGURATIONS FROM THIS FILE.
+//    FOR EASIER UPGRADING, YOU MAY IT IS RECOMMENDED TO MAKE THESE CHANGES TO THE configOverrides.php FILE
+//    WHICH ARE APPLIED AFTER LOADING CONFIGURATIONS FROM THIS FILE.
 //
-//    IF YOU WOULD LIKE TO ALLOW YOUR USERS TO OVERRIDE THE DEFAUTS SET THE "OVERRIDEABLE" VALUE TO true.
+//    IF YOU WOULD LIKE TO ALLOW YOUR USERS TO OVERRIDE THE DEFAULTS SET THE "OVERRIDEABLE" VALUE TO true.
 //    THIS WILL CAUSE THE KEY TO APPEAR ON THE 'SETTINGS' PAGE AND WILL BE CUSTOMIZABLE ON A USER-BY-USER
 //    BASIS. THIS IS ACCOMPLISHED BY SETTING COOKIES IN THE USER'S BROWSER AND THE USER'S SETTINGS WILL
 //    RETURN TO THE DEFAULTS SET BELOW IF THE COOKIES ARE CLEARED. THE "LABEL" AND "DESCRIPTION" VALUES CONTROL
@@ -72,7 +72,7 @@ $config["header_General"] = array(
 
     $config["debug"] = array(
         "label" => "Debug Mode",
-        "description" => "Enables debugging mode for showing supervariables and SOAP messages.",
+        "description" => "Enables debugging mode for showing super-variables and SOAP messages.",
         "default" => false,
         "overrideable" => false, // Only enable in trusted environment, as internal information can be exposed
         "dataType" => "boolean"
@@ -317,11 +317,11 @@ $config["header_Describe"] = array(
             "ko"    => "Korean",
             "zh_TW" => "Chinese (Traditional)",
             "zh_CN" => "Chinese (Simplified)",
-            "pt_BR" => "Portugese (Brazilian)",
+            "pt_BR" => "Portuguese (Brazilian)",
             "nl_NL" => "Dutch",
             "da"    => "Danish",
             "th"    => "Thai",
-            "fi"    => "Finnisch",
+            "fi"    => "Finnish",
             "ru"    => "Russian"   
         )
     );
@@ -352,7 +352,7 @@ $config["header_DataManagement"] = array(
 
     $config["allOrNoneHeader_allOrNone"] = array(
         "label" => "All-Or-None Transactional Processing",
-        "description" => "Forces operations to rollback all changes in one batch unless all records in that batch are processed successfully. If unchecked, records without errors are committed, while records with errors are marked as failed in the results. Warning, Workbench may automatically divides a CSV file into mutiple batches, each of which is considered a separate API transaction.",
+        "description" => "Forces operations to rollback all changes in one batch unless all records in that batch are processed successfully. If unchecked, records without errors are committed, while records with errors are marked as failed in the results. Warning, Workbench may automatically divides a CSV file into multiple batches, each of which is considered a separate API transaction.",
         "default" => false,
         "overrideable" => true,
         "dataType" => "boolean",
@@ -385,7 +385,7 @@ $config["header_DataManagement"] = array(
 
     $config["allowFieldTruncationHeader_allowFieldTruncation"] = array(
         "label" => "Allow Field Truncation",
-        "description" => "Specifies to automatically truncatrate string values that are too long when performing Insert, Update, Upsert, Updelete, or Execute; otherwise a STRING_TOO_LONG error is returned. This is ignored in all previous API versions.",
+        "description" => "Specifies to automatically truncate string values that are too long when performing Insert, Update, Upsert, or Execute; otherwise a STRING_TOO_LONG error is returned. This is ignored in all previous API versions.",
         "default" => false,
         "overrideable" => true,
         "dataType" => "boolean",
@@ -517,7 +517,7 @@ $config["header_PackageVersion"] = array(
 
     $config["packageVersionHeader_include"] = array(
         "label" => "Use Package Version Header",
-        "description" => "Incidates whether Workbench should use the following package version infomation.",
+        "description" => "Indicates whether Workbench should use the following package version information.",
         "default" => false,
         "overrideable" => true,
         "dataType" => "boolean",
@@ -544,7 +544,7 @@ $config["header_PackageVersion"] = array(
 
     $config["packageVersion_minorNumber"] = array(
         "label" => "Minor Number",
-        "description" => "The major version number of a package version. A package version is denoted by majorNumber.minorNumber, for example 2.1.",
+        "description" => "The minor version number of a package version. A package version is denoted by majorNumber.minorNumber, for example 2.1.",
         "default" => null,
         "overrideable" => true,
         "dataType" => "int",
@@ -676,7 +676,7 @@ $config["header_Performance"] = array(
     );
 
     $config["maxFileSize"] = array(
-        "label" => "Maxiumum File Size (bytes)",
+        "label" => "Maximum File Size (bytes)",
         "description" => "Maximum file size for upload in bytes.",
         "default" => 10000000,
         "overrideable" => false,
@@ -685,7 +685,7 @@ $config["header_Performance"] = array(
     );
 
     $config["maxFileLengthRows"] = array(
-        "label" => "Maxiumum File Length (rows)",
+        "label" => "Maximum File Length (rows)",
         "description" => "Maximum file size for upload in number of CSV rows.",
         "default" => 50000,
         "overrideable" => false,
@@ -755,7 +755,7 @@ $config["header_SecurityOptions"] = array(
     $config["csrfSecret"] = array(
         "label" => "CSRF Salting Secret",
         "description" => "Used for salting the CSRF (Cross-Site Request Forgery) tokens",
-        "default" => "5f47270e-e425-4eb0-b8c6-a515eadc71c9",
+        "default" => "CHANGE_ME_WITH_ADMIN_OVERRIDE",
         "overrideable" => false,
         "dataType" => "string"
     );
