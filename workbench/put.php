@@ -327,16 +327,13 @@ function fieldsToNameArray($fields) {
     return $fieldNames;
 }
 
-function queryCurrentRecord($describeSObjectResult, $id) {
-    $soql = "SELECT " .
-            implode(",", fieldsToNameArray($describeSObjectResult->fields)) .
-            " FROM " . WorkbenchContext::get()->getDefaultObject() .
-            " WHERE Id = '" . $id . "'";
-
+function retrieveCurrentRecord($describeSObjectResult, $id) {
     try {
-        $queryResponse = WorkbenchContext::get()->getPartnerConnection()->query($soql);
-        if ($queryResponse->size == 1) {
-            return new SObject($queryResponse->records[0]);
+        $fieldList = implode(",", fieldsToNameArray($describeSObjectResult->fields));
+        $objectType = $describeSObjectResult->name;
+        $response = WorkbenchContext::get()->getPartnerConnection()->retrieve($fieldList, $objectType, array($id));
+        if ($response != null) {
+            return new SObject($response);
         }
     } catch (Exception $e) {
         return null;
@@ -366,7 +363,7 @@ function setFieldMappings($action,$csvArray) {
             $keyPrefix = substr($id, 0, 3);
             if (!empty($keyPrefix)) {
                 $describeGlobal = WorkbenchContext::get()->describeGlobal();
-                $objectType = $describeGlobal->byKeyPrefix[$keyPrefix];
+                $objectType = isset($describeGlobal->byKeyPrefix[$keyPrefix]) ? $describeGlobal->byKeyPrefix[$keyPrefix] : null;
                 WorkbenchContext::get()->setDefaultObject($objectType);
             }
         }
@@ -374,7 +371,7 @@ function setFieldMappings($action,$csvArray) {
         if (WorkbenchContext::get()->getDefaultObject()) {
             $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
             if (!$csvArray && !empty($_REQUEST['id'])) {
-                $currRecord = queryCurrentRecord($describeSObjectResult, $id);
+                $currRecord = retrieveCurrentRecord($describeSObjectResult, $id);
                 if ($currRecord == null) {
                     displayUploadFileWithObjectSelectionForm($action, $id,
                                                              "An existing " . WorkbenchContext::get()->getDefaultObject() .
