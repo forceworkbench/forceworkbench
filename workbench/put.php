@@ -366,11 +366,6 @@ function setFieldMappings($action,$csvArray) {
             WorkbenchContext::get()->setDefaultObject(WorkbenchContext::get()->getObjectTypeByKeyPrefixOrId($id));
         }
 
-        if (!$csvArray && !$id) {
-            displayUploadFileWithObjectSelectionForm($action, "", "Id is required to $action.");
-            exit;
-        }
-
         if (WorkbenchContext::get()->getDefaultObject()) {
             $objectType = WorkbenchContext::get()->getDefaultObject();
             $describeSObjectResult = WorkbenchContext::get()->describeSObjects($objectType);
@@ -386,10 +381,10 @@ function setFieldMappings($action,$csvArray) {
         } else {
             if (!$csvArray && !empty($_REQUEST['id'])) {
                 displayUploadFileWithObjectSelectionForm($action, $id, "The object type of id '$id' is unknown. Choose an object type and confirm the id is correct.");
-                exit;
+            } else {
+                displayUploadFileWithObjectSelectionForm($action, $id, "Must choose an object to $action.");
             }
-
-            displayError("Must choose an object to $action.", false, true);
+            exit;
         }
     } else if (!$csvArray && $id) {
         $currRecord = new SObject();
