@@ -334,7 +334,7 @@ function fieldsToNameArray($fields, $includeBase64Fields = true) {
 function queryCurrentRecord($describeSObjectResult, $id) {
     $soql = "SELECT " .
             implode(",", fieldsToNameArray($describeSObjectResult->fields, false)) .
-            " FROM " . WorkbenchContext::get()->getDefaultObject() .
+            " FROM " . $describeSObjectResult->name .
             " WHERE Id = '" . $id . "'";
 
     try {
@@ -391,8 +391,29 @@ function setFieldMappings($action,$csvArray) {
             exit;
         }
     } else if (!$csvArray && $id) {
-        $currRecord = new SObject();
-        $currRecord->fields->Id = $id;
+        $objectType = WorkbenchContext::get()->getObjectTypeByKeyPrefixOrId($id);
+        if ($objectType) {
+            $describeSObjectResult = WorkbenchContext::get()->describeSObjects($objectType);
+            $currRecord = queryCurrentRecord($describeSObjectResult, $id);
+        } else {
+            $currRecord = new SObject();
+            $currRecord->fields->Id = $id;
+        }
+    }
+
+    if ($currRecord != null && isset($describeSObjectResult)) {
+        $isDeleted = isset($currRecord->fields->IsDeleted) && $currRecord->fields->IsDeleted == "true";
+            $dmlActions = array(
+                    "update" => !$isDeleted && $describeSObjectResult->updateable,
+                    "delete" => !$isDeleted && $describeSObjectResult->deletable,
+                    "undelete" => $isDeleted && $describeSObjectResult->undeletable,
+                    "purge" => $isDeleted && $describeSObjectResult->undeletable,
+
+        );
+        
+        if (isset($dmlActions[$action]) && !$dmlActions[$action]) {
+            displayWarning("It does not seem like this record can be " . $action . "d. Are you sure you wish to continue?");
+        }
     }
 
     print "<div id='setFieldMappingster_block_loading' style='display:block; color:#888;'><img src='" . getStaticResourcesPath() ."/images/wait16trans.gif' align='absmiddle'/> Loading...</div>";
@@ -422,15 +443,6 @@ function setFieldMappings($action,$csvArray) {
     if ($action == "retrieve") {
         print "<h3 style='margin:0px;'><a href='describe.php?default_object=$objectType' style='text-decoration:none; color:inherit;'>" . $objectType . "</a></h3>";
         print "<h1 style='margin-top:0px;'>" . (isset($currRecord->fields->Name) ? htmlspecialchars($currRecord->fields->Name) : $currRecord->fields->Id). "</h1>";
-
-        $isDeleted = isset($currRecord->fields->IsDeleted) && $currRecord->fields->IsDeleted == "true";
-        $dmlActions = array(
-                "update" => !$isDeleted && $describeSObjectResult->updateable,
-                "delete" => !$isDeleted && $describeSObjectResult->deletable,
-                "undelete" => $isDeleted && $describeSObjectResult->undeletable,
-                "purge" => $isDeleted && $describeSObjectResult->undeletable,
-
-        );
 
         foreach ($dmlActions as $dmlAction => $enabled) {
             print "<input type=\"button\" onclick=\"window.location.href='$dmlAction.php?sourceType=singleRecord&id=$id'\" value=\"" . ucfirst($dmlAction) . "\" " . (!$enabled ? "disabled=disabled" : "") . "/>&nbsp;&nbsp;";
