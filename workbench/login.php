@@ -13,7 +13,22 @@ if (isset($_GET['getCsrfToken'])) {
  * If the serverUrl is provided, it will be used alone, but if either
  */
 if ((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])) {
-
+    if (getConfig("loginCsrfEnabled")) {
+        if (!validateCsrfToken(false) && !isset($_GET['CSRF_TOKEN'])) {
+            require_once 'header.php';
+            displayWarning("Unknown login provider. Are you sure you trust this login source?");
+            print "<form action='' method='GET'>".getCsrfFormTag();
+            foreach ($_GET as $paramName => $paramValue) {
+                print "<input type='hidden' name='" . htmlspecialchars($paramName) . "' value='" . htmlspecialchars($paramValue) . "'>";
+            }
+            print  "<p/><input type='submit' value='Confirm'> ".
+                    "<input type='button' value='Cancel' onclick='window.location=\"login.php\"'>".
+                  "</form>";
+            require_once 'footer.php';
+            exit;
+        }
+    }
+    
     $un       = isset($_GET['un'])       ? $_GET['un']       : null;
     $pw       = isset($_GET['pw'])       ? $_GET['pw']       : null;
     $sid      = isset($_GET['sid'])      ? $_GET['sid']      : null;
@@ -29,13 +44,9 @@ if ((isset($_GET['un']) && isset($_GET['pw'])) || isset($_GET['sid'])) {
         displayLogin("Invalid auto-login parameters. Must set either serverUrl OR inst and/or api.");
 
     } else if (isset($_GET['serverUrl']) && !(isset($_GET['inst'])  || isset($_GET['api'])) ) {
-
         $serverUrl = $_GET['serverUrl'];
-
     } else {
-
         $serverUrl = getDefaultServerUrl();
-
     }
 
     $_REQUEST['autoLogin'] = 1;

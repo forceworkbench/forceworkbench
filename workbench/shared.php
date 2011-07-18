@@ -46,10 +46,15 @@ function getCsrfToken() {
     return md5(getConfig("csrfSecret") . session_id() . $_SERVER['SCRIPT_NAME']);
 }
 
-function validateCsrfToken() {
+function validateCsrfToken($doError = true) {
    if (!isset($_REQUEST['CSRF_TOKEN']) || $_REQUEST['CSRF_TOKEN'] != getCsrfToken()) {
-       httpError("403 Forbidden", "Invalid or missing required CSRF token");
+       if ($doError) {
+           httpError("403 Forbidden", "Invalid or missing required CSRF token");
+       } else {
+           return false;
+       }
    }
+   return true;
 }
 
 function getCsrfFormTag() {
