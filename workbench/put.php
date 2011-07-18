@@ -363,12 +363,7 @@ function setFieldMappings($action,$csvArray) {
     if (requiresObject($action)) {
         // if an object is not explicitly given, infer from the id, if that was given
         if (!isset($_REQUEST['default_object'])) {
-            $keyPrefix = substr($id, 0, 3);
-            if (!empty($keyPrefix)) {
-                $describeGlobal = WorkbenchContext::get()->describeGlobal();
-                $objectType = isset($describeGlobal->byKeyPrefix[$keyPrefix]) ? $describeGlobal->byKeyPrefix[$keyPrefix] : null;
-                WorkbenchContext::get()->setDefaultObject($objectType);
-            }
+            WorkbenchContext::get()->setDefaultObject(WorkbenchContext::get()->getObjectTypeByKeyPrefixOrId($id));
         }
 
         if (!$csvArray && !$id) {

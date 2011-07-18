@@ -413,12 +413,18 @@ function addLinksToIds($inputStr) {
     $dmlTip = "";
 
     if (getConfig("showIdActionsHover")) {
+        $tipWidth = 0;
         $dmlTip = "onmouseover=\"Tip('Choose an action:<br/>";
-        foreach (array("update", "delete", "undelete", "purge") as $dmlAction) {
+        $dmlActions = array("update", "delete", "undelete", "purge");
+        foreach ($dmlActions as $dmlAction) {
+            $tipWidth += 50;
             $dmlTip .= "<a href=\'$dmlAction.php?sourceType=singleRecord&id=$1\'>" . ucfirst($dmlAction) . "</a>&nbsp;&nbsp;";
         }
-        if (getConfig('linkIdToUi')) $dmlTip .= "<a " . str_replace("'", "\'", $uiHref) .">View in Salesforce</a>&nbsp;&nbsp;";
-        $dmlTip .= "', STICKY, true, WIDTH, 300)\"";
+        if (getConfig('linkIdToUi')) {
+            $tipWidth += 120;
+            $dmlTip .= "<a " . str_replace("'", "\'", $uiHref) .">View in Salesforce</a>&nbsp;&nbsp;";
+        }
+        $dmlTip .= "', STICKY, true, WIDTH, $tipWidth)\"";
     }
 
     return preg_replace($idMatcher,"<a href='retrieve.php?id=$1' $dmlTip>$1</a>", $inputStr);

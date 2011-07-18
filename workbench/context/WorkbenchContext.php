@@ -167,6 +167,14 @@ class WorkbenchContext {
                && $_REQUEST[self::INSTANCE][self::HAS_DEFAULT_OBJECT_CHANGED];
     }
 
+    function getObjectTypeByKeyPrefixOrId($keyPrefixOrId) {
+        $keyPrefix = substr($keyPrefixOrId, 0, 3);
+        $describeGlobal = $this->describeGlobal();
+        return isset($describeGlobal->byKeyPrefix[$keyPrefix])
+                ? $describeGlobal->byKeyPrefix[$keyPrefix]
+                : null;
+    }
+
     function setIsUiSessionLikelySet($sfdcUiSidLikelySet) {
         $this->sfdcUiSidLikelySet = $sfdcUiSidLikelySet;
     }

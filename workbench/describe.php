@@ -7,6 +7,12 @@ if (isset($cacheCleared)) {
     displayInfo("Cache Cleared Successfully");
     print "<p/>";
 }
+
+if (isset($_REQUEST['keyPrefix']) || isset($_REQUEST['id'])) {
+    $keyPrefixOrId = isset($_REQUEST['keyPrefix']) ? $_REQUEST['keyPrefix'] : $_REQUEST['id'];
+    $specifiedType = WorkbenchContext::get()->getObjectTypeByKeyPrefixOrId(trim($keyPrefixOrId));
+    WorkbenchContext::get()->setDefaultObject($specifiedType);
+}
 ?>
 
 <p class='instructions'>Choose an object to describe:</p>
