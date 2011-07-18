@@ -11,6 +11,9 @@ if (isset($cacheCleared)) {
 if (isset($_REQUEST['keyPrefix']) || isset($_REQUEST['id'])) {
     $keyPrefixOrId = isset($_REQUEST['keyPrefix']) ? $_REQUEST['keyPrefix'] : $_REQUEST['id'];
     $specifiedType = WorkbenchContext::get()->getObjectTypeByKeyPrefixOrId(trim($keyPrefixOrId));
+    if ($specifiedType == null) {
+        displayWarning("Unknown object type");
+    }
     WorkbenchContext::get()->setDefaultObject($specifiedType);
 }
 ?>
