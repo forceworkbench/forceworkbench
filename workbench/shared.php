@@ -343,12 +343,12 @@ function localizeDateTimes($inputStr, $formatOverride = null) {
 function printSelectOptions($valuesToLabelsArray,$defaultValue) {
     $valueAndLabelMatched = false;
     foreach ($valuesToLabelsArray as $value => $label) {
-        print "<option value=\"" . $value . "\"";
+        print "<option value=\"" . htmlspecialchars($value) . "\"";
         if ($defaultValue == $value) {
             print " selected=\"selected\"";
             $valueAndLabelMatched = true;
         }
-        print ">" . $label . "</option>\n";
+        print ">" . htmlspecialchars($label) . "</option>\n";
     }
     return $valueAndLabelMatched;
 }
