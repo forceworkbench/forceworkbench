@@ -420,8 +420,8 @@ function setFieldMappings($action,$csvArray) {
 
 
     if ($action == "retrieve") {
-        print "<h3 style='margin:0px;'>" . htmlentities($objectType) . "</h3>";
-        print "<h1 style='margin-top:0px;'>" . (isset($currRecord->fields->Name) ? htmlentities($currRecord->fields->Name) : $currRecord->fields->Id). "</h1>";
+        print "<h3 style='margin:0px;'><a href='describe.php?default_object=$objectType' style='text-decoration:none; color:inherit;'>" . $objectType . "</a></h3>";
+        print "<h1 style='margin-top:0px;'>" . (isset($currRecord->fields->Name) ? htmlspecialchars($currRecord->fields->Name) : $currRecord->fields->Id). "</h1>";
 
         $isDeleted = isset($currRecord->fields->IsDeleted) && $currRecord->fields->IsDeleted == "true";
         $dmlActions = array(
