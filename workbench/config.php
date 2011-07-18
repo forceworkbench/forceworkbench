@@ -62,6 +62,14 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
+    $config["checkForLatestVersion"] = array(
+        "label" => "Check for Latest Version",
+        "description" => "Enables checking for the latest version of Workbench.",
+        "default" => true,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
     $config["displayRequestTime"] = array(
         "label" => "Display Request Time",
         "description" => "Display the time to render the page in the footer.",

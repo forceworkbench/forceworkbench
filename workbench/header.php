@@ -24,24 +24,22 @@
 
 <?php
 //check for latest version
-if (!isset($_GET['skipVC']) && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))) {
+if (getConfig("checkForLatestVersion") && extension_loaded('curl') && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))) {
     try {
-        if (extension_loaded('curl')) {
-            $ch = curl_init();
-            if (stristr($GLOBALS["WORKBENCH_VERSION"],'beta')) {
-                curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailableBeta.txt');
-            } else {
-                curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
-            }
-            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            $latestVersionAvailable = trim(curl_exec($ch));
-            curl_close($ch);
+        $ch = curl_init();
+        if (stristr($GLOBALS["WORKBENCH_VERSION"],'beta')) {
+            curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailableBeta.txt');
+        } else {
+            curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
+        }
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $latestVersionAvailable = trim(curl_exec($ch));
+        curl_close($ch);
 
-            if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !stristr($GLOBALS["WORKBENCH_VERSION"],'trunk') && !stristr($GLOBALS["WORKBENCH_VERSION"],'alpha') && !stristr($GLOBALS["WORKBENCH_VERSION"],'i')) {
-                if ($latestVersionAvailable != $GLOBALS["WORKBENCH_VERSION"]) {
-                    print "<div style='background-color: #EAE9E4; width: 100%; padding: 2px;'><a href='http://code.google.com/p/forceworkbench/' target='_blank' style='font-size: 8pt; font-weight: bold; color: #0046ad;'>A newer version of Workbench is available for download</a></div><br/>";
-                }
+        if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !stristr($GLOBALS["WORKBENCH_VERSION"],'trunk') && !stristr($GLOBALS["WORKBENCH_VERSION"],'alpha') && !stristr($GLOBALS["WORKBENCH_VERSION"],'i')) {
+            if ($latestVersionAvailable != $GLOBALS["WORKBENCH_VERSION"]) {
+                print "<div style='background-color: #EAE9E4; width: 100%; padding: 2px;'><a href='http://code.google.com/p/forceworkbench/' target='_blank' style='font-size: 8pt; font-weight: bold; color: #0046ad;'>A newer version of Workbench is available for download</a></div><br/>";
             }
         }
     } catch (Exception $e) {
