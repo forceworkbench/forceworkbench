@@ -402,7 +402,6 @@ function setFieldMappings($action,$csvArray) {
         print "<table class='fieldMapping'><tr>\n";
         print "<td style='color: red;'>External Id</td>";
         print "<td><select name='_ext_id' style='width: 100%;'>\n";
-        //        print "    <option value=''></option>\n";
         foreach ($describeSObjectResult->fields as $fields => $field) {
             if ($field->idLookup) { //limit the fields to only those with the idLookup property set to true. Corrected Issue #10
                 print   " <option value='$field->name'";
