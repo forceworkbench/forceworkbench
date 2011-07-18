@@ -417,11 +417,11 @@ function addLinksToIds($inputStr) {
         $dmlTip = "onmouseover=\"Tip('Choose an action:<br/>";
         $dmlActions = array("update", "delete", "undelete", "purge");
         foreach ($dmlActions as $dmlAction) {
-            $tipWidth += 50;
+            $tipWidth += 55;
             $dmlTip .= "<a href=\'$dmlAction.php?sourceType=singleRecord&id=$1\'>" . ucfirst($dmlAction) . "</a>&nbsp;&nbsp;";
         }
         if (getConfig('linkIdToUi')) {
-            $tipWidth += 120;
+            $tipWidth += 125;
             $dmlTip .= "<a " . str_replace("'", "\'", $uiHref) .">View in Salesforce</a>&nbsp;&nbsp;";
         }
         $dmlTip .= "', STICKY, true, WIDTH, $tipWidth)\"";
