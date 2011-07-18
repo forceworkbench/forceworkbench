@@ -697,7 +697,7 @@ function getQueryResultHeaders($sobject, $tail="") {
         $headerBufferArray = array();
     }
 
-    if (isset($sobject->Id)) {
+    if (isset($sobject->Id) && !isset($sobject->fields->Id)) {
         $headerBufferArray[] = $tail . "Id";
     }
 
@@ -730,7 +730,7 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true) {
         $rowBuffer = array();
     }
      
-    if (isset($sobject->Id)) {
+    if (isset($sobject->Id) && !isset($sobject->fields->Id)) {
         $rowBuffer[] = $sobject->Id;
     }
 

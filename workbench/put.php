@@ -319,9 +319,13 @@ function displayCsvArray($csvArray) {
 }
 
 
-function fieldsToNameArray($fields) {
+function fieldsToNameArray($fields, $includeBase64Fields = true) {
     $fieldNames = array();
     foreach ($fields as $field) {
+        if (!$includeBase64Fields && $field->type == "base64") {
+            continue;
+        }
+        
         $fieldNames[] = $field->name;
     }
     return $fieldNames;
@@ -329,7 +333,7 @@ function fieldsToNameArray($fields) {
 
 function queryCurrentRecord($describeSObjectResult, $id) {
     $soql = "SELECT " .
-            implode(",", fieldsToNameArray($describeSObjectResult->fields)) .
+            implode(",", fieldsToNameArray($describeSObjectResult->fields, false)) .
             " FROM " . WorkbenchContext::get()->getDefaultObject() .
             " WHERE Id = '" . $id . "'";
 
@@ -432,7 +436,8 @@ function setFieldMappings($action,$csvArray) {
             print "<input type=\"button\" onclick=\"window.location.href='$dmlAction.php?sourceType=singleRecord&id=$id'\" value=\"" . ucfirst($dmlAction) . "\" " . (!$enabled ? "disabled=disabled" : "") . "/>&nbsp;&nbsp;";
         }
         if (getConfig('linkIdToUi')) {
-            print "<input type=\"button\" onclick=\"window.open('" . getJumpToSfdcUrlPrefix() . "$id')\" value=\"View in Salesforce\" " . (isset($describeSObjectResult->urlDetail) ? "" : "disabled=disabled") ."/>&nbsp;&nbsp;";
+            $uiViewable = isset($describeSObjectResult->urlDetail) || in_array($objectType, array("Dashboard", "Report", "Division", "BusinessHours", "BrandTemplate"));
+            print "<input type=\"button\" onclick=\"window.open('" . getJumpToSfdcUrlPrefix() . "$id')\" value=\"View in Salesforce\" " . ($uiViewable ? "" : "disabled=disabled") ."/>&nbsp;&nbsp;";
         }
         print "<p/>";
     } else {
@@ -547,7 +552,7 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord,
     print "><td style='cursor: pointer;' onmouseover=\"Tip('Label: " . str_replace("'", "\'", htmlspecialchars($field->label, ENT_COMPAT)) .
                                                       " <br/> Type: " . htmlspecialchars($field->type, ENT_QUOTES) .
                                                       " <br/> Length: " .htmlspecialchars($field->length, ENT_QUOTES) . "')\">" .
-          htmlspecialchars($field->name, ENT_QUOTES) . "</td>";
+          htmlspecialchars($field->name, ENT_QUOTES) . ($currentRecord && $field->type == "base64" ? "&nbsp;<em style='color:grey'>(current value not retrieved)</em>" : "") . "</td>";
 
     if ($csvArray) {
         print "<td><select name='$field->name' style='width: 100%;'>";
