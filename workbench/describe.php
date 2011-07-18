@@ -28,6 +28,10 @@ if (isset($cacheCleared)) {
 if (WorkbenchContext::get()->getDefaultObject()) {
     $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
 
+    if (isset($describeSObjectResult->childRelationships) && !is_array($describeSObjectResult->childRelationships)) {
+        $describeSObjectResult->childRelationships = array($describeSObjectResult->childRelationships);
+    }
+
     $forceCollapse = WorkbenchContext::get()->hasDefaultObjectChanged();
 
     $processedResults = ExpandableTree::processResults($describeSObjectResult, "Attributes", true);

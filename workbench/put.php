@@ -226,10 +226,10 @@ function displayUploadFileWithObjectSelectionForm($action, $id = null, $warning 
     }
 
     print "<tr><td><label><input type='radio' id='sourceType_singleRecord' name='sourceType' value='singleRecord' " .
-          ($id != null ? "checked=checked" : "") .
+          ($id !== null ? "checked=checked" : "") .
           "/>Single Record</label></td><td>" .
-          ($id != null || $action != "insert" ? "<input type='text' name='id' value='" . htmlspecialchars($_REQUEST['id']) .
-                                                "' onfocus='document.getElementById(\"sourceType_singleRecord\").checked=true;' />" : "") ."</td></tr>\n";
+          ($id !== null || $action != "insert" ? "<input type='text' name='id' value='" . htmlspecialchars($id) .
+                                                "' size='30' onfocus='document.getElementById(\"sourceType_singleRecord\").checked=true;' />" : "") ."</td></tr>\n";
 
     print "<tr><td colspan='2'><br/><input type='submit' name='action' value='Next' /></td></tr>\n";
     print "</table></form>\n";
@@ -327,13 +327,16 @@ function fieldsToNameArray($fields) {
     return $fieldNames;
 }
 
-function retrieveCurrentRecord($describeSObjectResult, $id) {
+function queryCurrentRecord($describeSObjectResult, $id) {
+    $soql = "SELECT " .
+            implode(",", fieldsToNameArray($describeSObjectResult->fields)) .
+            " FROM " . WorkbenchContext::get()->getDefaultObject() .
+            " WHERE Id = '" . $id . "'";
+
     try {
-        $fieldList = implode(",", fieldsToNameArray($describeSObjectResult->fields));
-        $objectType = $describeSObjectResult->name;
-        $response = WorkbenchContext::get()->getPartnerConnection()->retrieve($fieldList, $objectType, array($id));
-        if ($response != null) {
-            return new SObject($response);
+        $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryAll($soql);
+        if ($queryResponse->size == 1) {
+            return new SObject($queryResponse->records[0]);
         }
     } catch (Exception $e) {
         return null;
@@ -355,7 +358,7 @@ function retrieveCurrentRecord($describeSObjectResult, $id) {
 function setFieldMappings($action,$csvArray) {
 
     $currRecord = null;
-    $id = trim(htmlspecialchars($_REQUEST['id'], ENT_QUOTES));
+    $id = isset($_REQUEST['id']) ? trim(htmlspecialchars($_REQUEST['id'], ENT_QUOTES)) : null;
 
     if (requiresObject($action)) {
         // if an object is not explicitly given, infer from the id, if that was given
@@ -368,10 +371,16 @@ function setFieldMappings($action,$csvArray) {
             }
         }
 
+        if (!$csvArray && !$id) {
+            displayUploadFileWithObjectSelectionForm($action, "", "Id is required to $action.");
+            exit;
+        }
+
         if (WorkbenchContext::get()->getDefaultObject()) {
-            $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
-            if (!$csvArray && !empty($_REQUEST['id'])) {
-                $currRecord = retrieveCurrentRecord($describeSObjectResult, $id);
+            $objectType = WorkbenchContext::get()->getDefaultObject();
+            $describeSObjectResult = WorkbenchContext::get()->describeSObjects($objectType);
+            if (!$csvArray && !empty($id)) {
+                $currRecord = queryCurrentRecord($describeSObjectResult, $id);
                 if ($currRecord == null) {
                     displayUploadFileWithObjectSelectionForm($action, $id,
                                                              "An existing " . WorkbenchContext::get()->getDefaultObject() .
@@ -418,18 +427,25 @@ function setFieldMappings($action,$csvArray) {
 
 
     if ($action == "retrieve") {
-        if (isset($currRecord->fields->Name)) {
-            print "<h3 style='margin:0px;'>" . htmlentities($objectType) . "</h3>";
-            print "<h1 style='margin-top:0px;'>" . htmlentities($currRecord->fields->Name) . "</h1>";
+        print "<h3 style='margin:0px;'>" . htmlentities($objectType) . "</h3>";
+        print "<h1 style='margin-top:0px;'>" . (isset($currRecord->fields->Name) ? htmlentities($currRecord->fields->Name) : $currRecord->fields->Id). "</h1>";
 
-            foreach (array("update", "delete", "undelete", "purge") as $dmlAction) {
-                print "<input type=\"button\" onclick=\"window.location.href='$dmlAction.php?sourceType=singleRecord&id=$id'\" value=\"" . ucfirst($dmlAction) . "\"/>&nbsp;&nbsp;";
-            }
-            if (getConfig('linkIdToUi')) {
-                print "<input type=\"button\" onclick=\"window.open('" . getJumpToSfdcUrlPrefix() . "$id')\" value=\"View in Salesforce\"/>&nbsp;&nbsp;";
-            }
-            print "<p/>";
+        $isDeleted = isset($currRecord->fields->IsDeleted) && $currRecord->fields->IsDeleted == "true";
+        $dmlActions = array(
+                "update" => !$isDeleted && $describeSObjectResult->updateable,
+                "delete" => !$isDeleted && $describeSObjectResult->deletable,
+                "undelete" => $isDeleted && $describeSObjectResult->undeletable,
+                "purge" => $isDeleted && $describeSObjectResult->undeletable,
+
+        );
+
+        foreach ($dmlActions as $dmlAction => $enabled) {
+            print "<input type=\"button\" onclick=\"window.location.href='$dmlAction.php?sourceType=singleRecord&id=$id'\" value=\"" . ucfirst($dmlAction) . "\" " . (!$enabled ? "disabled=disabled" : "") . "/>&nbsp;&nbsp;";
         }
+        if (getConfig('linkIdToUi')) {
+            print "<input type=\"button\" onclick=\"window.open('" . getJumpToSfdcUrlPrefix() . "$id')\" value=\"View in Salesforce\" " . (isset($describeSObjectResult->urlDetail) ? "" : "disabled=disabled") ."/>&nbsp;&nbsp;";
+        }
+        print "<p/>";
     } else {
         if ($csvArray) {
             $instructions = "Map the Salesforce fields to the columns from the uploaded CSV:";
