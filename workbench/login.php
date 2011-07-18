@@ -47,11 +47,11 @@ if (isset($_POST['login_type'])) {
         processLogin($_POST['usernameStd'], $_POST['passwordStd'], null, null, $_POST['actionJumpStd']);
     } else if ($_POST['login_type']=='adv') {
         processLogin(
-        isset($_POST['usernameAdv']) ? $_POST['usernameAdv'] : null,
-        isset($_POST['passwordAdv']) ? $_POST['passwordAdv'] : null,
-        $_POST['serverUrl'],
-        isset($_POST['sessionId']) ? $_POST['sessionId'] : null,
-        $_POST['actionJumpAdv']
+            isset($_POST['usernameAdv']) ? $_POST['usernameAdv'] : null,
+            isset($_POST['passwordAdv']) ? $_POST['passwordAdv'] : null,
+            $_POST['serverUrl'],
+            isset($_POST['sessionId']) ? $_POST['sessionId'] : null,
+            $_POST['actionJumpAdv']
         );
     }
 } else {
@@ -376,7 +376,7 @@ function processLogin($username, $password, $serverUrl, $sessionId, $actionJump)
     $overriddenClientId = isset($_GET["clientId"]) ? $_GET["clientId"] : null;
     if ($username && $password && !$sessionId) {
         $orgId = isset($_GET["orgId"]) ? $_GET["orgId"] : getConfig("loginScopeHeader_organizationId");
-        $portalId = isset($_GET["portalId"]) ? $_GET["clientId"] : getConfig("loginScopeHeader_portalId");
+        $portalId = isset($_GET["portalId"]) ? $_GET["portalId"] : getConfig("loginScopeHeader_portalId");
 
         WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, null, $overriddenClientId));
         try {
