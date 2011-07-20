@@ -93,7 +93,7 @@ class RestExplorerController {
                 return;
             } else if (stripos($this->rawResponse->header, "Content-Type: application/json") !== false) {
                 $insturmenter = new RestResponseInstrumenter(htmlspecialchars($_SERVER['PHP_SELF']));
-                $this->instResponse = $insturmenter->instrument($this->escapeJson($this->rawResponse->body));
+                $this->instResponse = $insturmenter->instrumentJson($this->rawResponse->body);
                 $this->showResponse = true;
             } else {
                 $this->showResponse = true;
@@ -104,23 +104,6 @@ class RestExplorerController {
         }
     }
 
-    private function escapeJson($rawNodes) {
-        return json_encode($this->escapeJsonInternal(json_decode($rawNodes)));
-    }
-
-    private function escapeJsonInternal($rawNodes) {
-        $escapedNodes = array();
-
-        if (is_object($rawNodes) || is_array($rawNodes)) {
-            foreach ($rawNodes as $rawNodeKey => $rawNodeValue) {
-                $escapedNodes[$rawNodeKey] = $this->escapeJsonInternal($rawNodeValue);
-            }
-        } else {
-            $escapedNodes = htmlspecialchars($rawNodes);
-        }
-
-        return $escapedNodes;
-    }
 
     /**
      * @return bool true if binary is expected

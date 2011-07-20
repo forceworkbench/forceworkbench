@@ -49,6 +49,11 @@ if ($c->errors != null) {
 			value="Headers"
 			onclick="toggleRequestHeaders();"/>
     &nbsp;
+	<input  id="resetButton"
+	        type="button"
+			value="Reset"
+			onclick="resetUrl();"/>
+    &nbsp;
 	<input  id="upButton"
 	        type="button" 
 			value="Up"
@@ -121,7 +126,7 @@ if (isset($c->autoExec) && !$c->autoExec) {
         function showWaitingIndicator() {
             document.getElementById('waitingIndicator').style.display = 'inline';
         }
-        
+
         bindEvent(document.getElementById('execBtn'), 'click', showWaitingIndicator);
 
         if (document.getElementsByClassName) {
