@@ -8,6 +8,8 @@ if (!WorkbenchContext::isEstablished()) {
     exit;
 }
 
+// dereference session-based vars so we can close the session before entering the proxy
+// this will allow concurrent long requsts on the same session to work better
 $host = WorkbenchContext::get()->getHost();
 $forceSSL = WorkbenchContext::get()->isSecure();
 $sessionId = WorkbenchContext::get()->getSessionId();
@@ -18,6 +20,7 @@ $proxy = new PhpReverseProxy();
 $proxy->host = $host;
 $proxy->forceSSL = $forceSSL;
 $proxy->forward_path = "/cometd";
+$proxy->cookie_whitelist = array("sid", "sfdc-stream");
 $proxy->proxy_settings = getProxySettings();
 $proxy->is_forward_path_static = true;
 $proxy->connect();

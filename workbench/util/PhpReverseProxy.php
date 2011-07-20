@@ -2,9 +2,9 @@
  
 class PhpReverseProxy {
     public $host, $port, $forceSSL, $forward_path, $is_forward_path_static, $content, $content_type, $user_agent,
-    $XFF, $request_method, $cookie, $proxy_settings;
+    $XFF, $request_method, $cookie_whitelist, $proxy_settings;
 
-    private $http_code, $resultHeader;
+    private $http_code, $resultHeader, $cookie;
 
     function __construct() {
         $this->host = "";
@@ -19,6 +19,7 @@ class PhpReverseProxy {
         $this->XFF = "";
         $this->request_method = "GET";
         $this->cookie = "";
+        $this->cookie_whitelist = array();
     }
 
     function translateURL($serverName) {
@@ -52,15 +53,14 @@ class PhpReverseProxy {
         $this->user_agent = $_SERVER['HTTP_USER_AGENT'];
         $this->request_method = $_SERVER['REQUEST_METHOD'];
 
-        global $config;
-        $tempCookie = "";
+        $allowedCookies = "";
         foreach ($_COOKIE as $cookieName => $cookieValue) {
             if ($cookieName == "PHPSESSID") continue;
             if ($cookieName == "XDEBUG_SESSION") continue;
-            if (array_key_exists($cookieName, $config)) continue;
-            $tempCookie = $tempCookie . " $cookieName = $cookieValue;";
+            if (count($this->cookie_whitelist) > 0 && !in_array($cookieName, $this->cookie_whitelist)) continue;
+            $allowedCookies .= "$cookieName = $cookieValue; ";
         }
-        $this->cookie = $tempCookie;
+        $this->cookie = $allowedCookies;
 
         if (empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $this->XFF = $_SERVER['REMOTE_ADDR'];
