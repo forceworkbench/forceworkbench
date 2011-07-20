@@ -58,7 +58,7 @@ class PhpReverseProxy {
             if ($cookieName == "PHPSESSID") continue;
             if ($cookieName == "XDEBUG_SESSION") continue;
             if (count($this->cookie_whitelist) > 0 && !in_array($cookieName, $this->cookie_whitelist)) continue;
-            $allowedCookies .= "$cookieName = $cookieValue; ";
+            $allowedCookies .= trim($cookieName) . "=" . trim($cookieValue) ."; ";
         }
         $this->cookie = $allowedCookies;
 
@@ -117,16 +117,28 @@ class PhpReverseProxy {
 
         $this->content_type = $info["content_type"];
         $this->http_code = $info['http_code'];
-        $this->resultHeader = substr($output, 0, $info['header_size']);
-        $this->content = substr($output, $info['header_size']);
+
+        $headerSize = $info['header_size'];
+        if ($this->proxy_settings != null) {
+            $proxyHeader = "HTTP/1.0 200 Connection established";
+            if (strpos($output, $proxyHeader) === 0) {
+                $headerSize += strlen($proxyHeader);
+            }
+        }
+
+        $this->resultHeader = substr($output, 0, $headerSize);
+        $this->content = substr($output, $headerSize);
     }
 
     function output() {
         $headerWhitelist = array("HTTP", "Date", "Content-Type", "Set-Cookie");
         foreach (explode("\r\n",$this->resultHeader) as $h) {
             foreach ($headerWhitelist as $whl) {
+                $replaceExistingHeader = true;
+
                 if (stripos($h, $whl) > -1) {
                     if (stripos("Set-Cookie", $whl) > -1) {
+                        $replaceExistingHeader = false;
                         $h = preg_replace("`path=([^;]*)$this->forward_path`", 
 						                  "path=". ((strlen(dirname($_SERVER['PHP_SELF'])) == 1)
 										             ? "$1"
@@ -134,7 +146,7 @@ class PhpReverseProxy {
 										   , $h);
                     }
 
-                    header($h, true);
+                    header($h, $replaceExistingHeader);
                     continue;
                 }
             }
