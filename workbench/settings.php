@@ -29,11 +29,16 @@ if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['rest
             continue;
         }
         
-        //clear all config cookies if restoreDefaults selected
-        if (isset($_POST['restoreDefaults'])) {
-            setcookie($configKey,NULL,time()-3600);
+        //clear config cookies if restoreDefaults selected or the config is not overrideable
+        if (isset($_POST['restoreDefaults']) || !$configValue['overrideable']) {
+             // ...and is actually in the user's cookies
+             if (isset($_COOKIE[$configKey])){
+                setcookie($configKey,NULL,time()-3600);
+             }
             continue;
-        } 
+        }
+
+        // should only get down here if we're actually setting configs
 
         //special case for default clientId so that it doesnt persist after upgrading if not customized
         if ($configKey == 'callOptions_client' && $_POST[$configKey] == getWorkbenchUserAgent()) {
