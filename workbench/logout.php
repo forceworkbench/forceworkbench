@@ -3,7 +3,6 @@ require_once 'session.php';
 require_once 'shared.php';
 
 if ($_SESSION) {
-    require_once 'header.php';
     if (getConfig("invalidateSessionOnLogout")) {
         try {
             WorkbenchContext::get()->getPartnerConnection()->logout();
@@ -17,6 +16,8 @@ if ($_SESSION) {
 
     session_unset();
     session_destroy();
+    
+    require_once 'header.php';
     print "<p/>";
     if ($sessionInvalidated) {
         displayInfo('You have been successfully logged out of Workbench and Salesforce.');
