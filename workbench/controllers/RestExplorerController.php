@@ -111,7 +111,7 @@ class RestExplorerController {
     private function escapeJsonInternal($rawNodes) {
         $escapedNodes = array();
 
-        if (is_object($rawNodes)) {
+        if (is_object($rawNodes) || is_array($rawNodes)) {
             foreach ($rawNodes as $rawNodeKey => $rawNodeValue) {
                 $escapedNodes[$rawNodeKey] = $this->escapeJsonInternal($rawNodeValue);
             }

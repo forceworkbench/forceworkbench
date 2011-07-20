@@ -149,7 +149,7 @@ function explodeCommaSeparated($css) {
 }
 
 function handleAllErrors($errno, $errstr, $errfile, $errline, $errcontext) {
-    $errorId = basename($errfile, ".php") . "-$errline-" . uniqid();
+    $errorId = basename($errfile, ".php") . "-$errline-" . time();
     workbenchLog(LOG_CRIT, "F", $errorId . ":" . print_r(debug_backtrace(), true));
     throw new WorkbenchHandledException("A fatal error occurred. Contact your administrator and provide the following error id:\n [$errorId]", 0);
 }
