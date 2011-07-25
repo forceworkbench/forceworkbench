@@ -5,9 +5,11 @@ var WorkbenchLogin = new function() {
     this.initializeForm = function(loginType) {
         switchLoginTypeTo(form['loginType_' + loginType]);
 
-        setFocus();
-
-        buildServerUrl();
+        if (wbLoginConfig.customServerUrl === "") {
+            buildServerUrl();
+        } else {
+            form.serverUrl.value = wbLoginConfig.customServerUrl;
+        }
 
         bindEvent(form.loginType_std, "click", function () {switchLoginTypeTo(this)});
         bindEvent(form.loginType_adv, "click", function () {switchLoginTypeTo(this)});

@@ -241,6 +241,7 @@ class LoginController {
     public function getJsConfig() {
         $jsConfig = array();
         $jsConfig['useHTTPS'] = (bool) getConfig('useHTTPS');
+        $jsConfig['customServerUrl'] = isset($_REQUEST['serverUrl']) ? $_REQUEST['serverUrl'] : "";
         $jsConfig['serverIdMap'] = $this->getServerIdMap();
 
         return json_encode($jsConfig);

@@ -39,7 +39,7 @@ if ($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_
 
 // must come after configs are loaded...lets hope there's not a problem above
 set_exception_handler('handleAllExceptions');
-set_error_handler('handleAllErrors', E_ALL^E_NOTICE);
+set_error_handler('handleAllErrors', E_STRICT);
 
 workbenchLog(LOG_INFO, "U");
 

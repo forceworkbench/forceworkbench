@@ -150,9 +150,20 @@ function explodeCommaSeparated($css) {
 
 function handleAllErrors($errno, $errstr, $errfile, $errline, $errcontext) {
     $errorId = basename($errfile, ".php") . "-$errline-" . time();
-    workbenchLog(LOG_CRIT, "F", $errorId . ":" . print_r(debug_backtrace(), true));
-    throw new WorkbenchHandledException("A fatal error occurred. Contact your administrator and provide the following error id:\n [$errorId]", 0);
+    workbenchLog(LOG_CRIT, "F", $errorId . ":$errstr:" . print_r(debug_backtrace(), true));
+
+    switch ($errno) {
+        case E_PARSE:
+        case E_ERROR:
+        case E_USER_ERROR:
+        case E_RECOVERABLE_ERROR:
+            throw new WorkbenchHandledException("A fatal error occurred. Contact your administrator and provide the following error id:\n [$errorId]", 0);
+        default:
+            /* Swallow and don't execute PHP internal error handler */
+            return true;
+    }
 }
+
 
 /**
  * @param  Exception $e
@@ -169,10 +180,19 @@ function handleAllExceptions($e) {
         $cause = method_exists($cause,"getPrevious") ? $cause->getPrevious() : null;
     }
 
-    if ($e instanceof WorkbenchHandledException || $e->getMessage() == "Could not connect to host") {
+    if ($e instanceof WorkbenchHandledException) {
         workbenchLog(LOG_WARNING, "H", $fullMessage);
         displayError($e->getMessage(), false, true);
         return;
+    }
+
+    if (stripos($e->getMessage(), "Could not connect to host") === 0) {
+        handleAllExceptions(new WorkbenchHandledException($e->getMessage()));
+    }
+
+    if (stripos($e->getMessage(), "INVALID_OPERATION_WITH_EXPIRED_PASSWORD") === 0) {
+        WorkbenchContext::get()->release();
+        handleAllExceptions(new WorkbenchHandledException($e->getMessage()));
     }
 
     if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
