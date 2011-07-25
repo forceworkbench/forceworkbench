@@ -167,6 +167,10 @@ class LoginController {
 
         $overriddenClientId = isset($_REQUEST["clientId"]) ? $_REQUEST["clientId"] : null;
         if ($username && $password && !$sessionId) {
+             if ($this->oauthRequired) {
+                throw new WorkbenchHandledException("OAuth login is required");
+            }
+
             $orgId = isset($_REQUEST["orgId"]) ? $_REQUEST["orgId"] : getConfig("loginScopeHeader_organizationId");
             $portalId = isset($_REQUEST["portalId"]) ? $_REQUEST["portalId"] : getConfig("loginScopeHeader_portalId");
 
@@ -214,6 +218,10 @@ class LoginController {
     }
 
     private function oauthRedirect($hostName) {
+        if (!$this->oauthEnabled) {
+            throw new Exception("OAuth not enabled");
+        }
+
         $oauthConfigs = getConfig("oauthConfigs");
         $authUrl = "https://" . $hostName .
                     "/services/oauth2/authorize?response_type=code&display=popup&client_id=" .
@@ -223,6 +231,10 @@ class LoginController {
     }
 
     private function oauthProcessLogin($code, $hostName, $apiVersion) {
+        if (!$this->oauthEnabled) {
+            throw new Exception("OAuth not enabled");
+        }
+
         $oauthConfigs = getConfig("oauthConfigs");
 
         $tokenUrl =  "https://" . $hostName . "/services/oauth2/token";
