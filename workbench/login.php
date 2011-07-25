@@ -43,7 +43,7 @@ require_once "header.php";
                 <span id="pwcaps" style="visibility: hidden; color: red; font-weight: bold; margin-left: 65px;">Caps lock is on!</span>
             </div>
 
-            <div id="advContainer">
+            <div id="advContainer" style="display: none;">
                 <p>
                     <em>- OR -</em>
                 </p>
