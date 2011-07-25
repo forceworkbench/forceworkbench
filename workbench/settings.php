@@ -28,7 +28,12 @@ if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['rest
         if (isset($configValue['isHeader'])) {
             continue;
         }
-        
+
+        // don't even try to deal with complex types
+        if ($configValue['dataType'] == "complex") {
+            continue;
+        }
+
         //clear config cookies if restoreDefaults selected or the config is not overrideable
         if (isset($_POST['restoreDefaults']) || !$configValue['overrideable']) {
              // ...and is actually in the user's cookies
@@ -102,6 +107,11 @@ print "<table border='0' cellspacing='5' style='border-width-top: 1'>\n";
 print "<tr> <td colspan='3' align='left'><input type='submit' name='submitConfigSetter' value='Apply Settings'/>&nbsp;<input type='submit' name='restoreDefaults' value='Restore Defaults'/>&nbsp;<input type='reset' value='Cancel'/></td> </tr>";
 
 foreach ($config as $configKey => $configValue) {
+    // don't even try to deal with complex types
+    if ($configValue['dataType'] == "complex") {
+        continue;
+    }
+
     if (isset($configValue['isHeader']) && $configValue['display']) {
         print "\t<tr><th align='left' colspan='3'><br/>" . htmlspecialchars($configValue['label'],ENT_QUOTES) . "</th></tr>\n";
     } else if (isset($configValue['overrideable']) && $configValue['overrideable']==true) {

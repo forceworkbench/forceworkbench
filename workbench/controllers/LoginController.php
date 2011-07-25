@@ -9,6 +9,8 @@ class LoginController {
     private $subdomain;
     private $apiVersion;
     private $startUrl;
+    private $oauthEnabled;
+    private $oauthRequired;
 
     function __construct() {
         $this->errors = array();
@@ -38,6 +40,20 @@ class LoginController {
         $this->startUrl = isset($_REQUEST['startUrl'])
                               ? $_REQUEST['startUrl']
                               : "select.php";
+
+        $this->oauthEnabled = false;
+        foreach (getConfig('oauthConfigs') as $host => $hostInfo) {
+            if (!empty($hostInfo["key"]) && !empty($hostInfo["secret"])) {
+                $this->oauthEnabled = true;
+                break;
+            }
+        }
+
+        $this->oauthRequired = getConfig("oauthRequired");
+
+        if ($this->oauthRequired && !$this->oauthEnabled) {
+            throw new Exception("OAuth is required, but not enabled.");
+        }
     }
 
     public function processRequest() {
@@ -48,8 +64,23 @@ class LoginController {
             }
         }
 
-        if (isset($_POST["oauth_Login"]) || isset($_GET["code"])) {
-            $this->processLoginOAuth();
+        if (isset($_POST["oauth_Login"]) && isset($_POST["oauth_host"])) {
+            // load into session for redirect
+            $_SESSION['oauth'] = array(
+                "host" => $_POST["oauth_host"],
+                "apiVersion" => $_POST["api"]
+            );
+
+            $this->oauthRedirect($_POST["oauth_host"]);
+            return;
+        }
+
+        if (isset($_REQUEST["code"])) {
+            if (!isset($_SESSION['oauth']) || !isset($_SESSION['oauth']['host']) || !isset($_SESSION['oauth']['apiVersion']) ) {
+                throw new Exception("Invalid OAuth State");
+            }
+
+            $this->oauthProcessLogin($_REQUEST["code"], $_SESSION['oauth']['host'], $_SESSION['oauth']['apiVersion']);
             return;
         }
 
@@ -182,68 +213,82 @@ class LoginController {
         header("Location: $actionJump");
     }
 
-    private function processLoginOauth() {
-        $redirectUri =
-            "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? "s" : "") . "://" .
-            $_SERVER['HTTP_HOST'] .
-            str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
-			(strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/") .
-            "login.php";
-
-        $auth_url = "https://" . $this->subdomain . ".salesforce.com" .
+    private function oauthRedirect($hostName) {
+        $oauthConfigs = getConfig("oauthConfigs");
+        $authUrl = "https://" . $hostName .
                     "/services/oauth2/authorize?response_type=code&display=popup&client_id=" .
-                    getConfig("oauth2ConsumerKey") . "&redirect_uri=" . urlencode($redirectUri);
+                    $oauthConfigs[$hostName]["key"] . "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl());
 
-        if (isset($_POST["oauth_Login"])) {
-            header('Location: ' . $auth_url);
-        } else if (isset($_GET['code'])) {
-//            if(isset($_SESSION['server'])) $server = $_SESSION['server'];
+        header('Location: ' . $authUrl);
+    }
 
-            $token_url =  "https://" . $this->subdomain . ".salesforce.com" . "/services/oauth2/token";
+    private function oauthProcessLogin($code, $hostName, $apiVersion) {
+        $oauthConfigs = getConfig("oauthConfigs");
 
-            $code = $_GET['code'];
+        $tokenUrl =  "https://" . $hostName . "/services/oauth2/token";
 
-            $params = "code=" . $code
-                . "&grant_type=authorization_code"
-                . "&client_id=" . getConfig("oauth2ConsumerKey")
-                . "&client_secret=" . getConfig("oauth2ConsumerSecret")
-                . "&redirect_uri=" . urlencode($redirectUri);
-
-            $curl = curl_init($token_url);
-            curl_setopt($curl, CURLOPT_HEADER, false);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);                                //TODO: use ca-bundle instead
-
-            $json_response = curl_exec($curl);
-
-            $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
-            if ($status != 200 ) {
-                die("Error: call to token URL $token_url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
-            }
-
-            curl_close($curl);
-
-            $response = json_decode($json_response, true);
-
-            $access_token = $response['access_token'];
-            $instance_url = $response['instance_url'];
-
-            if (!isset($access_token) || $access_token == "") {
-                die("Error - access token missing from response!");
-            }
-
-            if (!isset($instance_url) || $instance_url == "") {
-                die("Error - instance URL missing from response!");
-            }
-
-            $this->processLogin(null, null, $instance_url . "/services/Soap/u/22.0", $access_token, "select.php");
-        } else {
-            throw new Exception("Unknown OAuth state.");
+        if (!isset($oauthConfigs[$hostName]['key']) || !isset($oauthConfigs[$hostName]['secret'])) {
+            throw new Exception("Misconfigured OAuth Host");
         }
+
+        $params = "code=" . $code
+                  . "&grant_type=authorization_code"
+                  . "&client_id=" . $oauthConfigs[$hostName]['key']
+                  . "&client_secret=" . $oauthConfigs[$hostName]['secret']
+                  . "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl());
+
+        $curl = curl_init($tokenUrl);
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);  //TODO: use ca-bundle instead
+
+        $json_response = curl_exec($curl);
+
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        if ($status != 200 ) {
+            throw new Exception("OAuth authentication failed to connect to: " . $tokenUrl);
+        }
+
+        if (curl_error($curl) != null) {
+            // not printing exception because it could contain the secret
+            throw new Exception("Unknown OAuth Error");
+        }
+
+        curl_close($curl);
+
+        $response = json_decode($json_response, true);
+        $accessToken = $response['access_token'];
+        $serverUrlPrefix = $response['instance_url'];
+
+        if (empty($accessToken)) {
+            throw new Exception("OAuth response missing access token");
+        }
+
+        if (empty($serverUrlPrefix)) {
+            throw new Exception("OAuth response missing instance name");
+        }
+
+        $this->processLogin(null, null, $serverUrlPrefix . "/services/Soap/u/" . $apiVersion, $accessToken, "select.php"); // TODO: work w/ startUrls
+    }
+
+    private function oauthBuildRedirectUrl() {
+        return "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? "s" : "") . "://" .
+                $_SERVER['HTTP_HOST'] .
+                str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
+                (strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/") .
+                basename($_SERVER['SCRIPT_NAME']);
+    }
+
+    public function isOAuthEnabled() {
+        return $this->oauthEnabled;
+    }
+
+    public function isOAuthRequired() {
+        return $this->oauthRequired;
     }
 
     public function getErrors() {
@@ -280,6 +325,14 @@ class LoginController {
             $subdomains[$subdomain] = $info[0];
         }
         return $subdomains;
+    }
+
+    public function getOauthHostSelectOptions() {
+        $hosts = array();
+        foreach (getConfig('oauthConfigs') as $host => $hostInfo) {
+            $hosts[$host] = $hostInfo["label"];
+        }
+        return $hosts;
     }
 
     public function getApiVersionSelectOptions() {

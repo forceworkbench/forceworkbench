@@ -365,7 +365,7 @@ function localizeDateTimes($inputStr, $formatOverride = null) {
                                  $inputStr);
 }
 
-function printSelectOptions($valuesToLabelsArray,$defaultValue) {
+function printSelectOptions($valuesToLabelsArray,$defaultValue = null) {
     $valueAndLabelMatched = false;
     foreach ($valuesToLabelsArray as $value => $label) {
         print "<option value=\"" . htmlspecialchars($value) . "\"";

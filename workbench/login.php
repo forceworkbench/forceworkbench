@@ -17,7 +17,7 @@ require_once "header.php";
 
 <div id="loginBlockContainer">
     <div id="loginBlock">
-        <form id="login_form" action="login.php" method="post" style="display: <?php print getConfig("requireOauth") ? "none" : "block"; ?>">
+        <form id="login_form" action="login.php" method="post" style="display: <?php print $c->isOAuthRequired() ? "none" : "block"; ?>">
             <?php print getCsrfFormTag(); ?>
                 <div id="login_type_selection" style="text-align: right;">
                 <input type="radio" id="loginType_std" name="loginType" value="std"/>
@@ -86,30 +86,25 @@ require_once "header.php";
             </p>
         </form>
 
-        <form id="oauth_login_form" action="login.php" method="post" style="display: <?php print getConfig("requireOauth") ? "block" : "none"; ?>">
+        <form id="oauth_login_form" action="login.php" method="post" style="display: <?php print $c->isOAuthRequired() ? "block" : "none"; ?>">
             <?php print getCsrfFormTag(); ?>
-<!--            <p>-->
-<!--                <label for="serverUrl">Server URL:</label>-->
-<!--                <input type="text" name="serverUrl" id="oauth_serverUrl" size="55" />-->
-<!--            </p>-->
-
             <p>
-                <label for="inst">Instance:</label>
-                <select id="oauth_inst" name="inst">
-                    <?php printSelectOptions($c->getSubdomainSelectOptions(), $c->getSubdomain()); ?>
+                <label for="inst">Environment:</label>
+                <select id="oauth_env" name="oauth_host" style="width: 200px;">
+                    <?php printSelectOptions($c->getOauthHostSelectOptions()); ?>
                 </select>
             </p>
 
             <p>
                 <label for="api">API Version:</label>
-                <select id="oauth_api" name="api">
+                <select id="oauth_api" name="api" style="width: 200px;">
                     <?php printSelectOptions($c->getApiVersionSelectOptions(), $c->getApiVersion()); ?>
                 </select>
             </p>
 
             <p>
             <div  style="text-align: right;">
-                <input type="submit" name="oauth_Login" value="Login">
+                <input type="submit" name="oauth_Login" value="Login with Salesforce">
             </div>
             </p>
         </form>
