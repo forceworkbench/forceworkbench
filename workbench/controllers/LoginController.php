@@ -57,13 +57,6 @@ class LoginController {
     }
 
     public function processRequest() {
-        if (getConfig("loginCsrfEnabled")) {
-            if (!validateCsrfToken(false)) {
-                $this->addError('This login method is not supported.');
-                return;
-            }
-        }
-
         if (isset($_POST["oauth_Login"]) && isset($_POST["oauth_host"])) {
             // load into session for redirect
             $_SESSION['oauth'] = array(
@@ -82,6 +75,13 @@ class LoginController {
 
             $this->oauthProcessLogin($_REQUEST["code"], $_SESSION['oauth']['host'], $_SESSION['oauth']['apiVersion']);
             return;
+        }
+
+        if (getConfig("loginCsrfEnabled")) {
+            if (!validateCsrfToken(false)) {
+                $this->addError('This login method is not supported.');
+                return;
+            }
         }
 
         $pw   = isset($_REQUEST['pw'])  ? $_REQUEST['pw']  : null;
