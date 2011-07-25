@@ -114,10 +114,11 @@ h3 {
     margin-right: auto;
 }
 
-#loginBlock strong {
+#loginBlock p label {
     float: left;
     width: 100px;
     text-align: left;
+    font-weight: bold;
 }
 
 #logoBlock {
