@@ -47,7 +47,12 @@ class LoginController {
                 return;
             }
         }
-        
+
+        if (isset($_POST["oauth_Login"]) || isset($_GET["code"])) {
+            $this->processLoginOAuth();
+            return;
+        }
+
         $pw   = isset($_REQUEST['pw'])  ? $_REQUEST['pw']  : null;
         $sid  = isset($_REQUEST['sid']) ? $_REQUEST['sid'] : null;
         $serverUrl = $this->buildServerUrl();
@@ -175,6 +180,70 @@ class LoginController {
         }
 
         header("Location: $actionJump");
+    }
+
+    private function processLoginOauth() {
+        $redirectUri =
+            "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? "s" : "") . "://" .
+            $_SERVER['HTTP_HOST'] .
+            str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
+			(strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/") .
+            "login.php";
+
+        $auth_url = "https://" . $this->subdomain . ".salesforce.com" .
+                    "/services/oauth2/authorize?response_type=code&display=popup&client_id=" .
+                    getConfig("oauth2ConsumerKey") . "&redirect_uri=" . urlencode($redirectUri);
+
+        if (isset($_POST["oauth_Login"])) {
+            header('Location: ' . $auth_url);
+        } else if (isset($_GET['code'])) {
+//            if(isset($_SESSION['server'])) $server = $_SESSION['server'];
+
+            $token_url =  "https://" . $this->subdomain . ".salesforce.com" . "/services/oauth2/token";
+
+            $code = $_GET['code'];
+
+            $params = "code=" . $code
+                . "&grant_type=authorization_code"
+                . "&client_id=" . getConfig("oauth2ConsumerKey")
+                . "&client_secret=" . getConfig("oauth2ConsumerSecret")
+                . "&redirect_uri=" . urlencode($redirectUri);
+
+            $curl = curl_init($token_url);
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);                                //TODO: use ca-bundle instead
+
+            $json_response = curl_exec($curl);
+
+            $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            if ($status != 200 ) {
+                die("Error: call to token URL $token_url failed with status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+            }
+
+            curl_close($curl);
+
+            $response = json_decode($json_response, true);
+
+            $access_token = $response['access_token'];
+            $instance_url = $response['instance_url'];
+
+            if (!isset($access_token) || $access_token == "") {
+                die("Error - access token missing from response!");
+            }
+
+            if (!isset($instance_url) || $instance_url == "") {
+                die("Error - instance URL missing from response!");
+            }
+
+            $this->processLogin(null, null, $instance_url . "/services/Soap/u/22.0", $access_token, "select.php");
+        } else {
+            throw new Exception("Unknown OAuth state.");
+        }
     }
 
     public function getErrors() {

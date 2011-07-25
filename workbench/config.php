@@ -786,6 +786,33 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "string"
     );
 
+    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    $config["requireOauth"] = array(
+        "label" => "Require OAuth Login",
+        "description" => "Require OAuth Login",
+        "default" => false,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
+    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    $config["oauth2ConsumerKey"] = array(
+        "label" => "OAuth 2.0 Consumer Key",
+        "description" => "OAuth 2.0 Consumer Key",
+        "default" => "3MVG9ytVT1SanXDmWxKyYiK4y8AVTW2Qc1bTreSK5sUQtcAh0ZXvA4T.AMJjajfuL4.BG3EPCJqiwc8WrLYd3", // SAMPLE PURPOSES ONLY -- OVERRIDE
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
+    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    $config["oauth2ConsumerSecret"] = array(
+        "label" => "OAuth 2.0 Consumer Secret",
+        "description" => "OAuth 2.0 Consumer Secret",
+        "default" => "8802984114206678016",  // SAMPLE PURPOSES ONLY -- OVERRIDE
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
 $config["header_proxyOptions"] = array(
     "label" => "Proxy Options",
     "display" => false,

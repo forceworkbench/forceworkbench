@@ -4,7 +4,7 @@ require_once "session.php";
 require_once "controllers/LoginController.php";
 
 $c = new LoginController();
-if (!empty($_REQUEST["pw"]) || !empty($_REQUEST["sid"])) {
+if (isset($_POST['uiLogin']) || !empty($_REQUEST["sid"]) || isset($_POST["oauth_Login"]) || isset($_GET["code"])) {
     $c->processRequest();
 }
 
@@ -17,9 +17,9 @@ require_once "header.php";
 
 <div id="loginBlockContainer">
     <div id="loginBlock">
-        <form id="login_form" action="login.php" method="post">
+        <form id="login_form" action="login.php" method="post" style="display: <?php print getConfig("requireOauth") ? "none" : "block"; ?>">
             <?php print getCsrfFormTag(); ?>
-            <div id="login_type_selection" style="text-align: right;">
+                <div id="login_type_selection" style="text-align: right;">
                 <input type="radio" id="loginType_std" name="loginType" value="std"/>
                 <label for="loginType_std">Standard</label>
 
@@ -83,6 +83,34 @@ require_once "header.php";
                 <div  style="text-align: right;">
                     <input type="submit" name="uiLogin" value="Login">
                 </div>
+            </p>
+        </form>
+
+        <form id="oauth_login_form" action="login.php" method="post" style="display: <?php print getConfig("requireOauth") ? "block" : "none"; ?>">
+            <?php print getCsrfFormTag(); ?>
+<!--            <p>-->
+<!--                <label for="serverUrl">Server URL:</label>-->
+<!--                <input type="text" name="serverUrl" id="oauth_serverUrl" size="55" />-->
+<!--            </p>-->
+
+            <p>
+                <label for="inst">Instance:</label>
+                <select id="oauth_inst" name="inst">
+                    <?php printSelectOptions($c->getSubdomainSelectOptions(), $c->getSubdomain()); ?>
+                </select>
+            </p>
+
+            <p>
+                <label for="api">API Version:</label>
+                <select id="oauth_api" name="api">
+                    <?php printSelectOptions($c->getApiVersionSelectOptions(), $c->getApiVersion()); ?>
+                </select>
+            </p>
+
+            <p>
+            <div  style="text-align: right;">
+                <input type="submit" name="oauth_Login" value="Login">
+            </div>
             </p>
         </form>
     </div>
