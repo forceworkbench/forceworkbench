@@ -78,7 +78,7 @@
     <target name="www" depends="stage" description="copies from staging to WWW dir of your choice">
         <fail unless="dir.www" message="Must set dir.www property"/>
         <copy todir="${dir.www}">
-		    <fileset dir="${dir.dist}/staging">
+		    <fileset dir="${dir.dist}/staging/workbench">
                 <exclude name="**/configOverrides.php"/>
             </fileset>
 		</copy>
