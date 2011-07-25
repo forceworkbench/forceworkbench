@@ -51,12 +51,19 @@ class LoginController {
         $pw   = isset($_REQUEST['pw'])  ? $_REQUEST['pw']  : null;
         $sid  = isset($_REQUEST['sid']) ? $_REQUEST['sid'] : null;
         $serverUrl = $this->buildServerUrl();
-        $this->processRemeberUserCookie();
+
+        // special-cases for UI vs API logins
+        if (isset($_POST['uiLogin'])) {
+            $this->processRemeberUserCookie();
+        } else {
+            $_REQUEST['autoLogin'] = 1;
+        }
+
         $this->processLogin($this->username, $pw, $serverUrl, $sid, $this->startUrl);
     }
 
     public function processRemeberUserCookie() {
-        if (isset($_REQUEST['rememberUser']) && $_REQUEST['rememberUser'] == 'on') {
+        if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'on') {
             setcookie('user', $this->username, time() + 60 * 60 * 24 * 7);
             $this->userRemembered = true;
         } else {

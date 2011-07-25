@@ -29,7 +29,7 @@ require_once "header.php";
 
             <p>
                 <label for="un">Username:</label>
-                <input type="text" id="un" name="un"size="55" value="<?php print htmlspecialchars($c->getUsername()); ?>" />
+                <input type="text" id="un" name="un"size="55" value="<?php print htmlspecialchars($c->getUsername()); ?>"/>
             </p>
 
             <p>
@@ -81,7 +81,7 @@ require_once "header.php";
 
             <p>
                 <div  style="text-align: right;">
-                    <input type="submit" name="loginClick" value="Login">
+                    <input type="submit" name="uiLogin" value="Login">
                 </div>
             </p>
         </form>
