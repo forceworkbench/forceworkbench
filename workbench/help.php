@@ -4,7 +4,7 @@ require_once 'shared.php';
 require_once 'header.php';
 ?>
 <p>Workbench is not a product of or supported by salesforce.com, inc.
-For support from the open source community, please visit the recources
+For support from the open source community, please visit the resources
 below:
 
 <ul>

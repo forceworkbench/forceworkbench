@@ -5,7 +5,7 @@ require_once 'header.php';
 ?>
 
 <p>Workbench is a powerful, web-based suite of tools designed for
-adminstrators and developers to interact with Salesforce.com
+administrators and developers to interact with Salesforce.com
 organizations via the Force.com APIs. Workbench includes robust support
 for the Force.com Partner, Bulk, Rest, Streaming, Metadata, and Apex APIs that allows
 users to describe, query, manipulate, and migrate both data and metadata
@@ -21,7 +21,7 @@ integration within the Salesforce application.</p>
 Developed by Ryan Brainard<br />
 </p>
 <p>Workbench is NOT a product of or supported by salesforce.com, inc.
-For support from the open source community, please visit the recources
+For support from the open source community, please visit the resources
 below:</p>
 <ul>
     <li><a href="http://wiki.apexdevnet.com/index.php/Workbench"
