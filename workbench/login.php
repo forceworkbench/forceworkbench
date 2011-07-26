@@ -102,8 +102,16 @@ require_once "header.php";
                 </select>
             </p>
 
+
+            <?php if ($c->getTermsFile()) { ?>
+            <div style="margin-left: 95px;">
+                <input type="checkbox" id="termsAccepted" name="termsAccepted"/>
+                <label for="termsAccepted"><a href="terms.php" target="_blank">I agree to the terms of service</a></label>
+            </div>
+            <?php } ?>
+
             <p>
-            <div  style="text-align: right;">
+            <div  style="text-align: right; margin-top: 2em;">
                 <input type="submit" name="oauth_Login" value="Login with Salesforce">
             </div>
             </p>

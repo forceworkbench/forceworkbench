@@ -11,6 +11,8 @@ class LoginController {
     private $startUrl;
     private $oauthEnabled;
     private $oauthRequired;
+    private $termsRequired;
+    private $termsFile;
 
     function __construct() {
         $this->errors = array();
@@ -54,9 +56,17 @@ class LoginController {
         if ($this->oauthRequired && !$this->oauthEnabled) {
             throw new Exception("OAuth is required, but not enabled.");
         }
+
+        $this->termsFile = is_file("terms.html") ? "terms.html" : null;
+        $this->termsRequired = $this->termsFile != null;
     }
 
     public function processRequest() {
+        if ($this->termsRequired && !isset($_POST['termsAccepted'])) {
+            $this->addError("Must agree to terms");
+            return;
+        }
+
         if (isset($_POST["oauth_Login"]) && isset($_POST["oauth_host"])) {
             // load into session for redirect
             $_SESSION['oauth'] = array(
@@ -332,6 +342,10 @@ class LoginController {
 
     public function getStartUrl() {
         return $this->startUrl;
+    }
+
+    public function getTermsFile() {
+        return $this->termsFile;
     }
 
     public function getSubdomainSelectOptions() {

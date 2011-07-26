@@ -888,7 +888,7 @@ $config["header_internal"] = array(
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-$GLOBALS["WORKBENCH_VERSION"] = "trunk";
+$GLOBALS["WORKBENCH_VERSION"] = "22.0.1";
 
 $GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"] = "static/" . "{{WORKBENCH_VERSION}}";
 
@@ -921,7 +921,8 @@ $GLOBALS["MENUS"] = array(
         'settings.php'  => new Page('Settings','Configuration for Workbench.',false,true,true,false,true,''),
         'logout.php'    => new Page('Logout','Logs out of your Salesforce organization.',true,true,true,false,false,''),
         'help.php'      => new Page('Help','Get help about using Workbench.',false,true,true,false,true,''),
-        'about.php'     => new Page('About','Learn about Workbench.',false,true,true,false,true,'')
+        'about.php'     => new Page('About','Learn about Workbench.',false,true,true,false,true,''),
+        'terms.php'     => new Page('Terms of Service','Terms of Service.',false,true,false,false,true,'')
     ),
 
     'Info' => array(
