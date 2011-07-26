@@ -345,6 +345,10 @@ class LoginController {
     public function getOauthHostSelectOptions() {
         $hosts = array();
         foreach (getConfig('oauthConfigs') as $host => $hostInfo) {
+            if (empty($hostInfo["key"]) || empty($hostInfo["secret"])) {
+                continue;
+            }
+
             $hosts[$host] = $hostInfo["label"];
         }
         return $hosts;
