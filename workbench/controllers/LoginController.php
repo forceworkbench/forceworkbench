@@ -160,10 +160,12 @@ class LoginController {
 
         // TODO: clean up this hackiness due to in-progress context refactoring...
         $savedConfig = $_SESSION['config'];
+        $savedOauthConfig = isset($_SESSION['oauth']) ? $_SESSION['oauth'] : null;
         session_unset();
         session_destroy();
         session_start();
         $_SESSION['config'] = $savedConfig;
+        $_SESSION['oauth'] = $savedOauthConfig;
 
         $overriddenClientId = isset($_REQUEST["clientId"]) ? $_REQUEST["clientId"] : null;
         if ($username && $password && !$sessionId) {
@@ -275,6 +277,7 @@ class LoginController {
         $response = json_decode($json_response, true);
         $accessToken = $response['access_token'];
         $serverUrlPrefix = $response['instance_url'];
+        $_SESSION['oauth']['serverUrlPrefix'] = $serverUrlPrefix;
 
         if (empty($accessToken)) {
             throw new Exception("OAuth response missing access token");
