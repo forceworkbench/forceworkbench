@@ -43,7 +43,7 @@ class LoginController {
 
         $this->oauthEnabled = false;
         foreach (getConfig('oauthConfigs') as $host => $hostInfo) {
-            if (!empty($hostInfo["key"]) && !empty($hostInfo["secret"])) {
+            if (!empty($hostInfo["label"]) && !empty($hostInfo["key"]) && !empty($hostInfo["secret"])) {
                 $this->oauthEnabled = true;
                 break;
             }
@@ -345,7 +345,7 @@ class LoginController {
     public function getOauthHostSelectOptions() {
         $hosts = array();
         foreach (getConfig('oauthConfigs') as $host => $hostInfo) {
-            if (empty($hostInfo["key"]) || empty($hostInfo["secret"])) {
+            if (empty($hostInfo["label"]) || empty($hostInfo["key"]) || empty($hostInfo["secret"])) {
                 continue;
             }
 
