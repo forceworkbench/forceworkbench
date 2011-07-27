@@ -3,7 +3,9 @@ require_once 'session.php';
 require_once 'shared.php';
 
 if ($_SESSION) {
-    if (getConfig("invalidateSessionOnLogout")) {
+    $redirectTime = 2000;
+
+    if (isset($_REQUEST['invalidateSession']) || (WorkbenchContext::isEstablished() && getConfig("invalidateSessionOnLogout"))) {
         try {
             if (WorkbenchContext::isEstablished()) {
                 WorkbenchContext::get()->getPartnerConnection()->logout();
@@ -14,7 +16,9 @@ if ($_SESSION) {
         }
 
         if (isset($_SESSION['oauth']['serverUrlPrefix'])) {
-            $uiLogoutIFrame = "<iframe src='". $_SESSION['oauth']['serverUrlPrefix'] . "/secur/logout.jsp' width='0' height='0' style='display:none;'></iframe>\n";
+            $redirectTime = 5000;
+            $uiLogoutIFrame = "<iframe src='". $_SESSION['oauth']['serverUrlPrefix'] .
+                              "/secur/logout.jsp' width='0' height='0' style='display:none;'></iframe>\n";
         }
     } else {
         $apiSessionInvalidated = false;
@@ -30,12 +34,15 @@ if ($_SESSION) {
         print $uiLogoutIFrame;
     }
 
-    if ($apiSessionInvalidated) {
+    if (isset($_REQUEST['message'])) {
+        $redirectTime = 5000;
+        displayError("An error has occurred and you have been logged out:\n" . $_REQUEST['message']);
+    } else if ($apiSessionInvalidated) {
         displayInfo('You have been successfully logged out of Workbench and Salesforce.');
     } else {
         displayInfo('You have been successfully logged out of Workbench.');
     }
-    print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\",3000);</script>";
+    print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\", $redirectTime);</script>";
 
     include_once 'footer.php';
 } else {

@@ -110,8 +110,8 @@ require_once "header.php";
             <?php } ?>
 
             <p>
-                <div  style="text-align: right;">
-                    <input type="submit" name="uiLogin" value="Login">
+                <div style="text-align: right;">
+                    <input type="submit" id="loginBtn" name="uiLogin" value="Login">
                 </div>
             </p>
         </div>

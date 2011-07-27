@@ -48,6 +48,14 @@ var WorkbenchLogin = new function() {
             }
         }
 
+        switch (typeElem.id) {
+            case "loginType_oauth":
+                form.loginBtn.value = "Login with Salesforce";
+                break;
+            default:
+                form.loginBtn.value = "Login";
+        }
+
         // remove focus from login type controls
         setFocus();
     }

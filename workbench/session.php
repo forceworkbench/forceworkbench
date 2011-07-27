@@ -115,8 +115,7 @@ if (isLoggedIn()) {
         }
     }
     if (!$isAllowed) {
-        WorkbenchContext::get()->release();
-        displayError("Requests for organization $orgId15 are not allowed", true, true);
+        throw new WorkbenchAuthenticationException("Requests for organization $orgId15 are not allowed");
     }
 
 

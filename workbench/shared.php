@@ -170,8 +170,17 @@ function handleAllErrors($errno, $errstr, $errfile, $errline, $errcontext) {
  * @return void
  */
 function handleAllExceptions($e) {
-    try { include_once 'header.php'; } catch (exception $e) {}
-    print "<p/>";
+    if (stripos($e->getMessage(), "Could not connect to host") === 0) {
+        handleAllExceptions(new WorkbenchHandledException($e->getMessage()));
+    }
+
+    if (stripos($e->getMessage(), "INVALID_OPERATION_WITH_EXPIRED_PASSWORD") === 0) {
+        handleAllExceptions(new WorkbenchAuthenticationException($e->getMessage()));
+    }
+
+    if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
+        handleAllExceptions(new WorkbenchAuthenticationException("Your Salesforce session is invalid or has expired. Please login again."));
+    }
 
     $cause = $e;
     $fullMessage = "";
@@ -180,36 +189,29 @@ function handleAllExceptions($e) {
         $cause = method_exists($cause,"getPrevious") ? $cause->getPrevious() : null;
     }
 
-    if ($e instanceof WorkbenchHandledException) {
-        workbenchLog(LOG_WARNING, "H", $fullMessage);
-        displayError($e->getMessage(), false, true);
-        return;
-    }
-
-    if (stripos($e->getMessage(), "Could not connect to host") === 0) {
-        handleAllExceptions(new WorkbenchHandledException($e->getMessage()));
-    }
-
-    if (stripos($e->getMessage(), "INVALID_OPERATION_WITH_EXPIRED_PASSWORD") === 0) {
+    if ($e instanceof WorkbenchAuthenticationException) {
         WorkbenchContext::get()->release();
-        handleAllExceptions(new WorkbenchHandledException($e->getMessage()));
-    }
-
-    if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
-        WorkbenchContext::get()->release();
-        displayError("Your Salesforce session is invalid or has expired. Please login again.", false, false);
-        print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\",3000);</script>";
-        include_once 'footer.php';
+        if ( basename($_SERVER['PHP_SELF']) !== "logout.php") {
+            header("Location: logout.php?invalidateSession=1&message=" . urlencode($e->getMessage()));
+        }
         exit;
     }
 
-    workbenchLog(LOG_ERR, "G", $fullMessage);
-
-    displayError("UNKNOWN ERROR: " . $e->getMessage(), false, true);
+    try { include_once 'header.php'; } catch (exception $e) {}
+    print "<p/>";
+    if ($e instanceof WorkbenchHandledException) {
+        workbenchLog(LOG_WARNING, "H", $fullMessage);
+        displayError($e->getMessage(), false, true);
+    } else {
+        workbenchLog(LOG_ERR, "G", $fullMessage);
+        displayError("UNKNOWN ERROR: " . $e->getMessage(), false, true);
+    }
     exit;
 }
 
 class WorkbenchHandledException extends Exception {}
+
+class WorkbenchAuthenticationException extends WorkbenchHandledException {}
 
 function unCamelCase($camelCasedString) {
     return ucfirst(preg_replace( '/([a-z0-9])([A-Z])/', "$1 $2", $camelCasedString));
