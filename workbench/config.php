@@ -301,6 +301,15 @@ $config["header_LoginOptions"] = array(
         "dataType" => "string"
     );
 
+    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    $config["termsFile"] = array(
+        "label" => "Terms of Service File",
+        "description" => "An HTML file containing Terms of Service that will be required for login.",
+        "default" => null,
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
 $config["header_Describe"] = array(
     "label" => "Describe Results",
     "display" => true,

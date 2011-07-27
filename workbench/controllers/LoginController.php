@@ -57,16 +57,23 @@ class LoginController {
             throw new Exception("OAuth is required, but not enabled.");
         }
 
-        $this->termsFile = is_file("terms.html") ? "terms.html" : null;
-        $this->termsRequired = $this->termsFile != null;
+        $this->termsFile = getConfig("termsFile");
+        if (!empty($this->termsFile)) {
+            if (!is_file($this->termsFile)) {
+                throw new Exception("Could not find Terms of Service.");
+            }
+            
+            $this->termsRequired = true;
+        }
     }
 
     public function processRequest() {
+        if ($this->termsRequired && !isset($_POST['termsAccepted'])) {
+            $this->addError("You must agree to terms of service.");
+            return;
+        }
+
         if (isset($_POST["oauth_Login"]) && isset($_POST["oauth_host"])) {
-            if ($this->termsRequired && !isset($_POST['termsAccepted'])) {
-                $this->addError("You must agree to terms of service.");
-                return;
-            }
             // load into session for redirect
             $_SESSION['oauth'] = array(
                 "host" => $_POST["oauth_host"],

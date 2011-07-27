@@ -79,6 +79,13 @@ require_once "header.php";
                 </select>
             </p>
 
+            <?php if ($c->getTermsFile()) { ?>
+            <div style="margin-left: 95px;">
+                <input type="checkbox" id="termsAccepted" name="termsAccepted"/>
+                <label for="termsAccepted"><a href="terms.php" target="_blank">I agree to the terms of service</a></label>
+            </div>
+            <?php } ?>
+
             <p>
                 <div  style="text-align: right;">
                     <input type="submit" name="uiLogin" value="Login">
@@ -105,8 +112,8 @@ require_once "header.php";
 
             <?php if ($c->getTermsFile()) { ?>
             <div style="margin-left: 95px;">
-                <input type="checkbox" id="termsAccepted" name="termsAccepted"/>
-                <label for="termsAccepted"><a href="terms.php" target="_blank">I agree to the terms of service</a></label>
+                <input type="checkbox" id="oauth_termsAccepted" name="termsAccepted"/>
+                <label for="oauth_termsAccepted"><a href="terms.php" target="_blank">I agree to the terms of service</a></label>
             </div>
             <?php } ?>
 
