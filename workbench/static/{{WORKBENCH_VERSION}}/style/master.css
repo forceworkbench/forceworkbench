@@ -104,17 +104,13 @@ h3 {
     text-decoration: none;
 }
 
-#loginBlock {
-    float: left;
-}
-
 #loginBlockContainer {
     width: 525px;
     margin-left: auto;
     margin-right: auto;
 }
 
-#loginBlock p label {
+#loginBlockContainer p label {
     float: left;
     width: 100px;
     text-align: left;

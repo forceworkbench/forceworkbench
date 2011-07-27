@@ -167,12 +167,13 @@ $config["header_LoginOptions"] = array(
    $config["defaultLoginType"]  = array(
         "label" => "Default Login Type",
         "description" => "Determines default login type that is loaded on startup.",
-        "default" => "Standard",
+        "default" => "std",
         "overrideable" => true,
         "dataType" => "picklist",
         "valuesToLabels" => array(
-            "Standard" => "Standard",
-            "Advanced" => "Advanced"
+            "std" => "Standard",
+            "adv" => "Advanced",
+            "oauth" => "OAuth Remote Access",
         )
     );
 

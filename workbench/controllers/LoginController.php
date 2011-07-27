@@ -19,9 +19,7 @@ class LoginController {
 
         $this->loginType = isset($_REQUEST['loginType'])
                              ? $_REQUEST['loginType']
-                             : ((getConfig("defaultLoginType") == 'Advanced')
-                                 ? "adv"
-                                 : "std");
+                             : getConfig("defaultLoginType");
 
         $this->username = isset($_REQUEST['un'])
                              ? $_REQUEST['un']
@@ -52,6 +50,9 @@ class LoginController {
         }
 
         $this->oauthRequired = getConfig("oauthRequired");
+        if ($this->oauthRequired) {
+            $this->loginType = "oauth";
+        }
 
         if ($this->oauthRequired && !$this->oauthEnabled) {
             throw new Exception("OAuth is required, but not enabled.");
@@ -68,22 +69,6 @@ class LoginController {
     }
 
     public function processRequest() {
-        if ($this->termsRequired && !isset($_POST['termsAccepted'])) {
-            $this->addError("You must agree to terms of service.");
-            return;
-        }
-
-        if (isset($_POST["oauth_Login"]) && isset($_POST["oauth_host"])) {
-            // load into session for redirect
-            $_SESSION['oauth'] = array(
-                "host" => $_POST["oauth_host"],
-                "apiVersion" => $_POST["api"]
-            );
-
-            $this->oauthRedirect($_POST["oauth_host"]);
-            return;
-        }
-
         if (isset($_REQUEST["code"])) {
             if (!isset($_SESSION['oauth']) || !isset($_SESSION['oauth']['host']) || !isset($_SESSION['oauth']['apiVersion']) ) {
                 throw new Exception("Invalid OAuth State");
@@ -100,18 +85,37 @@ class LoginController {
             }
         }
 
-        $pw   = isset($_REQUEST['pw'])  ? $_REQUEST['pw']  : null;
-        $sid  = isset($_REQUEST['sid']) ? $_REQUEST['sid'] : null;
-        $serverUrl = $this->buildServerUrl();
-
-        // special-cases for UI vs API logins
-        if (isset($_POST['uiLogin'])) {
-            $this->processRemeberUserCookie();
-        } else {
-            $_REQUEST['autoLogin'] = 1;
+        if ($this->termsRequired && !isset($_POST['termsAccepted'])) {
+            $this->addError("You must agree to terms of service.");
+            return;
         }
 
-        $this->processLogin($this->username, $pw, $serverUrl, $sid, $this->startUrl);
+        if (isset($_REQUEST['loginType']) && $_REQUEST['loginType'] == "oauth") {
+            if (!isset($_POST["oauth_host"]) || !isset($_POST["api"])) {
+                throw new Exception("Invalid parameters for Oauth login");
+            }
+
+            // load into session for redirect
+            $_SESSION['oauth'] = array(
+                "host" => $_POST["oauth_host"],
+                "apiVersion" => $_POST["oauth_apiVersion"]
+            );
+
+            $this->oauthRedirect($_POST["oauth_host"]);
+        } else {
+            $pw   = isset($_REQUEST['pw'])  ? $_REQUEST['pw']  : null;
+            $sid  = isset($_REQUEST['sid']) ? $_REQUEST['sid'] : null;
+            $serverUrl = $this->buildServerUrl();
+
+            // special-cases for UI vs API logins
+            if (isset($_POST['uiLogin'])) {
+                $this->processRemeberUserCookie();
+            } else {
+                $_REQUEST['autoLogin'] = 1;
+            }
+
+            $this->processLogin($this->username, $pw, $serverUrl, $sid, $this->startUrl);
+        }
     }
 
     public function processRemeberUserCookie() {

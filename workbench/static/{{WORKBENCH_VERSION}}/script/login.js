@@ -13,6 +13,7 @@ var WorkbenchLogin = new function() {
 
         bindEvent(form.loginType_std, "click", function () {switchLoginTypeTo(this)});
         bindEvent(form.loginType_adv, "click", function () {switchLoginTypeTo(this)});
+        bindEvent(form.loginType_oauth, "click", function () {switchLoginTypeTo(this)});
 
         bindEvent(form.un, "keyup", toggleUsernamePasswordSessionDisabled);
         bindEvent(form.pw, "keyup", toggleUsernamePasswordSessionDisabled);
@@ -34,19 +35,17 @@ var WorkbenchLogin = new function() {
     };
 
     function switchLoginTypeTo(typeElem) {
-        var advContainer = document.getElementById('advContainer');
+        form[typeElem.id].checked = true;
 
-        switch (typeElem.id) {
-            case 'loginType_std':
-                 form.loginType_std.checked = true;
-                 advContainer.style.display = 'none';
-                break;
-            case 'loginType_adv':
-                form.loginType_adv.checked = true;
-                advContainer.style.display = 'block';
-                break;
-            default:
-                console.error('Invalid login type');
+        var divs = document.getElementsByTagName("div");
+        for (var i = 0; i < divs.length; i++) {
+            if (divs[i].className.indexOf("loginType") >= 0) {
+                if (divs[i].className.indexOf(typeElem.id) >= 0) {
+                    divs[i].style.display = "block";
+                } else {
+                    divs[i].style.display = "none";
+                }
+            }
         }
 
         // remove focus from login type controls
