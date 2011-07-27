@@ -3,7 +3,12 @@ var WorkbenchLogin = new function() {
     var form = document.getElementById('login_form');
 
     this.initializeForm = function(loginType) {
-        switchLoginTypeTo(form['loginType_' + loginType]);
+        var loginTypeElem = form['loginType_' + loginType];
+        if (loginTypeElem === undefined) {
+            alert("Unknown login type '" + loginType + "'. Check configuration!");
+            return;
+        }
+        switchLoginTypeTo(loginTypeElem);
 
         if (wbLoginConfig.customServerUrl === "") {
             buildServerUrl();
