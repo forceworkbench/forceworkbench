@@ -41,6 +41,9 @@ class ConnectionConfiguration {
 
     function applyLoginResult($loginResult) {
         $this->host = parse_url($loginResult->serverUrl, PHP_URL_HOST);
+        $port = parse_url($loginResult->serverUrl, PHP_URL_PORT);
+        $this->host .= !empty($port) ? ":$port" : "";
+
         $this->sessionId = $loginResult->sessionId;
     }
 

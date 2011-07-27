@@ -50,7 +50,7 @@ function displaySelectForm() {
 
         try {
             print "<form method='post' action=''>\n";
-            print "<p class='instructions'>Select a default object and action:</p>\n";
+            print "<p class='instructions'>Select an action to perform:</p>\n";
 
             //Display a list of actions as submit buttons. Jump to the selected
             //action's page on refresh (see IF statement at top)

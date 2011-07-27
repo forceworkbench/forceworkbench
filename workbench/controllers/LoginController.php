@@ -64,7 +64,7 @@ class LoginController {
     public function processRequest() {
         if (isset($_POST["oauth_Login"]) && isset($_POST["oauth_host"])) {
             if ($this->termsRequired && !isset($_POST['termsAccepted'])) {
-                $this->addError("Must agree to terms");
+                $this->addError("You must agree to terms of service.");
                 return;
             }
             // load into session for redirect
