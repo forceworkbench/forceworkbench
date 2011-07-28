@@ -5,6 +5,7 @@ require_once 'MetadataConnectionProvider.php';
 require_once 'ApexConnectionProvider.php';
 require_once 'AsyncBulkConnectionProvider.php';
 require_once 'RestDataConnectionProvider.php';
+require_once 'SfdcVersionsProvider.php';
 require_once 'UserInfoProvider.php';
 require_once 'DescribeGlobalProvider.php';
 require_once 'DescribeSObjectsProvider.php';
@@ -24,6 +25,7 @@ class WorkbenchContext {
     const ASYNC_BULK = "ASYNC_BULK";
     const APEX = "APEX";
     const REST_DATA = "REST_DATA";
+    const SFDC_VERSIONS = "SFDC_VERSIONS";
     const USER_INFO = "USER_INFO";
     const DESCRIBE_GLOBAL = "DESCRIBE_GLOBAL";
     const DESCRIBE_SOBJECTS = "DESCRIBE_SOBJECTS";
@@ -195,6 +197,7 @@ class WorkbenchContext {
         $this->cache[self::ASYNC_BULK] = new AsyncBulkConnectionProvider(self::ASYNC_BULK);
         $this->cache[self::REST_DATA] = new RestDataConnectionProvider(self::REST_DATA);
         $this->cache[self::USER_INFO] = new UserInfoProvider(self::USER_INFO);
+        $this->cache[self::SFDC_VERSIONS] = new CurrentAppVersionProvider(self::SFDC_VERSIONS);
         $this->cache[self::DESCRIBE_GLOBAL] = new DescribeGlobalProvider(self::DESCRIBE_GLOBAL);
         $this->cache[self::DESCRIBE_SOBJECTS] = new DescribeSObjectsProvider(self::DESCRIBE_SOBJECTS);
     }
@@ -248,6 +251,14 @@ class WorkbenchContext {
      */
     function getRestDataConnection() {
         return $this->getConnection(self::REST_DATA);
+    }
+
+    function getSfdcVersions() {
+        return $this->getCacheableValue(self::SFDC_VERSIONS);
+    }
+
+    function getCurrentSfdcVersion() {
+        return end($this->getCacheableValue(self::SFDC_VERSIONS));
     }
 
     function getUserInfo() {

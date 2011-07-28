@@ -45,6 +45,17 @@ class StreamingController {
             }
         }
 
+        // This client was written to work w/ the pilot version of the Streaming API
+        // TODO: update client to work with 23.0+
+        $currentSfdcVersion = WorkbenchContext::get()->getCurrentSfdcVersion();
+        if ($currentSfdcVersion->version >= 23.0) {
+            $this->errors[] = "This client is not compatible with Streaming API in " . $currentSfdcVersion->label .
+                              ". Check for an update at:\n http://code.google.com/p/forceworkbench/downloads/list";
+            
+            $this->enabled = false;
+            return;
+        }
+
         $this->refresh();
     }
 
