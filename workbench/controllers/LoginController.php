@@ -16,6 +16,12 @@ class LoginController {
 
     function __construct() {
         $this->errors = array();
+        if (isset($_REQUEST['error'])) {
+            $this->addError($_REQUEST['error'] .
+                            (isset($_REQUEST['error_description'])
+                                ? (": " . $_REQUEST['error_description'])
+                                : ""));
+        }
 
         $this->loginType = isset($_REQUEST['loginType'])
                              ? $_REQUEST['loginType']
