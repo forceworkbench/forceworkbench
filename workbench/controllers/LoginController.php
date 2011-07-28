@@ -279,6 +279,13 @@ class LoginController {
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);  //TODO: use ca-bundle instead
 
+        $proxySettings = getProxySettings();
+        if ($proxySettings != null) {
+            curl_setopt($curl, CURLOPT_PROXY, $proxySettings["proxy_host"]);
+            curl_setopt($curl, CURLOPT_PROXYPORT, $proxySettings["proxy_port"]);
+            curl_setopt($curl, CURLOPT_PROXYUSERPWD, $proxySettings["proxy_username"] . ":" . $proxySettings["proxy_password"]);
+        }
+
         $json_response = curl_exec($curl);
 
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
