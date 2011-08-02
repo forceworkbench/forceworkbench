@@ -108,7 +108,7 @@ print "<tr> <td colspan='3' align='left'><input type='submit' name='submitConfig
 
 foreach ($config as $configKey => $configValue) {
     // don't even try to deal with complex types
-    if ($configValue['dataType'] == "complex") {
+    if (isset($configValue['dataType']) && $configValue['dataType'] == "complex") {
         continue;
     }
 
