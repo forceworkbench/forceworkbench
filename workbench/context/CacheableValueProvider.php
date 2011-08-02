@@ -15,7 +15,7 @@ abstract class CacheableValueProvider {
                 $cachedValue =& $this->fetch($args);
                 return $cachedValue;
             } else {
-                $loadedValue =& $this->load($args);
+                $loadedValue = $this->load($args);
                 $this->store($loadedValue, $args);
                 return $this->fetch($args);
             }
