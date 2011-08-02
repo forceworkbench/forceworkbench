@@ -66,7 +66,7 @@ class DescribeSObjectsProvider extends CacheableValueProvider {
             throw new Exception("Too many object types to load: " . count($typesToLoad));
         }
 
-        $rawLoadedTypes =& WorkbenchContext::get()->getPartnerConnection()->describeSObjects($typesToLoad);
+        $rawLoadedTypes = WorkbenchContext::get()->getPartnerConnection()->describeSObjects($typesToLoad);
 
         $loadedTypes = array();
         if ($rawLoadedTypes instanceof stdClass) {
