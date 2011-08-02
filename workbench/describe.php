@@ -37,8 +37,11 @@ if (isset($_REQUEST['keyPrefix']) || isset($_REQUEST['id'])) {
 if (WorkbenchContext::get()->getDefaultObject()) {
     $describeSObjectResult = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject());
 
-    if (isset($describeSObjectResult->childRelationships) && !is_array($describeSObjectResult->childRelationships)) {
-        $describeSObjectResult->childRelationships = array($describeSObjectResult->childRelationships);
+    $alwaysArrayChildren = array("recordTypeInfos", "childRelationships");
+    foreach ($alwaysArrayChildren as $child) {
+        if (isset($describeSObjectResult->$child) && !is_array($describeSObjectResult->$child)) {
+            $describeSObjectResult->$child = array($describeSObjectResult->$child);
+        }
     }
 
     $forceCollapse = WorkbenchContext::get()->hasDefaultObjectChanged();
