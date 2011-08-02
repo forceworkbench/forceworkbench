@@ -138,7 +138,11 @@ function parseUnpackagedManifest($xmlFile) {
     libxml_use_internal_errors(true);
     $packageXml = simplexml_load_file($xmlFile);
     if (!isset($packageXml) || !$packageXml) {
-        displayError(libxml_get_errors(), true, true);
+        $xmlErrors = array();
+        foreach(libxml_get_errors() as $xmlError) {
+            $xmlErrors[] = "$xmlError->message [Line $xmlError->line : Column: $xmlError->column]";
+        }
+        displayError($xmlErrors, true, true);
         libxml_clear_errors();
         exit;
     }

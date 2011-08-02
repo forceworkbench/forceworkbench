@@ -279,10 +279,6 @@ function displayError($errors, $showHeader=false, $showFooter=false) {
 
     $errorString = null;
     foreach ($errors as $error) {
-        if (is_a($error, 'LibXMLError')) {
-            $error = "$error->message [Line $error->line : Column: $error->column]";
-        }
-
         $errorString .= "<p>" . htmlspecialchars((string)$error) . "</p>";
         $errorString = str_replace("\n","<br/>",$errorString);
     }
