@@ -15,20 +15,15 @@ if (isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
         exit;
     }
 
-    try {
-        $retrieveAsyncResults = WorkbenchContext::get()->getMetadataConnection()->retrieve($_SESSION[$retrieveRequestId]);
+    $retrieveAsyncResults = WorkbenchContext::get()->getMetadataConnection()->retrieve($_SESSION[$retrieveRequestId]);
 
-        if (!isset($retrieveAsyncResults->id)) {
-            displayError("Unknown retrieval error.\n" . isset($retrieveAsyncResults->message) ? $retrieveAsyncResults->message : "", true, true);
-            exit;
-        }
-
-        unset($_SESSION[$retrieveRequestId]);
-        header("Location: metadataStatus.php?asyncProcessId=" . $retrieveAsyncResults->id . "&op=R");
-    } catch (Exception $e) {
-        displayError($e->getMessage(), true, true);
+    if (!isset($retrieveAsyncResults->id)) {
+        displayError("Unknown retrieval error.\n" . isset($retrieveAsyncResults->message) ? $retrieveAsyncResults->message : "", true, true);
         exit;
     }
+
+    unset($_SESSION[$retrieveRequestId]);
+    header("Location: metadataStatus.php?asyncProcessId=" . $retrieveAsyncResults->id . "&op=R");
 }
 
 else if (isset($_POST['stageForRetrieval'])) {
@@ -150,7 +145,11 @@ function parseUnpackagedManifest($xmlFile) {
 
     $unpackaged = new Package();
 
-    if(isset($packageXml->version)) $unpackaged->version = (string) $packageXml->version;
+    if (isset($packageXml->version)) {
+        $unpackaged->version = (string) $packageXml->version;
+    } else {
+        throw new WorkbenchHandledException("'version' element is required");
+    }
 
     if (isset($packageXml->types)) {
         $unpackaged->types = array();

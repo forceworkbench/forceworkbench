@@ -9,8 +9,11 @@ abstract class SoapBaseClient {
         $_SERVER['HTTP_USER_AGENT'] = getWorkbenchUserAgent();
 
         $soapClientArray = array();
-        $soapClientArray['trace'] = 1;
+        if (getConfig("debug") == true) {
+            $soapClientArray['trace'] = 1;
+        }
         $soapClientArray['encoding'] = 'utf-8';
+        $soapClientArray['exceptions'] = true;
 
         //set compression settings
         if (getConfig("enableGzip") && phpversion() > '5.1.2') {

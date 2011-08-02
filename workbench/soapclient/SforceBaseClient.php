@@ -102,6 +102,7 @@ class SforceBaseClient {
         if (getConfig("debug") == true) {
             $soapClientArray['trace'] = 1;
         }
+        $soapClientArray['exceptions'] = true;
         $soapClientArray['encoding'] = 'utf-8';
 
         if (getConfig("enableGzip") && phpversion() > '5.1.2') {
