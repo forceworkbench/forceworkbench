@@ -148,6 +148,10 @@ class WorkbenchContext {
         }
     }
 
+    function isRequestStartTimeSet() {
+        return isset($_REQUEST[self::INSTANCE][self::REQUEST_START_TIME]);
+    }
+
     function getRequestProcessingTime() {
         return microtime(true) - $_REQUEST[self::INSTANCE][self::REQUEST_START_TIME];
     }

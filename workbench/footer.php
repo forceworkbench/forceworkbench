@@ -10,7 +10,7 @@ if (getConfig("checkSSL") && !usingSSL()) {
     print "<div style='font-size: 8pt; color: orange;'>WARNING: Unsecure connection detected</div>";
 }
 
-if (WorkbenchContext::isEstablished() && getConfig("displayRequestTime")) {
+if (WorkbenchContext::isEstablished() && WorkbenchContext::get()->isRequestStartTimeSet() && getConfig("displayRequestTime")) {
     printf ("Requested in %01.3f sec<BR/>", WorkbenchContext::get()->getRequestProcessingTime());
 }
 
