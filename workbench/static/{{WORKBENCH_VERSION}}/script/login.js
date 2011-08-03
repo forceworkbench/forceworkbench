@@ -16,9 +16,11 @@ var WorkbenchLogin = new function() {
             form.serverUrl.value = wbLoginConfig.customServerUrl;
         }
 
-        bindEvent(form.loginType_std, "click", function () {switchLoginTypeTo(this)});
-        bindEvent(form.loginType_adv, "click", function () {switchLoginTypeTo(this)});
-        bindEvent(form.loginType_oauth, "click", function () {switchLoginTypeTo(this)});
+        // add listeners to the loginType radio buttons
+        var loginTypes = document.getElementsByName("loginType");
+        for (var i = 0; i < loginTypes.length; i++) {
+            bindEvent(loginTypes[i], "click", function () {switchLoginTypeTo(this)});
+        }
 
         bindEvent(form.un, "keyup", toggleUsernamePasswordSessionDisabled);
         bindEvent(form.pw, "keyup", toggleUsernamePasswordSessionDisabled);
