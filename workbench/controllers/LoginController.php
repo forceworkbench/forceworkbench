@@ -115,7 +115,7 @@ class LoginController {
 
             // special-cases for UI vs API logins
             if (isset($_POST['uiLogin'])) {
-                $this->processRemeberUserCookie();
+                $this->processRememberUserCookie();
             } else {
                 $_REQUEST['autoLogin'] = 1;
             }
@@ -124,7 +124,7 @@ class LoginController {
         }
     }
 
-    public function processRemeberUserCookie() {
+    public function processRememberUserCookie() {
         if (isset($_POST['rememberUser']) && $_POST['rememberUser'] == 'on') {
             setcookie('user', $this->username, time() + 60 * 60 * 24 * 7);
             $this->userRemembered = true;
@@ -233,6 +233,16 @@ class LoginController {
                 $this->addError("Must not connect to 'localhost'");
             }
 
+            return;
+        }
+
+        try {
+            // test the connection and prime the UserInfo cache
+            WorkbenchContext::get()->getUserInfo();
+        } catch (Exception $e) {
+            workbenchLog(LOG_ERR, "E", $e->getMessage()."\n".$e->getTraceAsString());
+            WorkbenchContext::get()->release();
+            $this->addError("UNKNOWN LOGIN ERROR: " .  $e->getMessage());
             return;
         }
 
