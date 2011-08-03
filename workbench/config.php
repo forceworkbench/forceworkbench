@@ -489,7 +489,7 @@ $config["header_queryAndSearchOptions"] = array(
     $config["allowQueryCsvExport"] = array(
         "label" => "Allows Query CSV Export",
         "description" => "Allows queries to export to CSV. Does not affect Bulk CSV export.",
-        "default" => false,
+        "default" => true,
         "overrideable" => false,
         "dataType" => "boolean"
     );
