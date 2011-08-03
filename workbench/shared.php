@@ -170,18 +170,6 @@ function handleAllErrors($errno, $errstr, $errfile, $errline, $errcontext) {
  * @return void
  */
 function handleAllExceptions($e) {
-    if (stripos($e->getMessage(), "Could not connect to host") === 0) {
-        handleAllExceptions(new WorkbenchHandledException($e->getMessage()));
-    }
-
-    if (stripos($e->getMessage(), "INVALID_OPERATION_WITH_EXPIRED_PASSWORD") === 0) {
-        handleAllExceptions(new WorkbenchAuthenticationException($e->getMessage()));
-    }
-
-    if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
-        handleAllExceptions(new WorkbenchAuthenticationException("Your Salesforce session is invalid or has expired. Please login again."));
-    }
-
     $cause = $e;
     $fullMessage = "";
     while ($cause != null) {
@@ -197,13 +185,25 @@ function handleAllExceptions($e) {
         exit;
     }
 
-    try { include_once 'header.php'; } catch (exception $e) {}
     print "<p/>";
     if ($e instanceof WorkbenchHandledException) {
-        workbenchLog(LOG_WARNING, "H", $fullMessage);
+        try { include_once 'header.php'; } catch (Exception $e) {}
         displayError($e->getMessage(), false, true);
     } else {
-        workbenchLog(LOG_ERR, "G", $fullMessage);
+        if (stripos($e->getMessage(), "Could not connect to host") === 0) {
+            handleAllExceptions(new WorkbenchHandledException($e->getMessage()));
+        }
+
+        if (stripos($e->getMessage(), "INVALID_OPERATION_WITH_EXPIRED_PASSWORD") === 0) {
+            handleAllExceptions(new WorkbenchAuthenticationException($e->getMessage()));
+        }
+
+        if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
+            handleAllExceptions(new WorkbenchAuthenticationException("Your Salesforce session is invalid or has expired. Please login again."));
+        }
+
+        try { include_once 'header.php'; } catch (Exception $e) {}
+        workbenchLog(LOG_ERR, "E", $fullMessage);
         displayError("UNKNOWN ERROR: " . $e->getMessage(), false, true);
     }
     exit;
