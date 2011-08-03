@@ -97,7 +97,7 @@ class DescribeSObjectsProvider extends CacheableValueProvider {
 
     function alphaOrderFields($describeSObjectResult) {
         //move field name out to key name and then ksort based on key for field abc order
-        if (isset($describeSObjectResult->fields)) {
+        if (isset($describeSObjectResult->fields) && is_array($describeSObjectResult->fields)) {
             if(!is_array($describeSObjectResult->fields)) $describeSObjectResult->fields = array($describeSObjectResult->fields);
             foreach ($describeSObjectResult->fields as $field) {
                 $fieldNames[] = $field->name;
