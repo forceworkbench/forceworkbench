@@ -2,29 +2,44 @@
 require_once 'session.php';
 require_once 'shared.php';
 
-//Has the user selected a default object and clicked one
-//of the action buttons. If so, proceed to that page; otherwise,
-//show the form to do so.
-
-if (isset($_POST['actionJump']) && $_POST['actionJump'] != "") {
+if (isset($_POST['actionJump']) && $_POST['actionJump'] != basename($_SERVER['PHP_SELF'])) {
     header("Location: $_POST[actionJump]");
-} else if (isset($_POST['select'])) {
-    include_once 'header.php';
+    exit;
+}
+
+include_once 'header.php';
+
+if (isset($_POST['select'])) {
     displayError("Choose an object and an action to which to jump.");
-    displaySelectForm();
-    include_once 'footer.php';
 }
+?>
 
-else {
-    include_once 'header.php';
-    displaySelectForm();
-    include_once 'footer.php';
-}
+<form method='POST' action=''>
+    <p class='instructions'>Select an action to perform:</p>
 
-function displaySelectForm() {
-    ?>
-<script>
+    <p>
+        <label for="actionJump"><strong>Jump to: </strong></label>
+        <select name='actionJump' id='actionJump' style='width: 20em;' onChange='toggleObjectSelectDisabled();'>
+            <option value='select.php'></option>
+            <?php
+            foreach ($GLOBALS["MENUS"] as $menu => $pages) {
+                foreach ($pages as $href => $page) {
+                    if ($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
+                }
+            }
+            ?>
+        </select>
+    </p>
+
+    <p>
+        <label for="default_object"><strong>Object: &nbsp; </strong></label>
+        <?php printObjectSelection(WorkbenchContext::get()->getDefaultObject(), 'default_object'); ?>
+    </p>
     
+    <input type='submit' name='select' value='Select'/>
+</form>
+
+<script type="text/javascript">
     function toggleObjectSelectDisabled() {
         var usesObject = new Array();
         <?php
@@ -36,48 +51,18 @@ function displaySelectForm() {
             }
         }
         ?>
-    
+
         var actionJumpVal = document.getElementById('actionJump').value;
 
         if (usesObject[actionJumpVal] != undefined) {
-            document.getElementById('default_object').disabled = false;        
+            document.getElementById('default_object').disabled = false;
         } else {
-            document.getElementById('default_object').disabled = true;            
+            document.getElementById('default_object').disabled = true;
         }
     }
-    </script>
-        <?php
+</script>
 
-        try {
-            print "<form method='post' action=''>\n";
-            print "<p class='instructions'>Select an action to perform:</p>\n";
-
-            //Display a list of actions as submit buttons. Jump to the selected
-            //action's page on refresh (see IF statement at top)
-            print "<p><strong>Jump to: </strong>" .
-          "<select name='actionJump' id='actionJump' style='width: 20em;' onChange='toggleObjectSelectDisabled();'>" .     
-          "<option value='select.php'></option>";
-            foreach ($GLOBALS["MENUS"] as $menu => $pages) {
-                foreach ($pages as $href => $page) {
-                    if($page->onMenuSelect) print "<option value='" . $href . "'>" . $page->title . "</option>";
-                }
-            }
-            print "</select></p>";
-
-
-            //Describe a list of all the objects in the user's org and display
-            //in a drop down select box
-            print "<p><strong>Object: &nbsp; </strong>";
-            printObjectSelection(WorkbenchContext::get()->getDefaultObject(),'default_object');
-
-
-            print "<p/><input type='submit' name='select' value='Select' />";
-            print "</form>\n";
-        } catch (Exception $e) {
-            displayError($e->getMessage(),false,true);
-        }
-
-        print "<script>toggleObjectSelectDisabled();</script>";
-}
-
+<?php
+addFooterScript("<script type='text/javascript'>toggleObjectSelectDisabled();</script>");
+include_once 'footer.php';
 ?>
