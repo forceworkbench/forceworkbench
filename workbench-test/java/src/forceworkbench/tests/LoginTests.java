@@ -24,12 +24,9 @@ public class LoginTests extends WorkbenchSeleneseBaseTest {
 
 	public void testAutoLoginApiVersions() throws Exception {
 		selenium.open("login.php");
-		selenium.click("login_become_adv");
-		for(String ep : selenium.getSelectOptions("endp")){
-
-
+		selenium.click("loginType_adv");
+		for(String ep : selenium.getSelectOptions("api")){
 			if(Double.valueOf(ep) > Double.valueOf(config.getApiVersion())){
-
 				continue;
 			}
 
@@ -37,6 +34,7 @@ public class LoginTests extends WorkbenchSeleneseBaseTest {
 			selenium.waitForPageToLoad(WAIT_TIMEOUT);
 			assertTrue(selenium.getLocation().contains("select.php"));
 			assertNoPhpErrors();
+            break;
 		}
 	}
 
@@ -46,12 +44,12 @@ public class LoginTests extends WorkbenchSeleneseBaseTest {
         assertEquals("Workbench", selenium.getTitle());
         assertTrue(selenium.isTextPresent("Username:"));
         assertTrue(selenium.isTextPresent("Password:"));
-        assertFalse(selenium.isVisible("sessionId"));
+        assertFalse(selenium.isVisible("sid"));
         assertNoPhpErrors();
 
-        selenium.type("username", config.getUsername());
-        selenium.type("password", config.getPassword());
-        selenium.click("loginClick");
+        selenium.type("un", config.getUsername());
+        selenium.type("pw", config.getPassword());
+        selenium.click("loginBtn");
         selenium.waitForPageToLoad(WAIT_TIMEOUT);
         assertEquals("Workbench", selenium.getTitle());
         assertTrue(selenium.getLocation().contains("select.php"));
@@ -61,18 +59,18 @@ public class LoginTests extends WorkbenchSeleneseBaseTest {
 
 	public void testAdvLoginJumpTo() throws Exception {
 		selenium.open("login.php");
-		selenium.click("login_become_adv");
+		selenium.click("loginType_adv");
         selenium.open("login.php");
         assertEquals("Workbench", selenium.getTitle());
-        selenium.click("login_become_adv");
+        selenium.click("loginType_adv");
         assertTrue(selenium.isTextPresent("Username:"));
         assertTrue(selenium.isTextPresent("Password:"));
-        assertTrue(selenium.isVisible("sessionId"));
+        assertTrue(selenium.isVisible("sid"));
         assertNoPhpErrors();
 
-        selenium.type("usernameAdv", config.getUsername());
-        selenium.type("passwordAdv", config.getPassword());
-        selenium.click("loginClick");
+        selenium.type("un", config.getUsername());
+        selenium.type("pw", config.getPassword());
+        selenium.click("loginBtn");
         selenium.waitForPageToLoad(WAIT_TIMEOUT);
         assertEquals("Workbench", selenium.getTitle());
         assertTrue(selenium.getLocation().contains("select.php"));
@@ -82,36 +80,35 @@ public class LoginTests extends WorkbenchSeleneseBaseTest {
 
 	public void testAdvLoginApiVersions() throws Exception {
 		selenium.open("login.php");
-		selenium.click("login_become_adv");
-		for(String ep : selenium.getSelectOptions("endp")){
+		selenium.click("loginType_adv");
+		for(String api : selenium.getSelectOptions("api")){
 
-
-			if(Double.valueOf(ep) > Double.valueOf(config.getApiVersion())) {
-
+			if(Double.valueOf(api) > Double.valueOf(config.getApiVersion())) {
 				continue;
 			}
 
 			selenium.open("login.php");
 			assertEquals("Workbench", selenium.getTitle());
-			selenium.click("login_become_adv");
+			selenium.click("loginType_adv");
 			assertNoPhpErrors();
 
-			selenium.select("endp", "label=" + ep);
-			assertEquals("https://login.salesforce.com/services/Soap/u/" + ep, selenium.getValue("serverUrl"));
-			selenium.type("usernameAdv", config.getUsername());
-			selenium.type("passwordAdv", config.getPassword());
-			selenium.click("loginClick");
+			selenium.select("api", "label=" + api);
+			assertEquals("https://login.salesforce.com/services/Soap/u/" + api, selenium.getValue("serverUrl"));
+			selenium.type("un", config.getUsername());
+			selenium.type("pw", config.getPassword());
+			selenium.click("loginBtn");
 			selenium.waitForPageToLoad(WAIT_TIMEOUT);
 			assertTrue(selenium.getLocation().contains("select.php"));
 			assertNoPhpErrors();
+            break;
 		}
 	}
 
 
 	public void testAdvLoginInstances() throws Exception {
 		selenium.open("login.php");
-		selenium.click("login_become_adv");
-		for(String inst : selenium.getSelectOptions("inst")){
+		selenium.click("loginType_adv");
+		for (String inst : selenium.getSelectOptions("inst")){
 
 			//skip future instances
 			if(config.getIgnoredInstances().contains(inst)){
@@ -120,13 +117,13 @@ public class LoginTests extends WorkbenchSeleneseBaseTest {
 
 			selenium.open("login.php");
 			assertEquals("Title should be Workbench", "Workbench", selenium.getTitle());
-			selenium.click("login_become_adv");
+			selenium.click("loginType_adv");
 
 			selenium.select("inst", "label=" + inst);
 
-			selenium.type("usernameAdv", config.getUsername());
-			selenium.type("passwordAdv", config.getPassword());
-			selenium.click("loginClick");
+			selenium.type("un", config.getUsername());
+			selenium.type("pw", config.getPassword());
+			selenium.click("loginBtn");
 			selenium.waitForPageToLoad(WAIT_TIMEOUT);
 
             final String location = selenium.getLocation();
@@ -139,6 +136,7 @@ public class LoginTests extends WorkbenchSeleneseBaseTest {
 			}
 
 			assertNoPhpErrors();
+            break;
 		}		
 	}	
 	
