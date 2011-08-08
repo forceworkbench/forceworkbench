@@ -16,6 +16,7 @@ class WorkbenchContext {
 
     // request keys
     const CACHE = "CACHE";
+    const ALL_CONNECTIONS = 'ALL_CONNECTIONS';
     const HAS_DEFAULT_OBJECT_CHANGED = "HAS_DEFAULT_OBJECT_CHANGED";
     const REQUEST_START_TIME = "REQUEST_START_TIME";
 
@@ -97,6 +98,7 @@ class WorkbenchContext {
 
         $loginResult = $this->getPartnerConnection()->login($username, $password);
         $this->connConfig->applyLoginResult($loginResult);
+        unset($_REQUEST[self::INSTANCE][self::ALL_CONNECTIONS]);
     }
 
     function release() {

@@ -4,10 +4,9 @@ require_once 'context/CacheableValueProvider.php';
 
 abstract class AbstractConnectionProvider extends CacheableValueProvider {
 
-    const ALL_CONNECTIONS = 'ALL_CONNECTIONS';
 
     final function &getCacheLocation() {
-        return $_REQUEST[WorkbenchContext::INSTANCE][self::ALL_CONNECTIONS][$this->getCacheKey()];
+        return $_REQUEST[WorkbenchContext::INSTANCE][WorkbenchContext::ALL_CONNECTIONS][$this->getCacheKey()];
     }
 
     function load($connConfig) {
