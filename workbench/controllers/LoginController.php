@@ -241,13 +241,41 @@ class LoginController {
 
         try {
             // test the connection and prime the UserInfo cache
-            WorkbenchContext::get()->getUserInfo();
+            $userInfo = WorkbenchContext::get()->getUserInfo();
         } catch (Exception $e) {
             workbenchLog(LOG_ERR, "E", $e->getMessage()."\n".$e->getTraceAsString());
             WorkbenchContext::get()->release();
             $this->addError("UNKNOWN LOGIN ERROR: " .  $e->getMessage());
             return;
         }
+
+        // do org id whitelist/blacklisting
+        $orgId15 = substr($userInfo->organizationId,0,15);
+        $orgIdWhiteList = array_map('trim',explode(",",getConfig("orgIdWhiteList")));
+        $orgIdBlackList = array_map('trim',explode(",",getConfig("orgIdBlackList")));
+        $isAllowed = true;
+        foreach ($orgIdWhiteList as $allowedOrgId) {
+            if ($allowedOrgId === "") {
+                continue;
+            } else if ($orgId15 === substr($allowedOrgId,0,15)) {
+                $isAllowed = true;
+                break;
+            } else {
+                // there is something on the whitelist that's not us
+                // disallow and keep looking until we find our org id
+                $isAllowed = false;
+            }
+        }
+        foreach ($orgIdBlackList as $disallowedOrgId) {
+            if ($orgId15 ===  substr($disallowedOrgId,0,15)) {
+                $isAllowed = false;
+                break;
+            }
+        }
+        if (!$isAllowed) {
+            throw new WorkbenchAuthenticationException("Requests for organization $orgId15 are not allowed");
+        }
+        
 
         if (isset($_REQUEST['autoLogin'])) {
             $actionJump .= (strpos($actionJump, "?") > -1 ? "&" :  "?") . "autoLogin=1";
