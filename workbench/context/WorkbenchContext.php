@@ -120,6 +120,7 @@ class WorkbenchContext {
 
     function setApiVersion($apiVersion) {
         $this->connConfig->setApiVersion($apiVersion);
+        unset($_REQUEST[self::INSTANCE][self::ALL_CONNECTIONS]);
     }
 
     /**
