@@ -58,7 +58,7 @@ class RestExplorerController {
 
     private function execute() {
         if ($this->requestMethod !== 'GET') {
-            $this->wbCtx->validateCsrfToken();
+            validateCsrfToken();
         }
 
         try {
