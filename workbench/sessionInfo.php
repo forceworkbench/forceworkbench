@@ -10,7 +10,9 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
     } catch (Exception $e) {
         if (stripos($e->getMessage(), 'UNSUPPORTED_API_VERSION') > -1) {
-            header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']) . "?switchApiVersionTo=" . $previousVersion . "&" . 'UNSUPPORTED_API_VERSION');
+            WorkbenchContext::get()->setApiVersion($previousVersion);
+            WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
+            $unsupportedVersionError = "Selected API version is not supported by this Salesforce organization. Automatically reverted to prior version.";
         } else {
             throw $e;
         }
@@ -20,8 +22,8 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
 
 require_once 'header.php';
 
-if (isset($_REQUEST['UNSUPPORTED_API_VERSION'])) {
-    displayError("Selected API version is not supported by this Salesforce organization. Automatically reverted to prior version.");
+if (isset($unsupportedVersionError)) {
+    displayError($unsupportedVersionError);
     print "<p/>";
 } else if (isset($cacheCleared)) {
     displayInfo("Cache Cleared Successfully");
