@@ -181,6 +181,9 @@ class LoginController {
         }
 
         if (WorkbenchContext::isEstablished()) {
+            // cache clearing shouldn't be needed since we're releasing on the next line,
+            // but doing it just in case someone puts a cache key outside the WbCtx scope
+            WorkbenchContext::get()->clearCache();
             WorkbenchContext::get()->release();
         }
 

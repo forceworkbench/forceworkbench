@@ -99,7 +99,7 @@ if (isLoggedIn()) {
     foreach ($orgIdWhiteList as $allowedOrgId) {
         if ($allowedOrgId === "") {
             continue;
-        } else if ($orgId15 ===  substr($allowedOrgId,0,15)) {
+        } else if ($orgId15 === substr($allowedOrgId,0,15)) {
             $isAllowed = true;
             break;
         } else {
@@ -120,7 +120,7 @@ if (isLoggedIn()) {
 
 
     // todo: should this be in the ctx?
-    if (isset($_SESSION['lastRequestTime'])) {
+    if (!in_array(basename($_SERVER['PHP_SELF'], ".php"), array("login", "logout")) && isset($_SESSION['lastRequestTime'])) {
         $idleTime = microtime(true) - $_SESSION['lastRequestTime'];
         if ($idleTime > (getConfig("sessionIdleMinutes") * 60)) {
             // ping SFDC to check if session is still alive

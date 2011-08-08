@@ -4,7 +4,11 @@ require_once "session.php";
 require_once "controllers/LoginController.php";
 
 $c = new LoginController();
-if (isset($_POST['uiLogin']) || !empty($_REQUEST["sid"]) || isset($_POST["oauth_Login"]) || isset($_GET["code"])) {
+if (isset($_POST['uiLogin'])
+    || !empty($_REQUEST["pw"])
+    || !empty($_REQUEST["sid"])
+    || isset($_POST["oauth_Login"])
+    || isset($_GET["code"])) {
     $c->processRequest();
 }
 
