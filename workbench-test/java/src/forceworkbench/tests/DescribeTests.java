@@ -25,6 +25,7 @@ public class DescribeTests extends WorkbenchSeleneseBaseTest {
 			assertTrue("Fields should appear for [" + type + "]", selenium.isTextPresent("Fields ("));
 			assertEquals("Default object should be set to [" + type + "]", type, selenium.getSelectedValue("default_object"));
 			assertNoPhpErrors();
+            break;
 		}
 	}
 	

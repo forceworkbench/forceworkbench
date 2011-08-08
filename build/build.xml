@@ -53,6 +53,7 @@
 	<target name="clean">
 		<delete dir="${dir.dist}"/>
 		<delete dir="${dir.test.java.bin}"/>
+		<delete dir="${dir.test.java.results}"/>
 	</target>
 	
 	<target name="stage" depends="init, clean">
@@ -164,8 +165,9 @@
 		  <classpath refid="classpath.test.java"/>
 
      	  <sysproperty key="baseUrl" value="http://localhost:8888/workbench-trunk/workbench/"/>
-		  <sysproperty key="browser" value="*firefox /Applications/Firefox 3.app/Contents/MacOS/firefox-bin"/>
-			
+		  <!--<sysproperty key="browser" value="*firefox /Applications/Firefox.app/Contents/MacOS/firefox-bin"/>-->
+		  <sysproperty key="browser" value="*googlechrome /Applications/Google Chrome.app/Contents/MacOS/Google Chrome"/>
+
 		  <formatter type="plain"/>
 
 		  <batchtest fork="yes" todir="${dir.test.java.results}">
