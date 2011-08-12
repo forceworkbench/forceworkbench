@@ -304,6 +304,10 @@ class LoginController {
             throw new Exception("OAuth not enabled");
         }
 
+        // we set this again below to the real value returned,
+        // but in case it fails prior, need to set for logout iframe hack
+        $_SESSION['oauth']['serverUrlPrefix'] = "https://" . parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+
         $oauthConfigs = getConfig("oauthConfigs");
 
         $tokenUrl =  "https://" . $hostName . "/services/oauth2/token";
@@ -333,22 +337,28 @@ class LoginController {
             curl_setopt($curl, CURLOPT_PROXYUSERPWD, $proxySettings["proxy_username"] . ":" . $proxySettings["proxy_password"]);
         }
 
-        $json_response = curl_exec($curl);
+        try {
+            $json_response = curl_exec($curl);
 
-        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            if (curl_error($curl) != null) {
+                // not printing exception because it could contain the secret
+                throw new Exception("Unknown OAuth Error");
+            }
 
-        if ($status != 200 ) {
-            throw new Exception("OAuth authentication failed to connect to: " . $tokenUrl);
+            $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            $response = json_decode($json_response, true);
+            
+            curl_close($curl);
+        } catch (Exception $e) {
+            throw new WorkbenchAuthenticationException("OAuth authentication failed connect to: " . $tokenUrl);
         }
 
-        if (curl_error($curl) != null) {
-            // not printing exception because it could contain the secret
-            throw new Exception("Unknown OAuth Error");
+        if (isset($response["error"]) && isset($response["error_description"])) {
+            throw new WorkbenchAuthenticationException($response["error"] . ": " . $response["error_description"]);
+        } else if ($status != 200) {
+            throw new WorkbenchAuthenticationException("Unknown OAuth Error. Status Code: $status");
         }
 
-        curl_close($curl);
-
-        $response = json_decode($json_response, true);
         $accessToken = $response['access_token'];
         $serverUrlPrefix = $response['instance_url'];
         $_SESSION['oauth']['serverUrlPrefix'] = $serverUrlPrefix;

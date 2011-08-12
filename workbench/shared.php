@@ -178,7 +178,9 @@ function handleAllExceptions($e) {
     }
 
     if ($e instanceof WorkbenchAuthenticationException) {
-        WorkbenchContext::get()->release();
+        if (WorkbenchContext::isEstablished()) {
+            WorkbenchContext::get()->release();
+        }
         if ( basename($_SERVER['PHP_SELF']) !== "logout.php") {
             header("Location: logout.php?invalidateSession=1&message=" . urlencode($e->getMessage()));
         }
