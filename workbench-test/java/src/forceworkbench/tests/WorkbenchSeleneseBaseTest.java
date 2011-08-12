@@ -4,7 +4,7 @@ import com.thoughtworks.selenium.SeleneseTestCase;
 
 public abstract class WorkbenchSeleneseBaseTest extends SeleneseTestCase {
 	
-	final String WAIT_TIMEOUT = "30000";
+	final static String WAIT_TIMEOUT = "30000";
 	Configuration config; 
 	
 	public void setUp() throws Exception {       
