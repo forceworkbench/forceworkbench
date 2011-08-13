@@ -21,7 +21,13 @@ require_once 'header.php';
 
 <script
 	type="text/javascript"
-	src="<?php echo getStaticResourcesPath() . "/script/simpletreemenu.js"; ?>"></script>
+	src="<?php echo getStaticResourcesPath() . "/script/simpletreemenu.js"; ?>">
+    /***********************************************
+    * Dynamic Countdown script- © Dynamic Drive (http://www.dynamicdrive.com)
+    * This notice MUST stay intact for legal use
+    * Visit http://www.dynamicdrive.com/ for this script and 100s more.
+    ***********************************************/
+</script>
 
 <?php
 if ($c->errors != null) {

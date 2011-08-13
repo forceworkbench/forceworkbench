@@ -44,7 +44,13 @@ class ExpandableTree {
 
         print "</ul>\n";
 
-        addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/simpletreemenu.js'></script>");
+        addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/simpletreemenu.js'>\n".
+                        "/***********************************************\n".
+                        "* Dynamic Countdown script- © Dynamic Drive (http://www.dynamicdrive.com)\n".
+                        "* This notice MUST stay intact for legal use\n".
+                        "* Visit http://www.dynamicdrive.com/ for this script and 100s more.\n".
+                        "***********************************************/\n".
+                        "</script>");
 
         addFooterScript("<script type='text/javascript'>" .
                            "ddtreemenu.createTree('$this->name', true);" .
