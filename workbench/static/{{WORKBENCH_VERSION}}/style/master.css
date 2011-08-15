@@ -121,6 +121,10 @@ h3 {
     float: right;
 }
 
+.loginType_std, .loginType_adv, .loginType_oauth {
+    display: none;
+}
+
 #navMenu a {
     color: black;
     text-decoration: none;
