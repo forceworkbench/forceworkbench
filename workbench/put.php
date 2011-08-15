@@ -219,17 +219,16 @@ function displayUploadFileWithObjectSelectionForm($action, $id = null, $warning 
         print "</td></tr>\n<tr><td colspan='2'></td></tr>\n";
     }
 
-    if ($action !== "retrieve") {
-        print "<tr><td style='width: 10em;'><label><input type='radio' id='sourceType_file' name='sourceType' value='file' checked='checked' />From File</label></td>\n" .
-              "<td><input type='file' name='file' size='44' onchange='document.getElementById(\"sourceType_file\").checked=true;' />\n" .
-              "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' /></td></tr>\n";
-    }
-
-    print "<tr><td><label><input type='radio' id='sourceType_singleRecord' name='sourceType' value='singleRecord' " .
-          ($id !== null ? "checked=checked" : "") .
+    print "<tr><td><label><input type='radio' id='sourceType_singleRecord' name='sourceType' value='singleRecord' checked=checked".
           "/>Single Record</label></td><td>" .
           ($id !== null || $action != "insert" ? "<input type='text' name='id' value='" . htmlspecialchars($id) .
                                                 "' size='30' onfocus='document.getElementById(\"sourceType_singleRecord\").checked=true;' />" : "") ."</td></tr>\n";
+    
+    if ($action !== "retrieve") {
+        print "<tr><td style='width: 10em;'><label><input type='radio' id='sourceType_file' name='sourceType' value='file'/>From File</label></td>\n" .
+              "<td><input type='file' name='file' size='44' onchange='document.getElementById(\"sourceType_file\").checked=true;' />\n" .
+              "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' /></td></tr>\n";
+    }
 
     print "<tr><td colspan='2'><br/><input type='submit' name='action' value='Next' /></td></tr>\n";
     print "</table></form>\n";
