@@ -181,8 +181,14 @@ function handleAllExceptions($e) {
         if (WorkbenchContext::isEstablished()) {
             WorkbenchContext::get()->release();
         }
-        if ( basename($_SERVER['PHP_SELF']) !== "logout.php") {
-            header("Location: logout.php?invalidateSession=1&message=" . urlencode($e->getMessage()));
+        if (basename($_SERVER['PHP_SELF']) !== "logout.php") {
+            if (!headers_sent()) {
+                header("Location: logout.php?invalidateSession=1&message=" . urlencode($e->getMessage()));
+            } else {
+                $_REQUEST['invalidateSession'] = 1;
+                $_REQUEST['message'] = $e->getMessage();
+                include_once("logout.php");
+            }
         }
         exit;
     }
