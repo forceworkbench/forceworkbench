@@ -67,13 +67,14 @@ var WorkbenchLogin = new function() {
     }
 
     function setFocus() {
-        form.un.style.display = "block";
-        form.pw.style.display = "block";
-
-        if (form.un.value == null || form.un.value == "") {
-            form.un.focus();
-        } else {
-            form.pw.focus();
+        try {
+            if (form.un.value == null || form.un.value == "") {
+                form.un.focus();
+            } else {
+                form.pw.focus();
+            }
+        } catch (e) {
+            // you suck IE
         }
     }
 
