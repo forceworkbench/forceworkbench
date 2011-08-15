@@ -67,6 +67,9 @@ var WorkbenchLogin = new function() {
     }
 
     function setFocus() {
+        form.un.style.display = "block";
+        form.pw.style.display = "block";
+
         if (form.un.value == null || form.un.value == "") {
             form.un.focus();
         } else {
