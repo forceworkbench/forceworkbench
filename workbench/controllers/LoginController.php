@@ -306,7 +306,9 @@ class LoginController {
 
         // we set this again below to the real value returned,
         // but in case it fails prior, need to set for logout iframe hack
-        $_SESSION['oauth']['serverUrlPrefix'] = "https://" . parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+        if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
+            $_SESSION['oauth']['serverUrlPrefix'] = "https://" . parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+        }
 
         $oauthConfigs = getConfig("oauthConfigs");
 
