@@ -61,10 +61,9 @@ var WorkbenchLogin = new function() {
                 break;
             default:
                 form.loginBtn.value = "Login";
+                setFocus();
+                break;
         }
-
-        // remove focus from login type controls
-        setFocus();
     }
 
     function setFocus() {
