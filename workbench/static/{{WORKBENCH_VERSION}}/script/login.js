@@ -19,7 +19,7 @@ var WorkbenchLogin = new function() {
         // add listeners to the loginType radio buttons
         var loginTypes = document.getElementsByName("loginType");
         for (var i = 0; i < loginTypes.length; i++) {
-            bindEvent(loginTypes[i], "click", function () {switchLoginTypeTo(this)});
+            bindEvent(loginTypes[i], "click", setFormForLoginType);
         }
 
         bindEvent(form.un, "keyup", toggleUsernamePasswordSessionDisabled);
@@ -40,6 +40,16 @@ var WorkbenchLogin = new function() {
         bindEvent(form.inst, "change", buildServerUrl);
         bindEvent(form.api, "change", buildServerUrl);
     };
+
+    function setFormForLoginType() {
+        var loginTypes = document.getElementsByName("loginType");
+        for (var i = 0; i < loginTypes.length; i++) {
+            if (loginTypes[i].checked) {
+                switchLoginTypeTo(loginTypes[i]);
+                break;
+            }
+        }
+    }
 
     function switchLoginTypeTo(typeElem) {
         typeElem.checked = true;
