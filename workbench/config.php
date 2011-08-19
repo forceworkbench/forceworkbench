@@ -224,6 +224,7 @@ $config["header_LoginOptions"] = array(
     );
 
     $GLOBALS['API_VERSIONS'] = array(
+        "23.0" => "23.0",
         "22.0" => "22.0",
         "21.0" => "21.0",
         "20.0" => "20.0",
@@ -776,7 +777,7 @@ $config["header_SecurityOptions"] = array(
     $config["csrfSecret"] = array(
         "label" => "CSRF Salting Secret",
         "description" => "Used for salting the CSRF (Cross-Site Request Forgery) tokens.",
-        "default" => "CHANGE_ME_WITH_ADMIN_OVERRIDE",
+        "default" => "OVERRIDE_ME_IN_CONFIG_OVERRIDES_PHP",
         "overrideable" => false,
         "dataType" => "string"
     );
@@ -814,18 +815,7 @@ $config["header_SecurityOptions"] = array(
         "description" => "OAuth 2.0 Consumer Key",
         "overrideable" => false,
         "dataType" => "complex",
-        "default" => array(
-            "login.salesforce.com" => array(
-                "label" => "Production",
-                "key" => "",
-                "secret" => ""
-            ),
-            "test.salesforce.com" => array(
-                "label" => "Sandbox",
-                "key" => "",
-                "secret" => ""
-            )
-        )
+        "default" => array()
     );
 
 $config["header_proxyOptions"] = array(
