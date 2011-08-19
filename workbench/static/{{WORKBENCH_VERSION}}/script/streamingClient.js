@@ -217,7 +217,7 @@ dojo.addOnLoad(function() {
     function subscribe() {
         var topic = dojo.byId("selectedTopic").value;
         var topicName = JSON.parse(topic).Name;
-        subscriptions[topicName] = cometd.subscribe("/" + topicName, handleSubscription);
+        subscriptions[topicName] = cometd.subscribe(wbStreaming.subscriptionPrefix + topicName, handleSubscription);
         toggleSubUnSubButtons();
     }
 

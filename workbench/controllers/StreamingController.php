@@ -3,6 +3,7 @@ require_once 'restclient/RestClient.php';
 
 class StreamingController {
 
+    private $restBaseUrl;
     private $restApi;
     private $selectedTopic;
     private $pushTopics;
@@ -11,15 +12,15 @@ class StreamingController {
     private $enabled;
     private $isAjax;
 
-    // hard coding API version for getting PushTopics because not available in prior versions
-    const restBaseUrl = "/services/data/v22.0";
-
     function __construct() {
         $this->restApi = WorkbenchContext::get()->getRestDataConnection();
         $this->infos = array();
         $this->errors = array();
         $this->enabled = true;
         $this->isAjax = false;
+        $this->restBaseUrl = "/services/data/v" . (WorkbenchContext::get()->getApiVersion() >= 22.0
+                                        ? WorkbenchContext::get()->getApiVersion()
+                                        : "22.0");
 
         if (get_magic_quotes_gpc()) {
             foreach ($_REQUEST as $fieldName => &$r) {
@@ -45,29 +46,18 @@ class StreamingController {
             }
         }
 
-        // This client was written to work w/ the pilot version of the Streaming API
-        // TODO: update client to work with 23.0+
-        $currentSfdcVersion = WorkbenchContext::get()->getCurrentSfdcVersion();
-        if ($currentSfdcVersion->version >= 23.0) {
-            $this->errors[] = "This client is not compatible with Streaming API in " . $currentSfdcVersion->label .
-                              ". Check for an update at:\n http://code.google.com/p/forceworkbench/downloads/list";
-            
-            $this->enabled = false;
-            return;
-        }
-
         $this->refresh();
     }
 
     private function refresh() {
         $pushTopicSoql = "SELECT Id, Name, Query, ApiVersion FROM PushTopic";
-        $url = self::restBaseUrl . "/query?" . http_build_query(array("q" => $pushTopicSoql));
+        $url = $this->restBaseUrl . "/query?" . http_build_query(array("q" => $pushTopicSoql));
 
         try {
             $queryResponse = $this->restApi->send("GET", $url, null, null, false);
 
             if (strpos($queryResponse->header, "200 OK") === false) {
-                $this->errors[] = "Could not load Push Topics. Ensure the Streaming API is enabled for this organization.";
+                $this->errors[] = "Could not load Push Topics. Ensure the both the REST and Streaming APIs are enabled for this organization.";
                 $this->enabled = false;
                 return;
             }
@@ -92,7 +82,7 @@ class StreamingController {
 
     private function dml($method, $opPastLabel, $opProgLabel, $urlTail, $data) {
         $headers = array("Content-Type: application/json");
-        $url = self::restBaseUrl . "/sobjects/PushTopic" . $urlTail;
+        $url = $this->restBaseUrl . "/sobjects/PushTopic" . $urlTail;
 
         try {
             $response = $this->restApi->send($method, $url, $headers, $data, false);
@@ -159,6 +149,7 @@ class StreamingController {
     function getStreamingConfig() {
         $streamingConfig["handshakeOnLoad"] = true; // TODO: make this configurable
         $streamingConfig["csrfToken"] = getCsrfToken();
+        $streamingConfig["subscriptionPrefix"] = ((WorkbenchContext::get()->getApiVersion()) >= 23.0 ? "/topic/" : "/");
 
         // configs in "$streamingConfig["cometdConfig"]" are loaded into CometD in JS and need to match their format
         $streamingConfig["cometdConfig"]["logLevel"] = "info";

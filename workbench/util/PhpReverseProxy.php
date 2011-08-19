@@ -7,6 +7,7 @@ class PhpReverseProxy {
     private $http_code, $resultHeader, $cookie;
 
     function __construct() {
+        $this->headers = array();
         $this->host = "";
         $this->port = "";
         $this->forceSSL = false;
@@ -87,13 +88,12 @@ class PhpReverseProxy {
             curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->proxy_settings["proxy_username"] . ":" . $this->proxy_settings["proxy_password"]);
         }
 
-        $headers = array();
         foreach (self::getAllRequestHeaders() as $key => $value) {
             if (in_array($key, array("Content-Type", "Accept"))) {
-                $headers[] = "$key: " . $value;
+                $this->headers[] = "$key: " . $value;
             }
         }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
 
         if ($this->cookie != "") {
             curl_setopt($ch, CURLOPT_COOKIE, $this->cookie);
@@ -139,7 +139,10 @@ class PhpReverseProxy {
                 if (stripos($h, $whl) > -1) {
                     if (stripos("Set-Cookie", $whl) > -1) {
                         $replaceExistingHeader = false;
-                        $h = preg_replace("`path=([^;]*)$this->forward_path`", 
+
+                        // ouch, recursive regex. strip off the end of the fwd path to make a new regex
+                        $fwdPathRegEx = preg_replace("`(/\w+)/.*`", "$1(.*)", $this->forward_path);
+                        $h = preg_replace("`path=([^;]*)$fwdPathRegEx`",
 						                  "path=". ((strlen(dirname($_SERVER['PHP_SELF'])) == 1)
 										             ? "$1"
 											         : (dirname($_SERVER['PHP_SELF'])."$1"))
