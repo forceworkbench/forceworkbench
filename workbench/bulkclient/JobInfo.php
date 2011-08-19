@@ -11,7 +11,7 @@
  * http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_reference_jobinfo.htm
  *
  *
- * This client is NOT a product of or supported by salesforce.com, inc.
+ * This client is NOT a supported product of or supported by salesforce.com, inc.
  * For support from the Open Source community, please visit the resources below:
  *
  * * Main Project Site
