@@ -29,6 +29,10 @@ function put($action) {
             $anySet = false;
             foreach ($fields as $field) {
                 if (isset($_POST[$field->name])) {
+                    if (get_magic_quotes_gpc()) {
+                        $_POST[$field->name] = stripslashes($_POST[$field->name]);
+                    }
+
                     $anySet |= $_POST[$field->name] != "";
                     $singleRecordCsv[0][] = $field->name;
                     $singleRecordCsv[1][] = trim($_POST[$field->name]);
