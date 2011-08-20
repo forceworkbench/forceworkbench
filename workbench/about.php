@@ -19,13 +19,8 @@ integration within the Salesforce application.</p>
 <p>
     <strong> Workbench <?php echo $GLOBALS['WORKBENCH_VERSION']; ?></strong><br />
     Developed by Ryan Brainard<br />
+    Distributed under the Open Source BSD License<br />
 </p>
-
-<p><strong> THIS APPLICATION IS STILL IN ACTIVE DEVELOPMENT AND HAS NOT
-UNDERGONE COMPLETE QUALITY ASSURANCE TESTING. DO NOT USE WITH PRODUCTION
-DATA. THIS APPLICATION IS PROVIDED 'AS IS' AND THE USER ASSUMES ALL
-RISKS ASSOCIATED WITH ITS USE. MAY CONTAIN PEANUTS, SOY, OR WHEAT
-PRODUCTS. </strong></p>
 
 <p>Workbench is NOT a supported product of or supported by salesforce.com, inc.
 For support from the open source community, please visit the resources
@@ -47,9 +42,17 @@ below:</p>
         target="_blank">Download</a></li>
 </ul>
 
-
 <p>
-    <strong>Distributed under the Open Source BSD License<br /></strong>
+    <strong>
+        THIS APPLICATION IS STILL IN ACTIVE DEVELOPMENT AND HAS NOT
+        UNDERGONE COMPLETE QUALITY ASSURANCE TESTING. DO NOT USE WITH PRODUCTION
+        DATA. THIS APPLICATION IS PROVIDED 'AS IS' AND THE USER ASSUMES ALL
+        RISKS ASSOCIATED WITH ITS USE. MAY CONTAIN PEANUTS, SOY, OR WHEAT
+        PRODUCTS.
+    </strong>
+</p>
+    
+<p>
     Copyright (c) <?php echo date("Y"); ?>, salesforce.com, inc.<br />
     All rights reserved.
 </p>
