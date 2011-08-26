@@ -92,7 +92,16 @@ function put($action) {
             $_SESSION['_ext_id'] = $_POST['_ext_id'];
             $_POST['_ext_id'] = NULL;
         }
-        $fieldNames = fieldsToNameArray(WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject())->fields);
+
+        if (requiresObject($action)) {
+            $fields = WorkbenchContext::get()->describeSObjects(WorkbenchContext::get()->getDefaultObject())->fields;
+        } else {
+            $idField = new stdClass();
+            $idField->name = "Id";
+            $fields['Id'] = $idField;
+        }
+
+        $fieldNames = fieldsToNameArray($fields);
         $_SESSION['field_map'] = convertFieldMapToArray($_POST, $fieldNames);
         confirmFieldMappings(
             $confirmAction,
