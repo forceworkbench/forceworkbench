@@ -33,6 +33,10 @@ if (isset($_REQUEST["footerScripts"])) {
 </html>
 
 <?php
+if (WorkbenchContext::isEstablished() && (memory_get_peak_usage()/toBytes(ini_get("memory_limit"))) > 0.7) {
+   WorkbenchContext::get()->clearCache();
+}
+
 //USAGE: debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null)
 debug(true,true,null,null);
 ?>
