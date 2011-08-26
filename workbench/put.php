@@ -75,7 +75,12 @@ function put($action) {
                 isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] : null,
                 true);
             } else {
-                putSyncIdOnly($action,$_SESSION['field_map'],$_SESSION['csv_array'],true);
+                putSyncIdOnly(
+                    $action,
+                    isset($_SESSION['field_map']) ? $_SESSION['field_map'] : null,
+                    isset($_SESSION['csv_array']) ? $_SESSION['csv_array'] : null,
+                    true
+                );
             }
             include_once 'footer.php';
         }
