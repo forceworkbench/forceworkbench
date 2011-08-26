@@ -214,7 +214,9 @@ class LoginController {
                 return;
             }
         } else if ($sessionId && $serverUrl && !($username && $password)) {
-            if (stristr($serverUrl,'login') || stristr($serverUrl,'www') || stristr($serverUrl,'test') || stristr($serverUrl,'prerellogin')) {
+            $serverUrlHost = parse_url($serverUrl, PHP_URL_HOST);
+            $loginHosts = array("login.salesforce.com", "test.salesforce.com", "prerellogin.pre.salesforce.com");
+            if (in_array($serverUrlHost, $loginHosts)) {
                 $this->addError('Must not connect to login server (www, login, test, or prerellogin) if providing a session id. ' .
                                'Choose your specific Salesforce instance on the QuickSelect menu when using a session id; ' .
                                'otherwise, provide a username and password and choose the appropriate a login server.');
@@ -243,9 +245,16 @@ class LoginController {
             // test the connection and prime the UserInfo cache
             $userInfo = WorkbenchContext::get()->getUserInfo();
         } catch (Exception $e) {
-            workbenchLog(LOG_ERR, "E", $e->getMessage()."\n".$e->getTraceAsString());
+            $errorMessage = $e->getMessage();
+
+            // if error isn't one of these, its "UNKNOWN" and should be logged
+            if (!(strpos($errorMessage, "INVALID_SESSION_ID") === 0 || strpos($errorMessage, "API_CURRENTLY_DISABLED"))) {
+                workbenchLog(LOG_ERR, "E", $errorMessage."\n".$e->getTraceAsString());
+                $errorMessage = "UNKNOWN LOGIN ERROR: " . $errorMessage;
+            }
+            
             WorkbenchContext::get()->release();
-            $this->addError("UNKNOWN LOGIN ERROR: " .  $e->getMessage());
+            $this->addError($errorMessage);
             return;
         }
 
