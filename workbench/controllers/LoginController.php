@@ -248,7 +248,7 @@ class LoginController {
             $errorMessage = $e->getMessage();
 
             // if error isn't one of these, its "UNKNOWN" and should be logged
-            if (!(strpos($errorMessage, "INVALID_SESSION_ID") === 0 || strpos($errorMessage, "API_CURRENTLY_DISABLED"))) {
+            if (!(strpos($errorMessage, "INVALID_SESSION_ID") === 0 || strpos($errorMessage, "API_CURRENTLY_DISABLED") === 0)) {
                 workbenchLog(LOG_ERR, "E", $errorMessage."\n".$e->getTraceAsString());
                 $errorMessage = "UNKNOWN LOGIN ERROR: " . $errorMessage;
             }
