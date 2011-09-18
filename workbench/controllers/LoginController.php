@@ -241,22 +241,9 @@ class LoginController {
             return;
         }
 
-        try {
-            // test the connection and prime the UserInfo cache
-            $userInfo = WorkbenchContext::get()->getUserInfo();
-        } catch (Exception $e) {
-            $errorMessage = $e->getMessage();
-
-            // if error isn't one of these, its "UNKNOWN" and should be logged
-            if (!(strpos($errorMessage, "INVALID_SESSION_ID") === 0 || strpos($errorMessage, "API_CURRENTLY_DISABLED") === 0)) {
-                workbenchLog(LOG_ERR, "E", $errorMessage."\n".$e->getTraceAsString());
-                $errorMessage = "UNKNOWN LOGIN ERROR: " . $errorMessage;
-            }
-            
-            WorkbenchContext::get()->release();
-            $this->addError($errorMessage);
-            return;
-        }
+        // test the connection and prime the UserInfo cache
+        // exceptions will be caught by top-level handler
+        $userInfo = WorkbenchContext::get()->getUserInfo();
 
         // do org id whitelist/blacklisting
         $orgId15 = substr($userInfo->organizationId,0,15);
@@ -275,12 +262,14 @@ class LoginController {
                 $isAllowed = false;
             }
         }
+
         foreach ($orgIdBlackList as $disallowedOrgId) {
             if ($orgId15 ===  substr($disallowedOrgId,0,15)) {
                 $isAllowed = false;
                 break;
             }
         }
+
         if (!$isAllowed) {
             throw new WorkbenchAuthenticationException("Requests for organization $orgId15 are not allowed");
         }

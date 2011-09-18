@@ -148,6 +148,25 @@ function explodeCommaSeparated($css) {
     return $exploded;
 }
 
+function isKnownAuthenicationError($errorMessage) {
+    $allowedErrors = array(
+        "INVALID_SESSION_ID",
+        "API_CURRENTLY_DISABLED",
+        "API_DISABLED_FOR_ORG",
+        "REQUEST_LIMIT_EXCEEDED",
+        "INVALID_OPERATION_WITH_EXPIRED_PASSWORD",
+        "Could not connect to host"
+    );
+
+    foreach ($allowedErrors as $allowedCode) {
+        if (strpos($errorMessage, $allowedCode) !== false) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function handleAllErrors($errno, $errstr, $errfile, $errline, $errcontext) {
     $errorId = basename($errfile, ".php") . "-$errline-" . time();
     workbenchLog(LOG_CRIT, "F", $errorId . ":$errstr:" . print_r(debug_backtrace(), true));
@@ -198,16 +217,12 @@ function handleAllExceptions($e) {
         try { include_once 'header.php'; } catch (Exception $e) {}
         displayError($e->getMessage(), false, true);
     } else {
-        if (stripos($e->getMessage(), "Could not connect to host") === 0) {
-            handleAllExceptions(new WorkbenchHandledException($e->getMessage()));
-        }
-
-        if (stripos($e->getMessage(), "INVALID_OPERATION_WITH_EXPIRED_PASSWORD") === 0) {
-            handleAllExceptions(new WorkbenchAuthenticationException($e->getMessage()));
-        }
-
         if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
             handleAllExceptions(new WorkbenchAuthenticationException("Your Salesforce session is invalid or has expired. Please login again."));
+        }
+
+        if (isKnownAuthenicationError($e->getMessage())) {
+            handleAllExceptions(new WorkbenchAuthenticationException($e->getMessage()));
         }
 
         try { include_once 'header.php'; } catch (Exception $e) {}
