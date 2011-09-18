@@ -1,0 +1,13 @@
+# The following settings are for forcing caching of static content on an Apache Web Server.
+# This file may be deleted if Workbench is hosted in an environment that does not allow .htaccess overrides.
+
+<ifModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 2592000 seconds"
+</ifModule>
+
+<ifModule mod_headers.c>
+    Header set Cache-Control "max-age=2592000, public"
+    Header unset Last-Modified
+    Header unset ETag
+</ifModule>
