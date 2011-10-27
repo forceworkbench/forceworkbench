@@ -153,7 +153,7 @@ function explodeCommaSeparated($css) {
     return $exploded;
 }
 
-function isKnownAuthenicationError($errorMessage) {
+function isKnownAuthenticationError($errorMessage) {
     $allowedErrors = array(
         "INVALID_SESSION_ID",
         "API_CURRENTLY_DISABLED",
@@ -226,7 +226,7 @@ function handleAllExceptions($e) {
             handleAllExceptions(new WorkbenchAuthenticationException("Your Salesforce session is invalid or has expired. Please login again."));
         }
 
-        if (isKnownAuthenicationError($e->getMessage())) {
+        if (isKnownAuthenticationError($e->getMessage())) {
             handleAllExceptions(new WorkbenchAuthenticationException($e->getMessage()));
         }
 

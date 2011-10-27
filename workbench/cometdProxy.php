@@ -14,18 +14,14 @@ $host = WorkbenchContext::get()->getHost();
 $apiVersion = WorkbenchContext::get()->getApiVersion();
 $forceSSL = WorkbenchContext::get()->isSecure();
 $sessionId = WorkbenchContext::get()->getSessionId();
-$_COOKIE['sid'] = $sessionId;
 session_write_close();
-
-// currently supporting both beta and 23.0+ style authentication
-// TODO: once beta goes away, remove the cookie stuff
 
 $proxy = new PhpReverseProxy();
 $proxy->headers[] = "Authorization: OAuth $sessionId";
 $proxy->host = $host;
 $proxy->forceSSL = $forceSSL;
 $proxy->forward_path = "/cometd/$apiVersion";
-$proxy->cookie_whitelist = array("sid", "sfdc-stream");
+$proxy->cookie_whitelist = array("sfdc-stream");
 $proxy->proxy_settings = getProxySettings();
 $proxy->is_forward_path_static = true;
 $proxy->connect();

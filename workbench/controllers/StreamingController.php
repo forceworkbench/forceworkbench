@@ -18,9 +18,7 @@ class StreamingController {
         $this->errors = array();
         $this->enabled = true;
         $this->isAjax = false;
-        $this->restBaseUrl = "/services/data/v" . (WorkbenchContext::get()->getApiVersion() >= 22.0
-                                        ? WorkbenchContext::get()->getApiVersion()
-                                        : "22.0");
+        $this->restBaseUrl = "/services/data/v" . WorkbenchContext::get()->getApiVersion();
 
         if (get_magic_quotes_gpc()) {
             foreach ($_REQUEST as $fieldName => &$r) {
@@ -149,7 +147,6 @@ class StreamingController {
     function getStreamingConfig() {
         $streamingConfig["handshakeOnLoad"] = true; // TODO: make this configurable
         $streamingConfig["csrfToken"] = getCsrfToken();
-        $streamingConfig["subscriptionPrefix"] = ((WorkbenchContext::get()->getApiVersion()) >= 23.0 ? "/topic/" : "/");
 
         // configs in "$streamingConfig["cometdConfig"]" are loaded into CometD in JS and need to match their format
         $streamingConfig["cometdConfig"]["logLevel"] = "info";

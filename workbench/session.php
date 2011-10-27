@@ -56,7 +56,7 @@ if (isset($_SESSION['retrievedZips']) && basename($_SERVER['PHP_SELF']) != 'meta
     unset($_SESSION['retrievedZips']);
 }
 
-if (isset($_REQUEST['clearCache'])) {
+if (WorkbenchContext::isEstablished() && isset($_REQUEST['clearCache'])) {
     WorkbenchContext::get()->clearCache();
     $cacheCleared = true;
 }
