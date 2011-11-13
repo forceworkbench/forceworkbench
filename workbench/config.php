@@ -891,7 +891,7 @@ $config["header_internal"] = array(
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-$GLOBALS["WORKBENCH_VERSION"] = "trunk";
+$GLOBALS["WORKBENCH_VERSION"] = "23.0.0";
 
 $GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"] = "static/" . "{{WORKBENCH_VERSION}}";
 
