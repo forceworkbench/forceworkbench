@@ -6,16 +6,13 @@
 	<property name="dir.build" value="build"/>
 	<property name="dir.build.lib" value="${dir.build}/lib"/>
 	<property name="dir.dist" value="dist"/>
-	
 	<property name="dir.test.java" value="workbench-test/java"/>
 	<property name="dir.test.java.src" value="${dir.test.java}/src"/>
 	<property name="dir.test.java.bin" value="${dir.test.java}/bin"/>
 	<property name="dir.test.java.lib" value="${dir.test.java}/lib"/>
 	<property name="dir.test.java.results" value="${dir.test.java}/results"/>
-	
 	<php expression="include_once('${dir.build}/build_util.php')"/>
-
-<!--
+	<!--
 	<path id="classpath.test.java">
             <pathelement location="${dir.test.java.bin}"/>
             <pathelement location="${dir.test.java.lib}/junit.jar"/>
@@ -27,72 +24,58 @@
     		<pathelement location="${dir.build.lib}/ant-contrib-1.0b3.jar"/>
 	    </classpath>
 	</taskdef>
--->	
-
-	<target name="init">		
+-->
+	<target name="init">
 		<loadfile srcfile="${dir.src}/config.php" property="app.config"/>
-         
-        <php function="matchOne" returnProperty="app.version">
-        	<param value="/\$GLOBALS\[&quot;WORKBENCH_VERSION&quot;\] = &quot;(.+)&quot;;/"/>
-  			<param value="${app.config}"/>
-  			<param value="1"/>
+		<php function="matchOne" returnProperty="app.version">
+			<param value="/\$GLOBALS\[&quot;WORKBENCH_VERSION&quot;\] = &quot;(.+)&quot;;/"/>
+			<param value="${app.config}"/>
+			<param value="1"/>
 		</php>
-        <echo message="App Version: ${app.version}"/>
-
-        <php function="preg_replace" returnProperty="app.version.stripped">
-        	<param value="/\s/"/>
+		<echo message="App Version: ${app.version}"/>
+		<php function="preg_replace" returnProperty="app.version.stripped">
+			<param value="/\s/"/>
 			<param value="_"/>
-  			<param value="${app.version}"/>
+			<param value="${app.version}"/>
 		</php>
 		<echo message="App Version Stripped: ${app.version.stripped}"/>
-        
-        <condition property="app.beta">
-	    	<contains string="${app.version}" substring="Beta"/>
-		</condition>		
+		<condition property="app.beta">
+			<contains string="${app.version}" substring="Beta"/>
+		</condition>
 	</target>
-	
 	<target name="clean">
 		<delete dir="${dir.dist}"/>
 		<delete dir="${dir.test.java.bin}"/>
 		<delete dir="${dir.test.java.results}"/>
 	</target>
-	
 	<target name="stage" depends="init, clean">
 		<mkdir dir="${dir.dist}"/>
 		<delete dir="${dir.dist}/staging"/>
 		<mkdir dir="${dir.dist}/staging"/>
-
 		<copy todir="${dir.dist}/staging">
-		    <fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*, ${dir.src}/static/**"/>
-
+			<fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*, ${dir.src}/static/**"/>
 			<filterchain>
 				<replacetokens begintoken="{{" endtoken="}}">
-				  <token key="WORKBENCH_VERSION" value="${app.version.stripped}"/>
+					<token key="WORKBENCH_VERSION" value="${app.version.stripped}"/>
 				</replacetokens>
-		    </filterchain>
+			</filterchain>
 		</copy>
-		
 		<copy todir="${dir.dist}/staging">
-		    <fileset dir="." includes="${dir.src}/static/**"/>
+			<fileset dir="." includes="${dir.src}/static/**"/>
 			<mapper type="regexp" from="${dir.src}/static/{{WORKBENCH_VERSION}}/(.*)" to="${dir.src}/static/${app.version.stripped}/\1"/>
 		</copy>
 	</target>
-
-
-    <target name="www" depends="stage" description="copies from staging to WWW dir of your choice">
-        <fail unless="dir.www" message="Must set dir.www property"/>
-        <copy todir="${dir.www}">
-		    <fileset dir="${dir.dist}/staging/workbench">
-                <exclude name="**/configOverrides.php"/>
-            </fileset>
+	<target name="www" depends="stage" description="copies from staging to WWW dir of your choice">
+		<fail unless="dir.www" message="Must set dir.www property"/>
+		<copy todir="${dir.www}">
+			<fileset dir="${dir.dist}/staging/workbench">
+				<exclude name="**/configOverrides.php"/>
+			</fileset>
 		</copy>
-    </target>
-
-    <target name="zip" depends="stage">
-        <property name="dist.zip.workbench" value="${dir.dist}/workbench-${app.version.stripped}.zip"/>
-
+	</target>
+	<target name="zip" depends="stage">
+		<property name="dist.zip.workbench" value="${dir.dist}/workbench-${app.version.stripped}.zip"/>
 		<zip destfile="${dist.zip.workbench}" basedir="${dir.dist}/staging"/>
-
 		<!-- Always update the latest beta version checker, but only the prod one if not a beta version -->
 		<echo message="Writing latest app version (${app.version}) to latestVersionAvailableBeta.txt"/>
 		<concat destfile="${dir.dist}/latestVersionAvailableBeta.txt">${app.version}</concat>
@@ -103,41 +86,17 @@
 				<concat destfile="${dir.dist}/latestVersionAvailable.txt">${app.version}</concat>
 			</then>
 		</if>
-
 		<property name="dist.zip.bulkclient" value="${dir.dist}/PHP_BulkApiClient-${app.version.stripped}.zip"/>
-
 		<zip destfile="${dist.zip.bulkclient}" basedir="${dir.src.bulkclient}"/>
 	</target>
-
 	<target name="upload" depends="zip">
 		<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="${dir.build.lib}/ant-googlecode-0.0.2.jar" name="gcupload"/>
-		
-		<condition 
-		        property="gc.labels" 
-		        value="Beta" 
-		        else="">
+		<condition property="gc.labels" value="Beta" else="">
 			<istrue value="${app.beta}"/>
 		</condition>
-		
-		<gcupload 
-				username="${gc.username}" 
-				password="${gc.password}" 
-				projectname="forceworkbench" 
-				filename="${basedir}/${dist.zip.workbench}" 
-				targetfilename="${dist.zip.workbench}"
-				summary="Workbench ${app.version}"
-				labels="${gc.labels}, Featured" />
-				
-		<gcupload 
-				username="${gc.username}" 
-				password="${gc.password}" 
-				projectname="forceworkbench" 
-				filename="${basedir}/${dist.zip.bulkclient}" 
-				targetfilename="${dist.zip.bulkclient}"
-				summary="PHP Bulk API Client ${app.version}"
-				labels="${gc.labels}" />	
+		<gcupload username="${gc.username}" password="${gc.password}" projectname="forceworkbench" filename="${basedir}/${dist.zip.workbench}" targetfilename="${dist.zip.workbench}" summary="Workbench ${app.version}" labels="${gc.labels}, Featured"/>
+		<gcupload username="${gc.username}" password="${gc.password}" projectname="forceworkbench" filename="${basedir}/${dist.zip.bulkclient}" targetfilename="${dist.zip.bulkclient}" summary="PHP Bulk API Client ${app.version}" labels="${gc.labels}"/>
 	</target>
-	
 	<target name="update" depends="zip">
 		<scp todir="${sf.username},forceworkbench:${sf.password}@web.sourceforge.net:/home/groups/f/fo/forceworkbench/htdocs/" verbose="true">
 			<fileset dir="${dir.dist}">
@@ -145,41 +104,32 @@
 			</fileset>
 		</scp>
 	</target>
-
 	<target name="deploy" depends="upload, update"/>
-
 	<target name="compileTests">
 		<mkdir dir="${dir.test.java.bin}"/>
-		
-        <javac destdir="${dir.test.java.bin}" source="1.6" target="1.6">
-            <src path="${dir.test.java.src}"/>
-            <classpath refid="classpath.test.java"/>
-        </javac>
+		<javac destdir="${dir.test.java.bin}" source="1.6" target="1.6">
+			<src path="${dir.test.java.src}"/>
+			<classpath refid="classpath.test.java"/>
+		</javac>
 	</target>
-	
 	<target name="startSeleniumServer">
 		<java jar="${dir.test.java.lib}/selenium-server.jar" fork="true"/>
 	</target>
-	
 	<target name="test" depends="compileTests">
 		<mkdir dir="${dir.test.java.results}"/>
-		
 		<junit printsummary="yes">
-		  <classpath refid="classpath.test.java"/>
-
-     	  <sysproperty key="baseUrl" value="http://localhost:8888/workbench-trunk/workbench/"/>
-		  <!--<sysproperty key="browser" value="*firefox /Applications/Firefox.app/Contents/MacOS/firefox-bin"/>-->
-		  <sysproperty key="browser" value="*googlechrome /Applications/Google Chrome.app/Contents/MacOS/Google Chrome"/>
-
-		  <formatter type="plain"/>
-
-		  <batchtest fork="yes" todir="${dir.test.java.results}">
-		    <fileset dir="${dir.test.java.src}">
-		      <include name="**/*Test.java"/>
-		      <include name="**/*Tests.java"/>
-		      <exclude name="**/BaseTest.java"/>
-		    </fileset>
-		  </batchtest>
+			<classpath refid="classpath.test.java"/>
+			<sysproperty key="baseUrl" value="http://localhost:8888/workbench-trunk/workbench/"/>
+			<!--<sysproperty key="browser" value="*firefox /Applications/Firefox.app/Contents/MacOS/firefox-bin"/>-->
+			<sysproperty key="browser" value="*googlechrome /Applications/Google Chrome.app/Contents/MacOS/Google Chrome"/>
+			<formatter type="plain"/>
+			<batchtest fork="yes" todir="${dir.test.java.results}">
+				<fileset dir="${dir.test.java.src}">
+					<include name="**/*Test.java"/>
+					<include name="**/*Tests.java"/>
+					<exclude name="**/BaseTest.java"/>
+				</fileset>
+			</batchtest>
 		</junit>
-	</target>	
+	</target>
 </project>
