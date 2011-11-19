@@ -17,13 +17,13 @@
 
 <!--
 	<path id="classpath.test.java">
-        <pathelement location="${dir.test.java.bin}"/>
-        <pathelement location="${dir.test.java.lib}/junit.jar"/>
-        <pathelement location="${dir.test.java.lib}/selenium-java-client-driver.jar"/>
-    </path>
+            <pathelement location="${dir.test.java.bin}"/>
+            <pathelement location="${dir.test.java.lib}/junit.jar"/>
+            <pathelement location="${dir.test.java.lib}/selenium-java-client-driver.jar"/>
+        </path>
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
-  		<classpath>
+            <classpath>
     		<pathelement location="${dir.build.lib}/ant-contrib-1.0b3.jar"/>
 	    </classpath>
 	</taskdef>
