@@ -13,7 +13,7 @@
 	<property name="dir.test.java.lib" value="${dir.test.java}/lib"/>
 	<property name="dir.test.java.results" value="${dir.test.java}/results"/>
 	
-	<php expression="include_once('${application.startdir}/build_util.php')"/>
+	<php expression="include_once('${dir.build}/build_util.php')"/>
 
 <!--
 	<path id="classpath.test.java">
