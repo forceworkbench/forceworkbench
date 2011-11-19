@@ -12,39 +12,40 @@
 	<property name="dir.test.java.bin" value="${dir.test.java}/bin"/>
 	<property name="dir.test.java.lib" value="${dir.test.java}/lib"/>
 	<property name="dir.test.java.results" value="${dir.test.java}/results"/>
+	
+	<php expression="include_once('${application.startdir}/build_util.php')"/>
 
+<!--
 	<path id="classpath.test.java">
         <pathelement location="${dir.test.java.bin}"/>
         <pathelement location="${dir.test.java.lib}/junit.jar"/>
         <pathelement location="${dir.test.java.lib}/selenium-java-client-driver.jar"/>
     </path>
-	
+
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
   		<classpath>
     		<pathelement location="${dir.build.lib}/ant-contrib-1.0b3.jar"/>
 	    </classpath>
 	</taskdef>
-	
+-->	
+
 	<target name="init">		
 		<loadfile srcfile="${dir.src}/config.php" property="app.config"/>
-
-        <propertyregex property="app.version"
-              input="${app.config}"
-              regexp="\$GLOBALS\[&quot;WORKBENCH_VERSION&quot;\] = &quot;(.+)&quot;;"
-              select="\1"
-              casesensitive="false" />
-                      
+         
+        <php function="matchOne" returnProperty="app.version">
+        	<param value="/\$GLOBALS\[&quot;WORKBENCH_VERSION&quot;\] = &quot;(.+)&quot;;/"/>
+  			<param value="${app.config}"/>
+  			<param value="1"/>
+		</php>
         <echo message="App Version: ${app.version}"/>
-                      
-        <propertyregex property="app.version.stripped"
-              input="${app.version}"
-              regexp="\s"
-              replace="_"
-              global="true"
-              defaultValue="${app.version}"/>
-                            
-        <echo message="App Version Stripped: ${app.version.stripped}"/>
-                      
+
+        <php function="preg_replace" returnProperty="app.version.stripped">
+        	<param value="/\s/"/>
+			<param value="_"/>
+  			<param value="${app.version}"/>
+		</php>
+		<echo message="App Version Stripped: ${app.version.stripped}"/>
+        
         <condition property="app.beta">
 	    	<contains string="${app.version}" substring="Beta"/>
 		</condition>		
@@ -64,14 +65,16 @@
 		<copy todir="${dir.dist}/staging">
 		    <fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*, ${dir.src}/static/**"/>
 
-			<filterset begintoken="{{" endtoken="}}">
-		      <filter token="WORKBENCH_VERSION" value="${app.version.stripped}"/>
-		    </filterset>
+			<filterchain>
+				<replacetokens begintoken="{{" endtoken="}}">
+				  <token key="WORKBENCH_VERSION" value="${app.version.stripped}"/>
+				</replacetokens>
+		    </filterchain>
 		</copy>
 		
 		<copy todir="${dir.dist}/staging">
 		    <fileset dir="." includes="${dir.src}/static/**"/>
-			<mapper type="glob" from="${dir.src}/static/{{WORKBENCH_VERSION}}/*" to="${dir.src}/static/${app.version.stripped}/*"/>
+			<mapper type="regexp" from="${dir.src}/static/{{WORKBENCH_VERSION}}/(.*)" to="${dir.src}/static/${app.version.stripped}/\1"/>
 		</copy>
 	</target>
 
