@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Workbench" default="zip" basedir="..">
+<project name="Workbench" default="zip">
 	<property name="dir.src" value="workbench"/>
 	<property name="dir.src.bulkclient" value="${dir.src}/bulkclient"/>
 	<property name="dir.test" value="workbench-test"/>
@@ -66,8 +66,8 @@
 		</copy>
 	</target>
 	<target name="www" depends="stage" description="copies from staging to WWW dir of your choice">
-		<fail unless="dir.www" message="Must set dir.www property"/>
-		<copy todir="${dir.www}">
+		<fail unless="WWW_DOCUMENT_ROOT" message="Must set dir.www property"/>
+		<copy todir="${WWW_DOCUMENT_ROOT}">
 			<fileset dir="${dir.dist}/staging/workbench">
 				<exclude name="**/configOverrides.php"/>
 			</fileset>
