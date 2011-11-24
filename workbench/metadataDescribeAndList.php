@@ -109,9 +109,9 @@ function listMetadata($type) {
 
         foreach ($folderQueryResult->records as $folderRecord) {
             $folder = new SObject($folderRecord);
-            $folderType = $folder->fields->DeveloperName;
+            $folderName = $folder->fields->DeveloperName;
 
-            $listMetadataResult["$folderType"] = processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->xmlName, $folder->fields->DeveloperName, WorkbenchContext::get()->getApiVersion()));
+            $listMetadataResult["$folderName"] = processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->xmlName, $folder->fields->DeveloperName, WorkbenchContext::get()->getApiVersion()));
         }
 
         return $listMetadataResult;
