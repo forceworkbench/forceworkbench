@@ -75,7 +75,7 @@
 
         <!--suppress PhingDomInspection -->
         <copy todir="${env.PUBLIC_HTML_DIR}">
-			<fileset dir="${dir.dist.versions}/${dir.src}">
+			<fileset dir="${dir.dist.versions}/${app.version.stripped}/${dir.src}">
 				<exclude name="**/configOverrides.php"/>
 			</fileset>
 		</copy>
