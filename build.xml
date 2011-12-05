@@ -71,10 +71,10 @@
 
 	<target name="stage" depends="version" description="Stages files for deployment">
 		<!--suppress PhingDomInspection -->
-        <fail unless="WWW_DOCUMENT_ROOT" message="Must set WWW_DOCUMENT_ROOT property"/>
+        <fail unless="env.PUBLIC_HTML_DIR" message="Environment variable PUBLIC_HTML_DIR must be set"/>
 
         <!--suppress PhingDomInspection -->
-        <copy todir="${WWW_DOCUMENT_ROOT}">
+        <copy todir="${env.PUBLIC_HTML_DIR}">
 			<fileset dir="${dir.dist.versions}/${dir.src}">
 				<exclude name="**/configOverrides.php"/>
 			</fileset>
