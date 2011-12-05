@@ -37,9 +37,13 @@
 			<param value="${app.version}"/>
 		</php>
 		<echo message="App Version Stripped: ${app.version.stripped}"/>
-		<condition property="app.beta">
-			<contains string="${app.version}" substring="Beta"/>
-		</condition>
+        <if>
+            <contains string="${app.version}" substring="Beta"/>
+            <then>
+                <echo>Beta version detected</echo>
+                <property name="app.beta" value="true"/>
+            </then>
+        </if>
 	</target>
 
 	<target name="clean" description="Cleans all generated files">
@@ -94,14 +98,21 @@
 		<zip destfile="${dist.zip.bulkclient}" basedir="${dir.dist.versions}/${app.version.stripped}/${dir.src.bulkclient}"/>
 	</target>
 
-    <!--<target name="upload" depends="zip">-->
-		<!--<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="${dir.build.lib}/ant-googlecode-0.0.2.jar" name="gcupload"/>-->
-		<!--<condition property="gc.labels" value="Beta" else="">-->
-			<!--<istrue value="${app.beta}"/>-->
-		<!--</condition>-->
-		<!--<gcupload username="${gc.username}" password="${gc.password}" projectname="forceworkbench" filename="${basedir}/${dist.zip.workbench}" targetfilename="${dist.zip.workbench}" summary="Workbench ${app.version}" labels="${gc.labels}, Featured"/>-->
-		<!--<gcupload username="${gc.username}" password="${gc.password}" projectname="forceworkbench" filename="${basedir}/${dist.zip.bulkclient}" targetfilename="${dist.zip.bulkclient}" summary="PHP Bulk API Client ${app.version}" labels="${gc.labels}"/>-->
-	<!--</target>-->
+    <target name="upload" depends="zip">
+		<taskdef name="gcupload" classname="GoogleCodeUploadTask" classpath="${dir.build.lib}/phing-googlecode"/>
+        <if>
+            <isset property="${app.beta}"/>
+            <then>
+                <property name="gc.labels" value="Beta"/>
+            </then>
+            <else>
+                <property name="gc.labels" value=""/>
+            </else>
+        </if>
+
+		<gcupload username="${gc.username}" password="${gc.password}" projectname="forceworkbench" file="${dist.zip.workbench}" summary="Workbench ${app.version}" labels="${gc.labels}, Featured"/>
+		<gcupload username="${gc.username}" password="${gc.password}" projectname="forceworkbench" file="${dist.zip.bulkclient}" summary="PHP Bulk API Client ${app.version}" labels="${gc.labels}"/>
+	</target>
 
 	<!--<target name="update" depends="zip">-->
 		<!--<scp todir="${sf.username},forceworkbench:${sf.password}@web.sourceforge.net:/home/groups/f/fo/forceworkbench/htdocs/" verbose="true">-->
@@ -111,7 +122,7 @@
 		<!--</scp>-->
 	<!--</target>-->
 
-    <!--<target name="deploy" depends="upload, update"/>-->
+    <!--<target name="release" depends="upload, update"/>-->
 
     <!--<target name="compileTests">-->
 		<!--<mkdir dir="${dir.test.java.bin}"/>-->
