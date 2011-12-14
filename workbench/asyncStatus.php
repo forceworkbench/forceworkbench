@@ -139,7 +139,7 @@ if (count($batchInfos) > 0) {
               "</td>" . 
               "<td class='dataValue'>" . $batchInfo->getState() . (($batchInfo->getStateMessage() != "") ? (": " . $batchInfo->getStateMessage()) : "") . "</td>" .
               (WorkbenchContext::get()->isApiVersionAtLeast(19.0)
-                  ? "<td class='dataValue pseudoLink' onmouseover=\"Tip('$processingTimeDetails')\"/>" 
+                  ? "<td class='dataValue pseudoLink' style='cursor: default' onmouseover=\"Tip('$processingTimeDetails')\"/>"
                   : "<td class='dataValue'>") .
               $batchInfo->getNumberRecordsProcessed() . ($batchInfo->getNumberRecordsProcessed() == "1" ? " record" : " records") .
               "</td>" .
