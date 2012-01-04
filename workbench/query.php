@@ -827,7 +827,7 @@ function createQueryResultTable($records, $rowNum) {
     $table = "<table id='query_results' class='" . getTableClass() . "'>\n";
 
     //call shared recusive function above for header printing
-    $table .= "<tr><th></th><th>";
+    $table .= "<tr><th>&nbsp;</th><th>";
     if ($records[0] instanceof SObject) {
         $table .= implode("</th><th>", getQueryResultHeaders($records[0]));
     } else {
