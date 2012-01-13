@@ -5,6 +5,7 @@ class RestApiClient {
     private $proxySettings;
     private $userAgent = "PHP-RestApiClient/22.0";
     private $compressionEnabled = true;
+    private $includeSessionCookie = false;
     private $logs;
     private $loggingEnabled = false;
 
@@ -27,6 +28,10 @@ class RestApiClient {
 
     public function setProxySettings($proxySettings) {
         $this->proxySettings = $proxySettings;
+    }
+
+    public function setIncludeSessionCookie($includeSessionCookie) {
+        $this->includeSessionCookie = $includeSessionCookie;
     }
 
     public function getUserAgent() {
@@ -110,6 +115,15 @@ class RestApiClient {
 
         if ($this->compressionEnabled) {
             curl_setopt($ch, CURLOPT_ENCODING, "gzip");   //TODO: add  outbound compression support
+        }
+
+        $cookies = array();
+        if ($this->includeSessionCookie) {
+            $cookies[] = "sid=" . $this->sessionId;
+        }
+
+        if (count($cookies) > 0) {
+            curl_setopt($ch, CURLOPT_COOKIE, implode("; ", $cookies));
         }
 
         $this->log("REQUEST \n METHOD: $method \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlspecialchars($data));

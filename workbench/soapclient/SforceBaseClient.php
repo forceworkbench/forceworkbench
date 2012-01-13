@@ -345,6 +345,10 @@ class SforceBaseClient {
              'sessionId' => $id
             ));
             $this->sessionId = $id;
+
+            if (getConfig("includeSessionCookie")) {
+                $this->sforce->__setCookie("sid", $id);
+            }
         } else {
             $this->sessionHeader = NULL;
             $this->sessionId = NULL;

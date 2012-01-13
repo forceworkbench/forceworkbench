@@ -78,6 +78,14 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
+    $config["includeSessionCookie"] = array(
+        "label" => "Include Session Cookie",
+        "description" => "Include the SFDC session id as a cookie",
+        "default" => false,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
     $config["debug"] = array(
         "label" => "Debug Mode",
         "description" => "Enables debugging mode for showing super-variables and SOAP messages.",
