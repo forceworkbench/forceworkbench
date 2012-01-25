@@ -19,6 +19,8 @@ foreach ($_ENV as $envKey => $envValue) {
         continue;
     }
 
+    $envKey = str_replace("___DOT___", ".", $envKey);
+
     $envKeyParts = explode($configDelim, $envKey);
 
     foreach ($envKeyParts as $keyPart) {
