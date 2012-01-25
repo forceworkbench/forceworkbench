@@ -32,6 +32,8 @@ function processCmds($key, $value) {
     } else {
         $key = str_replace(".", "___DOT___", $key);
 
+        $value = (!$value ? "false" : $value);
+
         $keyValue = "\"" . $configNamespace . $configDelim . $key . "=$value\"";
         $exportCmds[] = "export " . $keyValue;
         $herokuCmds[] = "heroku config:add " . $keyValue;
