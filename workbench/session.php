@@ -29,6 +29,10 @@ foreach ($_ENV as $envKey => $envValue) {
             continue;
         }
 
+        if (!isset($point[$keyPart])) {
+            $point[$keyPart] = "";
+        }
+
         $point = &$point[$keyPart];
     }
 
