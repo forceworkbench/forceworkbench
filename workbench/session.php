@@ -5,9 +5,38 @@ require_once 'context/WorkbenchContext.php';
 ini_set("session.cookie_httponly", "1");
 session_start();
 
-//load default config values and then any custom overrides.
+//load default config values
 require_once 'config.php';
+
+// load file-based config overrides
 if(is_file('configOverrides.php')) require_once 'configOverrides.php';
+
+// load environment variable based overrides
+$configNamespace = "forceworkbench";
+$configDelim = "__";
+foreach ($_ENV as $envKey => $envValue) {
+    if (strpos($envKey, $configNamespace) !== 0) {
+        continue;
+    }
+
+    $envKeyParts = explode($configDelim, $envKey);
+
+    foreach ($envKeyParts as $keyPart) {
+        if ($keyPart === $configNamespace) {
+            $point = &$config;
+            continue;
+        }
+
+        $point = &$point[$keyPart];
+    }
+
+    if (!isset($point) || is_array($point)) {
+        workbenchLog(LOG_ERR, "Invalid location for $envKey");
+        continue;
+    }
+
+    $point = ($envValue === "false") ? false : $envValue;
+}
 
 foreach ($config as $configKey => $configValue) {
     // skip headers
