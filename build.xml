@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<project name="Workbench" default="stage">
+	<property name="dir.src" value="workbench"/>
+	<property name="dir.src.static" value="${dir.src}/static"/>
+	<property name="dir.src.bulkclient" value="${dir.src}/bulkclient"/>
+	<property name="dir.test" value="workbench-test"/>
+	<property name="dir.build" value="build"/>
+	<property name="dir.build.lib" value="${dir.build}/lib"/>
+	<property name="dir.dist" value="dist"/>
+	<property name="dir.dist.versions" value="${dir.dist}/versions"/>
+	<property name="dir.test.java" value="workbench-test/java"/>
+	<property name="dir.test.java.src" value="${dir.test.java}/src"/>
+	<property name="dir.test.java.bin" value="${dir.test.java}/bin"/>
+	<property name="dir.test.java.lib" value="${dir.test.java}/lib"/>
+	<property name="dir.test.java.results" value="${dir.test.java}/results"/>
+	<php expression="include_once('${dir.build}/build_util.php')"/>
+
+<!--
+    <path id="classpath.test.java">
+        <pathelement location="${dir.test.java.bin}"/>
+        <pathelement location="${dir.test.java.lib}/junit.jar"/>
+        <pathelement location="${dir.test.java.lib}/selenium-java-client-driver.jar"/>
+    </path>
+-->
+
+	<target name="init" description="Initializes versioning properties">
+		<loadfile file="${dir.src}/config.php" property="app.config"/>
+		<php function="matchOne" returnProperty="app.version">
+			<param value="/\$GLOBALS\[&quot;WORKBENCH_VERSION&quot;\] = &quot;(.+)&quot;;/"/>
+			<param value="${app.config}"/>
+			<param value="1"/>
+		</php>
+		<echo message="App Version: ${app.version}"/>
+		<php function="preg_replace" returnProperty="app.version.stripped">
+			<param value="/\s/"/>
+			<param value="_"/>
+			<param value="${app.version}"/>
+		</php>
+		<echo message="App Version Stripped: ${app.version.stripped}"/>
+        <if>
+            <contains string="${app.version}" substring="Beta"/>
+            <then>
+                <echo>Beta version detected</echo>
+                <property name="app.beta" value="true"/>
+            </then>
+        </if>
+	</target>
+
+	<target name="clean" description="Cleans all generated files">
+		<delete dir="${dir.dist}"/>
+		<delete dir="${dir.test.java.bin}"/>
+		<delete dir="${dir.test.java.results}"/>
+	</target>
+
+	<target name="version" depends="init" description="Versions static resources">
+		<delete dir="${dir.dist.versions}/${app.version.stripped}"/>
+		<mkdir dir="${dir.dist.versions}/${app.version.stripped}"/>
+		<copy todir="${dir.dist.versions}/${app.version.stripped}">
+			<fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*, ${dir.src.static}/**"/>
+			<filterchain>
+				<replacetokens begintoken="{{" endtoken="}}">
+					<token key="WORKBENCH_VERSION" value="${app.version.stripped}"/>
+				</replacetokens>
+			</filterchain>
+		</copy>
+		<copy todir="${dir.dist.versions}/${app.version.stripped}">
+			<fileset dir="." includes="${dir.src.static}/**"/>
+			<mapper type="regexp" from="${dir.src.static}/{{WORKBENCH_VERSION}}/(.*)" to="${dir.src.static}/${app.version.stripped}/\1"/>
+		</copy>
+	</target>
+
+	<target name="stage" depends="version" description="Stages files for deployment">
+		<!--suppress PhingDomInspection -->
+        <fail unless="env.PUBLIC_HTML_DIR" message="Environment variable PUBLIC_HTML_DIR must be set"/>
+
+        <!--suppress PhingDomInspection -->
+        <copy todir="${env.PUBLIC_HTML_DIR}">
+			<fileset dir="${dir.dist.versions}/${app.version.stripped}/${dir.src}">
+				<exclude name="**/configOverrides.php"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="zip" depends="version" description="Creates zipped distribution">
+		<property name="dist.zip.workbench" value="${dir.dist}/workbench-${app.version.stripped}.zip"/>
+		<zip destfile="${dist.zip.workbench}" basedir="${dir.dist.versions}/${app.version.stripped}"/>
+		<!-- Always update the latest beta version checker, but only the prod one if not a beta version -->
+		<echo message="Writing latest app version (${app.version}) to latestVersionAvailableBeta.txt"/>
+		<echo file="${dir.dist}/latestVersionAvailableBeta.txt" append="false">${app.version}</echo>
+		<if>
+			<not><isset property="app.beta"/></not>
+			<then>
+				<echo message="Writing latest app version (${app.version}) to latestVersionAvailable.txt"/>
+				<echo file="${dir.dist}/latestVersionAvailable.txt" append="false">${app.version}</echo>
+			</then>
+		</if>
+		<property name="dist.zip.bulkclient" value="${dir.dist}/PHP_BulkApiClient-${app.version.stripped}.zip"/>
+		<zip destfile="${dist.zip.bulkclient}" basedir="${dir.dist.versions}/${app.version.stripped}/${dir.src.bulkclient}"/>
+	</target>
+
+    <target name="uploadZipToGoogleCode" depends="zip">
+		<!--suppress PhingDomInspection -->
+        <taskdef name="gcupload" classname="GoogleCodeUploadTask" classpath="${dir.build.lib}/phing-googlecode"/>
+        <if>
+            <isset property="app.beta"/>
+            <then>
+                <property name="gc.labels" value="Beta"/>
+            </then>
+            <else>
+                <property name="gc.labels" value=""/>
+            </else>
+        </if>
+
+		<gcupload username="${gc.username}" password="${gc.password}" projectname="forceworkbench" file="${dist.zip.workbench}" summary="Workbench ${app.version}" labels="${gc.labels}, Featured"/>
+		<gcupload username="${gc.username}" password="${gc.password}" projectname="forceworkbench" file="${dist.zip.bulkclient}" summary="PHP Bulk API Client ${app.version}" labels="${gc.labels}"/>
+	</target>
+
+	<!--<target name="updateLatestVersionAvailable" depends="zip">-->
+        <!--<php function="extension_loaded" returnProperty="ssh2.loaded">-->
+            <!--<param value="ssh2"/>-->
+        <!--</php>-->
+        <!--<if>-->
+            <!--<isfalse value="${ssh2.loaded}"/>-->
+            <!--<then>-->
+                <!--<php function="dl">-->
+                    <!--<param value="ssh2.so"/>-->
+                <!--</php>-->
+            <!--</then>-->
+        <!--</if>-->
+
+        <!--<scp host="web.sourceforge.net"-->
+             <!--username="${sf.username},forceworkbench"-->
+             <!--password="${sf.password}"-->
+             <!--todir="/home/groups/f/fo/forceworkbench/htdocs/"-->
+             <!--level="debug"-->
+             <!-->-->
+        <!--<fileset dir="${dir.dist}">-->
+     				<!--<include name="latestVersionAvailable*.txt"/>-->
+     			<!--</fileset>-->
+        <!--</scp>-->
+	<!--</target>-->
+
+    <!--<target name="releaseZip" depends="zip, uploadZipToGoogleCode, updateLatestVersionAvailable"/>-->
+
+    <!--<target name="compileTests">-->
+		<!--<mkdir dir="${dir.test.java.bin}"/>-->
+		<!--<javac destdir="${dir.test.java.bin}" source="1.6" target="1.6">-->
+			<!--<src path="${dir.test.java.src}"/>-->
+			<!--<classpath refid="classpath.test.java"/>-->
+		<!--</javac>-->
+	<!--</target>-->
+
+    <!--<target name="startSeleniumServer">-->
+		<!--<java jar="${dir.test.java.lib}/selenium-server.jar" fork="true"/>-->
+	<!--</target>-->
+
+    <!--<target name="test" depends="compileTests">-->
+		<!--<mkdir dir="${dir.test.java.results}"/>-->
+		<!--<junit printsummary="yes">-->
+			<!--<classpath refid="classpath.test.java"/>-->
+			<!--<sysproperty key="baseUrl" value="http://localhost:8888/workbench-trunk/workbench/"/>-->
+			<!--&lt;!&ndash;<sysproperty key="browser" value="*firefox /Applications/Firefox.app/Contents/MacOS/firefox-bin"/>&ndash;&gt;-->
+			<!--<sysproperty key="browser" value="*googlechrome /Applications/Google Chrome.app/Contents/MacOS/Google Chrome"/>-->
+			<!--<formatter type="plain"/>-->
+			<!--<batchtest fork="yes" todir="${dir.test.java.results}">-->
+				<!--<fileset dir="${dir.test.java.src}">-->
+					<!--<include name="**/*Test.java"/>-->
+					<!--<include name="**/*Tests.java"/>-->
+					<!--<exclude name="**/BaseTest.java"/>-->
+				<!--</fileset>-->
+			<!--</batchtest>-->
+		<!--</junit>-->
+	<!--</target>-->
+
+    <target name="phpinfo">
+        <php function="phpinfo" />
+    </target>
+</project>
