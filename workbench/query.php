@@ -629,7 +629,16 @@ QUERY_BUILDER_SCRIPT;
 function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false) {
     try {
         if (!getConfig("allowParentRelationshipQueries") && preg_match("/SELECT.*?(\w+\.\w+).*FROM/i", $soqlQuery, $matches)) {
-            throw new WorkbenchHandledException("Parent relationship queries are not allowed: " . $matches[1]);
+
+            $msg = "Parent relationship queries are disabled in Workbench: " . $matches[1];
+
+            if ($GLOBALS["config"]["allowParentRelationshipQueries"]["overrideable"]) {
+                $msg .= "\n\nDue to issues rendering query results, parent relationship queries are disabled by default. " .
+                         "If you understand these limitations, parent relationship queries can be enabled under Settings. " .
+                         "Alternatively, parent relationship queries can be run with REST Explorer under the Utilities menu without issue.";
+            }
+
+            throw new WorkbenchHandledException($msg);
         }
 
         if ($queryAction == 'Query') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->query($soqlQuery);

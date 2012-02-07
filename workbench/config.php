@@ -534,8 +534,8 @@ $config["header_queryAndSearchOptions"] = array(
     $config["allowParentRelationshipQueries"] = array(
         "label" => "Allows SOQL Parent Relationship Queries",
         "description" => "Allows parent relationship queries in SOQL.",
-        "default" => true,
-        "overrideable" => false,
+        "default" => false,
+        "overrideable" => true,
         "dataType" => "boolean"
     );
 
