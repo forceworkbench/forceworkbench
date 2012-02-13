@@ -900,7 +900,7 @@ $config["header_internal"] = array(
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-$GLOBALS["WORKBENCH_VERSION"] = "trunk";
+$GLOBALS["WORKBENCH_VERSION"] = "24.0.0 Beta 1";
 
 $GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"] = "static/" . "{{WORKBENCH_VERSION}}";
 
