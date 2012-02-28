@@ -615,7 +615,7 @@ QUERY_BUILDER_SCRIPT;
     print "&nbsp;&nbsp;Save as: <input type='text' id='saveQr' name='saveQr' value='" . htmlspecialchars($queryRequest->getName(),ENT_QUOTES) . "' style='width: 10em;'/>\n";
 
     print "<input type='submit' name='doSaveQr' value='Save' onclick='return doesQueryHaveName();' />\n";
-    print "<input type='submit' name='clearAllQr' value='Clear All'/>\n";
+    print "<input type='submit' name='clearAllQr' value='Clear All' onclick='return confirm(\"Are you sure you would like to clear all saved queries?\");'/>\n";
 
     print "&nbsp;&nbsp;" .
           "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/>";
@@ -629,7 +629,16 @@ QUERY_BUILDER_SCRIPT;
 function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false) {
     try {
         if (!getConfig("allowParentRelationshipQueries") && preg_match("/SELECT.*?(\w+\.\w+).*FROM/i", $soqlQuery, $matches)) {
-            throw new WorkbenchHandledException("Parent relationship queries are not allowed: " . $matches[1]);
+
+            $msg = "Parent relationship queries are disabled in Workbench: " . $matches[1];
+
+            if ($GLOBALS["config"]["allowParentRelationshipQueries"]["overrideable"]) {
+                $msg .= "\n\nDue to issues rendering query results, parent relationship queries are disabled by default. " .
+                         "If you understand these limitations, parent relationship queries can be enabled under Settings. " .
+                         "Alternatively, parent relationship queries can be run with REST Explorer under the Utilities menu without issue.";
+            }
+
+            throw new WorkbenchHandledException($msg);
         }
 
         if ($queryAction == 'Query') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->query($soqlQuery);
@@ -827,7 +836,7 @@ function createQueryResultTable($records, $rowNum) {
     $table = "<table id='query_results' class='" . getTableClass() . "'>\n";
 
     //call shared recusive function above for header printing
-    $table .= "<tr><th></th><th>";
+    $table .= "<tr><th>&nbsp;</th><th>";
     if ($records[0] instanceof SObject) {
         $table .= implode("</th><th>", getQueryResultHeaders($records[0]));
     } else {

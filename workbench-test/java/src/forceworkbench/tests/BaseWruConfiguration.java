@@ -7,7 +7,7 @@ public class BaseWruConfiguration extends Configuration {
 		
 		setUsername("rbrainard@ee.org");
 		setPassword("123456");
-		setApiVersion("23.0");
+		setApiVersion("24.0");
 		setInstance("NA4");
 		setLoginInstance("Login: Production/Developer");
 				

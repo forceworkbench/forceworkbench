@@ -10,6 +10,7 @@ class RestDataConnectionProvider extends AbstractConnectionProvider {
         $restConnection->setExternalLogReference($_SESSION['restDebugLog']); //TODO: maybe replace w/ its own log?? //TODO: move into ctx
         $restConnection->setLoggingEnabled(getConfig("debug") == true);
         $restConnection->setProxySettings(getProxySettings());
+        $restConnection->setIncludeSessionCookie(getConfig("includeSessionCookie"));
 
         return $restConnection;
     }

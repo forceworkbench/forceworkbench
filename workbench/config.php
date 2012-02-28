@@ -78,6 +78,14 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
+    $config["includeSessionCookie"] = array(
+        "label" => "Include Session Cookie",
+        "description" => "Include the SFDC session id as a cookie",
+        "default" => false,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
     $config["debug"] = array(
         "label" => "Debug Mode",
         "description" => "Enables debugging mode for showing super-variables and SOAP messages.",
@@ -224,6 +232,7 @@ $config["header_LoginOptions"] = array(
     );
 
     $GLOBALS['API_VERSIONS'] = array(
+        "24.0" => "24.0",
         "23.0" => "23.0",
         "22.0" => "22.0",
         "21.0" => "21.0",
@@ -246,7 +255,7 @@ $config["header_LoginOptions"] = array(
     $config["defaultApiVersion"]  = array(
         "label" => "Default API Version",
         "description" => "Default API version to be used for login. This setting does not affect the API version of the current session. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
-        "default" => "23.0",
+        "default" => "24.0",
         "overrideable" => true,
         "dataType" => "picklist",
         "valuesToLabels" => $GLOBALS['API_VERSIONS']
@@ -525,8 +534,8 @@ $config["header_queryAndSearchOptions"] = array(
     $config["allowParentRelationshipQueries"] = array(
         "label" => "Allows SOQL Parent Relationship Queries",
         "description" => "Allows parent relationship queries in SOQL.",
-        "default" => true,
-        "overrideable" => false,
+        "default" => false,
+        "overrideable" => true,
         "dataType" => "boolean"
     );
 
@@ -891,7 +900,7 @@ $config["header_internal"] = array(
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-$GLOBALS["WORKBENCH_VERSION"] = "23.0.0";
+$GLOBALS["WORKBENCH_VERSION"] = "24.0.0";
 
 $GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"] = "static/" . "{{WORKBENCH_VERSION}}";
 

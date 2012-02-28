@@ -33,6 +33,11 @@ abstract class SoapBaseClient {
 
         $this->sforce = new SoapClient($wsdlPath, $soapClientArray);
 
+        // set session cookie, if enabled
+        if (getConfig("includeSessionCookie")) {
+            $this->sforce->__setCookie("sid", $sessionId);
+        }
+
         //start to set headers
         $headerArray = array();
 

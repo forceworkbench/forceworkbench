@@ -100,7 +100,8 @@ function listMetadata($type) {
             return processListMetadataResult(WorkbenchContext::get()->getMetadataConnection()->listMetadata($type->xmlName, null, WorkbenchContext::get()->getApiVersion()));
         }
 
-        $folderQueryResult = WorkbenchContext::get()->getPartnerConnection()->query("SELECT DeveloperName FROM Folder WHERE Type = '" . $type->xmlName . "' AND DeveloperName != null AND NamespacePrefix = null");
+        $folderType = $type->xmlName == "EmailTemplate" ? "Email" : $type->xmlName;
+        $folderQueryResult = WorkbenchContext::get()->getPartnerConnection()->query("SELECT DeveloperName FROM Folder WHERE Type = '" . $folderType . "' AND DeveloperName != null AND NamespacePrefix = null");
 
         if ($folderQueryResult->size == 0) {
             return array();

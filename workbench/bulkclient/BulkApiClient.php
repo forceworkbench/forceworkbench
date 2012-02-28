@@ -3,11 +3,11 @@ require_once 'JobInfo.php';
 require_once 'BatchInfo.php';
 
 /**
- * PHP BULK API CLIENT 23.0.0
+ * PHP BULK API CLIENT 24.0.0
  * @author Ryan Brainard
  *
  * BulkApiClient.php
- * Main client for interacting with the REST-based Force.com Bulk API 23.0
+ * Main client for interacting with the REST-based Force.com Bulk API 24.0
  * to asynchronously insert, update, and upsert data to Salesforce.
  * Requires PHP cURL library to be installed.
  *
@@ -21,7 +21,7 @@ require_once 'BatchInfo.php';
  * * Feedback & Discussion
  *   http://groups.google.com/group/forceworkbench
  *
- * Copyright (c) 2011, salesforce.com, inc.
+ * Copyright (c) 2012, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -63,8 +63,9 @@ class BulkApiClient {
     private $endpoint;
     private $sessionId;
     private $proxySettings;
-    private $userAgent = "PHP-BulkApiClient/23.0.0";
+    private $userAgent = "PHP-BulkApiClient/24.0.0";
     private $compressionEnabled = true;
+    private $includeSessionCookie = false;
     private $logs;
     private $loggingEnabled = false;
     const CSV = "CSV";
@@ -131,6 +132,20 @@ class BulkApiClient {
      */
     public function setCompressionEnabled($compressionEnabled) {
         $this->compressionEnabled = $compressionEnabled;
+    }
+
+    /**
+     * @return bool true is session id is included as a cookie
+     */
+    public function getIncludeSessionCookie() {
+        return $this->includeSessionCookie;
+    }
+
+    /**
+     * @param $includeSessionCookie true to have session id included as a cookie
+     */
+    public function setIncludeSessionCookie($includeSessionCookie) {
+        $this->includeSessionCookie = $includeSessionCookie;
     }
 
     private function convertEndpoint($endpoint) {
@@ -369,6 +384,15 @@ class BulkApiClient {
             if (isset($this->proxySettings["proxy_username"]) && isset($this->proxySettings["proxy_password"])) {
                 curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->proxySettings["proxy_username"] . ":" . $this->proxySettings["proxy_password"]);
             }
+        }
+
+        $cookies = array();
+        if ($this->includeSessionCookie) {
+            $cookies[] = "sid=" . $this->sessionId;
+        }
+
+        if (count($cookies) > 0) {
+            curl_setopt($ch, CURLOPT_COOKIE, implode("; ", $cookies));
         }
 
         if (isset($toFile)) {

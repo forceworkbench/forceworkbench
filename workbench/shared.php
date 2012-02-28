@@ -68,7 +68,8 @@ function getCsrfFormTag() {
 
 function usingSSL() {
     // was the request to Workbench secure?
-    $secureLocal2Wb = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    $secureLocal2Wb = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+                      (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
 
     // is connection secure from Workbench to Salesforce?
     $secureWb2sfdc = !WorkbenchContext::isEstablished() || WorkbenchContext::get()->isSecure();
