@@ -66,15 +66,17 @@ function getCsrfFormTag() {
     return "\n<input type='hidden' name='CSRF_TOKEN' value='" . getCsrfToken() . "'/>\n";
 }
 
-function usingSSL() {
-    // was the request to Workbench secure?
-    $secureLocal2Wb = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
-                      (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
+function usingSslFromUserToWorkbench() {
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+           (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
+}
 
-    // is connection secure from Workbench to Salesforce?
-    $secureWb2sfdc = !WorkbenchContext::isEstablished() || WorkbenchContext::get()->isSecure();
+function usingSslFromWorkbenchToSfdc() {
+    return !WorkbenchContext::isEstablished() || WorkbenchContext::get()->isSecure();
+}
 
-    return $secureLocal2Wb && $secureWb2sfdc;
+function usingSslEndToEnd() {
+    return usingSslFromUserToWorkbench() && usingSslFromWorkbenchToSfdc();
 }
 
 function toBytes ($size_str) {

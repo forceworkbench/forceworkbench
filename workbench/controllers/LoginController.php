@@ -378,7 +378,7 @@ class LoginController {
     }
 
     private function oauthBuildRedirectUrl() {
-        return "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? "s" : "") . "://" .
+        return "http" . (usingSslFromUserToWorkbench() ? "s" : "") ."://" .
                 $_SERVER['HTTP_HOST'] .
                 str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
                 (strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/") .

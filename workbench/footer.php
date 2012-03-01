@@ -6,7 +6,7 @@ include_once 'shared.php';
 <div id='disclaimer'><br />
 
 <?php
-if (getConfig("checkSSL") && !usingSSL()) {
+if (getConfig("checkSSL") && !usingSslEndToEnd()) {
     print "<div style='font-size: 8pt; color: orange;'>WARNING: Unsecure connection detected</div>";
 }
 

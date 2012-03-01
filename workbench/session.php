@@ -2,6 +2,11 @@
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
 
+if (getConfig("redirectToHTTPS")) {
+    header("Location: " . "https://" . $_SERVER['HTTP_HOST']  . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
 if (isset($_ENV['REDISTOGO_URL'])) {
   $redis_url = "tcp://" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_HOST) . ":" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PORT);
   if (!is_array(parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PASS))) {
@@ -110,7 +115,7 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") {
     httpError("400 Bad Request", "Path info trailing script name in URI not allowed.");
 }
 
-if (getConfig("requireSSL") && !usingSSL()) {
+if (getConfig("requireSSL") && !usingSslEndToEnd()) {
     if (WorkbenchContext::isEstablished()) {
         WorkbenchContext::get()->release();
     }

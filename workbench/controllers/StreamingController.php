@@ -152,7 +152,7 @@ class StreamingController {
         $streamingConfig["cometdConfig"]["logLevel"] = "info";
         $streamingConfig["cometdConfig"]["appendMessageTypeToURL"] = false;
         $streamingConfig["cometdConfig"]["url"] =
-            "http" . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? "s" : "") . "://" .
+            "http" . (usingSslFromUserToWorkbench() ? "s" : "") ."://" .
             $_SERVER['HTTP_HOST'] .
             str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
 			(strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/") .

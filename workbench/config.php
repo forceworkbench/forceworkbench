@@ -765,6 +765,14 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "boolean"
     );
 
+    $config["redirectToHTTPS"] = array(
+        "label" => "Redirect to HTTPS",
+        "description" => "Redirect user to HTTPS if unsecure connection is used",
+        "default" => false,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
     $config["readOnlyMode"] = array(
         "label" => "Read Only Mode",
         "description" => "Disable access to pages that can change data or metadata. Do not use as a replacement for server-side validation.",
