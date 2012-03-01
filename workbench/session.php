@@ -2,11 +2,6 @@
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
 
-if (getConfig("redirectToHTTPS")) {
-    header("Location: " . "https://" . $_SERVER['HTTP_HOST']  . $_SERVER['REQUEST_URI']);
-    exit;
-}
-
 if (isset($_ENV['REDISTOGO_URL'])) {
   $redis_url = "tcp://" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_HOST) . ":" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PORT);
   if (!is_array(parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PASS))) {
@@ -80,6 +75,11 @@ foreach ($config as $configKey => $configValue) {
     else {
         $_SESSION['config'][$configKey] = $configValue['default'];
     }
+}
+
+if (getConfig("redirectToHTTPS") && !usingSslFromUserToWorkbench()) {
+    header("Location: " . "https://" . $_SERVER['HTTP_HOST']  . $_SERVER['REQUEST_URI']);
+    exit;
 }
 
 if ($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_COOKIE["callOptions_client"])) {
