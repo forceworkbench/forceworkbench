@@ -67,9 +67,12 @@ class LoginController {
         $this->termsFile = getConfig("termsFile");
         if (!empty($this->termsFile)) {
             if (!is_file($this->termsFile)) {
-                throw new Exception("Could not find Terms of Service.");
+                $termsHttpHeaders = get_headers($this->termsFile);
+                if ($termsHttpHeaders === FALSE || strpos($termsHttpHeaders[0], "200 OK") === FALSE) {
+                    throw new Exception("Could not find Terms of Service.");
+                }
             }
-            
+
             $this->termsRequired = true;
         }
     }
@@ -273,7 +276,7 @@ class LoginController {
         if (!$isAllowed) {
             throw new WorkbenchAuthenticationException("Requests for organization $orgId15 are not allowed");
         }
-        
+
 
         if (isset($_REQUEST['autoLogin'])) {
             $actionJump .= (strpos($actionJump, "?") > -1 ? "&" :  "?") . "autoLogin=1";
@@ -347,7 +350,7 @@ class LoginController {
 
             $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             $response = json_decode($json_response, true);
-            
+
             curl_close($curl);
         } catch (Exception $e) {
             throw new WorkbenchAuthenticationException("OAuth authentication failed connect to: " . $tokenUrl);

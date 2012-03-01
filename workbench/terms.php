@@ -2,6 +2,6 @@
 require_once 'session.php';
 require_once 'shared.php';
 require_once 'header.php';
-require_once 'terms.html';
+echo file_get_contents(getConfig("termsFile"));
 require_once 'footer.php';
 ?>
