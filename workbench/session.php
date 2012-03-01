@@ -2,6 +2,15 @@
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
 
+if (isset($_ENV['REDISTOGO_URL'])) {
+  $redis_url = "tcp://" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_HOST) . ":" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PORT);
+  if (!is_array(parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PASS))) {
+    $redis_url .= "?auth=" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PASS);
+  }
+  ini_set("session.save_path", $redis_url);
+  ini_set("session.save_handler", "redis");
+}
+
 ini_set("session.cookie_httponly", "1");
 session_start();
 
