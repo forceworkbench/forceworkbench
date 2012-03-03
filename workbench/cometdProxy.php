@@ -16,6 +16,9 @@ $forceSSL = WorkbenchContext::get()->isSecure();
 $sessionId = WorkbenchContext::get()->getSessionId();
 session_write_close();
 
+// send back an empty pre-response for load balancers that are expecting a response within a time window
+flush();
+
 $proxy = new PhpReverseProxy();
 $proxy->headers[] = "Authorization: OAuth $sessionId";
 $proxy->host = $host;
