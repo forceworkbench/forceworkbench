@@ -15,8 +15,6 @@ if (WorkbenchContext::isEstablished() && WorkbenchContext::get()->isRequestStart
 }
 
 print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKBENCH_VERSION"] : "") . "<br/>\n";
-
-print "d" . WorkbenchConfig::init()->get("textareaRows");
 ?></div>
 
 </body>

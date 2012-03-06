@@ -6,19 +6,29 @@ class WorkbenchConfig {
 
     private $config;
 
-    static function init() {
-        $GLOBALS[self::INSTANCE] = new WorkbenchConfig();
+    /**
+     * @static
+     * @return WorkbenchConfig
+     */
+    static function get() {
+        if (!isset($GLOBALS[self::INSTANCE])) {
+            $GLOBALS[self::INSTANCE] = new WorkbenchConfig();
+        }
+
         return $GLOBALS[self::INSTANCE];
     }
 
     function __construct() {
         //load default config values
-        require_once 'config/defaults.php';
+        require 'defaults.php';
 
         // load file-based config overrides
-        if(is_file('config/overrides.php')) require_once 'config/overrides.php';
+        if(is_file('config/overrides.php')) require 'overrides.php';
 
-        $config = $GLOBALS["WORKBENCH_CONFIG_TEMP"];
+        // TODO: remove this temp hackiness
+        $this->config = $GLOBALS["WORKBENCH_CONFIG_TEMP"];
+        unset($GLOBALS["WORKBENCH_CONFIG_TEMP"]);
+        unset($GLOBALS["config"]);
 
         // load environment variable based overrides
         $configNamespace = "forceworkbench";
@@ -34,7 +44,7 @@ class WorkbenchConfig {
         
             foreach ($envKeyParts as $keyPart) {
                 if ($keyPart === $configNamespace) {
-                    $point = &$config;
+                    $point = &$this->config;
                     continue;
                 }
         
@@ -53,7 +63,7 @@ class WorkbenchConfig {
             $point = ($envValue === "false") ? false : $envValue;
         }
         
-        foreach ($config as $configKey => $configValue) {
+        foreach ($this->config as $configKey => $configValue) {
             // skip headers
             if (isset($configValue['isHeader'])) {
                 continue;
@@ -63,35 +73,52 @@ class WorkbenchConfig {
             else if (isset($_COOKIE[$configKey])) {
                 // override the session value with that of the cookie
                 if ($configValue['overrideable']) {
-                    $this->config[$configKey] = $_COOKIE[$configKey];
+                    $this->config[$configKey]['value'] = $_COOKIE[$configKey];
                 }
                 // remove the override if not actually overridable and set to default
                 else {
                     setcookie($configKey,NULL,time()-3600);
-                    $this->config[$configKey] = $configValue['default'];
+                    $this->config[$configKey]['value'] = $configValue['default'];
                 }
             }
             // otherwise, just use the default
             else {
-                $this->config[$configKey] = $configValue['default'];
+                $this->config[$configKey]['value'] = $configValue['default'];
             }
         }
-        
-        unset($GLOBALS["WORKBENCH_CONFIG_TEMP"]);
+
+        if ($this->config['callOptions_client']['default'] == 'WORKBENCH_DEFAULT' && !isset($_COOKIE['callOptions_client'])) {
+            $this->config['callOptions_client']['value'] = getWorkbenchUserAgent();
+        }
     }
-    
-    public function get($configKey) {
-        if (!isset($this->config[$configKey]) || 
-            (isset($GLOBALS["config"][$configKey]["minApiVersion"])) &&
-             !WorkbenchContext::get()->isApiVersionAtLeast($GLOBALS["config"][$configKey]["minApiVersion"])) {
-            
-            if ($GLOBALS["config"][$configKey]["dataType"] == "boolean") {
+
+
+    // TODO: what to do about min api version?
+    public function value($configKey) {
+        if (!isset($this->config[$configKey]["value"])) {
+            if ($this->config[$configKey]["dataType"] == "boolean") {
                 return false;
             } else {
                 return null;
             }
         }
-        
-        return $this->config[$configKey];
+
+        return $this->config[$configKey]["value"];
+    }
+
+    public function valuesToLabels($configKey) {
+        if (!isset($this->config[$configKey]["valuesToLabels"])) {
+            return array();
+        }
+
+        return $this->config[$configKey]["valuesToLabels"];
+    }
+
+    public function minApiVersion($configKey) {
+        if (isset($this->config[$configKey]["minApiVersion"])) {
+            return false;
+        }
+
+        return $this->config[$configKey]["minApiVersion"];
     }
 }

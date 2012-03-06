@@ -2,6 +2,7 @@
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
 require_once 'config/WorkbenchConfig.php';
+require_once 'config/constants.php';
 
 if (isset($_ENV['REDISTOGO_URL'])) {
   $redis_url = "tcp://" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_HOST) . ":" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PORT);
@@ -15,76 +16,9 @@ if (isset($_ENV['REDISTOGO_URL'])) {
 ini_set("session.cookie_httponly", "1");
 session_start();
 
-//load default config values
-require_once 'config/defaults.php';
-
-// load file-based config overrides
-if(is_file('config/overrides.php')) require_once 'config/overrides.php';
-
-// load environment variable based overrides
-$configNamespace = "forceworkbench";
-$configDelim = "__";
-foreach ($_ENV as $envKey => $envValue) {
-    if (strpos($envKey, $configNamespace) !== 0) {
-        continue;
-    }
-
-    $envKey = str_replace("___DOT___", ".", $envKey);
-
-    $envKeyParts = explode($configDelim, $envKey);
-
-    foreach ($envKeyParts as $keyPart) {
-        if ($keyPart === $configNamespace) {
-            $point = &$config;
-            continue;
-        }
-
-        if (!isset($point[$keyPart])) {
-            $point[$keyPart] = "";
-        }
-
-        $point = &$point[$keyPart];
-    }
-
-    if (!isset($point) || is_array($point)) {
-        workbenchLog(LOG_ERR, "Invalid location for $envKey");
-        continue;
-    }
-
-    $point = ($envValue === "false") ? false : $envValue;
-}
-
-foreach ($config as $configKey => $configValue) {
-    // skip headers
-    if (isset($configValue['isHeader'])) {
-        continue;
-    }
-
-    // does the user have an override?
-    else if (isset($_COOKIE[$configKey])) {
-        // override the session value with that of the cookie
-        if ($configValue['overrideable']) {
-            $_SESSION['config'][$configKey] = $_COOKIE[$configKey];
-        }
-        // remove the override if not actually overridable and set to default
-        else {
-            setcookie($configKey,NULL,time()-3600);
-            $_SESSION['config'][$configKey] = $configValue['default'];
-        }
-    }
-    // otherwise, just use the default
-    else {
-        $_SESSION['config'][$configKey] = $configValue['default'];
-    }
-}
-
 if (getConfig("redirectToHTTPS") && !usingSslFromUserToWorkbench()) {
     header("Location: " . "https://" . $_SERVER['HTTP_HOST']  . $_SERVER['REQUEST_URI']);
     exit;
-}
-
-if ($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_COOKIE["callOptions_client"])) {
-    $_SESSION['config']['callOptions_client'] = getWorkbenchUserAgent();
 }
 
 // must come after configs are loaded...lets hope there's not a problem above

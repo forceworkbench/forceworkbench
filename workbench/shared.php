@@ -113,18 +113,7 @@ function addFooterScript($script) {
 }
 
 function getConfig($configKey) {
-    if (!isset($_SESSION["config"][$configKey]) || 
-        (isset($GLOBALS["config"][$configKey]["minApiVersion"])) &&
-         !WorkbenchContext::get()->isApiVersionAtLeast($GLOBALS["config"][$configKey]["minApiVersion"])) {
-        
-        if ($GLOBALS["config"][$configKey]["dataType"] == "boolean") {
-            return false;
-        } else {
-            return null;
-        }
-    }
-    
-    return $_SESSION["config"][$configKey];
+    return WorkbenchConfig::get()->value($configKey);
 }
 
 function isReadOnlyMode() {

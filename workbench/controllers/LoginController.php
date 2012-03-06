@@ -427,7 +427,7 @@ class LoginController {
 
     public function getSubdomainSelectOptions() {
         $subdomains = array();
-        foreach ($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $info) {
+        foreach (WorkbenchConfig::get()->valuesToLabels("defaultInstance") as $subdomain => $info) {
             $subdomains[$subdomain] = $info[0];
         }
         return $subdomains;
@@ -446,7 +446,7 @@ class LoginController {
     }
 
     public function getApiVersionSelectOptions() {
-        return $GLOBALS['config']['defaultApiVersion']['valuesToLabels'];
+        return WorkbenchConfig::get()->valuesToLabels("defaultApiVersion");
     }
 
     public function getStartUrlSelectOptions() {
@@ -462,7 +462,7 @@ class LoginController {
 
     public function getServerIdMap() {
         $serverIdMap = array();
-        foreach ($GLOBALS['config']['defaultInstance']['valuesToLabels'] as $subdomain => $info) {
+        foreach (WorkbenchConfig::get()->valuesToLabels("defaultInstance") as $subdomain => $info) {
             if (isset($info[1]) && $info[1] != "") {
                 $serverIdMap[$info[1]] = $subdomain;
             }
