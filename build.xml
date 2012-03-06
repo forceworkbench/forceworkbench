@@ -24,7 +24,7 @@
 -->
 
 	<target name="init" description="Initializes versioning properties">
-		<loadfile file="${dir.src}/config.php" property="app.config"/>
+		<loadfile file="workbench/config/defaults.php" property="app.config"/>
 		<php function="matchOne" returnProperty="app.version">
 			<param value="/\$GLOBALS\[&quot;WORKBENCH_VERSION&quot;\] = &quot;(.+)&quot;;/"/>
 			<param value="${app.config}"/>

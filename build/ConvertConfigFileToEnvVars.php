@@ -9,7 +9,7 @@
 if ($argc > 1) {
     $configFile = $argv[1];
 } else {
-    $defaultConfigFile = "../workbench/configOverrides.php";
+    $defaultConfigFile = "../workbench/config/overrides.php";
     $configFile = trim(readline("Provide location of config file to convert [$defaultConfigFile]:"));
     if ($configFile == "") {
         $configFile = $defaultConfigFile;

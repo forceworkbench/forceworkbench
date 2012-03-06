@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    TO CONFIGURE WORKBENCH FOR ALL YOUR USERS, ADJUST THE "DEFAULT" VALUES FOR THE KEYS BELOW.
-//    FOR EASIER UPGRADING, YOU MAY IT IS RECOMMENDED TO MAKE THESE CHANGES TO THE configOverrides.php FILE
+//    FOR EASIER UPGRADING, YOU MAY IT IS RECOMMENDED TO MAKE THESE CHANGES TO THE overrides.php FILE
 //    WHICH ARE APPLIED AFTER LOADING CONFIGURATIONS FROM THIS FILE.
 //
 //    IF YOU WOULD LIKE TO ALLOW YOUR USERS TO OVERRIDE THE DEFAULTS SET THE "OVERRIDEABLE" VALUE TO true.
@@ -315,7 +315,7 @@ $config["header_LoginOptions"] = array(
         "dataType" => "string"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["termsFile"] = array(
         "label" => "Terms of Service File",
         "description" => "An HTML file containing Terms of Service that will be required for login.",
@@ -739,7 +739,7 @@ $config["header_SecurityOptions"] = array(
         "minApiVersion" => 13.0
     );
 
-    // This should never be overrideable by end users; instead, admins can override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins can override default in overrides.php
     $config["requireSSL"] = array(
         "label" => "Requires a Secure Connection",
         "description" => "Requires a secure connection to between this computer and the Workbench server AND between Workbench server and Salesforce API. Returns an HTTP 403.4 error if not satisfied.",
@@ -781,7 +781,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "boolean"
     );
 
-    // This should never be overrideable by end users; instead, admins can override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins can override default in overrides.php
     $config["loginCsrfEnabled"] = array(
         "label" => "Enable CSRF Protection for Login",
         "description" => "Enable CSRF (Cross-Site Request Forgery) protection for login.",
@@ -790,7 +790,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "boolean"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["csrfSecret"] = array(
         "label" => "CSRF Salting Secret",
         "description" => "Used for salting the CSRF (Cross-Site Request Forgery) tokens.",
@@ -799,7 +799,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "string"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["orgIdWhiteList"] = array(
         "label" => "Organization Id Whitelist",
         "description" => "A comma-separated list of organization ids which are the only ones allowed to connect to Workbench.",
@@ -808,7 +808,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "string"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["orgIdBlackList"] = array(
         "label" => "Organization Id Blacklist",
         "description" => "A comma-separated list of organization ids which are not allowed to connect to Workbench.",
@@ -817,7 +817,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "string"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["oauthRequired"] = array(
         "label" => "Require OAuth Login",
         "description" => "Require OAuth Login",
@@ -826,7 +826,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "boolean"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["oauthConfigs"] = array(
         "label" => "OAuth 2.0 Consumer Key",
         "description" => "OAuth 2.0 Consumer Key",
@@ -899,6 +899,9 @@ $config["header_internal"] = array(
         "overrideable" => false,
         "dataType" => "boolean"
     );
+
+
+$GLOBALS["WORKBENCH_CONFIG_TEMP"] = $config;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //

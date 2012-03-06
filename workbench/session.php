@@ -1,6 +1,7 @@
 <?php
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
+require_once 'config/WorkbenchConfig.php';
 
 if (isset($_ENV['REDISTOGO_URL'])) {
   $redis_url = "tcp://" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_HOST) . ":" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PORT);
@@ -15,10 +16,10 @@ ini_set("session.cookie_httponly", "1");
 session_start();
 
 //load default config values
-require_once 'config.php';
+require_once 'config/defaults.php';
 
 // load file-based config overrides
-if(is_file('configOverrides.php')) require_once 'configOverrides.php';
+if(is_file('config/overrides.php')) require_once 'config/overrides.php';
 
 // load environment variable based overrides
 $configNamespace = "forceworkbench";

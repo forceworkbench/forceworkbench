@@ -26,7 +26,7 @@
     </taskdef>
 
     <target name="init">		
-        <loadfile srcfile="${dir.src}/config.php" property="app.config"/>
+        <loadfile srcfile="${dir.src}/config/defaults.php" property="app.config"/>
 
         <propertyregex property="app.version"
             input="${app.config}"
