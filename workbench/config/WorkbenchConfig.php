@@ -19,16 +19,26 @@ class WorkbenchConfig {
     }
 
     function __construct() {
+        // initialize in case load issues
+        $config = array();
+
         //load default config values
         require 'defaults.php';
 
         // load file-based config overrides
-        if(is_file('config/overrides.php')) require 'overrides.php';
+        if (is_file('overrides.php')) {
+            require 'overrides.php';
+        }
 
-        // TODO: remove this temp hackiness
-        $this->config = $GLOBALS["WORKBENCH_CONFIG_TEMP"];
-        unset($GLOBALS["WORKBENCH_CONFIG_TEMP"]);
-        unset($GLOBALS["config"]);
+        // load legecy file-based config-overrides
+        if (is_file('../configOverrides.php')) {
+            /** @noinspection PhpIncludeInspection */
+            require '../configOverrides.php';
+        }
+
+        // unset from global namespace
+        $this->config = $config;
+        unset($config);
 
         // load environment variable based overrides
         $configNamespace = "forceworkbench";
@@ -92,16 +102,10 @@ class WorkbenchConfig {
         }
     }
 
-
-    public function keys() {
-        return array_keys($this->config);
-    }
-
     public function entries() {
         return $this->config;
     }
 
-    // TODO: what to do about min api version?
     public function value($configKey) {
         if (!isset($this->config[$configKey]["value"])) {
             if ($this->config[$configKey]["dataType"] == "boolean") {
@@ -128,13 +132,5 @@ class WorkbenchConfig {
         }
 
         return $this->config[$configKey]["valuesToLabels"];
-    }
-
-    public function minApiVersion($configKey) {
-        if (isset($this->config[$configKey]["minApiVersion"])) {
-            return false;
-        }
-
-        return $this->config[$configKey]["minApiVersion"];
     }
 }

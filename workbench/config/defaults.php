@@ -899,7 +899,4 @@ $config["header_internal"] = array(
         "overrideable" => false,
         "dataType" => "boolean"
     );
-
-
-$GLOBALS["WORKBENCH_CONFIG_TEMP"] = $config;
 ?>

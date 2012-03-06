@@ -1,8 +1,8 @@
 <?php
+require_once 'config/constants.php';
+require_once 'config/WorkbenchConfig.php';
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
-require_once 'config/WorkbenchConfig.php';
-require_once 'config/constants.php';
 
 if (isset($_ENV['REDISTOGO_URL'])) {
   $redis_url = "tcp://" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_HOST) . ":" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PORT);
