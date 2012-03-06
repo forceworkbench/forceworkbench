@@ -191,12 +191,10 @@ class LoginController {
         }
 
         // TODO: clean up this hackiness due to in-progress context refactoring...
-        $savedConfig = $_SESSION['config'];
         $savedOauthConfig = isset($_SESSION['oauth']) ? $_SESSION['oauth'] : null;
         session_unset();
         session_destroy();
         session_start();
-        $_SESSION['config'] = $savedConfig;
         $_SESSION['oauth'] = $savedOauthConfig;
 
         $overriddenClientId = isset($_REQUEST["clientId"]) ? $_REQUEST["clientId"] : null;

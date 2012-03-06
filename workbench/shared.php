@@ -249,7 +249,7 @@ function validateUploadedFile($file) {
         8=>"File upload stopped by extension.  Please try again. (Error 8)"
         );
 
-        if ($_SESSION['config']['maxFileSize']['overrideable']) {
+        if (WorkbenchConfig::get()->overrideable('maxFileSize')) {
             $uploadErrorCodes[2] = "The file uploaded is too large. Please try again or adjust in Settings. (Error 2)";
         }
 

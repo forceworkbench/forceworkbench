@@ -106,6 +106,14 @@ class WorkbenchConfig {
         return $this->config[$configKey]["value"];
     }
 
+    public function overrideable($configKey) {
+        if (isset($this->config[$configKey]["overrideable"])) {
+            return false;
+        }
+
+        return $this->config[$configKey]["overrideable"];
+    }
+
     public function valuesToLabels($configKey) {
         if (!isset($this->config[$configKey]["valuesToLabels"])) {
             return array();
