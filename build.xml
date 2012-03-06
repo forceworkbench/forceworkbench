@@ -24,7 +24,7 @@
 -->
 
 	<target name="init" description="Initializes versioning properties">
-		<loadfile file="workbench/config/defaults.php" property="app.config"/>
+		<loadfile file="workbench/config/constants.php" property="app.config"/>
 		<php function="matchOne" returnProperty="app.version">
 			<param value="/\$GLOBALS\[&quot;WORKBENCH_VERSION&quot;\] = &quot;(.+)&quot;;/"/>
 			<param value="${app.config}"/>
@@ -76,6 +76,7 @@
         <!--suppress PhingDomInspection -->
         <copy todir="${env.PUBLIC_HTML_DIR}">
 			<fileset dir="${dir.dist.versions}/${app.version.stripped}/${dir.src}">
+				<exclude name="**/config/overrides.php"/>
 				<exclude name="**/configOverrides.php"/>
 			</fileset>
 		</copy>

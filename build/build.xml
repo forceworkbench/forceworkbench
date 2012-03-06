@@ -26,7 +26,7 @@
     </taskdef>
 
     <target name="init">		
-        <loadfile srcfile="${dir.src}/config/defaults.php" property="app.config"/>
+        <loadfile srcfile="${dir.src}/config/constants.php" property="app.config"/>
 
         <propertyregex property="app.version"
             input="${app.config}"
@@ -80,6 +80,7 @@
         <fail unless="dir.www" message="Must set dir.www property"/>
         <copy todir="${dir.www}">
             <fileset dir="${dir.dist}/staging/workbench">
+                <exclude name="**/config/overrides.php"/>
                 <exclude name="**/configOverrides.php"/>
             </fileset>
         </copy>
