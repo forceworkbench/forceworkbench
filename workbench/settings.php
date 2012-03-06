@@ -6,7 +6,7 @@ $errors = null;
 
 if (isset($_POST['submitConfigSetter'])) {
     //find errors
-    foreach ($config as $configKey => $configValue) {
+    foreach (WorkbenchConfig::get()->entries() as $configKey => $configValue) {
         if (!isset($configValue['isHeader']) && isset($_POST[$configKey])) {
             if (isset($configValue['maxValue']) && $configValue['maxValue'] < $_POST[$configKey]) {
                 $errors[] = $configValue['label'] . " must not be greater than " . $configValue['maxValue'];
@@ -23,7 +23,7 @@ if (isset($_POST['submitConfigSetter'])) {
 }
 
 if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['restoreDefaults'])) {
-    foreach ($config as $configKey => $configValue) {
+    foreach (WorkbenchConfig::get()->entries() as $configKey => $configValue) {
         // ignore headers
         if (isset($configValue['isHeader'])) {
             continue;
@@ -84,7 +84,7 @@ if (isset($errors)) {
 
 if (isLoggedIn()) {
     $unsupportedConfigs = array();
-    foreach ($config as $configKey => $configValue) {
+    foreach (WorkbenchConfig::get()->entries() as $configKey => $configValue) {
          if (isset($configValue['minApiVersion']) && !WorkbenchContext::get()->isApiVersionAtLeast($configValue['minApiVersion'])) {
              $unsupportedConfigs[] = $configValue['label'] . sprintf(" (Requires %01.1f)", $configValue['minApiVersion']);
          }
@@ -106,7 +106,7 @@ print "<table border='0' cellspacing='5' style='border-width-top: 1'>\n";
 
 print "<tr> <td colspan='3' align='left'><input type='submit' name='submitConfigSetter' value='Apply Settings'/>&nbsp;<input type='submit' name='restoreDefaults' value='Restore Defaults'/>&nbsp;<input type='reset' value='Cancel'/></td> </tr>";
 
-foreach ($config as $configKey => $configValue) {
+foreach (WorkbenchConfig::get()->entries() as $configKey => $configValue) {
     // don't even try to deal with complex types
     if (isset($configValue['dataType']) && $configValue['dataType'] == "complex") {
         continue;
@@ -124,12 +124,12 @@ foreach ($config as $configKey => $configValue) {
         print "\t\t<td align='left'>";
         if ($configValue['dataType'] == "boolean") {
             print "<input name='$configKey' id='$configKey' type='checkbox' ";
-            if($_SESSION['config'][$configKey]) print " checked='true'";
+            if($configValue['value']) print " checked='true'";
             print "/></td>\n";
         } else if ($configValue['dataType'] == "string" || $configValue['dataType'] == "int") {
-            print "<input name='$configKey' id='$configKey' type='text' value='" . (isset($_SESSION['config'][$configKey]) ? $_SESSION['config'][$configKey] : "") . "' size='30'/></td>\n";
+            print "<input name='$configKey' id='$configKey' type='text' value='" . (isset($configValue['value']) ? $configValue['value'] : "") . "' size='30'/></td>\n";
         } else if ($configValue['dataType'] == "password") {
-            print "<input name='$configKey' id='$configKey' type='password' value='". (isset($_SESSION['config'][$configKey]) ? $_SESSION['config'][$configKey] : "")  . "' size='30'/></td>\n";
+            print "<input name='$configKey' id='$configKey' type='password' value='". (isset($configValue['value']) ? $configValue['value'] : "")  . "' size='30'/></td>\n";
         } else if ($configValue['dataType'] == "picklist") {
             print "<select name='$configKey' id='$configKey'>";
             foreach ($configValue['valuesToLabels'] as $value => $label) {
@@ -137,7 +137,7 @@ foreach ($config as $configKey => $configValue) {
                     $label = $label[$configValue['labelKey']]; //if the label is an array, this will pull the nested label out
                 }
                 print "<option value=\"" . $value . "\"";
-                if (isset($_SESSION['config'][$configKey]) && $_SESSION['config'][$configKey] == $value) {
+                if (isset($configValue['value']) && $configValue['value'] == $value) {
                     print " selected=\"selected\"";
                 }
                 print ">" . $label . "</option>";

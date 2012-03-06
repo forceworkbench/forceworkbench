@@ -93,6 +93,14 @@ class WorkbenchConfig {
     }
 
 
+    public function keys() {
+        return array_keys($this->config);
+    }
+
+    public function entries() {
+        return $this->config;
+    }
+
     // TODO: what to do about min api version?
     public function value($configKey) {
         if (!isset($this->config[$configKey]["value"])) {
