@@ -19,11 +19,11 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     }
 
     $persistedSavedQueryRequestsKey = "PSQR@";
-    if (getConfig("savedQueriesAndSearchesPersistanceLevel") == 'USER') {
+    if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == 'USER') {
         $persistedSavedQueryRequestsKey .= WorkbenchContext::get()->getUserInfo()->userId . "@" . WorkbenchContext::get()->getUserInfo()->organizationId;
-    } else if (getConfig("savedQueriesAndSearchesPersistanceLevel") == "ORG") {
+    } else if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == "ORG") {
         $persistedSavedQueryRequestsKey .= WorkbenchContext::get()->getUserInfo()->organizationId;
-    } else if (getConfig("savedQueriesAndSearchesPersistanceLevel") == 'ALL') {
+    } else if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == 'ALL') {
         $persistedSavedQueryRequestsKey .= "ALL";
     }
 
@@ -37,7 +37,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     } else {
         $queryRequest = new QueryRequest($defaultSettings);
         $queryRequest->setObject(WorkbenchContext::get()->getDefaultObject());
-        if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE' && !isset($_SESSION['savedQueryRequests']) && isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
+        if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE' && !isset($_SESSION['savedQueryRequests']) && isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
             $_SESSION['savedQueryRequests'] = unserialize($_COOKIE[$persistedSavedQueryRequestsKey]);
         }
     }
@@ -45,7 +45,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     //clear  all saved queries in scope if user requests
     if (isset($_POST['clearAllQr']) && $_POST['clearAllQr'] == 'Clear All') {
         $_SESSION['savedQueryRequests'] = null;
-        if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
+        if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
             setcookie($persistedSavedQueryRequestsKey,null,time()-3600);
         }
     }
@@ -53,7 +53,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     //save as named query
     if (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' && isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0) {
         $_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES)] = $lastQr;
-        if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
+        if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
             setcookie($persistedSavedQueryRequestsKey,serialize($_SESSION['savedQueryRequests']),time()+60*60*24*7);
         }
     }
@@ -448,7 +448,7 @@ function toggleMatrixSortSelectors(hasChanged) {
 QUERY_BUILDER_SCRIPT;
 
 
-        if (getConfig("autoJumpToResults")) {
+        if (WorkbenchConfig::get()->value("autoJumpToResults")) {
             print "<form method='POST' id='query_form' name='query_form' action='#qr'>\n";
         } else {
             print "<form method='POST' id='query_form' name='query_form' action=''>\n";
@@ -499,7 +499,7 @@ QUERY_BUILDER_SCRIPT;
         if ($queryRequest->getExportTo() == 'matrix') print "checked='true'";
         print " onClick='toggleMatrixSortSelectors(true);'>Matrix</label>";
 
-        if (getConfig("allowQueryCsvExport")) {
+        if (WorkbenchConfig::get()->value("allowQueryCsvExport")) {
             print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
             if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
             print " onClick='toggleMatrixSortSelectors(true);'>CSV</label>&nbsp;";
@@ -590,7 +590,7 @@ QUERY_BUILDER_SCRIPT;
 
 
     print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-        "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . getConfig("textareaRows") . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES) . "</textarea>\n" .
+        "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . WorkbenchConfig::get()->value("textareaRows") . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES) . "</textarea>\n" .
       "</td></tr>\n";
 
 
@@ -628,7 +628,7 @@ QUERY_BUILDER_SCRIPT;
 
 function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false) {
     try {
-        if (!getConfig("allowParentRelationshipQueries") && preg_match("/SELECT.*?(\w+\.\w+).*FROM/i", $soqlQuery, $matches)) {
+        if (!WorkbenchConfig::get()->value("allowParentRelationshipQueries") && preg_match("/SELECT.*?(\w+\.\w+).*FROM/i", $soqlQuery, $matches)) {
 
             $msg = "Parent relationship queries are disabled in Workbench: " . $matches[1];
 
@@ -674,8 +674,8 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
         }
 
         $memLimitBytes = toBytes(ini_get("memory_limit"));
-        $memWarningThreshold = getConfig("memoryUsageWarningThreshold") / 100;
-        while(($suppressScreenOutput || getConfig("autoRunQueryMore")) && !$queryResponse->done) {
+        $memWarningThreshold = WorkbenchConfig::get()->value("memoryUsageWarningThreshold") / 100;
+        while(($suppressScreenOutput || WorkbenchConfig::get()->value("autoRunQueryMore")) && !$queryResponse->done) {
 
             if ($memLimitBytes != 0 && (memory_get_usage() / $memLimitBytes > $memWarningThreshold)) {
                 displayError("Workbench almost exhausted all its memory after only processing " . count($records) . " rows of data.
@@ -887,18 +887,18 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
 
     //Check if records were returned
     if ($records) {
-        if (getConfig("areTablesSortable")) {
+        if (WorkbenchConfig::get()->value("areTablesSortable")) {
             addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/sortable.js'></script>");
         }
         
         try {
             $rowNum = 0;
             print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
-            if (isset($_SESSION['queryLocator']) && !getConfig("autoRunQueryMore")) {
+            if (isset($_SESSION['queryLocator']) && !WorkbenchConfig::get()->value("autoRunQueryMore")) {
                 preg_match("/-(\d+)/",$_SESSION['queryLocator'],$lastRecord);
                 $rowNum = ($lastRecord[1] - count($records) + 1);
                 print "<p>Returned records $rowNum - " . $lastRecord[1] . " of ";
-            } else if (!getConfig("autoRunQueryMore")) {
+            } else if (!WorkbenchConfig::get()->value("autoRunQueryMore")) {
                 $rowNum = ($_SESSION['totalQuerySize'] - count($records) + 1);
                 print "<p>Returned records $rowNum - " . $_SESSION['totalQuerySize'] . " of ";
             } else {
@@ -912,7 +912,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
             printf ("%01.3f", $queryTimeElapsed);
             print " seconds:</p>\n";
 
-            if (!getConfig("autoRunQueryMore") && $_SESSION['queryLocator']) {
+            if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $_SESSION['queryLocator']) {
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
             }
 
@@ -920,7 +920,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
             createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
             createQueryResultTable($records, $rowNum));
 
-            if (!getConfig("autoRunQueryMore") && $_SESSION['queryLocator']) {
+            if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $_SESSION['queryLocator']) {
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
             }
 
@@ -939,7 +939,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
 
 //Export the above query to a CSV file
 function exportQueryAsCsv($records,$queryAction) {
-    if (!getConfig("allowQueryCsvExport")) {
+    if (!WorkbenchConfig::get()->value("allowQueryCsvExport")) {
         throw new Exception("Export to CSV not allowed");
     }
 
@@ -991,7 +991,7 @@ function queryAsync($queryRequest) {
 
     $job->setOpertion("query");
     $job->setContentType(substr($queryRequest->getExportTo(), strlen("async_")));
-    $job->setConcurrencyMode(getConfig("asyncConcurrencyMode"));
+    $job->setConcurrencyMode(WorkbenchConfig::get()->value("asyncConcurrencyMode"));
 
     $job = $asyncConnection->createJob($job);
     $asyncConnection->createBatch($job, $queryRequest->getSoqlQuery());

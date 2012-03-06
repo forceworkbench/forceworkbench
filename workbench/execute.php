@@ -14,8 +14,8 @@ if (isset($_POST['execute'])) {
     $_SESSION['LogCategory'] = $_POST['LogCategory'];
     $_SESSION['LogCategoryLevel'] = $_POST['LogCategoryLevel'];
 } else if (!isset($_SESSION['LogCategory']) && !isset($_SESSION['LogCategoryLevel'])) {
-    $_SESSION['LogCategory'] = getConfig("defaultLogCategory");
-    $_SESSION['LogCategoryLevel'] = getConfig("defaultLogCategoryLevel");
+    $_SESSION['LogCategory'] = WorkbenchConfig::get()->value("defaultLogCategory");
+    $_SESSION['LogCategoryLevel'] = WorkbenchConfig::get()->value("defaultLogCategoryLevel");
 }
 
 
@@ -44,7 +44,7 @@ if (isset($_POST['execute'])) {
     <tr>
         <td colspan="2"><textarea id='scriptInput' name='scriptInput'
             cols='100'
-            rows='<?php print getConfig("textareaRows") ?>'
+            rows='<?php print WorkbenchConfig::get()->value("textareaRows") ?>'
             style='overflow: auto; font-family: monospace, courier;'><?php echo htmlspecialchars(isset($_SESSION['scriptInput'])?$_SESSION['scriptInput']:null,ENT_QUOTES); ?></textarea>
         <p />
         <input type='submit' name="execute" value='Execute' /> <input

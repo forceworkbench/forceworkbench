@@ -25,7 +25,7 @@ class LoginController {
 
         $this->loginType = isset($_REQUEST['loginType'])
                              ? $_REQUEST['loginType']
-                             : getConfig("defaultLoginType");
+                             : WorkbenchConfig::get()->value("defaultLoginType");
 
         $this->username = isset($_REQUEST['un'])
                              ? $_REQUEST['un']
@@ -37,25 +37,25 @@ class LoginController {
 
         $this->subdomain = isset($_REQUEST['inst'])
                              ? $_REQUEST['inst']
-                             : getConfig("defaultInstance");
+                             : WorkbenchConfig::get()->value("defaultInstance");
 
         $this->apiVersion = isset($_REQUEST['api'])
                               ? $_REQUEST['api']
-                              : getConfig("defaultApiVersion");
+                              : WorkbenchConfig::get()->value("defaultApiVersion");
 
         $this->startUrl = isset($_REQUEST['startUrl'])
                               ? $_REQUEST['startUrl']
                               : "select.php";
 
         $this->oauthEnabled = false;
-        foreach (getConfig('oauthConfigs') as $host => $hostInfo) {
+        foreach (WorkbenchConfig::get()->value('oauthConfigs') as $host => $hostInfo) {
             if (!empty($hostInfo["label"]) && !empty($hostInfo["key"]) && !empty($hostInfo["secret"])) {
                 $this->oauthEnabled = true;
                 break;
             }
         }
 
-        $this->oauthRequired = getConfig("oauthRequired");
+        $this->oauthRequired = WorkbenchConfig::get()->value("oauthRequired");
         if ($this->oauthRequired) {
             $this->loginType = "oauth";
         }
@@ -64,7 +64,7 @@ class LoginController {
             throw new Exception("OAuth is required, but not enabled.");
         }
 
-        $this->termsFile = getConfig("termsFile");
+        $this->termsFile = WorkbenchConfig::get()->value("termsFile");
         if (!empty($this->termsFile)) {
             if (!is_file($this->termsFile)) {
                 $termsHttpHeaders = get_headers($this->termsFile);
@@ -87,7 +87,7 @@ class LoginController {
             return;
         }
 
-        if (getConfig("loginCsrfEnabled")) {
+        if (WorkbenchConfig::get()->value("loginCsrfEnabled")) {
             if (!validateCsrfToken(false)) {
                 $this->addError('This login method is not supported.');
                 return;
@@ -151,7 +151,7 @@ class LoginController {
         } else {
             $serverUrl .= "http";
 
-            if (getConfig("useHTTPS") && !stristr(getConfig("defaultInstance"), 'localhost')) {
+            if (WorkbenchConfig::get()->value("useHTTPS") && !stristr(WorkbenchConfig::get()->value("defaultInstance"), 'localhost')) {
                 $serverUrl .= "s";
             }
 
@@ -203,8 +203,8 @@ class LoginController {
                 throw new WorkbenchHandledException("OAuth login is required");
             }
 
-            $orgId = isset($_REQUEST["orgId"]) ? $_REQUEST["orgId"] : getConfig("loginScopeHeader_organizationId");
-            $portalId = isset($_REQUEST["portalId"]) ? $_REQUEST["portalId"] : getConfig("loginScopeHeader_portalId");
+            $orgId = isset($_REQUEST["orgId"]) ? $_REQUEST["orgId"] : WorkbenchConfig::get()->value("loginScopeHeader_organizationId");
+            $portalId = isset($_REQUEST["portalId"]) ? $_REQUEST["portalId"] : WorkbenchConfig::get()->value("loginScopeHeader_portalId");
 
             WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, null, $overriddenClientId));
             try {
@@ -248,8 +248,8 @@ class LoginController {
 
         // do org id whitelist/blacklisting
         $orgId15 = substr($userInfo->organizationId,0,15);
-        $orgIdWhiteList = array_map('trim',explode(",",getConfig("orgIdWhiteList")));
-        $orgIdBlackList = array_map('trim',explode(",",getConfig("orgIdBlackList")));
+        $orgIdWhiteList = array_map('trim',explode(",",WorkbenchConfig::get()->value("orgIdWhiteList")));
+        $orgIdBlackList = array_map('trim',explode(",",WorkbenchConfig::get()->value("orgIdBlackList")));
         $isAllowed = true;
         foreach ($orgIdWhiteList as $allowedOrgId) {
             if ($allowedOrgId === "") {
@@ -290,7 +290,7 @@ class LoginController {
             throw new Exception("OAuth not enabled");
         }
 
-        $oauthConfigs = getConfig("oauthConfigs");
+        $oauthConfigs = WorkbenchConfig::get()->value("oauthConfigs");
         $authUrl = "https://" . $hostName .
                     "/services/oauth2/authorize?response_type=code&display=popup&client_id=" .
                     $oauthConfigs[$hostName]["key"] . "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl());
@@ -309,7 +309,7 @@ class LoginController {
             $_SESSION['oauth']['serverUrlPrefix'] = "https://" . parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
         }
 
-        $oauthConfigs = getConfig("oauthConfigs");
+        $oauthConfigs = WorkbenchConfig::get()->value("oauthConfigs");
 
         $tokenUrl =  "https://" . $hostName . "/services/oauth2/token";
 
@@ -433,7 +433,7 @@ class LoginController {
 
     public function getOauthHostSelectOptions() {
         $hosts = array();
-        foreach (getConfig('oauthConfigs') as $host => $hostInfo) {
+        foreach (WorkbenchConfig::get()->value('oauthConfigs') as $host => $hostInfo) {
             if (empty($hostInfo["label"]) || empty($hostInfo["key"]) || empty($hostInfo["secret"])) {
                 continue;
             }
@@ -470,7 +470,7 @@ class LoginController {
 
     public function getJsConfig() {
         $jsConfig = array();
-        $jsConfig['useHTTPS'] = (bool) getConfig('useHTTPS');
+        $jsConfig['useHTTPS'] = (bool) WorkbenchConfig::get()->value('useHTTPS');
         $jsConfig['customServerUrl'] = isset($_REQUEST['serverUrl']) ? $_REQUEST['serverUrl'] : "";
         $jsConfig['serverIdMap'] = $this->getServerIdMap();
 

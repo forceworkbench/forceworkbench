@@ -99,22 +99,22 @@ class SforceBaseClient {
         $_SERVER['HTTP_USER_AGENT'] = 'Salesforce/PHPToolkit/1.0';
 
         $soapClientArray = array();
-        if (getConfig("debug") == true) {
+        if (WorkbenchConfig::get()->value("debug") == true) {
             $soapClientArray['trace'] = 1;
         }
         $soapClientArray['exceptions'] = true;
         $soapClientArray['encoding'] = 'utf-8';
 
-        if (getConfig("enableGzip") && phpversion() > '5.1.2') {
+        if (WorkbenchConfig::get()->value("enableGzip") && phpversion() > '5.1.2') {
             $soapClientArray['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | 1;
         }
 
-        if (getConfig("proxyEnabled")) {
+        if (WorkbenchConfig::get()->value("proxyEnabled")) {
             $proxySettings = array();
-            $proxySettings['proxy_host'] = getConfig("proxyHost");
-            $proxySettings['proxy_port'] = (int)getConfig("proxyPort"); // Use an integer, not a string
-            $proxySettings['proxy_login'] = getConfig("proxyUsername");
-            $proxySettings['proxy_password'] = getConfig("proxyPassword");
+            $proxySettings['proxy_host'] = WorkbenchConfig::get()->value("proxyHost");
+            $proxySettings['proxy_port'] = (int)WorkbenchConfig::get()->value("proxyPort"); // Use an integer, not a string
+            $proxySettings['proxy_login'] = WorkbenchConfig::get()->value("proxyUsername");
+            $proxySettings['proxy_password'] = WorkbenchConfig::get()->value("proxyPassword");
 
             $soapClientArray = array_merge($soapClientArray, $proxySettings);
         }
@@ -346,7 +346,7 @@ class SforceBaseClient {
             ));
             $this->sessionId = $id;
 
-            if (getConfig("includeSessionCookie")) {
+            if (WorkbenchConfig::get()->value("includeSessionCookie")) {
                 $this->sforce->__setCookie("sid", $id);
             }
         } else {

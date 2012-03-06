@@ -88,7 +88,7 @@ to define a retrieve request along with any applicable options:</p>
     action=''
     enctype='multipart/form-data'><input type='hidden'
     name='MAX_FILE_SIZE'
-    value='<?php print getConfig("maxFileSize"); ?>' />
+    value='<?php print WorkbenchConfig::get()->value("maxFileSize"); ?>' />
 <table>
     <tr>
         <td style='padding-right: 20px;'>Unpackaged Manifest:</td>

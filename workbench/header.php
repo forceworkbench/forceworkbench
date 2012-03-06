@@ -24,7 +24,7 @@
 
 <?php
 //check for latest version
-if (getConfig("checkForLatestVersion") && extension_loaded('curl') && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))) {
+if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('curl') && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))) {
     try {
         $ch = curl_init();
         if (stristr($GLOBALS["WORKBENCH_VERSION"],'beta')) {

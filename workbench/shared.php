@@ -2,7 +2,7 @@
 require_once "util/ExpandableTree.php";
 
 function workbenchLog($logLevel, $type, $message = "") {
-    if (!getConfig("enableLogging")) {
+    if (!WorkbenchConfig::get()->value("enableLogging")) {
         return;
     }
 
@@ -20,7 +20,7 @@ function workbenchLog($logLevel, $type, $message = "") {
         }
     }
 
-    openlog("forceworkbench", LOG_ODELAY, getConfig("syslogFacility"));
+    openlog("forceworkbench", LOG_ODELAY, WorkbenchConfig::get()->value("syslogFacility"));
     syslog($logLevel, implode("`",
                      array($type,
                            $_SERVER['REMOTE_ADDR'],
@@ -43,7 +43,7 @@ function httpError($code, $reason) {
 }
 
 function getCsrfToken() {
-    return md5(getConfig("csrfSecret") . session_id() . $_SERVER['SCRIPT_NAME']);
+    return md5(WorkbenchConfig::get()->value("csrfSecret") . session_id() . $_SERVER['SCRIPT_NAME']);
 }
 
 function validateCsrfToken($doError = true) {
@@ -112,16 +112,12 @@ function addFooterScript($script) {
     $_REQUEST["footerScripts"][$scriptHash] = $script;
 }
 
-function getConfig($configKey) {
-    return WorkbenchConfig::get()->value($configKey);
-}
-
 function isReadOnlyMode() {
-    return getConfig("readOnlyMode");
+    return WorkbenchConfig::get()->value("readOnlyMode");
 }
 
 function printAsyncRefreshBlock() {
-    if (getConfig("asyncAutoRefresh")) {
+    if (WorkbenchConfig::get()->value("asyncAutoRefresh")) {
         $lastRefreshNum = (isset($_GET['rn']) && is_numeric($_GET['rn']) && $_GET['rn'] > 0) ? $_GET['rn'] : 1;
         $nextRefreshNum = $lastRefreshNum + 1;
         $newUrl = isset($_GET['rn']) ? str_replace("rn=$lastRefreshNum", "rn=$nextRefreshNum", $_SERVER["REQUEST_URI"]) : ($_SERVER["REQUEST_URI"] . "&rn=1");
@@ -285,7 +281,7 @@ function getMyTitle() {
 }
 
 function getTableClass($defaultClass = 'dataTable') {
-    return getConfig("areTablesSortable") ? "sortable" : $defaultClass;
+    return WorkbenchConfig::get()->value("areTablesSortable") ? "sortable" : $defaultClass;
 }
 
 function displayError($errors, $showHeader=false, $showFooter=false) {
@@ -357,14 +353,14 @@ function localizeDateTimes($inputStr, $formatOverride = null) {
     // for the config option, otherwise default format
     $format = (($formatOverride != null) 
 	              ? $formatOverride 
-	              : ((getConfig("localeDateTimeFormat") !=  null) 
-	                  ? getConfig("localeDateTimeFormat") 
+	              : ((WorkbenchConfig::get()->value("localeDateTimeFormat") !=  null)
+	                  ? WorkbenchConfig::get()->value("localeDateTimeFormat")
 	                  : 'Y-m-d\\TH:i:s.000P'));
 	                  
-    $timezone = getConfig("convertTimezone");
+    $timezone = WorkbenchConfig::get()->value("convertTimezone");
     
     // Short-circuit if we aren't actually doing anything useful.
-    if ($formatOverride == null && $timezone == "" && getConfig("localeDateTimeFormat") == "") {
+    if ($formatOverride == null && $timezone == "" && WorkbenchConfig::get()->value("localeDateTimeFormat") == "") {
         return $inputStr;
     } 
 
@@ -455,7 +451,7 @@ function addLinksToIds($inputStr) {
 
     $dmlTip = "";
 
-    if (getConfig("showIdActionsHover")) {
+    if (WorkbenchConfig::get()->value("showIdActionsHover")) {
         $tipWidth = 0;
         $dmlTip = "onmouseover=\"Tip('Choose an action:<br/>";
         $dmlActions = array("update", "delete", "undelete", "purge");
@@ -463,7 +459,7 @@ function addLinksToIds($inputStr) {
             $tipWidth += 55;
             $dmlTip .= "<a href=\'$dmlAction.php?sourceType=singleRecord&id=$1\'>" . ucfirst($dmlAction) . "</a>&nbsp;&nbsp;";
         }
-        if (getConfig('linkIdToUi')) {
+        if (WorkbenchConfig::get()->value('linkIdToUi')) {
             $tipWidth += 125;
             $dmlTip .= "<a " . str_replace("'", "\'", $uiHref) .">View in Salesforce</a>&nbsp;&nbsp;";
         }
@@ -494,13 +490,13 @@ function convertArrayToCsv($arr) {
 }
 
 function getProxySettings() {
-    if (!getConfig("proxyEnabled"))  return null;
+    if (!WorkbenchConfig::get()->value("proxyEnabled"))  return null;
 
     $proxySettings = array();
-    $proxySettings['proxy_host'] = getConfig("proxyHost");
-    $proxySettings['proxy_port'] = (int)getConfig("proxyPort"); // Use an integer, not a string
-    $proxySettings['proxy_username'] = getConfig("proxyUsername");
-    $proxySettings['proxy_password'] = getConfig("proxyPassword");
+    $proxySettings['proxy_host'] = WorkbenchConfig::get()->value("proxyHost");
+    $proxySettings['proxy_port'] = (int)WorkbenchConfig::get()->value("proxyPort"); // Use an integer, not a string
+    $proxySettings['proxy_username'] = WorkbenchConfig::get()->value("proxyUsername");
+    $proxySettings['proxy_password'] = WorkbenchConfig::get()->value("proxyPassword");
 
      return $proxySettings;
 }
@@ -558,7 +554,7 @@ function prettyPrintXml($xml, $htmlOutput=FALSE)
 
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {
-    if (getConfig("debug") == true) {
+    if (WorkbenchConfig::get()->value("debug") == true) {
 
         print "<script>
             function toggleDebugSection(title, sectionId) {

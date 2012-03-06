@@ -99,7 +99,7 @@ require_once "header.php";
         </div>
 
         <div class="loginType_std loginType_oauth loginType_adv">
-            <p style="display: <?php print getConfig("displayJumpTo") ? "block" : "none"; ?>">
+            <p style="display: <?php print WorkbenchConfig::get()->value("displayJumpTo") ? "block" : "none"; ?>">
                 <label for="startUrl">Jump to:</label>
                 <select id="startUrl" name="startUrl" style="width: 18em;">
                     <?php printSelectOptions($c->getStartUrlSelectOptions(), $c->getStartUrl()); ?>

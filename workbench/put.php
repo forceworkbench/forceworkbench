@@ -133,8 +133,8 @@ function put($action) {
             $csvArrayCount = count($_SESSION['csv_array']) - 1;
             if (!$csvArrayCount) {
                 displayError("The file uploaded contains no records. Please try again.", false, true);
-            } else if ($csvArrayCount > getConfig("maxFileLengthRows")) {
-                displayError ("The file uploaded contains more than " . getConfig("maxFileLengthRows") . " records. Please try again.", false, true);
+            } else if ($csvArrayCount > WorkbenchConfig::get()->value("maxFileLengthRows")) {
+                displayError ("The file uploaded contains more than " . WorkbenchConfig::get()->value("maxFileLengthRows") . " records. Please try again.", false, true);
             }
             $info = "The file $csvFileName was uploaded successfully and contains $csvArrayCount row";
             if ($csvArrayCount !== 1) $info .= 's';
@@ -245,7 +245,7 @@ function displayUploadFileWithObjectSelectionForm($action, $id = null, $warning 
     if ($action !== "retrieve") {
         print "<tr><td style='width: 10em;'><label><input type='radio' id='sourceType_file' name='sourceType' value='file'/>From File</label></td>\n" .
               "<td><input type='file' name='file' size='44' onchange='document.getElementById(\"sourceType_file\").checked=true;' />\n" .
-              "<input type='hidden' name='MAX_FILE_SIZE' value='" . getConfig("maxFileSize") . "' /></td></tr>\n";
+              "<input type='hidden' name='MAX_FILE_SIZE' value='" . WorkbenchConfig::get()->value("maxFileSize") . "' /></td></tr>\n";
     }
 
     print "<tr><td colspan='2'><br/><input type='submit' name='action' value='Next' /></td></tr>\n";
@@ -282,7 +282,7 @@ function convertCsvFileToArray($file) {
     $csvArray = array();
     $handle = fopen($file, "r");
     $memLimitBytes = toBytes(ini_get("memory_limit"));
-    $memWarningThreshold = getConfig("memoryUsageWarningThreshold") / 100;
+    $memWarningThreshold = WorkbenchConfig::get()->value("memoryUsageWarningThreshold") / 100;
     for ($row=0; ($data = fgetcsv($handle)) !== FALSE; $row++) {
         if ($memLimitBytes != 0 && (memory_get_usage() / $memLimitBytes > $memWarningThreshold)) {
             displayError("Workbench almost exhausted all its memory after only processing $row rows of data.
@@ -464,7 +464,7 @@ function setFieldMappings($action,$csvArray) {
         foreach ($dmlActions as $dmlAction => $enabled) {
             print "<input type=\"button\" onclick=\"window.location.href='$dmlAction.php?sourceType=singleRecord&id=$id'\" value=\"" . ucfirst($dmlAction) . "\" " . (!$enabled ? "disabled=disabled" : "") . "/>&nbsp;&nbsp;";
         }
-        if (getConfig('linkIdToUi')) {
+        if (WorkbenchConfig::get()->value('linkIdToUi')) {
             $uiViewable = isset($describeSObjectResult->urlDetail) || in_array($objectType, array("Dashboard", "Report", "Division", "BusinessHours", "BrandTemplate"));
             print "<input type=\"button\" onclick=\"window.open('" . getJumpToSfdcUrlPrefix() . "$id')\" value=\"View in Salesforce\" " . ($uiViewable ? "" : "disabled=disabled") ."/>&nbsp;&nbsp;";
         }
@@ -490,7 +490,7 @@ function setFieldMappings($action,$csvArray) {
         print "<th>Value</th>";
     }
 
-    if (getConfig("showReferenceBy") && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
+    if (WorkbenchConfig::get()->value("showReferenceBy") && ($action == 'insert' || $action == 'update' || $action == 'upsert'))
     print "<th onmouseover=\"Tip('For fields that reference other objects, external ids from the foreign objects provided can be automatically matched to their corresponding primary ids. Use this column to select the object and field by which to perform the Smart Lookup. If left unselected, standard lookup using the primary id will be performed. If this field is disabled, only standard lookup is available because the foreign object contains no external ids.')\">Smart Lookup &nbsp; <img align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/></th>";
     print "</tr>\n";
 
@@ -604,7 +604,7 @@ function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord,
               "</td>";
     }
 
-    if ($showRefCol && getConfig("showReferenceBy")) {
+    if ($showRefCol && WorkbenchConfig::get()->value("showReferenceBy")) {
         if (isset($field->referenceTo) && isset($field->relationshipName)) {
             $describeRefObjResult = WorkbenchContext::get()->describeSObjects($field->referenceTo);
             printRefField($field, $describeRefObjResult);
@@ -757,7 +757,7 @@ function confirmFieldMappings($action, $fieldMap, $csvArray, $extId) {
     } 
 
     $recommendDoAsync = extension_loaded('curl')
-                        && count($csvArray) >= getConfig("asyncRecommendationThreshold")
+                        && count($csvArray) >= WorkbenchConfig::get()->value("asyncRecommendationThreshold")
                         && !in_array($action, array('Confirm Undelete', 'Confirm Purge'));
 
     if (($action == 'Confirm Update') || ($action == 'Confirm Delete') || ($action == 'Confirm Undelete') || ($action == 'Confirm Purge')) {
@@ -815,13 +815,13 @@ function displayFieldMappings($fieldMap,$extId,$showRefCol) {
     print "<table class='fieldMapping'>\n";
     print "<tr><th>Salesforce Field</th>";
     print "<th>CSV Field</th>";
-    if ($showRefCol && getConfig("showReferenceBy")) print "<th>Smart Lookup</th>";
+    if ($showRefCol && WorkbenchConfig::get()->value("showReferenceBy")) print "<th>Smart Lookup</th>";
     print "</tr>\n";
 
     foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
         print "<tr><td>$salesforceField</td>";
         print "<td>" . $fieldMapArray['csvField'] . "</td>";
-        if ($showRefCol && getConfig("showReferenceBy")) {
+        if ($showRefCol && WorkbenchConfig::get()->value("showReferenceBy")) {
             print "<td>";
             if (isset($fieldMapArray['relatedObjectName']) && isset($fieldMapArray['relatedFieldName'])) {
                 print $fieldMapArray['relatedObjectName'] . "." . $fieldMapArray['relatedFieldName'];
@@ -866,7 +866,7 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults) {
         $idArrayAll = $idArray;
 
         while($idArray) {
-            $idArrayBatch = array_splice($idArray,0,getConfig("batchSize"));
+            $idArrayBatch = array_splice($idArray,0,WorkbenchConfig::get()->value("batchSize"));
             try {
                 if($apiCall == 'purge') $apiCall = 'emptyRecycleBin';
                 $resultsMore = WorkbenchContext::get()->getPartnerConnection()->$apiCall($idArrayBatch);
@@ -905,12 +905,12 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
 
         while($csvArray) {
             $sObjects = array();
-            $csvArrayBatch = array_splice($csvArray,0,getConfig("batchSize"));
+            $csvArrayBatch = array_splice($csvArray,0,WorkbenchConfig::get()->value("batchSize"));
 
             for ($row=0; $row < count($csvArrayBatch); $row++) {
                 $sObject = new SObject;
                 $sObject->type = WorkbenchContext::get()->getDefaultObject();
-                if(getConfig("fieldsToNull")) $sObject->fieldsToNull = array();
+                if(WorkbenchConfig::get()->value("fieldsToNull")) $sObject->fieldsToNull = array();
                 $fields = array();
 
                 foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
@@ -926,7 +926,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
                         $col = array_search($fieldMapArray['csvField'],$csvHeader);
                         if ($csvArrayBatch[$row][$col] != "") {
                             $field = array($salesforceField => htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES));
-                        } else if (getConfig("fieldsToNull")) {
+                        } else if (WorkbenchConfig::get()->value("fieldsToNull")) {
                             $sObject->fieldsToNull[] = $salesforceField;
                         }
                     }
@@ -991,8 +991,8 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
             $job->setObject(WorkbenchContext::get()->getDefaultObject());
             $job->setOpertion($apiCall);
             $job->setContentType(isset($contentType) ? $contentType : ($doingZip ? "ZIP_CSV" : "CSV"));
-            $job->setConcurrencyMode(getConfig("asyncConcurrencyMode"));
-            if(getConfig("assignmentRuleHeader_assignmentRuleId")) $job->setAssignmentRuleId(getConfig("assignmentRuleHeader_assignmentRuleId"));
+            $job->setConcurrencyMode(WorkbenchConfig::get()->value("asyncConcurrencyMode"));
+            if(WorkbenchConfig::get()->value("assignmentRuleHeader_assignmentRuleId")) $job->setAssignmentRuleId(WorkbenchConfig::get()->value("assignmentRuleHeader_assignmentRuleId"));
             if($apiCall == "upsert" && isset($extId)) $job->setExternalIdFieldName($extId);
 
             $job = WorkbenchContext::get()->getAsyncBulkConnection()->createJob($job);
@@ -1016,7 +1016,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
     
             while($csvArray) {
                 $sObjects = array();
-                $csvArrayBatch = array_splice($csvArray,0,getConfig("asyncBatchSize"));
+                $csvArrayBatch = array_splice($csvArray,0,WorkbenchConfig::get()->value("asyncBatchSize"));
     
                 $asyncCsv = array();
     
@@ -1040,7 +1040,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
                     foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
                         $col = array_search($fieldMapArray['csvField'],$csvHeader);
                         if (isset($salesforceField) && isset($fieldMapArray['csvField'])) {
-                            if ($csvArrayBatch[$row][$col] == "" && getConfig("fieldsToNull")) {
+                            if ($csvArrayBatch[$row][$col] == "" && WorkbenchConfig::get()->value("fieldsToNull")) {
                                 $asyncCsvRow[] = "#N/A";
                             } else {
                                 $asyncCsvRow[] = htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES);
@@ -1237,7 +1237,7 @@ function displayBulkApiOptions($action, $forceDoAsync, $recommendDoAsync = false
         // find this user's settings that are in the unsupported config list
         $bulkUnsupportedSettings = array();
         foreach ($bulkUnsupportedConfigs as $c) {
-            if ($GLOBALS["config"][$c]["default"] != getConfig($c)) {
+            if ($GLOBALS["config"][$c]["default"] != WorkbenchConfig::get()->value($c)) {
                 $bulkUnsupportedSettings[] = $c;
             }
         }

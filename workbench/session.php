@@ -16,7 +16,7 @@ if (isset($_ENV['REDISTOGO_URL'])) {
 ini_set("session.cookie_httponly", "1");
 session_start();
 
-if (getConfig("redirectToHTTPS") && !usingSslFromUserToWorkbench()) {
+if (WorkbenchConfig::get()->value("redirectToHTTPS") && !usingSslFromUserToWorkbench()) {
     header("Location: " . "https://" . $_SERVER['HTTP_HOST']  . $_SERVER['REQUEST_URI']);
     exit;
 }
@@ -50,7 +50,7 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") {
     httpError("400 Bad Request", "Path info trailing script name in URI not allowed.");
 }
 
-if (getConfig("requireSSL") && !usingSslEndToEnd()) {
+if (WorkbenchConfig::get()->value("requireSSL") && !usingSslEndToEnd()) {
     if (WorkbenchContext::isEstablished()) {
         WorkbenchContext::get()->release();
     }
@@ -79,7 +79,7 @@ if (isLoggedIn()) {
     // todo: should this be in the ctx?
     if (!in_array(basename($_SERVER['PHP_SELF'], ".php"), array("login", "logout")) && isset($_SESSION['lastRequestTime'])) {
         $idleTime = microtime(true) - $_SESSION['lastRequestTime'];
-        if ($idleTime > (getConfig("sessionIdleMinutes") * 60)) {
+        if ($idleTime > (WorkbenchConfig::get()->value("sessionIdleMinutes") * 60)) {
             // ping SFDC to check if session is still alive
             WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
         }

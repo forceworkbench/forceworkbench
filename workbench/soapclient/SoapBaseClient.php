@@ -9,24 +9,24 @@ abstract class SoapBaseClient {
         $_SERVER['HTTP_USER_AGENT'] = getWorkbenchUserAgent();
 
         $soapClientArray = array();
-        if (getConfig("debug") == true) {
+        if (WorkbenchConfig::get()->value("debug") == true) {
             $soapClientArray['trace'] = 1;
         }
         $soapClientArray['encoding'] = 'utf-8';
         $soapClientArray['exceptions'] = true;
 
         //set compression settings
-        if (getConfig("enableGzip") && phpversion() > '5.1.2') {
+        if (WorkbenchConfig::get()->value("enableGzip") && phpversion() > '5.1.2') {
             $soapClientArray['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | 1;
         }
 
         //set proxy settings
-        if (getConfig("proxyEnabled") == true) {
+        if (WorkbenchConfig::get()->value("proxyEnabled") == true) {
             $proxySettings = array();
-            $proxySettings['proxy_host'] = getConfig("proxyHost");
-            $proxySettings['proxy_port'] = (int)getConfig("proxyPort"); // Use an integer, not a string
-            $proxySettings['proxy_login'] = getConfig("proxyUsername");
-            $proxySettings['proxy_password'] = getConfig("proxyPassword");
+            $proxySettings['proxy_host'] = WorkbenchConfig::get()->value("proxyHost");
+            $proxySettings['proxy_port'] = (int)WorkbenchConfig::get()->value("proxyPort"); // Use an integer, not a string
+            $proxySettings['proxy_login'] = WorkbenchConfig::get()->value("proxyUsername");
+            $proxySettings['proxy_password'] = WorkbenchConfig::get()->value("proxyPassword");
 
             $soapClientArray = array_merge($soapClientArray, $proxySettings);
         }
@@ -34,7 +34,7 @@ abstract class SoapBaseClient {
         $this->sforce = new SoapClient($wsdlPath, $soapClientArray);
 
         // set session cookie, if enabled
-        if (getConfig("includeSessionCookie")) {
+        if (WorkbenchConfig::get()->value("includeSessionCookie")) {
             $this->sforce->__setCookie("sid", $sessionId);
         }
 
@@ -48,14 +48,14 @@ abstract class SoapBaseClient {
 
         //set call options header
         if ($clientId != null) {
-            $clientBody = array('client' => new SoapVar(getConfig("callOptions_client"), XSD_STRING));
+            $clientBody = array('client' => new SoapVar(WorkbenchConfig::get()->value("callOptions_client"), XSD_STRING));
             $callOptionsHeader = new SoapHeader($this->getNamespace(), 'CallOptions', $clientBody, false);
             $headerArray[] = $callOptionsHeader;
         }
 
         //set allowFieldTruncationHeader header
-        if (getConfig("allowFieldTruncationHeader_allowFieldTruncation")) {
-            $allowFieldTruncationBody = array('allowFieldTruncation' => new SoapVar(getConfig("allowFieldTruncationHeader_allowFieldTruncation"), XSD_BOOLEAN));
+        if (WorkbenchConfig::get()->value("allowFieldTruncationHeader_allowFieldTruncation")) {
+            $allowFieldTruncationBody = array('allowFieldTruncation' => new SoapVar(WorkbenchConfig::get()->value("allowFieldTruncationHeader_allowFieldTruncation"), XSD_BOOLEAN));
             $allowFieldTruncationHeader = new SoapHeader($this->getNamespace(), 'AllowFieldTruncationHeader', $allowFieldTruncationBody, false);
             $headerArray[] = $allowFieldTruncationHeader;
         }

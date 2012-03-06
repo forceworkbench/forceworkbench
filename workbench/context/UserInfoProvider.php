@@ -4,7 +4,7 @@ require_once 'context/CacheableValueProvider.php';
 class UserInfoProvider extends CacheableValueProvider {
 
     function isCachingEnabled() {
-        return getConfig('cacheGetUserInfo');
+        return WorkbenchConfig::get()->value('cacheGetUserInfo');
     }
 
     function load($args) {
