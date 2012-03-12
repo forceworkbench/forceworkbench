@@ -32,12 +32,12 @@ if (isset($_POST['execute'])) {
         <td align="right">Log Category: <select id="LogCategory"
             name="LogCategory">
             <?php
-            printSelectOptions($config['defaultLogCategory']['valuesToLabels'],$_SESSION['LogCategory']);
+            printSelectOptions(WorkbenchConfig::get()->valuesToLabels('defaultLogCategory'),$_SESSION['LogCategory']);
             ?>
         </select> &nbsp; Log Level: <select id="LogCategoryLevel"
             name="LogCategoryLevel">
             <?php
-            printSelectOptions($config['defaultLogCategoryLevel']['valuesToLabels'],$_SESSION['LogCategoryLevel']);
+            printSelectOptions(WorkbenchConfig::get()->valuesToLabels('defaultLogCategoryLevel'),$_SESSION['LogCategoryLevel']);
             ?>
         </select></td>
     </tr>
