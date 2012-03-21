@@ -36,7 +36,7 @@ function workbenchLog($logLevel, $type, $message = "") {
 
 // TODO: handle level
 function _handle_error_log($logLevel, $expMessage) {
-    error_log($expMessage);
+    error_log("forceworkbench: " . $expMessage);
 }
 
 function _handle_syslog($logLevel, $expMessage) {
