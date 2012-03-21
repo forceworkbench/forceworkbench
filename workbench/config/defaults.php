@@ -159,6 +159,14 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
+    $config["logHandler"] = array(
+        "label" => "Logging Handle",
+        "description" => "Log handler to which to log. Valid values are 'syslog' or 'error_log'",
+        "default" => "syslog",
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
     $config["syslogFacility"] = array(
         "label" => "Syslog Facility",
         "description" => "Syslog facility to which to log.",
