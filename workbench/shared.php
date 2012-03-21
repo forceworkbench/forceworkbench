@@ -2,6 +2,8 @@
 require_once "util/ExpandableTree.php";
 
 function workbenchLog($logLevel, $type, $message = "") {
+    error_log("TEST APACHE LOGGING");
+
     if (!WorkbenchConfig::get()->value("enableLogging")) {
         return;
     }
