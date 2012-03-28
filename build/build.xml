@@ -62,19 +62,9 @@
         <mkdir dir="${dir.dist}/staging"/>
 
         <copy todir="${dir.dist}/staging">
-            <fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*, ${dir.src}/static/**"/>
-
-            <filterset begintoken="{{" endtoken="}}">
-                <filter token="WORKBENCH_VERSION" value="${app.version.stripped}"/>
-            </filterset>
-        </copy>
-
-        <copy todir="${dir.dist}/staging">
-            <fileset dir="." includes="${dir.src}/static/**"/>
-            <mapper type="glob" from="${dir.src}/static/{{WORKBENCH_VERSION}}/*" to="${dir.src}/static/${app.version.stripped}/*"/>
+            <fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*"/>
         </copy>
     </target>
-
 
     <target name="www" depends="stage" description="copies from staging to WWW dir of your choice">
         <fail unless="dir.www" message="Must set dir.www property"/>
