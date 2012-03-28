@@ -44,7 +44,7 @@ class ExpandableTree {
 
         print "</ul>\n";
 
-        addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/simpletreemenu.js'>\n".
+        addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/simpletreemenu.js') . "'>\n".
                         "/***********************************************\n".
                         "* Dynamic Countdown script- © Dynamic Drive (http://www.dynamicdrive.com)\n".
                         "* This notice MUST stay intact for legal use\n".
@@ -143,8 +143,7 @@ class ExpandableTree {
 
     public static function getClearCacheMenu() {
         return " | <a href='?clearCache' style='text-decoration:none;'>" .
-                    "<span style='text-decoration:underline;'>Clear Cache</span> <img src='" .
-                     getStaticResourcesPath() ."/images/sweep.png' border='0' align='top'/>" .
+                    "<span style='text-decoration:underline;'>Clear Cache</span> <img src='" . getPathToStaticResource('/images/sweep.png') . "' border='0' align='top'/>" .
                   "</a>";
     }
 

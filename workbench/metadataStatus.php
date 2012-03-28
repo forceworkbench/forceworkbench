@@ -100,7 +100,7 @@ try {
             print "<p/>";
 
             $zipLink = " | <a id='zipLink' href='?asyncProcessId=$asyncResults->id&downloadZip' onclick='undownloadedZip=false;' style='text-decoration:none;'>" .
-                       "<span style='text-decoration:underline;'>Download ZIP File</span> <img src='" . getStaticResourcesPath() ."/images/downloadIconCompleted.gif' border='0'/>" . 
+                       "<span style='text-decoration:underline;'>Download ZIP File</span> <img src='" . getPathToStaticResource('/images/downloadIconCompleted.gif') . "' border='0'/>" .
                        "</a></p>";
         }
 

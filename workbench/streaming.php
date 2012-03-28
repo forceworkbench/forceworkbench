@@ -77,7 +77,7 @@ require_once "header.php";
                        value="Delete"/>
 
                 <span id="waitingIndicator">
-                    <img src="<?php echo getStaticResourcesPath(); ?>/images/wait16trans.gif"/>
+                    <img src="<?php echo getPathToStaticResource('/images/wait16trans.gif'); ?>"/>
                     Processing...
                 </span>
             </div>
@@ -97,8 +97,8 @@ require_once "header.php";
 
 <?php
 if ($c->isEnabled()) {
-    addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/dojo/dojo/dojo.js'></script>");
-    addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/streamingClient.js'></script>");
+    addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/dojo/dojo/dojo.js') . "'></script>");
+    addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/streamingClient.js') . "'></script>");
     addFooterScript("<script type='text/javascript'>var wbStreaming = ". $c->getStreamingConfig() . ";</script>");
 }
 require_once "footer.php";

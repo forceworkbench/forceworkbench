@@ -282,7 +282,7 @@ SEARCH_BUILDER_SCRIPT;
         print "<input type='submit' name='clearAllSr' value='Clear All'/>\n";
 
         print "&nbsp;&nbsp;" .
-          "<img onmouseover=\"Tip('Save a search with a name and run it at a later time during your session. Note, if a search is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/>";
+          "<img onmouseover=\"Tip('Save a search with a name and run it at a later time during your session. Note, if a search is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
 
 
         print "</td></tr></table><p/></form>\n";
@@ -323,7 +323,7 @@ function displaySearchResult($records, $searchTimeElapsed) {
     //Check if records were returned
     if ($records) {
         if (WorkbenchConfig::get()->value("areTablesSortable")) {
-            addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/sortable.js'></script>");
+            addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/sortable.js') . "></script>");
         }
         
         try {

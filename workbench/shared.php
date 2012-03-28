@@ -106,8 +106,12 @@ function getStaticResourcesPath() {
     return $GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"];
 }
 
+function getPathToStaticResource($relPath) {
+    return "static" . $relPath . "?version=" . urlencode($GLOBALS["WORKBENCH_VERSION"]);
+}
+
 function registerShortcut($key, $jsCommand) {
-    addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/shortcut.js'></script>");
+    addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/shortcut.js') . "'></script>");
     
     addFooterScript("<script type='text/javascript'>".
                         "shortcut.add(".
@@ -133,7 +137,7 @@ function printAsyncRefreshBlock() {
         $newUrl = isset($_GET['rn']) ? str_replace("rn=$lastRefreshNum", "rn=$nextRefreshNum", $_SERVER["REQUEST_URI"]) : ($_SERVER["REQUEST_URI"] . "&rn=1");
         $refreshInterval = ceil(pow($nextRefreshNum, 0.75));
         print "<div style='float:right; color: #888;'>Auto Refreshing " .
-                 "<span id='refreshSpinner' style='display:none;'>&nbsp;<img src='" . getStaticResourcesPath() ."/images/wait16trans.gif' align='absmiddle'/></span>" . 
+                 "<span id='refreshSpinner' style='display:none;'>&nbsp;<img src='" . getPathToStaticResource('/images/wait16trans.gif') . "' align='absmiddle'/></span>" .
                  "<span id='refreshInTimer' style='display:inline;'>in $refreshInterval seconds" .
                  "</span></div>";
         print "<script>setTimeout('document.getElementById(\'refreshInTimer\').style.display=\'none\'; document.getElementById(\'refreshSpinner\').style.display=\'inline\'; window.location.href=\'$newUrl\'', $refreshInterval * 1000);</script>";
@@ -300,7 +304,7 @@ function displayError($errors, $showHeader=false, $showFooter=false) {
         print "<p/>";
     }
     print "<div class='displayErrors'>\n";
-    print "<img src='" . getStaticResourcesPath() ."/images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
+    print "<img src='" . getPathToStaticResource('/images/error24.png') . "' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
     if(!is_array($errors)) $errors = array($errors);
 
     $errorString = null;
@@ -319,7 +323,7 @@ function displayError($errors, $showHeader=false, $showFooter=false) {
 
 function displayWarning($warnings) {
     print "<div class='displayWarning'>\n";
-    print "<img src='" . getStaticResourcesPath() ."/images/warning24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
+    print "<img src='" . getPathToStaticResource('/images/warning24.png') . "' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($warnings)) {
         $warningString = "";
         foreach ($warnings as $warning) {
@@ -334,7 +338,7 @@ function displayWarning($warnings) {
 
 function displayInfo($infos) {
     print "<div class='displayInfo'>\n";
-    print "<img src='" . getStaticResourcesPath() ."/images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
+    print "<img src='" . getPathToStaticResource('/images/info24.png') . "' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($infos)) {
         $infoString = "";
         foreach ($infos as $info) {

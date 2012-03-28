@@ -531,7 +531,7 @@ QUERY_BUILDER_SCRIPT;
         if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixCols());
         print "</select></td> <td><select id='matrix_rows' name='matrix_rows' style='width: 15em;' onChange='toggleFieldDisabled();buildQuery();' onkeyup='toggleFieldDisabled();buildQuery();'>";
         if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixRows());
-        print "</select></td> <td><img onmouseover=\"Tip('Matrix view groups records into columns and rows of common field values.')\" align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/></td></tr>\n";
+        print "</select></td> <td><img onmouseover=\"Tip('Matrix view groups records into columns and rows of common field values.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/></td></tr>\n";
 
         print "<tr id='sort_selection_headers'><td colspan='2'><br/>Sort results by:</td> <td><br/>Max Records:</td></tr>\n";
         print "<tr id='sort_selection_row'>";
@@ -618,7 +618,7 @@ QUERY_BUILDER_SCRIPT;
     print "<input type='submit' name='clearAllQr' value='Clear All' onclick='return confirm(\"Are you sure you would like to clear all saved queries?\");'/>\n";
 
     print "&nbsp;&nbsp;" .
-          "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/>";
+          "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
 
     print "</td></tr></table><p/>\n";
 
@@ -888,7 +888,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
     //Check if records were returned
     if ($records) {
         if (WorkbenchConfig::get()->value("areTablesSortable")) {
-            addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/sortable.js'></script>");
+            addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/sortable.js') . "></script>");
         }
         
         try {
