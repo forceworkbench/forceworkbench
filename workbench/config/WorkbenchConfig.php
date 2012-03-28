@@ -26,14 +26,15 @@ class WorkbenchConfig {
         require 'defaults.php';
 
         // load file-based config overrides
-        if (is_file('overrides.php')) {
-            require 'overrides.php';
+        if (is_file('config/overrides.php')) {
+            /** @noinspection PhpIncludeInspection */
+            require 'config/overrides.php';
         }
 
         // load legecy file-based config-overrides
-        if (is_file('../configOverrides.php')) {
+        if (is_file('configOverrides.php')) {
             /** @noinspection PhpIncludeInspection */
-            require '../configOverrides.php';
+            require 'configOverrides.php';
         }
 
         // unset from global namespace
