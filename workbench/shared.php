@@ -20,18 +20,28 @@ function workbenchLog($logLevel, $type, $message = "") {
         }
     }
 
+    $expMessage = implode("`",array($type,
+                                    $_SERVER['REMOTE_ADDR'],
+                                    $_SERVER['REQUEST_METHOD'],
+                                    getWorkbenchUserAgent(),
+                                    $_SERVER['SCRIPT_NAME'],
+                                    $sfdcHost,
+                                    $orgId,
+                                    $userId,
+                                    $message
+                                ));
+
+    call_user_func('_handle_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, $expMessage);
+}
+
+// TODO: handle level
+function _handle_error_log($logLevel, $expMessage) {
+    error_log("forceworkbench: " . $expMessage);
+}
+
+function _handle_syslog($logLevel, $expMessage) {
     openlog("forceworkbench", LOG_ODELAY, WorkbenchConfig::get()->value("syslogFacility"));
-    syslog($logLevel, implode("`",
-                     array($type,
-                           $_SERVER['REMOTE_ADDR'],
-                           $_SERVER['REQUEST_METHOD'],
-                           getWorkbenchUserAgent(),
-                           $_SERVER['SCRIPT_NAME'],
-                           $sfdcHost,
-                           $orgId,
-                           $userId,
-                           $message
-                     )));
+    syslog($logLevel, $expMessage);
     closelog();
 }
 
