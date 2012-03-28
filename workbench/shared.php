@@ -102,12 +102,18 @@ function endsWith($haystack, $needle, $ignoreCase){
     return substr_compare($haystack, $needle, -strlen($needle), strlen($needle), $ignoreCase) === 0;
 }
 
-function getStaticResourcesPath() {
-    return $GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"];
+function getStaticResourceVersionParam() {
+    return "?v=" . urlencode($GLOBALS["WORKBENCH_VERSION"]);
 }
 
 function getPathToStaticResource($relPath) {
-    return "static" . $relPath . "?version=" . urlencode($GLOBALS["WORKBENCH_VERSION"]);
+    return "static" . $relPath . getStaticResourceVersionParam();
+}
+
+function getPathToStaticResourceAsJsFunction() {
+    return "function(relPath) { " .
+               "return 'static' + relPath + '" . getStaticResourceVersionParam() . "'" .
+            "}";
 }
 
 function registerShortcut($key, $jsCommand) {

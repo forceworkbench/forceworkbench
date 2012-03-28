@@ -9,11 +9,11 @@ Version 1.5.7
  */
 
 /* You can change these values */
-var image_path = WORKBENCH_STATIC_RESOURCES_PATH + "/images/";
+var image_path = "static/images/";
 var image_up = "arrow-up.gif";
 var image_down = "arrow-down.gif";
 var image_none = "arrow-none.gif";
-var europeandate = true;
+var europeandate = false;
 var alternate_row_colors = true;
 
 /* Don't change anything below this unless you know what you're doing */
@@ -28,7 +28,7 @@ function sortables_init() {
     tbls = document.getElementsByTagName("table");
     for (ti=0;ti<tbls.length;ti++) {
         thisTbl = tbls[ti];
-        if (((' '+thisTbl.className+' ').indexOf("sortable") != -1) && (thisTbl.id)) {                
+        if (((' '+thisTbl.className+' ').indexOf("sortable") != -1) && (thisTbl.id)) {
             ts_makeSortable(thisTbl);
         }
     }
@@ -51,7 +51,7 @@ function ts_makeSortable(t) {
         var cell = firstRow.cells[i];
         var txt = ts_getInnerText(cell);
         if (cell.className != "unsortable" && cell.className.indexOf("unsortable") == -1) {
-            cell.innerHTML = '<a href="#" class="sortheader" onclick="ts_resortTable(this, '+i+');return false;" style="text-decoration: none;">'+txt+'<span class="sortarrow">&nbsp;<img src="'+ image_path + image_none + '" alt="&darr;"/></span></a>';
+            cell.innerHTML = '<a href="#" class="sortheader" onclick="ts_resortTable(this, '+i+');return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;<img src="'+ image_path + image_none + '" alt="&darr;"/></span></a>';
         }
     }
     if (alternate_row_colors) {
@@ -131,11 +131,11 @@ function ts_resortTable(lnk, clid) {
     }
     newRows.sort(sortfn);
     if (span.getAttribute("sortdir") == 'down') {
-        ARROW = '&nbsp;<img src="'+ image_path + image_down + '" alt="&darr;"/>';
+        ARROW = '&nbsp;&nbsp;<img src="'+ image_path + image_down + '" alt="&darr;"/>';
         newRows.reverse();
         span.setAttribute('sortdir','up');
     } else {
-        ARROW = '&nbsp;<img src="'+ image_path + image_up + '" alt="&uarr;"/>';
+        ARROW = '&nbsp;&nbsp;<img src="'+ image_path + image_up + '" alt="&uarr;"/>';
         span.setAttribute('sortdir','down');
     } 
     // We appendChild rows that already exist to the tbody, so it moves them
@@ -161,7 +161,7 @@ function ts_resortTable(lnk, clid) {
                 // table
                 // as
                 // us?
-                allspans[ci].innerHTML = '&nbsp;<img src="'+ image_path + image_none + '" alt="&darr;"/>';
+                allspans[ci].innerHTML = '&nbsp;&nbsp;<img src="'+ image_path + image_none + '" alt="&darr;"/>';
             }
         }
     }                

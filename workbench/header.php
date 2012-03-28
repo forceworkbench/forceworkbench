@@ -15,8 +15,7 @@
         $title = $myPage->showTitle ? ": " . $myPage->title : "";
         print "<title>Workbench$title</title>";
 
-        //TODO: replace this with new getPathToStaticResource
-        print "<script type='text/javascript'>var WORKBENCH_STATIC_RESOURCES_PATH = '" . getStaticResourcesPath() . "';</script>";
+        print "<script type='text/javascript'>var getPathToStaticResource = " . getPathToStaticResourceAsJsFunction() . ";</script>";
         ?>
         
 		<script type="text/javascript" src="<?php echo getPathToStaticResource('/script/pro_dropdown.js'); ?>"></script>
