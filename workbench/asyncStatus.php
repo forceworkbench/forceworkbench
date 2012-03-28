@@ -119,7 +119,7 @@ if (count($batchInfos) > 0) {
             }
             foreach($batchResultList as $resultId) {
                 print "<a href='downloadAsyncBatch.php?op=result&jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "&resultId=" . $resultId . "'>" .
-                      "<img src='" . getStaticResourcesPath() . "/images/downloadIcon" . $batchInfo->getState() . ".gif' border='0' onmouseover=\"Tip('Download " . $batchInfo->getState() . " Batch Results')\"/>" .
+                      "<img src='" . getPathToStaticResource('/images/downloadIcon' . $batchInfo->getState() . '.gif') . "' border='0' onmouseover=\"Tip('Download " . $batchInfo->getState() . " Batch Results')\"/>" .
                       "</a><br/>";
             }
         } else {

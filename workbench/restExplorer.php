@@ -14,14 +14,14 @@ require_once 'header.php';
 ?>
 <link
 	rel="stylesheet" type="text/css"
-	href="<?php echo getStaticResourcesPath() . "/style/restexplorer.css"; ?>" />
+	href="<?php echo getPathToStaticResource('/style/restexplorer.css'); ?>" />
 <script
 	type="text/javascript"
-	src="<?php echo getStaticResourcesPath() . "/script/restexplorer.js"; ?>"></script>
+	src="<?php echo getPathToStaticResource('/script/restexplorer.js'); ?>"></script>
 
 <script
 	type="text/javascript"
-	src="<?php echo getStaticResourcesPath() . "/script/simpletreemenu.js"; ?>">
+	src="<?php echo getPathToStaticResource('/script/simpletreemenu.js'); ?>">
     /***********************************************
     * Dynamic Countdown script- © Dynamic Drive (http://www.dynamicdrive.com)
     * This notice MUST stay intact for legal use
@@ -66,7 +66,7 @@ if ($c->errors != null) {
 			onclick="upUrl();"/>
     &nbsp;
     <span id='waitingIndicator'>
-        <img src='<?php print getStaticResourcesPath(); ?>/images/wait16trans.gif'/> Processing...
+        <img src='<?php print getPathToStaticResource('/images/wait16trans.gif'); ?>'/> Processing...
     </span>
     </p>
 

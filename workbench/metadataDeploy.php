@@ -94,7 +94,7 @@ options:</p>
     <?php print getCsrfFormTag(); ?>
     <input type='hidden' name='MAX_FILE_SIZE' value='<?php print WorkbenchConfig::get()->value("maxFileSize"); ?>' />
     <img onmouseover="Tip('Choose a ZIP file containing a project manifest, a file named package.xml, and a set of directories that contain the components to deploy.  See Salesforce.com Metadata API Developers guide more information about working with ZIP files for deployment.')"
-     align='absmiddle' src='<?php echo getStaticResourcesPath(); ?>/images/help16.png' />
+     align='absmiddle' src='<?php echo getPathToStaticResource('/images/help16.png'); ?>' />
 <p />
     <?php printDeployOptions(defaultDeployOptions(), true); ?>
 <p />

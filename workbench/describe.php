@@ -27,7 +27,7 @@ if (isset($_REQUEST['keyPrefix']) || isset($_REQUEST['id'])) {
     ?>
 
     <span id='loadingMessage' style='visibility:hidden; color:#888;'>
-        &nbsp;&nbsp;<img src='<?php print getStaticResourcesPath(); ?>/images/wait16trans.gif' align='absmiddle'/> Loading...
+        &nbsp;&nbsp;<img src='<?php print getPathToStaticResource('/images/wait16trans.gif'); ?>' align='absmiddle'/> Loading...
     </span>
 
 </form>

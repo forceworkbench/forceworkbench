@@ -3,10 +3,6 @@
 
 php_flag register_globals off
 
-<FilesMatch "config.*\.php">
-    deny from all
-</FilesMatch>
-
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/css text/html application/x-javascript application/javascript application/csv
     BrowserMatch ^Mozilla/4 gzip-only-text/html

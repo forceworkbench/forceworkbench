@@ -56,16 +56,7 @@
 		<delete dir="${dir.dist.versions}/${app.version.stripped}"/>
 		<mkdir dir="${dir.dist.versions}/${app.version.stripped}"/>
 		<copy todir="${dir.dist.versions}/${app.version.stripped}">
-			<fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*, ${dir.src.static}/**"/>
-			<filterchain>
-				<replacetokens begintoken="{{" endtoken="}}">
-					<token key="WORKBENCH_VERSION" value="${app.version.stripped}"/>
-				</replacetokens>
-			</filterchain>
-		</copy>
-		<copy todir="${dir.dist.versions}/${app.version.stripped}">
-			<fileset dir="." includes="${dir.src.static}/**"/>
-			<mapper type="regexp" from="${dir.src.static}/{{WORKBENCH_VERSION}}/(.*)" to="${dir.src.static}/${app.version.stripped}/\1"/>
+			<fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*"/>
 		</copy>
 	</target>
 
