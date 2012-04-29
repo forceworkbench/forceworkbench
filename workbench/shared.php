@@ -20,29 +20,31 @@ function workbenchLog($logLevel, $type, $message = "") {
         }
     }
 
-    $expMessage = implode("`",array($type,
-                                    $_SERVER['REMOTE_ADDR'],
-                                    $_SERVER['REQUEST_METHOD'],
-                                    getWorkbenchUserAgent(),
-                                    $_SERVER['SCRIPT_NAME'],
-                                    $sfdcHost,
-                                    $orgId,
-                                    $userId,
-                                    $message
-                                ));
+    $pieces = array("timestamp" => date(DATE_ISO8601),
+                    "level"     => logLevelToStr($logLevel),
+                    "type"      => $type,
+                    "origin"    => $_SERVER['REMOTE_ADDR'],
+                    "method"    => $_SERVER['REQUEST_METHOD'],
+                    "version"   => $GLOBALS["WORKBENCH_VERSION"],
+                    "script"    => $_SERVER['SCRIPT_NAME'],
+                    "sfdc"      => $sfdcHost,
+                    "org"       => $orgId,
+                    "user"      => $userId,
+                    "message"   => $message
+              );
 
-    call_user_func('_handle_logs_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, $expMessage);
+    call_user_func('_handle_logs_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, json_encode($pieces));
 }
 
-function _handle_logs_syslog($logLevel, $expMessage) {
+function _handle_logs_syslog($logLevel, $msg) {
     openlog("forceworkbench", LOG_ODELAY, WorkbenchConfig::get()->value("syslogFacility"));
-    syslog($logLevel, $expMessage);
+    syslog($logLevel, $msg);
     closelog();
 }
 
-function _handle_logs_file($logLevel, $expMessage) {
+function _handle_logs_file($logLevel, $msg) {
     $logFile = fopen(WorkbenchConfig::get()->value("logFile"), 'a') or die("can't open log file");
-    fwrite($logFile, "forceworkbench" . "`" . logLevelToStr($logLevel) . "`" . $expMessage . "\n");
+    fwrite($logFile, "forceworkbench=$msg\n");
     fclose($logFile);
 }
 
