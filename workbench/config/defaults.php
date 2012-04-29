@@ -910,4 +910,12 @@ $config["header_internal"] = array(
         "overrideable" => false,
         "dataType" => "boolean"
     );
+
+    $config["sessionStore"] = array(
+        "label" => "Session Store",
+        "description" => "Only redis:// URL are currently supported; otherwise, blank for default value",
+        "default" => "",
+        "overrideable" => false,
+        "dataType" => "string"
+    );
 ?>

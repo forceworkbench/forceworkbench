@@ -4,12 +4,19 @@ require_once 'config/WorkbenchConfig.php';
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
 
-if (isset($_ENV['REDISTOGO_URL'])) {
-  $redis_url = "tcp://" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_HOST) . ":" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PORT);
-  if (!is_array(parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PASS))) {
-    $redis_url .= "?auth=" . parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PASS);
+set_exception_handler('handleAllExceptions');
+set_error_handler('handleAllErrors');
+
+$sessionStore = WorkbenchConfig::get()->value("sessionStore");
+// If $sessionStore starts with redis://, convert to format for Redis extension and set as the session save handler
+// IN:  redis://user:pass@host:port/
+// OUT: tcp://host:port?auth=pass
+if (strpos($sessionStore, "redis://") === 0) {
+  $redisUrl = "tcp://" . parse_url($sessionStore, PHP_URL_HOST) . ":" . parse_url($sessionStore, PHP_URL_PORT);
+  if (!is_array(parse_url($sessionStore, PHP_URL_PASS))) {
+    $redisUrl .= "?auth=" . parse_url($sessionStore, PHP_URL_PASS);
   }
-  ini_set("session.save_path", $redis_url);
+  ini_set("session.save_path", $redisUrl);
   ini_set("session.save_handler", "redis");
 }
 
@@ -20,10 +27,6 @@ if (WorkbenchConfig::get()->value("redirectToHTTPS") && !usingSslFromUserToWorkb
     header("Location: " . "https://" . $_SERVER['HTTP_HOST']  . $_SERVER['REQUEST_URI']);
     exit;
 }
-
-// must come after configs are loaded...lets hope there's not a problem above
-set_exception_handler('handleAllExceptions');
-set_error_handler('handleAllErrors');
 
 workbenchLog(LOG_INFO, "U");
 
