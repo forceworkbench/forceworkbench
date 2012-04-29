@@ -123,7 +123,7 @@ require_once "header.php";
 </div>
     
 <?php
-addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/login.js') . "></script>");
+addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/login.js') . "'></script>");
 addFooterScript("<script type='text/javascript'>wbLoginConfig=" . $c->getJsConfig() ."</script>");
 addFooterScript("<script type='text/javascript'>WorkbenchLogin.initializeForm('" . htmlspecialchars($c->getLoginType()) ."');</script>");
 require_once "footer.php";
