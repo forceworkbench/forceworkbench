@@ -161,7 +161,7 @@ $config["header_General"] = array(
 
     $config["logHandler"] = array(
         "label" => "Logging Handle",
-        "description" => "Log handler to which to log. Valid values are 'syslog' or 'error_log'",
+        "description" => "Log handler to which to log. Valid values are 'syslog' or 'file'",
         "default" => "syslog",
         "overrideable" => false,
         "dataType" => "string"
@@ -173,6 +173,14 @@ $config["header_General"] = array(
         "default" => LOG_USER,
         "overrideable" => false,
         "dataType" => "int"
+    );
+
+    $config["logFile"] = array(
+        "label" => "Log File",
+        "description" => "Location of log file for Workbench logs",
+        "default" => "forceworkbench.log",
+        "overrideable" => false,
+        "dataType" => "String"
     );
 
 $config["header_LoginOptions"] = array(

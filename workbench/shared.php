@@ -31,18 +31,33 @@ function workbenchLog($logLevel, $type, $message = "") {
                                     $message
                                 ));
 
-    call_user_func('_handle_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, $expMessage);
+    call_user_func('_handle_logs_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, $expMessage);
 }
 
-// TODO: handle level
-function _handle_error_log($logLevel, $expMessage) {
-    error_log("forceworkbench: " . $expMessage);
-}
-
-function _handle_syslog($logLevel, $expMessage) {
+function _handle_logs_syslog($logLevel, $expMessage) {
     openlog("forceworkbench", LOG_ODELAY, WorkbenchConfig::get()->value("syslogFacility"));
     syslog($logLevel, $expMessage);
     closelog();
+}
+
+function _handle_logs_file($logLevel, $expMessage) {
+    $logFile = fopen(WorkbenchConfig::get()->value("logFile"), 'a') or die("can't open log file");
+    fwrite($logFile, logLevelToStr($logLevel) . ":" . $expMessage . "\n");
+    fclose($logFile);
+}
+
+function logLevelToStr($logLevel) {
+    switch($logLevel) {
+        case LOG_EMERG:   return "EMERGENCY";
+        case LOG_ALERT:   return "ALERT";
+        case LOG_CRIT:    return "CRITICAL";
+        case LOG_ERR:     return "ERROR";
+        case LOG_WARNING: return "WARNING";
+        case LOG_NOTICE:  return "NOTICE";
+        case LOG_INFO:    return "INFO";
+        case LOG_DEBUG:   return "DEBUG";
+        default:          return "";
+    }
 }
 
 function httpError($code, $reason) {
