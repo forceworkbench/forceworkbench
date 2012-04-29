@@ -42,7 +42,7 @@ function _handle_logs_syslog($logLevel, $expMessage) {
 
 function _handle_logs_file($logLevel, $expMessage) {
     $logFile = fopen(WorkbenchConfig::get()->value("logFile"), 'a') or die("can't open log file");
-    fwrite($logFile, logLevelToStr($logLevel) . ":" . $expMessage . "\n");
+    fwrite($logFile, "forceworkbench" . "`" . logLevelToStr($logLevel) . "`" . $expMessage . "\n");
     fclose($logFile);
 }
 
