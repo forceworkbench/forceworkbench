@@ -217,6 +217,7 @@ $config["header_LoginOptions"] = array(
             "na10-api" => array("NA10","F"),
             "na11-api" => array("NA11","G"),
             "na12-api" => array("NA12","U"),
+            "na14-api" => array("NA14","d"),
             "ap0-api" => array("AP0 (ap)","1"),
             "ap1-api" => array("AP1","9"),
             "eu0-api" => array("EU0 (emea)","2"),
@@ -234,7 +235,9 @@ $config["header_LoginOptions"] = array(
             "cs10-api" => array("Sandbox: CS10","J"),
             "cs11-api" => array("Sandbox: CS11","Z"),
             "cs12-api" => array("Sandbox: CS12","V"),
-            "cs13-api" => array("Sandbox: CS13","Y"),
+            "cs13-api" => array("Sandbox: CS13","W"),
+            "cs14-api" => array("Sandbox: CS14","c"),
+            "cs15-api" => array("Sandbox: CS15","e"),
             "prerelna1.pre" => array("Pre-Release: NA1","t")
         )
     );
