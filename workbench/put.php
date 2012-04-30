@@ -1237,7 +1237,7 @@ function displayBulkApiOptions($action, $forceDoAsync, $recommendDoAsync = false
         // find this user's settings that are in the unsupported config list
         $bulkUnsupportedSettings = array();
         foreach ($bulkUnsupportedConfigs as $c) {
-            if ($GLOBALS["config"][$c]["default"] != WorkbenchConfig::get()->value($c)) {
+            if (WorkbenchConfig::get()->overridden($c)) {
                 $bulkUnsupportedSettings[] = $c;
             }
         }
@@ -1246,12 +1246,12 @@ function displayBulkApiOptions($action, $forceDoAsync, $recommendDoAsync = false
         if (count($bulkUnsupportedSettings) > 0) {
             print "<div id='unsupportedBulkConfigList' style='display: " . ($forceDoAsync || $recommendDoAsync ? "inline" : "none") . "; color: orange;'>" .
                       "<p " . ($forceDoAsync ? "" : "style='margin-left: 3em;'") . ">" .  
-                          "<img src='" . getPathToStaticResource('/images/warning24.png') . " /> " .
+                          "<img src='" . getPathToStaticResource('/images/warning24.png') . "' /> " .
                           "The following settings are not supported by the Bulk API and will be ignored:" . 
                           "<ul " . ($forceDoAsync ? "" : "style='margin-left: 5em;'") . ">";
             
             foreach ($bulkUnsupportedSettings as $s) {
-                print "<li>" . $GLOBALS['config'][$s]['label'] . "</li>";
+                print "<li>" . WorkbenchConfig::get()->label($s) . "</li>";
             }
             
             print "</ul>" . 
