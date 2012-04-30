@@ -1,5 +1,16 @@
 =Version History=
-'''24.0.0 Beta 1''' 2012/02/17
+'''24.0.1 Beta 1''' 2012/04/29
+:* Support for saving session data to Redis to allow for multiple, horizontally scalable, stateless app servers
+:* Encapulation of configuration into a single point of access
+:* Removal of Workbench configuration from PHP session
+:* Option to auto-forward unsecure requests to HTTPS endpoint
+:* Support for remote term files
+:* Changed static resource versioning to query parameters instead of file paths to simplify build process
+:* Changed logging to JSON format for machine readability
+:* Support for multiple log handlers with syslog and file-based handlers
+:* Complete support for HTTP_X_FORWARD_* headers
+
+'''24.0.0''' 2012/02/27
 :* Upgraded Partner, Apex, Bulk, REST, and Streaming clients to Force.com API 24.0
 :* Added partial support for Phing-based builds
 :* Added support for environment variable based configuration
@@ -331,3 +342,5 @@
 
 :* Blank screen
 :* Stripped down Apex API 8.0 Partner WSDL-based PHP Toolkit
+
+[[Category:Tools]]
