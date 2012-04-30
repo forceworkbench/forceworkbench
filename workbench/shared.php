@@ -23,7 +23,7 @@ function workbenchLog($logLevel, $type, $message = "") {
     $pieces = array("timestamp" => date(DATE_ISO8601),
                     "level"     => logLevelToStr($logLevel),
                     "type"      => $type,
-                    "origin"    => $_SERVER['REMOTE_ADDR'],
+                    "origin"    => isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'],
                     "method"    => $_SERVER['REQUEST_METHOD'],
                     "version"   => $GLOBALS["WORKBENCH_VERSION"],
                     "script"    => $_SERVER['SCRIPT_NAME'],
