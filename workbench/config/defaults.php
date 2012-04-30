@@ -162,7 +162,7 @@ $config["header_General"] = array(
     $config["logHandler"] = array(
         "label" => "Logging Handle",
         "description" => "Log handler to which to log. Valid values are 'syslog' or 'file'",
-        "default" => "file",
+        "default" => "syslog",
         "overrideable" => false,
         "dataType" => "string"
     );
