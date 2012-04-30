@@ -624,40 +624,45 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
             print "<h2 onclick=\"toggleDebugSection(this,'container_globals')\" class=\"debugHeader\">+ SUPERGLOBAL VARIABLES</h2>\n";
             print "<div id='container_globals' class='debugContainer'>";
 
+            print "<strong onclick=\"toggleDebugSection(this,'container_globals_cookie')\" class=\"debugHeader\">+ SERVER SUPERGLOBAL VARIABLE</strong>\n";
+            print "<div id='container_globals_cookie' class='debugContainer'>";
+            htmlspecialchars(var_dump ($_SERVER));
+            print "<hr/>";
+            print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_cookie')\" class=\"debugHeader\">+ COOKIE SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_cookie' class='debugContainer'>";
-            var_dump ($_COOKIE);
+            htmlspecialchars(var_dump ($_COOKIE));
             print "<hr/>";
             print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_session')\" class=\"debugHeader\">+ SESSION SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_session' class='debugContainer'>";
-            var_dump ($_SESSION);
+            htmlspecialchars(var_dump ($_SESSION));
             print "<hr/>";
             print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_post')\" class=\"debugHeader\">+ POST SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_post' class='debugContainer'>";
-            var_dump ($_POST);
+            htmlspecialchars(var_dump ($_POST));
             print "<hr/>";
             print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_get')\" class=\"debugHeader\">+ GET SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_get' class='debugContainer'>";
-            var_dump ($_GET);
+            htmlspecialchars(var_dump ($_GET));
             print "<hr/>";
             print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_files')\" class=\"debugHeader\">+ FILES SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_files' class='debugContainer'>";
-            var_dump ($_FILES);
+            htmlspecialchars(var_dump ($_FILES));
             print "<hr/>";
             print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_env')\" class=\"debugHeader\">+ ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_env' class='debugContainer'>";
-            var_dump ($_ENV);
+            htmlspecialchars(var_dump ($_ENV));
             print "<hr/>";
             print "</div>";
 
@@ -748,7 +753,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
             }
             catch (Exception $e) {
                 print "<strong>SOAP Error</strong>\n";
-                print_r ($e);
+                htmlspecialchars(print_r ($e));
             }
         }
 
@@ -756,7 +761,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
         if (isset($_SESSION['restDebugLog']) && $_SESSION['restDebugLog'] != "") {
             print "<h2 onclick=\"toggleDebugSection(this,'rest_debug_container')\" class=\"debugHeader\">+ REST/BULK API LOGS</h2>\n";
             print "<div id='rest_debug_container' class='debugContainer'>";
-            print "<pre>" . $_SESSION['restDebugLog'] . "</pre>";
+            print "<pre>" . htmlspecialchars($_SESSION['restDebugLog']) . "</pre>";
             print "<hr/>";
             print "</div>";
 
