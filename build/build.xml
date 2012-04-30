@@ -127,7 +127,7 @@
     </target>
 
     <target name="update" depends="zip">
-        <scp todir="${sf.username},forceworkbench:${sf.password}@web.sourceforge.net:/home/groups/f/fo/forceworkbench/htdocs/" verbose="true">
+        <scp todir="${sf.username},forceworkbench:${sf.password}@web.sourceforge.net:/home/groups/f/fo/forceworkbench/htdocs/" verbose="true" trust="true">
             <fileset dir="${dir.dist}">
                 <include name="latestVersionAvailable*.txt"/>
             </fileset>
