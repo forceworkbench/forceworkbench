@@ -120,11 +120,7 @@ class WorkbenchConfig {
     }
 
     public function overrideable($configKey) {
-        if (isset($this->config[$configKey]["overrideable"])) {
-            return false;
-        }
-
-        return $this->config[$configKey]["overrideable"];
+        return isset($this->config[$configKey]["overrideable"]) && $this->config[$configKey]["overrideable"];
     }
 
     public function overridden($configKey) {

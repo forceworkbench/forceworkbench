@@ -632,7 +632,7 @@ function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutpu
 
             $msg = "Parent relationship queries are disabled in Workbench: " . $matches[1];
 
-            if ($GLOBALS["config"]["allowParentRelationshipQueries"]["overrideable"]) {
+            if (WorkbenchConfig::get()->overrideable("allowParentRelationshipQueries")) {
                 $msg .= "\n\nDue to issues rendering query results, parent relationship queries are disabled by default. " .
                          "If you understand these limitations, parent relationship queries can be enabled under Settings. " .
                          "Alternatively, parent relationship queries can be run with REST Explorer under the Utilities menu without issue.";
