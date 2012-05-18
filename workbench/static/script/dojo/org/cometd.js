@@ -1645,6 +1645,8 @@ org.cometd.Cometd = function(name)
             if (!_connected)
             {
                 message.advice = { timeout: 0 };
+            } else {
+                message.advice = { timeout: _config.advice.timeout }
             }
 
             _setStatus('connecting');
