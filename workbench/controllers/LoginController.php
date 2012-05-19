@@ -377,7 +377,7 @@ class LoginController {
 
     private function oauthBuildRedirectUrl() {
         return "http" . (usingSslFromUserToWorkbench() ? "s" : "") ."://" .
-                $_SERVER['HTTP_HOST'] .
+                WorkbenchConfig::get()->valueOrElse("oauthRedirectHost", $_SERVER['HTTP_HOST']) .
                 str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
                 (strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/") .
                 basename($_SERVER['SCRIPT_NAME']);

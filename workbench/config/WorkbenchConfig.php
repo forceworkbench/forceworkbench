@@ -119,6 +119,14 @@ class WorkbenchConfig {
         return $this->config[$configKey]["value"];
     }
 
+    public function valueOrElse($configKey, $otherwise) {
+        if (isset($this->config[$configKey]["value"])) {
+            return $this->config[$configKey]["value"];
+        } else {
+            return $otherwise;
+        }
+    }
+
     public function overrideable($configKey) {
         return isset($this->config[$configKey]["overrideable"]) && $this->config[$configKey]["overrideable"];
     }
