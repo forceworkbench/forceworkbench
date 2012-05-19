@@ -270,6 +270,12 @@ function unCamelCase($camelCasedString) {
     return ucfirst(preg_replace( '/([a-z0-9])([A-Z])/', "$1 $2", $camelCasedString));
 }
 
+function array_unshift_assoc(&$arr, $key, $val) {
+    $arr = array_reverse($arr, true);
+    $arr[$key] = $val;
+    return array_reverse($arr, true);
+}
+
 function validateUploadedFile($file) {
     if ($file['error'] != 0) {
         $uploadErrorCodes = array(
