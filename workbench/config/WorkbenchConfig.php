@@ -108,7 +108,7 @@ class WorkbenchConfig {
     }
 
     public function isConfigured($configKey) {
-        return isset($this->config[$configKey]["value"]);
+        return isset($this->config[$configKey]);
     }
 
     public function value($configKey) {

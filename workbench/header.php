@@ -23,7 +23,7 @@
 <body>
 
 <?php
-if (WorkbenchConfig::get()->value("displayLiveMaintenanceMessage")) {
+if (WorkbenchConfig::get()->isConfigured("displayLiveMaintenanceMessage")) {
     print "<div style='background-color: orange; width: 100%; padding: 2px; font-size: 8pt; font-weight: bold;'>" .
               "Workbench is currently undergoing maintenance. The service may be intermittently unavailable during this time.</div><br/>";
 }
