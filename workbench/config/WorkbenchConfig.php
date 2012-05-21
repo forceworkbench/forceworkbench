@@ -107,6 +107,10 @@ class WorkbenchConfig {
         return $this->config;
     }
 
+    public function isConfigured($configKey) {
+        return isset($this->config[$configKey]["value"]);
+    }
+
     public function value($configKey) {
         if (!isset($this->config[$configKey]["value"])) {
             if ($this->config[$configKey]["dataType"] == "boolean") {

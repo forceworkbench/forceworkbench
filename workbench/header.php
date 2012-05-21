@@ -23,6 +23,11 @@
 <body>
 
 <?php
+if (WorkbenchConfig::get()->value("displayLiveMaintenanceMessage")) {
+    print "<div style='background-color: orange; width: 100%; padding: 2px; font-size: 8pt; font-weight: bold;'>" .
+              "Workbench is currently undergoing maintenance. The service may be intermittently unavailable during this time.</div><br/>";
+}
+
 //check for latest version
 if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('curl') && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))) {
     try {
