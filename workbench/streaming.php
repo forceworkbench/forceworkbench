@@ -97,7 +97,7 @@ require_once "header.php";
 
 <?php
 if ($c->isEnabled()) {
-    addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/dojo/dojo/dojo.js') . "'></script>");
+    addFooterScript("<script type='text/javascript' src='" . 'static-unversioned/script/dojo/dojo/dojo.js' . "'></script>");
     addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/streamingClient.js') . "'></script>");
     addFooterScript("<script type='text/javascript'>var wbStreaming = ". $c->getStreamingConfig() . ";</script>");
 }
