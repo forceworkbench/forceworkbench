@@ -151,7 +151,7 @@ class StreamingController {
         // configs in "$streamingConfig["cometdConfig"]" are loaded into CometD in JS and need to match their format
         $streamingConfig["cometdConfig"]["logLevel"] = "info";
         $streamingConfig["cometdConfig"]["appendMessageTypeToURL"] = false;
-        $streamingConfig["cometdConfig"]["advice"]["timeout"] = WorkbenchConfig::get()->valueOrElse("streamingAdviceTimeout", 25000);
+        $streamingConfig["cometdConfig"]["advice"]["timeout"] = (int) WorkbenchConfig::get()->valueOrElse("streamingAdviceTimeout", 25000);
         $streamingConfig["cometdConfig"]["advice"]["interval"] = 0;
         $streamingConfig["cometdConfig"]["advice"]["reconnect"] = "retry";
         $streamingConfig["cometdConfig"]["url"] =
