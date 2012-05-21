@@ -119,6 +119,13 @@ class WorkbenchConfig {
         return $this->config[$configKey]["value"];
     }
 
+    /**
+     * Returns the configured value for a key; otherwise, returns specified default
+     *
+     * @param $configKey
+     * @param $otherwise
+     * @return mixed
+     */
     public function valueOrElse($configKey, $otherwise) {
         if (isset($this->config[$configKey]["value"])) {
             return $this->config[$configKey]["value"];
