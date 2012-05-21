@@ -911,14 +911,6 @@ $config["header_internal"] = array(
     "isHeader" => true
 );
 
-    $config["mockClients"] = array(
-        "label" => "Connect with Mocked API Client",
-        "description" => "Only used during internal development. Do not expose in production environments.",
-        "default" => false,
-        "overrideable" => false,
-        "dataType" => "boolean"
-    );
-
     $config["sessionStore"] = array(
         "label" => "Session Store",
         "description" => "Only redis:// URL are currently supported; otherwise, blank for default value",
