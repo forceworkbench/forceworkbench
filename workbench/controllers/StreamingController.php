@@ -156,7 +156,7 @@ class StreamingController {
         $streamingConfig["cometdConfig"]["advice"]["reconnect"] = "retry";
         $streamingConfig["cometdConfig"]["url"] =
             "http" . (usingSslFromUserToWorkbench() ? "s" : "") ."://" .
-            $_SERVER['HTTP_HOST'] .
+            WorkbenchConfig::get()->valueOrElse("streamingProxyHost", $_SERVER['HTTP_HOST']) .
             str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
 			(strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/") .
             "cometdProxy.php";
