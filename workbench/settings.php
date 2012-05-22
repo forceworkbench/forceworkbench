@@ -30,12 +30,12 @@ if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['rest
         }
 
         // don't even try to deal with complex types
-        if ($configValue['dataType'] == "complex") {
+        if (isset($configValue['dataType']) && $configValue['dataType'] == "complex") {
             continue;
         }
 
         //clear config cookies if restoreDefaults selected or the config is not overrideable
-        if (isset($_POST['restoreDefaults']) || !$configValue['overrideable']) {
+        if (isset($_POST['restoreDefaults']) || !isset($configValue['overrideable']) || !$configValue['overrideable']) {
              // ...and is actually in the user's cookies
              if (isset($_COOKIE[$configKey])){
                 setcookie($configKey,NULL,time()-3600);
