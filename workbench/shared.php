@@ -2,7 +2,7 @@
 require_once "util/ExpandableTree.php";
 
 function workbenchLog($logLevel, $type, $message = "") {
-    if (!getConfig("enableLogging")) {
+    if (!WorkbenchConfig::get()->value("enableLogging")) {
         return;
     }
 
@@ -20,19 +20,46 @@ function workbenchLog($logLevel, $type, $message = "") {
         }
     }
 
-    openlog("forceworkbench", LOG_ODELAY, getConfig("syslogFacility"));
-    syslog($logLevel, implode("`",
-                     array($type,
-                           $_SERVER['REMOTE_ADDR'],
-                           $_SERVER['REQUEST_METHOD'],
-                           getWorkbenchUserAgent(),
-                           $_SERVER['SCRIPT_NAME'],
-                           $sfdcHost,
-                           $orgId,
-                           $userId,
-                           $message
-                     )));
+    $pieces = array("timestamp" => date(DATE_ISO8601),
+                    "level"     => logLevelToStr($logLevel),
+                    "type"      => $type,
+                    "origin"    => isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'],
+                    "method"    => $_SERVER['REQUEST_METHOD'],
+                    "version"   => $GLOBALS["WORKBENCH_VERSION"],
+                    "script"    => $_SERVER['SCRIPT_NAME'],
+                    "sfdc"      => $sfdcHost,
+                    "org"       => $orgId,
+                    "user"      => $userId,
+                    "message"   => $message
+              );
+
+    call_user_func('_handle_logs_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, json_encode($pieces));
+}
+
+function _handle_logs_syslog($logLevel, $msg) {
+    openlog("forceworkbench", LOG_ODELAY, WorkbenchConfig::get()->value("syslogFacility"));
+    syslog($logLevel, $msg);
     closelog();
+}
+
+function _handle_logs_file($logLevel, $msg) {
+    $logFile = fopen(WorkbenchConfig::get()->value("logFile"), 'a') or die("can't open log file");
+    fwrite($logFile, "forceworkbench=$msg\n");
+    fclose($logFile);
+}
+
+function logLevelToStr($logLevel) {
+    switch($logLevel) {
+        case LOG_EMERG:   return "EMERGENCY";
+        case LOG_ALERT:   return "ALERT";
+        case LOG_CRIT:    return "CRITICAL";
+        case LOG_ERR:     return "ERROR";
+        case LOG_WARNING: return "WARNING";
+        case LOG_NOTICE:  return "NOTICE";
+        case LOG_INFO:    return "INFO";
+        case LOG_DEBUG:   return "DEBUG";
+        default:          return "";
+    }
 }
 
 function httpError($code, $reason) {
@@ -43,7 +70,7 @@ function httpError($code, $reason) {
 }
 
 function getCsrfToken() {
-    return md5(getConfig("csrfSecret") . session_id() . $_SERVER['SCRIPT_NAME']);
+    return md5(WorkbenchConfig::get()->value("csrfSecret") . session_id() . $_SERVER['SCRIPT_NAME']);
 }
 
 function validateCsrfToken($doError = true) {
@@ -66,15 +93,17 @@ function getCsrfFormTag() {
     return "\n<input type='hidden' name='CSRF_TOKEN' value='" . getCsrfToken() . "'/>\n";
 }
 
-function usingSSL() {
-    // was the request to Workbench secure?
-    $secureLocal2Wb = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
-                      (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
+function usingSslFromUserToWorkbench() {
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+           (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
+}
 
-    // is connection secure from Workbench to Salesforce?
-    $secureWb2sfdc = !WorkbenchContext::isEstablished() || WorkbenchContext::get()->isSecure();
+function usingSslFromWorkbenchToSfdc() {
+    return !WorkbenchContext::isEstablished() || WorkbenchContext::get()->isSecure();
+}
 
-    return $secureLocal2Wb && $secureWb2sfdc;
+function usingSslEndToEnd() {
+    return usingSslFromUserToWorkbench() && usingSslFromWorkbenchToSfdc();
 }
 
 function toBytes ($size_str) {
@@ -90,12 +119,22 @@ function endsWith($haystack, $needle, $ignoreCase){
     return substr_compare($haystack, $needle, -strlen($needle), strlen($needle), $ignoreCase) === 0;
 }
 
-function getStaticResourcesPath() {
-    return $GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"];
+function getStaticResourceVersionParam() {
+    return "?v=" . urlencode($GLOBALS["WORKBENCH_VERSION"]);
+}
+
+function getPathToStaticResource($relPath) {
+    return "static" . $relPath . getStaticResourceVersionParam();
+}
+
+function getPathToStaticResourceAsJsFunction() {
+    return "function(relPath) { " .
+               "return 'static' + relPath + '" . getStaticResourceVersionParam() . "'" .
+            "}";
 }
 
 function registerShortcut($key, $jsCommand) {
-    addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/shortcut.js'></script>");
+    addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/shortcut.js') . "'></script>");
     
     addFooterScript("<script type='text/javascript'>".
                         "shortcut.add(".
@@ -110,33 +149,18 @@ function addFooterScript($script) {
     $_REQUEST["footerScripts"][$scriptHash] = $script;
 }
 
-function getConfig($configKey) {
-    if (!isset($_SESSION["config"][$configKey]) || 
-        (isset($GLOBALS["config"][$configKey]["minApiVersion"])) &&
-         !WorkbenchContext::get()->isApiVersionAtLeast($GLOBALS["config"][$configKey]["minApiVersion"])) {
-        
-        if ($GLOBALS["config"][$configKey]["dataType"] == "boolean") {
-            return false;
-        } else {
-            return null;
-        }
-    }
-    
-    return $_SESSION["config"][$configKey];
-}
-
 function isReadOnlyMode() {
-    return getConfig("readOnlyMode");
+    return WorkbenchConfig::get()->value("readOnlyMode");
 }
 
 function printAsyncRefreshBlock() {
-    if (getConfig("asyncAutoRefresh")) {
+    if (WorkbenchConfig::get()->value("asyncAutoRefresh")) {
         $lastRefreshNum = (isset($_GET['rn']) && is_numeric($_GET['rn']) && $_GET['rn'] > 0) ? $_GET['rn'] : 1;
         $nextRefreshNum = $lastRefreshNum + 1;
         $newUrl = isset($_GET['rn']) ? str_replace("rn=$lastRefreshNum", "rn=$nextRefreshNum", $_SERVER["REQUEST_URI"]) : ($_SERVER["REQUEST_URI"] . "&rn=1");
         $refreshInterval = ceil(pow($nextRefreshNum, 0.75));
         print "<div style='float:right; color: #888;'>Auto Refreshing " .
-                 "<span id='refreshSpinner' style='display:none;'>&nbsp;<img src='" . getStaticResourcesPath() ."/images/wait16trans.gif' align='absmiddle'/></span>" . 
+                 "<span id='refreshSpinner' style='display:none;'>&nbsp;<img src='" . getPathToStaticResource('/images/wait16trans.gif') . "' align='absmiddle'/></span>" .
                  "<span id='refreshInTimer' style='display:inline;'>in $refreshInterval seconds" .
                  "</span></div>";
         print "<script>setTimeout('document.getElementById(\'refreshInTimer\').style.display=\'none\'; document.getElementById(\'refreshSpinner\').style.display=\'inline\'; window.location.href=\'$newUrl\'', $refreshInterval * 1000);</script>";
@@ -246,6 +270,12 @@ function unCamelCase($camelCasedString) {
     return ucfirst(preg_replace( '/([a-z0-9])([A-Z])/', "$1 $2", $camelCasedString));
 }
 
+function array_unshift_assoc($arr, $key, $val) {
+    $arr = array_reverse($arr, true);
+    $arr[$key] = $val;
+    return array_reverse($arr, true);
+}
+
 function validateUploadedFile($file) {
     if ($file['error'] != 0) {
         $uploadErrorCodes = array(
@@ -258,7 +288,7 @@ function validateUploadedFile($file) {
         8=>"File upload stopped by extension.  Please try again. (Error 8)"
         );
 
-        if ($_SESSION['config']['maxFileSize']['overrideable']) {
+        if (WorkbenchConfig::get()->overrideable('maxFileSize')) {
             $uploadErrorCodes[2] = "The file uploaded is too large. Please try again or adjust in Settings. (Error 2)";
         }
 
@@ -294,7 +324,7 @@ function getMyTitle() {
 }
 
 function getTableClass($defaultClass = 'dataTable') {
-    return getConfig("areTablesSortable") ? "sortable" : $defaultClass;
+    return WorkbenchConfig::get()->value("areTablesSortable") ? "sortable" : $defaultClass;
 }
 
 function displayError($errors, $showHeader=false, $showFooter=false) {
@@ -303,7 +333,7 @@ function displayError($errors, $showHeader=false, $showFooter=false) {
         print "<p/>";
     }
     print "<div class='displayErrors'>\n";
-    print "<img src='" . getStaticResourcesPath() ."/images/error24.png' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
+    print "<img src='" . getPathToStaticResource('/images/error24.png') . "' width='24' height='24' align='middle' border='0' alt='ERROR:' /> <p/>";
     if(!is_array($errors)) $errors = array($errors);
 
     $errorString = null;
@@ -322,7 +352,7 @@ function displayError($errors, $showHeader=false, $showFooter=false) {
 
 function displayWarning($warnings) {
     print "<div class='displayWarning'>\n";
-    print "<img src='" . getStaticResourcesPath() ."/images/warning24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
+    print "<img src='" . getPathToStaticResource('/images/warning24.png') . "' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($warnings)) {
         $warningString = "";
         foreach ($warnings as $warning) {
@@ -337,7 +367,7 @@ function displayWarning($warnings) {
 
 function displayInfo($infos) {
     print "<div class='displayInfo'>\n";
-    print "<img src='" . getStaticResourcesPath() ."/images/info24.png' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
+    print "<img src='" . getPathToStaticResource('/images/info24.png') . "' width='24' height='24' align='middle' border='0' alt='info:' /> <p/>";
     if (is_array($infos)) {
         $infoString = "";
         foreach ($infos as $info) {
@@ -366,14 +396,14 @@ function localizeDateTimes($inputStr, $formatOverride = null) {
     // for the config option, otherwise default format
     $format = (($formatOverride != null) 
 	              ? $formatOverride 
-	              : ((getConfig("localeDateTimeFormat") !=  null) 
-	                  ? getConfig("localeDateTimeFormat") 
+	              : ((WorkbenchConfig::get()->value("localeDateTimeFormat") !=  null)
+	                  ? WorkbenchConfig::get()->value("localeDateTimeFormat")
 	                  : 'Y-m-d\\TH:i:s.000P'));
 	                  
-    $timezone = getConfig("convertTimezone");
+    $timezone = WorkbenchConfig::get()->value("convertTimezone");
     
     // Short-circuit if we aren't actually doing anything useful.
-    if ($formatOverride == null && $timezone == "" && getConfig("localeDateTimeFormat") == "") {
+    if ($formatOverride == null && $timezone == "" && WorkbenchConfig::get()->value("localeDateTimeFormat") == "") {
         return $inputStr;
     } 
 
@@ -464,7 +494,7 @@ function addLinksToIds($inputStr) {
 
     $dmlTip = "";
 
-    if (getConfig("showIdActionsHover")) {
+    if (WorkbenchConfig::get()->value("showIdActionsHover")) {
         $tipWidth = 0;
         $dmlTip = "onmouseover=\"Tip('Choose an action:<br/>";
         $dmlActions = array("update", "delete", "undelete", "purge");
@@ -472,7 +502,7 @@ function addLinksToIds($inputStr) {
             $tipWidth += 55;
             $dmlTip .= "<a href=\'$dmlAction.php?sourceType=singleRecord&id=$1\'>" . ucfirst($dmlAction) . "</a>&nbsp;&nbsp;";
         }
-        if (getConfig('linkIdToUi')) {
+        if (WorkbenchConfig::get()->value('linkIdToUi')) {
             $tipWidth += 125;
             $dmlTip .= "<a " . str_replace("'", "\'", $uiHref) .">View in Salesforce</a>&nbsp;&nbsp;";
         }
@@ -503,13 +533,13 @@ function convertArrayToCsv($arr) {
 }
 
 function getProxySettings() {
-    if (!getConfig("proxyEnabled"))  return null;
+    if (!WorkbenchConfig::get()->value("proxyEnabled"))  return null;
 
     $proxySettings = array();
-    $proxySettings['proxy_host'] = getConfig("proxyHost");
-    $proxySettings['proxy_port'] = (int)getConfig("proxyPort"); // Use an integer, not a string
-    $proxySettings['proxy_username'] = getConfig("proxyUsername");
-    $proxySettings['proxy_password'] = getConfig("proxyPassword");
+    $proxySettings['proxy_host'] = WorkbenchConfig::get()->value("proxyHost");
+    $proxySettings['proxy_port'] = (int)WorkbenchConfig::get()->value("proxyPort"); // Use an integer, not a string
+    $proxySettings['proxy_username'] = WorkbenchConfig::get()->value("proxyUsername");
+    $proxySettings['proxy_password'] = WorkbenchConfig::get()->value("proxyPassword");
 
      return $proxySettings;
 }
@@ -567,7 +597,7 @@ function prettyPrintXml($xml, $htmlOutput=FALSE)
 
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {
-    if (getConfig("debug") == true) {
+    if (WorkbenchConfig::get()->value("debug") == true) {
 
         print "<script>
             function toggleDebugSection(title, sectionId) {
@@ -600,40 +630,45 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
             print "<h2 onclick=\"toggleDebugSection(this,'container_globals')\" class=\"debugHeader\">+ SUPERGLOBAL VARIABLES</h2>\n";
             print "<div id='container_globals' class='debugContainer'>";
 
+            print "<strong onclick=\"toggleDebugSection(this,'container_globals_cookie')\" class=\"debugHeader\">+ SERVER SUPERGLOBAL VARIABLE</strong>\n";
+            print "<div id='container_globals_cookie' class='debugContainer'>";
+            htmlspecialchars(var_dump ($_SERVER));
+            print "<hr/>";
+            print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_cookie')\" class=\"debugHeader\">+ COOKIE SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_cookie' class='debugContainer'>";
-            var_dump ($_COOKIE);
+            htmlspecialchars(var_dump ($_COOKIE));
             print "<hr/>";
             print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_session')\" class=\"debugHeader\">+ SESSION SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_session' class='debugContainer'>";
-            var_dump ($_SESSION);
+            htmlspecialchars(var_dump ($_SESSION));
             print "<hr/>";
             print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_post')\" class=\"debugHeader\">+ POST SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_post' class='debugContainer'>";
-            var_dump ($_POST);
+            htmlspecialchars(var_dump ($_POST));
             print "<hr/>";
             print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_get')\" class=\"debugHeader\">+ GET SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_get' class='debugContainer'>";
-            var_dump ($_GET);
+            htmlspecialchars(var_dump ($_GET));
             print "<hr/>";
             print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_files')\" class=\"debugHeader\">+ FILES SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_files' class='debugContainer'>";
-            var_dump ($_FILES);
+            htmlspecialchars(var_dump ($_FILES));
             print "<hr/>";
             print "</div>";
 
             print "<strong onclick=\"toggleDebugSection(this,'container_globals_env')\" class=\"debugHeader\">+ ENVIRONMENT SUPERGLOBAL VARIABLE</strong>\n";
             print "<div id='container_globals_env' class='debugContainer'>";
-            var_dump ($_ENV);
+            htmlspecialchars(var_dump ($_ENV));
             print "<hr/>";
             print "</div>";
 
@@ -724,7 +759,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
             }
             catch (Exception $e) {
                 print "<strong>SOAP Error</strong>\n";
-                print_r ($e);
+                htmlspecialchars(print_r ($e));
             }
         }
 
@@ -732,7 +767,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
         if (isset($_SESSION['restDebugLog']) && $_SESSION['restDebugLog'] != "") {
             print "<h2 onclick=\"toggleDebugSection(this,'rest_debug_container')\" class=\"debugHeader\">+ REST/BULK API LOGS</h2>\n";
             print "<div id='rest_debug_container' class='debugContainer'>";
-            print "<pre>" . $_SESSION['restDebugLog'] . "</pre>";
+            print "<pre>" . htmlspecialchars($_SESSION['restDebugLog']) . "</pre>";
             print "<hr/>";
             print "</div>";
 

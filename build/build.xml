@@ -26,7 +26,7 @@
     </taskdef>
 
     <target name="init">		
-        <loadfile srcfile="${dir.src}/config.php" property="app.config"/>
+        <loadfile srcfile="${dir.src}/config/constants.php" property="app.config"/>
 
         <propertyregex property="app.version"
             input="${app.config}"
@@ -62,24 +62,15 @@
         <mkdir dir="${dir.dist}/staging"/>
 
         <copy todir="${dir.dist}/staging">
-            <fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*, ${dir.src}/static/**"/>
-
-            <filterset begintoken="{{" endtoken="}}">
-                <filter token="WORKBENCH_VERSION" value="${app.version.stripped}"/>
-            </filterset>
-        </copy>
-
-        <copy todir="${dir.dist}/staging">
-            <fileset dir="." includes="${dir.src}/static/**"/>
-            <mapper type="glob" from="${dir.src}/static/{{WORKBENCH_VERSION}}/*" to="${dir.src}/static/${app.version.stripped}/*"/>
+            <fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*"/>
         </copy>
     </target>
-
 
     <target name="www" depends="stage" description="copies from staging to WWW dir of your choice">
         <fail unless="dir.www" message="Must set dir.www property"/>
         <copy todir="${dir.www}">
             <fileset dir="${dir.dist}/staging/workbench">
+                <exclude name="**/config/overrides.php"/>
                 <exclude name="**/configOverrides.php"/>
             </fileset>
         </copy>
@@ -136,7 +127,7 @@
     </target>
 
     <target name="update" depends="zip">
-        <scp todir="${sf.username},forceworkbench:${sf.password}@web.sourceforge.net:/home/groups/f/fo/forceworkbench/htdocs/" verbose="true">
+        <scp todir="${sf.username},forceworkbench:${sf.password}@web.sourceforge.net:/home/groups/f/fo/forceworkbench/htdocs/" verbose="true" trust="true">
             <fileset dir="${dir.dist}">
                 <include name="latestVersionAvailable*.txt"/>
             </fileset>

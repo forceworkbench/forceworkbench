@@ -19,7 +19,7 @@ class DescribeSObjectsProvider extends CacheableValueProvider {
     }
 
     function isCachingEnabled() {
-        return getConfig('cacheDescribeSObject');
+        return WorkbenchConfig::get()->value('cacheDescribeSObject');
     }
 
     protected function isCached($types) {
@@ -79,7 +79,7 @@ class DescribeSObjectsProvider extends CacheableValueProvider {
             throw new Exception("Unknown Describe SObject results");
         }
 
-        if (getConfig("abcOrder")) {
+        if (WorkbenchConfig::get()->value("abcOrder")) {
             foreach ($loadedTypes as $name => $result) {
                 $loadedTypes[$name] = $this->alphaOrderFields($result);
             }

@@ -21,7 +21,7 @@ $proxy->headers[] = "Authorization: OAuth $sessionId";
 $proxy->host = $host;
 $proxy->forceSSL = $forceSSL;
 $proxy->forward_path = "/cometd/$apiVersion";
-$proxy->cookie_whitelist = array("sfdc-stream");
+$proxy->cookie_whitelist = array("sfdc-stream", "BAYEUX_BROWSER");
 $proxy->proxy_settings = getProxySettings();
 $proxy->is_forward_path_static = true;
 $proxy->connect();

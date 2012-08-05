@@ -9,8 +9,8 @@ require_once 'put.php';
     <head>
         <meta http-equiv="Content-Language" content="UTF-8" />
         <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
-        <link rel="stylesheet" href="<?php echo getStaticResourcesPath(); ?>/style/master.css" type="text/css" />
-        <link rel="Shortcut Icon" type="image/png" href="<?php echo getStaticResourcesPath(); ?>/images/bluecube-16x16.png" />
+        <link rel="stylesheet" href="<?php echo getPathToStaticResource('/style/master.css'); ?>" type="text/css" />
+        <link rel="Shortcut Icon" type="image/png" href="<?php echo getPathToStaticResource('/images/bluecube-16x16.png'); ?>" />
         <title>Workbench - CSV Preview</title>
     </head>
 <body>

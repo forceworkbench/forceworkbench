@@ -7,8 +7,8 @@
 var persisteduls = new Object()
 var ddtreemenu = new Object()
 
-ddtreemenu.closefolder = WORKBENCH_STATIC_RESOURCES_PATH + "/images/closed.gif" // set image path to "closed"
-ddtreemenu.openfolder  = WORKBENCH_STATIC_RESOURCES_PATH + "/images/open.gif" // set image path to "open" folder
+ddtreemenu.closefolder = getPathToStaticResource("/images/closed.gif") // set image path to "closed"
+ddtreemenu.openfolder  = getPathToStaticResource("/images/open.gif") // set image path to "open" folder
 
 ////////No need to edit beyond here///////////////////////////
 

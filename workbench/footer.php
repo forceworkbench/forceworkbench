@@ -6,21 +6,20 @@ include_once 'shared.php';
 <div id='disclaimer'><br />
 
 <?php
-if (getConfig("checkSSL") && !usingSSL()) {
+if (WorkbenchConfig::get()->value("checkSSL") && !usingSslEndToEnd()) {
     print "<div style='font-size: 8pt; color: orange;'>WARNING: Unsecure connection detected</div>";
 }
 
-if (WorkbenchContext::isEstablished() && WorkbenchContext::get()->isRequestStartTimeSet() && getConfig("displayRequestTime")) {
+if (WorkbenchContext::isEstablished() && WorkbenchContext::get()->isRequestStartTimeSet() && WorkbenchConfig::get()->value("displayRequestTime")) {
     printf ("Requested in %01.3f sec<BR/>", WorkbenchContext::get()->getRequestProcessingTime());
 }
 
 print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKBENCH_VERSION"] : "") . "<br/>\n";
-
 ?></div>
 
 </body>
 
-<script type="text/javascript" src="<?php echo getStaticResourcesPath(); ?>/script/wz_tooltip.js"></script>
+<script type="text/javascript" src="<?php echo getPathToStaticResource('/script/wz_tooltip.js'); ?>"></script>
 
 <?php
 if (isset($_REQUEST["footerScripts"])) {

@@ -1,80 +1,32 @@
 <?php
+require_once 'config/constants.php';
+require_once 'config/WorkbenchConfig.php';
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
+
+set_exception_handler('handleAllExceptions');
+set_error_handler('handleAllErrors');
+
+$sessionStore = WorkbenchConfig::get()->value("sessionStore");
+// If $sessionStore starts with redis://, convert to format for Redis extension and set as the session save handler
+// IN:  redis://user:pass@host:port/
+// OUT: tcp://host:port?auth=pass
+if (strpos($sessionStore, "redis://") === 0) {
+  $redisUrl = "tcp://" . parse_url($sessionStore, PHP_URL_HOST) . ":" . parse_url($sessionStore, PHP_URL_PORT);
+  if (!is_array(parse_url($sessionStore, PHP_URL_PASS))) {
+    $redisUrl .= "?auth=" . parse_url($sessionStore, PHP_URL_PASS);
+  }
+  ini_set("session.save_path", $redisUrl);
+  ini_set("session.save_handler", "redis");
+}
 
 ini_set("session.cookie_httponly", "1");
 session_start();
 
-//load default config values
-require_once 'config.php';
-
-// load file-based config overrides
-if(is_file('configOverrides.php')) require_once 'configOverrides.php';
-
-// load environment variable based overrides
-$configNamespace = "forceworkbench";
-$configDelim = "__";
-foreach ($_ENV as $envKey => $envValue) {
-    if (strpos($envKey, $configNamespace) !== 0) {
-        continue;
-    }
-
-    $envKey = str_replace("___DOT___", ".", $envKey);
-
-    $envKeyParts = explode($configDelim, $envKey);
-
-    foreach ($envKeyParts as $keyPart) {
-        if ($keyPart === $configNamespace) {
-            $point = &$config;
-            continue;
-        }
-
-        if (!isset($point[$keyPart])) {
-            $point[$keyPart] = "";
-        }
-
-        $point = &$point[$keyPart];
-    }
-
-    if (!isset($point) || is_array($point)) {
-        workbenchLog(LOG_ERR, "Invalid location for $envKey");
-        continue;
-    }
-
-    $point = ($envValue === "false") ? false : $envValue;
+if (WorkbenchConfig::get()->value("redirectToHTTPS") && !usingSslFromUserToWorkbench()) {
+    header("Location: " . "https://" . $_SERVER['HTTP_HOST']  . $_SERVER['REQUEST_URI']);
+    exit;
 }
-
-foreach ($config as $configKey => $configValue) {
-    // skip headers
-    if (isset($configValue['isHeader'])) {
-        continue;
-    }
-
-    // does the user have an override?
-    else if (isset($_COOKIE[$configKey])) {
-        // override the session value with that of the cookie
-        if ($configValue['overrideable']) {
-            $_SESSION['config'][$configKey] = $_COOKIE[$configKey];
-        }
-        // remove the override if not actually overridable and set to default
-        else {
-            setcookie($configKey,NULL,time()-3600);
-            $_SESSION['config'][$configKey] = $configValue['default'];
-        }
-    }
-    // otherwise, just use the default
-    else {
-        $_SESSION['config'][$configKey] = $configValue['default'];
-    }
-}
-
-if ($config["callOptions_client"]["default"] == "WORKBENCH_DEFAULT" && !isset($_COOKIE["callOptions_client"])) {
-    $_SESSION['config']['callOptions_client'] = getWorkbenchUserAgent();
-}
-
-// must come after configs are loaded...lets hope there's not a problem above
-set_exception_handler('handleAllExceptions');
-set_error_handler('handleAllErrors');
 
 workbenchLog(LOG_INFO, "U");
 
@@ -101,7 +53,7 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != "") {
     httpError("400 Bad Request", "Path info trailing script name in URI not allowed.");
 }
 
-if (getConfig("requireSSL") && !usingSSL()) {
+if (WorkbenchConfig::get()->value("requireSSL") && !usingSslEndToEnd()) {
     if (WorkbenchContext::isEstablished()) {
         WorkbenchContext::get()->release();
     }
@@ -130,7 +82,7 @@ if (isLoggedIn()) {
     // todo: should this be in the ctx?
     if (!in_array(basename($_SERVER['PHP_SELF'], ".php"), array("login", "logout")) && isset($_SESSION['lastRequestTime'])) {
         $idleTime = microtime(true) - $_SESSION['lastRequestTime'];
-        if ($idleTime > (getConfig("sessionIdleMinutes") * 60)) {
+        if ($idleTime > (WorkbenchConfig::get()->value("sessionIdleMinutes") * 60)) {
             // ping SFDC to check if session is still alive
             WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
         }

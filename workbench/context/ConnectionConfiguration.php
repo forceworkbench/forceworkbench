@@ -36,7 +36,7 @@ class ConnectionConfiguration {
     }
 
     function getClientId() {
-        return isset($this->overriddenClientId) ? $this->overriddenClientId : getConfig("callOptions_client");
+        return isset($this->overriddenClientId) ? $this->overriddenClientId : WorkbenchConfig::get()->value("callOptions_client");
     }
 
     function applyLoginResult($loginResult) {

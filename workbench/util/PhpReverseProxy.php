@@ -41,7 +41,7 @@ class PhpReverseProxy {
     function translateServer($serverName) {
         // use SSL if forced on proxy or original request was using SSL
         $protocol = "http" .
-                    ($this->forceSSL || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+                    ($this->forceSSL || usingSslFromUserToWorkbench()
                         ? "s"
                         : "");
 

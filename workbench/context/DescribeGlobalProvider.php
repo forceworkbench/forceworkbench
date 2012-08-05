@@ -4,7 +4,7 @@ require_once 'context/CacheableValueProvider.php';
 class DescribeGlobalProvider extends CacheableValueProvider {
 
     function isCachingEnabled() {
-        return getConfig('cacheDescribeGlobal');
+        return WorkbenchConfig::get()->value('cacheDescribeGlobal');
     }
 
     function load($args) {

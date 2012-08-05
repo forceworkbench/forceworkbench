@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    TO CONFIGURE WORKBENCH FOR ALL YOUR USERS, ADJUST THE "DEFAULT" VALUES FOR THE KEYS BELOW.
-//    FOR EASIER UPGRADING, YOU MAY IT IS RECOMMENDED TO MAKE THESE CHANGES TO THE configOverrides.php FILE
+//    FOR EASIER UPGRADING, YOU MAY IT IS RECOMMENDED TO MAKE THESE CHANGES TO THE overrides.php FILE
 //    WHICH ARE APPLIED AFTER LOADING CONFIGURATIONS FROM THIS FILE.
 //
 //    IF YOU WOULD LIKE TO ALLOW YOUR USERS TO OVERRIDE THE DEFAULTS SET THE "OVERRIDEABLE" VALUE TO true.
@@ -159,12 +159,28 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
+    $config["logHandler"] = array(
+        "label" => "Logging Handle",
+        "description" => "Log handler to which to log. Valid values are 'syslog' or 'file'",
+        "default" => "syslog",
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
     $config["syslogFacility"] = array(
         "label" => "Syslog Facility",
         "description" => "Syslog facility to which to log.",
         "default" => LOG_USER,
         "overrideable" => false,
         "dataType" => "int"
+    );
+
+    $config["logFile"] = array(
+        "label" => "Log File",
+        "description" => "Location of log file for Workbench logs",
+        "default" => "forceworkbench.log",
+        "overrideable" => false,
+        "dataType" => "String"
     );
 
 $config["header_LoginOptions"] = array(
@@ -209,6 +225,7 @@ $config["header_LoginOptions"] = array(
             "na10-api" => array("NA10","F"),
             "na11-api" => array("NA11","G"),
             "na12-api" => array("NA12","U"),
+            "na14-api" => array("NA14","d"),
             "ap0-api" => array("AP0 (ap)","1"),
             "ap1-api" => array("AP1","9"),
             "eu0-api" => array("EU0 (emea)","2"),
@@ -226,12 +243,15 @@ $config["header_LoginOptions"] = array(
             "cs10-api" => array("Sandbox: CS10","J"),
             "cs11-api" => array("Sandbox: CS11","Z"),
             "cs12-api" => array("Sandbox: CS12","V"),
-            "cs13-api" => array("Sandbox: CS13","Y"),
+            "cs13-api" => array("Sandbox: CS13","W"),
+            "cs14-api" => array("Sandbox: CS14","c"),
+            "cs15-api" => array("Sandbox: CS15","e"),
             "prerelna1.pre" => array("Pre-Release: NA1","t")
         )
     );
 
     $GLOBALS['API_VERSIONS'] = array(
+        "25.0" => "25.0",
         "24.0" => "24.0",
         "23.0" => "23.0",
         "22.0" => "22.0",
@@ -255,7 +275,7 @@ $config["header_LoginOptions"] = array(
     $config["defaultApiVersion"]  = array(
         "label" => "Default API Version",
         "description" => "Default API version to be used for login. This setting does not affect the API version of the current session. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
-        "default" => "24.0",
+        "default" => "25.0",
         "overrideable" => true,
         "dataType" => "picklist",
         "valuesToLabels" => $GLOBALS['API_VERSIONS']
@@ -315,7 +335,7 @@ $config["header_LoginOptions"] = array(
         "dataType" => "string"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["termsFile"] = array(
         "label" => "Terms of Service File",
         "description" => "An HTML file containing Terms of Service that will be required for login.",
@@ -739,7 +759,7 @@ $config["header_SecurityOptions"] = array(
         "minApiVersion" => 13.0
     );
 
-    // This should never be overrideable by end users; instead, admins can override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins can override default in overrides.php
     $config["requireSSL"] = array(
         "label" => "Requires a Secure Connection",
         "description" => "Requires a secure connection to between this computer and the Workbench server AND between Workbench server and Salesforce API. Returns an HTTP 403.4 error if not satisfied.",
@@ -765,6 +785,14 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "boolean"
     );
 
+    $config["redirectToHTTPS"] = array(
+        "label" => "Redirect to HTTPS",
+        "description" => "Redirect user to HTTPS if unsecure connection is used",
+        "default" => false,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
     $config["readOnlyMode"] = array(
         "label" => "Read Only Mode",
         "description" => "Disable access to pages that can change data or metadata. Do not use as a replacement for server-side validation.",
@@ -773,7 +801,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "boolean"
     );
 
-    // This should never be overrideable by end users; instead, admins can override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins can override default in overrides.php
     $config["loginCsrfEnabled"] = array(
         "label" => "Enable CSRF Protection for Login",
         "description" => "Enable CSRF (Cross-Site Request Forgery) protection for login.",
@@ -782,7 +810,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "boolean"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["csrfSecret"] = array(
         "label" => "CSRF Salting Secret",
         "description" => "Used for salting the CSRF (Cross-Site Request Forgery) tokens.",
@@ -791,7 +819,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "string"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["orgIdWhiteList"] = array(
         "label" => "Organization Id Whitelist",
         "description" => "A comma-separated list of organization ids which are the only ones allowed to connect to Workbench.",
@@ -800,7 +828,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "string"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["orgIdBlackList"] = array(
         "label" => "Organization Id Blacklist",
         "description" => "A comma-separated list of organization ids which are not allowed to connect to Workbench.",
@@ -809,7 +837,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "string"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["oauthRequired"] = array(
         "label" => "Require OAuth Login",
         "description" => "Require OAuth Login",
@@ -818,7 +846,7 @@ $config["header_SecurityOptions"] = array(
         "dataType" => "boolean"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in configOverrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["oauthConfigs"] = array(
         "label" => "OAuth 2.0 Consumer Key",
         "description" => "OAuth 2.0 Consumer Key",
@@ -884,99 +912,11 @@ $config["header_internal"] = array(
     "isHeader" => true
 );
 
-    $config["mockClients"] = array(
-        "label" => "Connect with Mocked API Client",
-        "description" => "Only used during internal development. Do not expose in production environments.",
-        "default" => false,
+    $config["sessionStore"] = array(
+        "label" => "Session Store",
+        "description" => "Only redis:// URL are currently supported; otherwise, blank for default value",
+        "default" => "",
         "overrideable" => false,
-        "dataType" => "boolean"
+        "dataType" => "string"
     );
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//
-//
-//  CONSTANTS. DO NOT CHANGE.
-//
-//
-//////////////////////////////////////////////////////////////////////////////////////////
-
-$GLOBALS["WORKBENCH_VERSION"] = "24.0.0";
-
-$GLOBALS["WORKBENCH_STATIC_RESOURCES_PATH"] = "static/" . "{{WORKBENCH_VERSION}}";
-
-class Page {
-    public $title;
-    public $desc;
-    public $requiresSfdcSession;
-    public $isReadOnly;
-    public $onNavBar;
-    public $onMenuSelect;
-    public $showTitle;
-    public $window;
-
-    public function __construct($title, $desc, $requiresSfdcSession=true, $isReadOnly=false, $onNavBar=false, $onMenuSelect=false, $showTitle=true, $window='') {
-        $this->title = $title;
-        $this->desc = $desc;
-        $this->requiresSfdcSession = $requiresSfdcSession;
-        $this->isReadOnly = $isReadOnly;
-        $this->onNavBar = $onNavBar;
-        $this->onMenuSelect = $onMenuSelect;
-        $this->showTitle = $showTitle;
-        $this->window = $window;
-    }
-}
-
-$GLOBALS["MENUS"] = array(
-    'WORKBENCH' => array(
-        'login.php'     => new Page('Login','Logs into your Salesforce organization.',false,true,true,false,false,''),
-        'select.php'    => new Page('Select','Select action to which to jump.',true,true,false,false,false,''),
-        'settings.php'  => new Page('Settings','Configuration for Workbench.',false,true,true,false,true,''),
-        'logout.php'    => new Page('Logout','Logs out of your Salesforce organization.',false,true,true,false,false,''),
-        'help.php'      => new Page('Help','Get help about using Workbench.',false,true,true,false,true,''),
-        'about.php'     => new Page('About','Learn about Workbench.',false,true,true,false,true,''),
-        'terms.php'     => new Page('Terms of Service','Terms of Service.',false,true,false,false,true,'')
-    ),
-
-    'Info' => array(
-        'describe.php'          => new Page('Standard & Custom Objects','Describes the attributes, fields, record types, and child relationships of an object in a tree format.',true,true,true,'usesObject',true,''),
-        'metadataDescribeAndList.php'      => new Page('Metadata Types & Components','Describes and lists the metadata components in this organization.',true,true,true,true,true,''),
-        'sessionInfo.php'       => new Page('Session Information','Information about the current session.',true,true,true,false,true,''),
-    ),
-
-    'Queries' => array(
-        'query.php'       => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file.',true,true,true,'usesObject',true,''),
-        'search.php'      => new Page('SOSL Search','Search the data in your organization across multiple objects.',true,true,true,'usesObject',true,''),
-        'streaming.php'   => new Page('Streaming Push Topics','Streaming latest query results in push topics using CometD long polling.',true,false,true,true,true,''),
-    ),
-
-    'Data' => array(
-        'retrieve.php'  => new Page('Retrieve','View a record.',true,true,false,false,false,''),
-        'insert.php'    => new Page('Insert','Creates new records.',true,false,true,'usesObject',true,''),
-        'update.php'    => new Page('Update','Updates existing records.',true,false,true,'usesObject',true,''),
-        'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records based on a unique External Id.',true,false,true,'usesObject',true,''),
-        'delete.php'    => new Page('Delete','Moves records to the Recycle Bin.',true,false,true,true,true,''),
-        'undelete.php'  => new Page('Undelete','Restores records from the Recycle Bin.',true,false,true,true,true,''),
-        'purge.php'     => new Page('Purge','Permanently deletes records from your Recycle Bin.',true,false,true,true,true,'')
-     ),
-
-    'Migration' => array(
-        'metadataDeploy.php'    => new Page('Deploy','Deploys metadata components to this organization.',true,false,true,true,true,''),
-        'metadataRetrieve.php'  => new Page('Retrieve','Retrieves metadata components from this organization.',true,true,true,true,true,''),
-    ),
-
-    'Utilities' => array(
-        'restExplorer.php'            => new Page('REST Explorer','Explore and discover the REST API.',true,false,true,true,true,''),
-        'execute.php'                 => new Page('Apex Execute','Execute Apex code as an anonymous block.',true,false,true,true,true,''),
-        'runAllApexTests.php'         => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,true,false,true,'runAllApexTests'),
-        'pwdMgmt.php'                 => new Page('Password Management','Set and Reset Passwords.',true,false,true,false,true,''),
-        'asyncStatus.php'             => new Page('Bulk API Job Status','Asynchronous data load status and results.',true,true,true,false,true,''),
-        'metadataStatus.php'          => new Page('Metadata API Process Status','Metadata API status and results.',true,true,true,false,true,''),
-        'burn.php'                    => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,false,true,''),
-        'downloadAsyncBatch.php'      => new Page('Download Bulk API Batch','Downloads Bulk API requests and results.',true,true,false,false,true,''),
-        'downloadResultsWithData.php' => new Page('Download DML Results','Downloads DML results.',true,true,false,false,true,''),
-        'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload.',true,true,false,false,true,''),
-        'jumpToSfdc.php'              => new Page('Jump to SFDC','Jumps to SFDC user interface for a given id.',true,true,false,false,true,''),
-        'cometdProxy.php'             => new Page('CometD Proxy','CometD Proxy for Streaming API support.',true,true,false,false,false,'')
-     )
-);
 ?>

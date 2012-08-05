@@ -5,7 +5,7 @@ require_once 'shared.php';
 if ($_SESSION) {
     $redirectTime = 2000;
 
-    if (isset($_REQUEST['invalidateSession']) || (WorkbenchContext::isEstablished() && getConfig("invalidateSessionOnLogout"))) {
+    if (isset($_REQUEST['invalidateSession']) || (WorkbenchContext::isEstablished() && WorkbenchConfig::get()->value("invalidateSessionOnLogout"))) {
         try {
             if (WorkbenchContext::isEstablished()) {
                 WorkbenchContext::get()->getPartnerConnection()->logout();

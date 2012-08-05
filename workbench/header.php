@@ -4,27 +4,32 @@
         <meta http-equiv="Content-Language" content="UTF-8" />
         <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 
-        <link rel="Shortcut Icon" type="image/png" href="<?php echo getStaticResourcesPath(); ?>/images/bluecube-16x16.png" />
+        <link rel="Shortcut Icon" type="image/png" href="<?php echo getPathToStaticResource('/images/bluecube-16x16.png'); ?>" />
 
-        <link rel="stylesheet" type="text/css" href="<?php echo getStaticResourcesPath(); ?>/style/master.css" />
-        <link rel="stylesheet" type="text/css" href="<?php echo getStaticResourcesPath(); ?>/style/pro_dropdown.css" />
-        <link rel="stylesheet" type="text/css" href="<?php echo getStaticResourcesPath(); ?>/style/simpletree.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo getPathToStaticResource('/style/master.css'); ?>" />
+        <link rel="stylesheet" type="text/css" href="<?php echo getPathToStaticResource('/style/pro_dropdown.css'); ?>" />
+        <link rel="stylesheet" type="text/css" href="<?php echo getPathToStaticResource('/style/simpletree.css'); ?>" />
 
         <?php
         $myPage = getMyPage();
         $title = $myPage->showTitle ? ": " . $myPage->title : "";
         print "<title>Workbench$title</title>";
-        
-        print "<script type='text/javascript'>var WORKBENCH_STATIC_RESOURCES_PATH = '" . getStaticResourcesPath() . "';</script>";
+
+        print "<script type='text/javascript'>var getPathToStaticResource = " . getPathToStaticResourceAsJsFunction() . ";</script>";
         ?>
         
-		<script type="text/javascript" src="<?php echo getStaticResourcesPath(); ?>/script/pro_dropdown.js"></script>
+		<script type="text/javascript" src="<?php echo getPathToStaticResource('/script/pro_dropdown.js'); ?>"></script>
     </head>
 <body>
 
 <?php
+if (WorkbenchConfig::get()->isConfigured("displayLiveMaintenanceMessage")) {
+    print "<div style='background-color: orange; width: 100%; padding: 2px; font-size: 8pt; font-weight: bold;'>" .
+              "Workbench is currently undergoing maintenance. The service may be intermittently unavailable during this time.</div><br/>";
+}
+
 //check for latest version
-if (getConfig("checkForLatestVersion") && extension_loaded('curl') && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))) {
+if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('curl') && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))) {
     try {
         $ch = curl_init();
         if (stristr($GLOBALS["WORKBENCH_VERSION"],'beta')) {
@@ -60,7 +65,7 @@ if (getConfig("checkForLatestVersion") && extension_loaded('curl') && (isset($_G
         if (isReadOnlyMode() && $menu == "Data") { //special-case for Data menu, since all read-only
             continue;
         }
-        $menuLabel = ($menu == "WORKBENCH") ? "&nbsp;<img src='" . getStaticResourcesPath() . "/images/workbench-3-cubed-white-small.png'/>" : strtolower($menu);
+        $menuLabel = ($menu == "WORKBENCH") ? "&nbsp;<img src='" . getPathToStaticResource('/images/workbench-3-cubed-white-small.png') . "'/>" : strtolower($menu);
         print "<li class='top'><a class='top_link'><span class='down'>" . $menuLabel ."</span></a>\n" .
                   "<ul class='sub'>";
         foreach ($pages as $href => $page) {

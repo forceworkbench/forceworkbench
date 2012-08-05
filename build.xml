@@ -24,7 +24,7 @@
 -->
 
 	<target name="init" description="Initializes versioning properties">
-		<loadfile file="${dir.src}/config.php" property="app.config"/>
+		<loadfile file="workbench/config/constants.php" property="app.config"/>
 		<php function="matchOne" returnProperty="app.version">
 			<param value="/\$GLOBALS\[&quot;WORKBENCH_VERSION&quot;\] = &quot;(.+)&quot;;/"/>
 			<param value="${app.config}"/>
@@ -56,16 +56,7 @@
 		<delete dir="${dir.dist.versions}/${app.version.stripped}"/>
 		<mkdir dir="${dir.dist.versions}/${app.version.stripped}"/>
 		<copy todir="${dir.dist.versions}/${app.version.stripped}">
-			<fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*, ${dir.src.static}/**"/>
-			<filterchain>
-				<replacetokens begintoken="{{" endtoken="}}">
-					<token key="WORKBENCH_VERSION" value="${app.version.stripped}"/>
-				</replacetokens>
-			</filterchain>
-		</copy>
-		<copy todir="${dir.dist.versions}/${app.version.stripped}">
-			<fileset dir="." includes="${dir.src.static}/**"/>
-			<mapper type="regexp" from="${dir.src.static}/{{WORKBENCH_VERSION}}/(.*)" to="${dir.src.static}/${app.version.stripped}/\1"/>
+			<fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*"/>
 		</copy>
 	</target>
 
@@ -76,6 +67,7 @@
         <!--suppress PhingDomInspection -->
         <copy todir="${env.PUBLIC_HTML_DIR}">
 			<fileset dir="${dir.dist.versions}/${app.version.stripped}/${dir.src}">
+				<exclude name="**/config/overrides.php"/>
 				<exclude name="**/configOverrides.php"/>
 			</fileset>
 		</copy>

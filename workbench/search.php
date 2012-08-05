@@ -12,11 +12,11 @@ if ((isset($_POST['searchSubmit']) && $_POST['searchSubmit']=='Search') || (isse
 }
 
 $persistedSavedSearchRequestsKey = "PSSR@";
-if (getConfig("savedQueriesAndSearchesPersistanceLevel") == 'USER') {
+if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == 'USER') {
     $persistedSavedSearchRequestsKey .= WorkbenchContext::get()->getUserInfo()->userId . "@" . WorkbenchContext::get()->getUserInfo()->organizationId;
-} else if (getConfig("savedQueriesAndSearchesPersistanceLevel") == "ORG") {
+} else if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == "ORG") {
     $persistedSavedSearchRequestsKey .= WorkbenchContext::get()->getUserInfo()->organizationId;
-} else if (getConfig("savedQueriesAndSearchesPersistanceLevel") == 'ALL') {
+} else if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == 'ALL') {
     $persistedSavedSearchRequestsKey .= "ALL";
 }
 
@@ -30,7 +30,7 @@ if (isset($_REQUEST['getSr']) && $_REQUEST['getSr'] != "" && isset($_SESSION['sa
 } else {
     $defaultSettings['numReturningObjects'] = 1;
     $searchRequest = new SearchRequest($defaultSettings);
-    if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE' && !isset($_SESSION['savedSearchRequests']) && isset($_COOKIE[$persistedSavedSearchRequestsKey])) {
+    if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE' && !isset($_SESSION['savedSearchRequests']) && isset($_COOKIE[$persistedSavedSearchRequestsKey])) {
         $_SESSION['savedSearchRequests'] = unserialize($_COOKIE[$persistedSavedSearchRequestsKey]);
     }
 }
@@ -38,7 +38,7 @@ if (isset($_REQUEST['getSr']) && $_REQUEST['getSr'] != "" && isset($_SESSION['sa
 //clear  all saved searches in scope if user requests
 if (isset($_POST['clearAllSr']) && $_POST['clearAllSr'] == 'Clear All') {
     $_SESSION['savedSearchRequests'] = null;
-    if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
+    if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
         setcookie($persistedSavedSearchRequestsKey,null,time()-3600);
     }
 }
@@ -46,7 +46,7 @@ if (isset($_POST['clearAllSr']) && $_POST['clearAllSr'] == 'Clear All') {
 //save as named search
 if (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST['saveSr']) && strlen($_REQUEST['saveSr']) > 0) {
     $_SESSION['savedSearchRequests'][htmlspecialchars($_REQUEST['saveSr'],ENT_QUOTES)] = $lastSr;
-    if (getConfig("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
+    if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
         setcookie($persistedSavedSearchRequestsKey,serialize($_SESSION['savedSearchRequests']),time()+60*60*24*7);
     }
 }
@@ -207,7 +207,7 @@ function addReturningObjectRow(rowNum, defaultObject, defaultFields) {
     var newPlusCell = document.createElement('td');
     newPlusCell.setAttribute('id','add_row_plus_cell_' + rowNum);
     newPlusCell.setAttribute('vAlign','bottom');
-    newPlusCell.innerHTML = "<img id='row_plus_button' src='" + WORKBENCH_STATIC_RESOURCES_PATH + "/images/plus_icon.jpg' onclick='addReturningObjectRow(document.getElementById(\"numReturningObjects\").value++);toggleFieldDisabled();' onmouseover='this.style.cursor=\"pointer\";'  style='padding-top: 4px;'/>";
+    newPlusCell.innerHTML = "<img id='row_plus_button' src='" + getPathToStaticResource('/images/plus_icon.jpg') + "' onclick='addReturningObjectRow(document.getElementById(\"numReturningObjects\").value++);toggleFieldDisabled();' onmouseover='this.style.cursor=\"pointer\";'  style='padding-top: 4px;'/>";
     
     var newRow = document.createElement('tr');
     newRow.setAttribute('id','returning_objects_row_' + rowNum);
@@ -227,7 +227,7 @@ function addReturningObjectRow(rowNum, defaultObject, defaultFields) {
 </script>
 SEARCH_BUILDER_SCRIPT;
 
-    if (getConfig("autoJumpToResults")) {
+    if (WorkbenchConfig::get()->value("autoJumpToResults")) {
         print "<form method='POST' name='search_form' action='#sr'>\n";
     } else {
         print "<form method='POST' name='search_form' action='#sr'>\n";
@@ -257,7 +257,7 @@ SEARCH_BUILDER_SCRIPT;
         print " limited to <input id='SB_limit' name='SB_limit' type='text'  value='" . htmlspecialchars($searchRequest->getLimit(),ENT_QUOTES) . "' size='5' onKeyUp='buildSearch();' /> maximum records</td></tr>\n";
 
         print "<tr id='sosl_search_textarea_row'><td valign='top' colspan='3'><br/>Enter or modify a SOSL search below:" .
-        "<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='100' rows='" . getConfig("textareaRows") . "' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($searchRequest->getSoslSearch(),ENT_QUOTES) . "</textarea>" .
+        "<br/><textarea id='sosl_search_textarea' type='text' name='sosl_search' cols='100' rows='" . WorkbenchConfig::get()->value("textareaRows") . "' style='overflow: auto; font-family: monospace, courier;'>". htmlspecialchars($searchRequest->getSoslSearch(),ENT_QUOTES) . "</textarea>" .
       "</td></tr>";
 
         print "<tr><td><input type='submit' name='searchSubmit' value='Search' />";
@@ -282,7 +282,7 @@ SEARCH_BUILDER_SCRIPT;
         print "<input type='submit' name='clearAllSr' value='Clear All'/>\n";
 
         print "&nbsp;&nbsp;" .
-          "<img onmouseover=\"Tip('Save a search with a name and run it at a later time during your session. Note, if a search is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getStaticResourcesPath() ."/images/help16.png'/>";
+          "<img onmouseover=\"Tip('Save a search with a name and run it at a later time during your session. Note, if a search is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
 
 
         print "</td></tr></table><p/></form>\n";
@@ -322,8 +322,8 @@ function search($searchRequest) {
 function displaySearchResult($records, $searchTimeElapsed) {
     //Check if records were returned
     if ($records) {
-        if (getConfig("areTablesSortable")) {
-            addFooterScript("<script type='text/javascript' src='" . getStaticResourcesPath() . "/script/sortable.js'></script>");
+        if (WorkbenchConfig::get()->value("areTablesSortable")) {
+            addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/sortable.js') . "></script>");
         }
         
         try {

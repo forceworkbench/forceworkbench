@@ -9,70 +9,70 @@ class PartnerConnectionProvider extends AbstractSoapConnectionProvider {
         $connection->createConnection($this->buildWsdlPath($connConfig));
         $connection->setEndpoint($this->buildEndpoint($connConfig));
         $connection->setSessionHeader($connConfig->getSessionId());
-        $connection->setCallOptions(new CallOptions($connConfig->getClientId(), getConfig('callOptions_defaultNamespace')));
+        $connection->setCallOptions(new CallOptions($connConfig->getClientId(), WorkbenchConfig::get()->value('callOptions_defaultNamespace')));
 
-        if (getConfig('assignmentRuleHeader_assignmentRuleId') || getConfig('assignmentRuleHeader_useDefaultRule')) {
+        if (WorkbenchConfig::get()->value('assignmentRuleHeader_assignmentRuleId') || WorkbenchConfig::get()->value('assignmentRuleHeader_useDefaultRule')) {
             $connection->setAssignmentRuleHeader(
                 new AssignmentRuleHeader(
-                    getConfig('assignmentRuleHeader_assignmentRuleId'),
-                    getConfig('assignmentRuleHeader_useDefaultRule')
+                    WorkbenchConfig::get()->value('assignmentRuleHeader_assignmentRuleId'),
+                    WorkbenchConfig::get()->value('assignmentRuleHeader_useDefaultRule')
                 )
             );
         }
 
-        if (getConfig('mruHeader_updateMru')) {
-            $connection->setMruHeader(new MruHeader(getConfig('mruHeader_updateMru')));
+        if (WorkbenchConfig::get()->value('mruHeader_updateMru')) {
+            $connection->setMruHeader(new MruHeader(WorkbenchConfig::get()->value('mruHeader_updateMru')));
         }
 
-        if (getConfig('queryOptions_batchSize')) {
-            $connection->setQueryOptions(new QueryOptions(getConfig('queryOptions_batchSize')));
+        if (WorkbenchConfig::get()->value('queryOptions_batchSize')) {
+            $connection->setQueryOptions(new QueryOptions(WorkbenchConfig::get()->value('queryOptions_batchSize')));
         }
 
-        if (getConfig('emailHeader_triggerAutoResponseEmail') ||
-            getConfig('emailHeader_triggerOtherEmail') ||
-            getConfig('emailHeader_triggertriggerUserEmail')) {
+        if (WorkbenchConfig::get()->value('emailHeader_triggerAutoResponseEmail') ||
+            WorkbenchConfig::get()->value('emailHeader_triggerOtherEmail') ||
+            WorkbenchConfig::get()->value('emailHeader_triggertriggerUserEmail')) {
 
             $connection->setEmailHeader(new EmailHeader(
-                    getConfig('emailHeader_triggerAutoResponseEmail'),
-                    getConfig('emailHeader_triggerOtherEmail'),
-                    getConfig('emailHeader_triggertriggerUserEmail')
+                    WorkbenchConfig::get()->value('emailHeader_triggerAutoResponseEmail'),
+                    WorkbenchConfig::get()->value('emailHeader_triggerOtherEmail'),
+                    WorkbenchConfig::get()->value('emailHeader_triggertriggerUserEmail')
                 )
             );
         }
 
-        if (getConfig('UserTerritoryDeleteHeader_transferToUserId')) {
+        if (WorkbenchConfig::get()->value('UserTerritoryDeleteHeader_transferToUserId')) {
             $connection->setUserTerritoryDeleteHeader(
-                new UserTerritoryDeleteHeader(getConfig('UserTerritoryDeleteHeader_transferToUserId')));
+                new UserTerritoryDeleteHeader(WorkbenchConfig::get()->value('UserTerritoryDeleteHeader_transferToUserId')));
         }
 
-        if (getConfig('allowFieldTruncationHeader_allowFieldTruncation')) {
+        if (WorkbenchConfig::get()->value('allowFieldTruncationHeader_allowFieldTruncation')) {
             $connection->setAllowFieldTruncationHeader(
-                new AllowFieldTruncationHeader(getConfig('allowFieldTruncationHeader_allowFieldTruncation')));
+                new AllowFieldTruncationHeader(WorkbenchConfig::get()->value('allowFieldTruncationHeader_allowFieldTruncation')));
         }
 
-        if (getConfig('allOrNoneHeader_allOrNone')) {
+        if (WorkbenchConfig::get()->value('allOrNoneHeader_allOrNone')) {
             $connection->setAllOrNoneHeader(
-			    new AllOrNoneHeader(getConfig('allOrNoneHeader_allOrNone')));
+			    new AllOrNoneHeader(WorkbenchConfig::get()->value('allOrNoneHeader_allOrNone')));
         }
 
-        if (getConfig('disableFeedTrackingHeader_disableFeedTracking')) {
+        if (WorkbenchConfig::get()->value('disableFeedTrackingHeader_disableFeedTracking')) {
             $connection->setDisableFeedTrackingHeader(
-			    new DisableFeedTrackingHeader(getConfig('disableFeedTrackingHeader_disableFeedTracking')));
+			    new DisableFeedTrackingHeader(WorkbenchConfig::get()->value('disableFeedTrackingHeader_disableFeedTracking')));
         }
 
-        if (getConfig('localOptions_language')) {
+        if (WorkbenchConfig::get()->value('localOptions_language')) {
             $connection->setLocaleOptions(
-			    new LocaleOptions(getConfig('localOptions_language')));
+			    new LocaleOptions(WorkbenchConfig::get()->value('localOptions_language')));
         }
 
-        if (getConfig('packageVersionHeader_include') &&
-            getConfig('packageVersion_namespace') &&
-            getConfig('packageVersion_majorNumber') &&
-            getConfig('packageVersion_minorNumber')) {
+        if (WorkbenchConfig::get()->value('packageVersionHeader_include') &&
+            WorkbenchConfig::get()->value('packageVersion_namespace') &&
+            WorkbenchConfig::get()->value('packageVersion_majorNumber') &&
+            WorkbenchConfig::get()->value('packageVersion_minorNumber')) {
             $connection->setPackageVersionHeader(
-                getConfig("packageVersion_namespace"),
-                getConfig("packageVersion_majorNumber"),
-                getConfig("packageVersion_minorNumber")
+                WorkbenchConfig::get()->value("packageVersion_namespace"),
+                WorkbenchConfig::get()->value("packageVersion_majorNumber"),
+                WorkbenchConfig::get()->value("packageVersion_minorNumber")
 		    );
         }
 
