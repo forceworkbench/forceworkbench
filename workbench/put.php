@@ -283,6 +283,7 @@ function convertCsvFileToArray($file) {
     $handle = fopen($file, "r");
     $memLimitBytes = toBytes(ini_get("memory_limit"));
     $memWarningThreshold = WorkbenchConfig::get()->value("memoryUsageWarningThreshold") / 100;
+    $headerCount = 0;
     for ($row=0; ($data = fgetcsv($handle)) !== FALSE; $row++) {
         if ($memLimitBytes != 0 && (memory_get_usage() / $memLimitBytes > $memWarningThreshold)) {
             displayError("Workbench almost exhausted all its memory after only processing $row rows of data.
@@ -290,6 +291,17 @@ function convertCsvFileToArray($file) {
             To do so, rename your CSV file to 'request.txt', zip it, and try uploading again to Workbench.", false, true);
             fclose($handle);
             return;
+        }
+
+        if ($row == 0) {
+            $headerCount = count($data);
+        } else {
+            $colCount = count($data);
+            if ($headerCount != $colCount) {
+                throw new WorkbenchHandledException("Invalid CSV file. All rows must have same number of columns.\n" .
+                                                    "Header contains " . amt($headerCount, "column") .
+                                                    ", but data row $row contains " . amt($colCount, "column") . ".");
+            }
         }
 
         for ($col=0; $col < count($data); $col++) {

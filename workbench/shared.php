@@ -119,6 +119,15 @@ function endsWith($haystack, $needle, $ignoreCase){
     return substr_compare($haystack, $needle, -strlen($needle), strlen($needle), $ignoreCase) === 0;
 }
 
+function amt($qty, $word) {
+    $amt = $qty . " " . $word;
+    if ($qty == 1) {
+        return $amt;
+    } else {
+        return $amt . "s";
+    }
+}
+
 function getStaticResourceVersionParam() {
     return "?v=" . urlencode($GLOBALS["WORKBENCH_VERSION"]);
 }
