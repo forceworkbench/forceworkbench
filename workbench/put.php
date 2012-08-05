@@ -1133,11 +1133,27 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
                 print "<td>" . addLinksToIds($results[$row]->id) . "</td>";
             }
 
-            print "<td>" . ucwords($results[$row]->errors->message) . "</td>";
-            $_SESSION['resultsWithData'][$row+1][1] = ucwords($results[$row]->errors->message);
-            print "<td>" . $results[$row]->errors->statusCode . "</td>";
-            $_SESSION['resultsWithData'][$row+1][2] = $results[$row]->errors->statusCode;
-            //print "<td>" . $results[$row]->errors->fields . "</td>"; //APIDOC: Reserved for future use. Array of one or more field names. Identifies which fields in the object, if any, affected the error condition.
+            $errMsgs = "";
+            $statusCodes = "";
+            if (is_array($results[$row]->errors)) {
+                $errMsgs = implode("; ", array_map(function($e) {
+                    return $e->message;
+                }, $results[$row]->errors));
+
+                $statusCodes = implode("; ", array_map(function($e) {
+                    return $e->statusCode;
+                }, $results[$row]->errors));
+            } else {
+                $errMsgs .= $results[$row]->errors->message;
+                $statusCodes .= $results[$row]->errors->statusCode;
+            }
+
+            print "<td>" . ucwords($errMsgs) . "</td>";
+            $_SESSION['resultsWithData'][$row+1][1] = ucwords($errMsgs);
+
+            print "<td>" . $statusCodes . "</td>";
+            $_SESSION['resultsWithData'][$row+1][2] = $statusCodes;
+
             print "</tr>\n";
         }
 
