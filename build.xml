@@ -55,9 +55,12 @@
 	<target name="version" depends="init" description="Versions static resources">
 		<delete dir="${dir.dist.versions}/${app.version.stripped}"/>
 		<mkdir dir="${dir.dist.versions}/${app.version.stripped}"/>
-		<copy todir="${dir.dist.versions}/${app.version.stripped}">
-			<fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*"/>
-		</copy>
+        <copy todir="${dir.dist.versions}/${app.version.stripped}">
+            <fileset dir="." includes="${dir.src}/**" >
+                <exclude name="**/*Mock*"/>
+                <exclude name="**/*.log"/>
+            </fileset>
+        </copy>
 	</target>
 
 	<target name="stage" depends="version" description="Stages files for deployment">

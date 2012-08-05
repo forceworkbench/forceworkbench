@@ -62,7 +62,10 @@
         <mkdir dir="${dir.dist}/staging"/>
 
         <copy todir="${dir.dist}/staging">
-            <fileset dir="." includes="${dir.src}/**" excludes="**/*Mock*"/>
+            <fileset dir="." includes="${dir.src}/**" >
+                <exclude name="**/*Mock*"/>
+                <exclude name="**/*.log"/>
+            </fileset>
         </copy>
     </target>
 
