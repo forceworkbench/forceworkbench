@@ -76,6 +76,14 @@ class RestApiClient {
             $httpHeaders = array_merge($httpHeaders, $additionalHeaders);
         }
 
+        // clean up malformed headers, which apparently is not handled by some cUrl libs @see Issue 583
+        foreach ($httpHeaders as $k => $v) {
+            $httpHeaders[$k] = trim($v);
+            if (strpos($v, ":") === false) {
+                unset($httpHeaders[$k]);
+            }
+        }
+
         switch ($method) {
             case 'HEAD':
                 curl_setopt($ch, CURLOPT_NOBODY, 1);
