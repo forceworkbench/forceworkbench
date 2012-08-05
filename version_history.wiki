@@ -1,5 +1,13 @@
 =Version History=
-'''24.0.1 Beta 1''' 2012/04/29
+'''25.0.0 Beta''' 2012/08/04
+:* Upgraded Partner, Apex, Bulk, REST, and Streaming clients to Force.com API 25.0
+:* Added new Salesforce instances to instance picklist
+:* Bug Fix: Allow more than one error per row to displayed on DML operation failures (e.g two triggered validation rules)
+:* Bug Fix: Scrub additional headers of REST Explorer to be compatible with CURL versions that do not already do this
+:* Bug Fix: Block invalid CSV files if all rows do not have same number of columns
+:* Bug Fix: Handle DML operations for sobjects with unknown key prefixes
+
+'''24.0.1 Beta''' 2012/04/29 - 2012/06/25
 :* Support for saving session data to Redis to allow for multiple, horizontally scalable, stateless app servers
 :* Encapulation of configuration into a single point of access
 :* Removal of Workbench configuration from PHP session
@@ -9,6 +17,7 @@
 :* Changed logging to JSON format for machine readability
 :* Support for multiple log handlers with syslog and file-based handlers
 :* Complete support for HTTP_X_FORWARD_* headers
+:* Add BAYEUX_BROWSER cookie support to Streaming API client
 
 '''24.0.0''' 2012/02/27
 :* Upgraded Partner, Apex, Bulk, REST, and Streaming clients to Force.com API 24.0
