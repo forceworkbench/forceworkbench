@@ -427,6 +427,7 @@ function setFieldMappings($action,$csvArray) {
             $currRecord = queryCurrentRecord($describeSObjectResult, $id);
         } else {
             $currRecord = new SObject();
+            $currRecord->fields = new StdClass();
             $currRecord->fields->Id = $id;
         }
     }
