@@ -298,6 +298,7 @@ function convertCsvFileToArray($file) {
         } else {
             $colCount = count($data);
             if ($headerCount != $colCount) {
+                fclose($handle);
                 throw new WorkbenchHandledException("Invalid CSV file. All rows must have same number of columns.\n" .
                                                     "Header contains " . amt($headerCount, "column") .
                                                     ", but data row $row contains " . amt($colCount, "column") . ".");
