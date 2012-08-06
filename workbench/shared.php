@@ -568,9 +568,13 @@ function in_arrayi($needle, $haystack) {
  * @param boolean $htmlOutput If the xml should be formatted for display on an html page
  * @return string The beautified xml
  */
-function prettyPrintXml($xml, $htmlOutput=FALSE)
-{
-    $xmlObj = new SimpleXMLElement($xml);
+function prettyPrintXml($xml, $htmlOutput=FALSE) {
+    try {
+        $xmlObj = new SimpleXMLElement($xml);
+    } catch (Exception $e) {
+        return $xml;
+    }
+
     $xmlLines = explode("
 ", str_replace("><", ">
 <", $xmlObj->asXML()));
