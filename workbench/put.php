@@ -1150,13 +1150,8 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
             $errMsgs = "";
             $statusCodes = "";
             if (is_array($results[$row]->errors)) {
-                $errMsgs = implode("; ", array_map(function($e) {
-                    return $e->message;
-                }, $results[$row]->errors));
-
-                $statusCodes = implode("; ", array_map(function($e) {
-                    return $e->statusCode;
-                }, $results[$row]->errors));
+                $errMsgs = implode("; ", array_map("extractMessage", $results[$row]->errors));
+                $statusCodes = implode("; ", array_map("extractStatusCode", $results[$row]->errors));
             } else {
                 $errMsgs .= $results[$row]->errors->message;
                 $statusCodes .= $results[$row]->errors->statusCode;
@@ -1183,6 +1178,14 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
     print "<br/>\n<table class='dataTable'>\n";
     print "<th>&nbsp;</th> <th style='width: 30%'>Salesforce Id</th> <th style='width: 30%'>Result</th> <th style='width: 35%'>Status</th>\n";
     print "<p>$resultsTable</p>";
+}
+
+function extractMessage($e) {
+    return $e->message;
+}
+
+function extractStatusCode($e) {
+    return $e->statusCode;
 }
 
 function supportsBulk($action) {
