@@ -20,11 +20,16 @@ require_once "AsyncJob.php";
 //ini_set("session.use_cookies", false);
 //ini_set("session.cache_limiter", "");
 
-//while (true) {
+while (true) {
     $job = AsyncJob::dequeue();
+
+    if ($job == null) {
+        continue;
+    }
+
     var_dump($job);
     WorkbenchContext::establish($job->getConnConfig());
     var_dump(WorkbenchContext::get()->getUserInfo());
     WorkbenchContext::get()->release();
-//}
+}
 ?>
