@@ -106,6 +106,10 @@ class WorkbenchContext {
         unset($_REQUEST[self::INSTANCE]);
     }
 
+    function getConnConfig() {
+        return $this->connConfig;
+    }
+
     function isLoggedIn() {
         return $this->connConfig->getSessionId() != null;
     }
