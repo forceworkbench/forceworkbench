@@ -1,7 +1,5 @@
 <?php
 
-set_include_path(get_include_path() . PATH_SEPARATOR . "/app/target/public_html/");
-
 require_once 'config/constants.php';
 require_once 'config/WorkbenchConfig.php';
 require_once 'shared.php';
