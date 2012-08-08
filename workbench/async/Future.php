@@ -1,6 +1,6 @@
 <?php
 
-require_once "asyncUtils.php";
+include_once "asyncUtils.php";
 
 class Future {
 

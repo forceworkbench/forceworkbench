@@ -1,7 +1,7 @@
 <?php
 
-require_once "asyncUtils.php";
-require_once "Future.php";
+include_once "asyncUtils.php";
+include_once "Future.php";
 
 abstract class FutureTask {
 
