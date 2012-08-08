@@ -3,6 +3,7 @@
 require_once 'soxl/QueryObjects.php';
 require_once 'session.php';
 require_once 'shared.php';
+require_once 'async/QueryFutureTask.php';
 
 $defaultSettings['numFilters'] = 1;
 //clear the form if the user changes the object
@@ -63,12 +64,13 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
 //show the query results with default object selected on a previous page, otherwise
 // just display the blank form. When the user selects the SCREEN or CSV options, the
 //query is processed by the correct function
-if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
+if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
+    $_SESSION['queryLocator'] = $_POST['queryLocator']; //todo <---
     require_once 'header.php';
     //    $queryRequest->setExportTo('screen');
     displayQueryForm($queryRequest);
     $queryTimeStart = microtime(true);
-    $records = query(null,'QueryMore',$_SESSION['queryLocator']);
+    $records = query(null,'QueryMore',$_POST['queryLocator']);
     $queryTimeEnd = microtime(true);
     $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
     displayQueryResults($records,$queryTimeElapsed,$queryRequest);
@@ -80,11 +82,16 @@ if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
         displayWarning("Both column and row must be specified for Matrix view.", false, true);
         return;
     }
-    $queryTimeStart = microtime(true);
-    $records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction());
-    $queryTimeEnd = microtime(true);
-    $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
-    displayQueryResults($records,$queryTimeElapsed,$queryRequest);
+//    $queryTimeStart = microtime(true);
+//    $records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction());
+//    $queryTimeEnd = microtime(true);
+//    $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
+//    displayQueryResults($records,$queryTimeElapsed,$queryRequest);
+
+    $asyncJob = new QueryFutureTask($queryRequest);
+    $future = $asyncJob->enqueue();
+    echo $future->ajax();
+
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && strpos($queryRequest->getExportTo(), 'async_') === 0) {
     queryAsync($queryRequest);
