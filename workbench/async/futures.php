@@ -67,8 +67,9 @@ class FutureResult {
      * @return FutureResult
      */
     public static function fromId($asyncId) {
-        // check lock is there
-        if (!redis()->exists(FUTURE_LOCK . $asyncId)) {
+        // check lock is there and is for this session
+        $sid = redis()->get(FUTURE_LOCK . $asyncId);
+        if ($sid == null || $sid !== session_id()) {
             throw new UnknownAsyncIdException();
         }
 

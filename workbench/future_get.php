@@ -1,5 +1,6 @@
 <?php
 
+    include_once "session.php";
     include_once "shared.php";
     include_once "async/futures.php";
     session_write_close();
