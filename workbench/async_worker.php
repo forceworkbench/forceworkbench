@@ -8,6 +8,11 @@ foreach (scandir('async') as $f) {
     require_once "async/$f";
 }
 
+// block direct web access
+if (php_sapi_name() != 'cli') {
+    httpError(404, "Not Found");
+}
+
 while (true) {
     try {
         $job = FutureTask::dequeue(30);
@@ -15,5 +20,6 @@ while (true) {
     } catch (TimeoutException $e) {
         continue;
     }
+    exit();
 }
 ?>
