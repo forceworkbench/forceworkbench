@@ -1,6 +1,8 @@
 <?php
 include_once "redis.php";
 
+const FUTURE_LOCK = "FUTURE_LOCK";
+
 abstract class FutureTask {
 
     const QUEUE = "FUTURE_TASK_REQUESTS";
@@ -14,7 +16,8 @@ abstract class FutureTask {
     }
 
     public function enqueue() {
-        redis()->rpush(self::QUEUE, serialize($this));
+        redis()->rpush(self::QUEUE, serialize($this));                         // actual job
+        redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, session_id());   // expiring existence handle
         return new FutureResult($this->asyncId);
     }
 
@@ -37,8 +40,8 @@ abstract class FutureTask {
      * @static
      * @return FutureTask
      */
-    public static function dequeue() {
-        $blpop = redis()->blpop(self::QUEUE, 30);
+    public static function dequeue($timeout) {
+        $blpop = redis()->blpop(self::QUEUE, $timeout);
         if (isset($blpop[1])) {
             return unserialize($blpop[1]);
         } else {
@@ -48,6 +51,8 @@ abstract class FutureTask {
 }
 
 class FutureResult {
+
+    const RESULT = "FUTURE_RESULT";
 
     private $asyncId;
     private $result;
@@ -62,21 +67,26 @@ class FutureResult {
      * @return FutureResult
      */
     public static function fromId($asyncId) {
-        // TODO handle not valid id
+        // check lock is there
+        if (!redis()->exists(FUTURE_LOCK . $asyncId)) {
+            throw new UnknownAsyncIdException();
+        }
+
         return new FutureResult($asyncId);
     }
 
     function redeem($result) {
         $this->result = $result;
-        redis()->rpush($this->asyncId, serialize($this->result));
+        redis()->rpush(self::RESULT . $this->asyncId, serialize($this->result));
     }
 
     public function getAsyncId() {
         return $this->asyncId;
     }
 
-    public function get() {
-        $blpop = redis()->blpop($this->asyncId, 10);
+    public function get($timeout) {
+        $blpop = redis()->blpop(self::RESULT . $this->asyncId, $timeout);
+        redis()->del(FUTURE_LOCK . $this->asyncId); // remove lock
 
         if (isset($blpop[1])) {
             $this->result = unserialize($blpop[1]);
@@ -103,4 +113,5 @@ class FutureResult {
 }
 
 class TimeoutException extends Exception {}
+class UnknownAsyncIdException extends Exception {}
 ?>

@@ -10,7 +10,7 @@ foreach (scandir('async') as $f) {
 
 while (true) {
     try {
-        $job = FutureTask::dequeue();
+        $job = FutureTask::dequeue(30);
         $job->execute();
     } catch (TimeoutException $e) {
         continue;
