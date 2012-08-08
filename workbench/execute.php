@@ -67,50 +67,11 @@ if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptIn
     try {
         $asyncJob = new ApexExecuteFutureTask($_POST['scriptInput'], $_POST['LogCategory'], $_POST['LogCategoryLevel']);
         $future = $asyncJob->enqueue();
-        $executeAnonymousResultWithDebugLog = $future->get();
+        print $future->ajax();
     } catch(Exception $e) {
         displayError($e->getMessage(),false,true);
     }
 
-    if ($executeAnonymousResultWithDebugLog->executeAnonymousResult->success) {
-        if (isset($executeAnonymousResultWithDebugLog->debugLog) && $executeAnonymousResultWithDebugLog->debugLog != "") {
-            print("<pre>" . addLinksToIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES)) . '</pre>');
-        } else {
-            displayInfo("Execution was successful, but returned no results. Confirm log category and level.");
-        }
-
-    } else {
-        $error = null;
-
-        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem)) {
-            $error .=  "COMPILE ERROR: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem;
-        }
-
-        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage)) {
-            $error .= "\nEXCEPTION: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage;
-        }
-
-        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace)) {
-            $error .= "\nSTACKTRACE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace;
-        }
-
-
-        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->line)) {
-            $error .=  "\nLINE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->line;
-        }
-
-        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->column)) {
-            $error .=  " COLUMN: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->column;
-        }
-
-        displayError($error);
-
-        print('<pre style="color: red;">' . addLinksToIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES)) . '</pre>');
-    }
-
-    //    print('<pre>');
-    //    print_r($executeAnonymousResultWithDebugLog);
-    //    print('</pre>');
 } else if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] == "") {
     displayInfo("Anonymous block must not be blank.");
 }

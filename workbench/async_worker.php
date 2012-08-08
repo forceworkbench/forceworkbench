@@ -9,12 +9,11 @@ foreach (scandir('async') as $f) {
 }
 
 while (true) {
-    $job = FutureTask::dequeue();
-
-    if ($job == null) {
+    try {
+        $job = FutureTask::dequeue();
+        $job->execute();
+    } catch (TimeoutException $e) {
         continue;
     }
-
-    $job->execute();
 }
 ?>

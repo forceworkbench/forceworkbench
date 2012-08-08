@@ -42,7 +42,7 @@ abstract class FutureTask {
         if (isset($blpop[1])) {
             return unserialize($blpop[1]);
         } else {
-            return null;
+            throw new TimeoutException();
         }
     }
 }
@@ -56,7 +56,13 @@ class FutureResult {
         $this->asyncId = $asyncId;
     }
 
+    /**
+     * @static
+     * @param $asyncId
+     * @return FutureResult
+     */
     public static function fromId($asyncId) {
+        // TODO handle not valid id
         return new FutureResult($asyncId);
     }
 
@@ -85,6 +91,16 @@ class FutureResult {
         return $this->result;
     }
 
+    public function ajax() {
+        ob_start();
+        require "future_ajax.js.php";
+        futureAjax($this->asyncId);
+        $ajax = ob_get_contents();
+        ob_end_clean();
+        return $ajax;
+    }
+
 }
 
+class TimeoutException extends Exception {}
 ?>
