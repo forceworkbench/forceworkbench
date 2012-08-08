@@ -1,5 +1,4 @@
 <?php
-
 require_once 'config/constants.php';
 require_once 'config/WorkbenchConfig.php';
 require_once 'shared.php';
@@ -16,7 +15,6 @@ while (true) {
         continue;
     }
 
-    var_dump($job);
     $job->execute();
 }
 ?>

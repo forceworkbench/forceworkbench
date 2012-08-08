@@ -1,5 +1,4 @@
 <?php
-
 function redis() {
     $r = new Redis();
     $r->connect(parse_url($_ENV['REDISTOGO_URL'], PHP_URL_HOST), parse_url($_ENV['REDISTOGO_URL'], PHP_URL_PORT));
@@ -8,9 +7,4 @@ function redis() {
     }
     return $r;
 }
-
-class TimeoutException extends Exception {
-
-}
-
 ?>

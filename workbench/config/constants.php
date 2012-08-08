@@ -82,8 +82,7 @@ $GLOBALS["MENUS"] = array(
         'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload.',true,true,false,false,true,''),
         'jumpToSfdc.php'              => new Page('Jump to SFDC','Jumps to SFDC user interface for a given id.',true,true,false,false,true,''),
         'cometdProxy.php'             => new Page('CometD Proxy','CometD Proxy for Streaming API support.',true,true,false,false,false,''),
-        'redis_enqueuer.php'             => new Page('Redis Worker','Redis Worker',true,false,false,false,false,''),
-        'redis_worker.php'             => new Page('Redis Worker','Redis Worker',true,false,false,false,false,'')
+        'async_worker.php'            => new Page('Async Worker','Redis Worker',true,false,false,false,false,'')
      )
 );
 ?>
