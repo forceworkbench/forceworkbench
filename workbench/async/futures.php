@@ -44,10 +44,17 @@ abstract class FutureTask {
     public static function dequeue($timeout) {
         $blpop = redis()->blpop(self::QUEUE, $timeout);
         if (isset($blpop[1])) {
-            return unserialize($blpop[1]);
-        } else {
-            throw new TimeoutException();
+            $task = unserialize($blpop[1]);
+
+            if (!redis()->exists(FUTURE_LOCK . $task->asyncId)) {
+                workbenchLog(LOG_INFO, "FutureTaskGC", $task->asyncId);
+                throw new TimeoutException();
+            }
+
+            return $task;
         }
+
+        throw new TimeoutException();
     }
 }
 
