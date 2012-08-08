@@ -17,6 +17,16 @@ if (php_sapi_name() != 'cli') {
 $_SERVER['REMOTE_ADDR'] = 'CLI';
 $_SERVER['REQUEST_METHOD'] = 'ASYNC';
 
+// gc
+$frKeys = redis()->keys(FutureResult::RESULT . "*");
+foreach ($frKeys as $frKey) {
+    $asyncId = substr($frKey, strlen(FutureResult::RESULT));
+    if (!redis()->exists(FUTURE_LOCK . $asyncId)) {
+        redis()->del($frKey);
+        workbenchLog(LOG_INFO, "FutureResultGC", $asyncId);
+    }
+}
+
 while (true) {
     try {
         $job = FutureTask::dequeue(30);

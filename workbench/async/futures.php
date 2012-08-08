@@ -88,13 +88,14 @@ class FutureResult {
 
     public function get($timeout) {
         $blpop = redis()->blpop(self::RESULT . $this->asyncId, $timeout);
-        redis()->del(FUTURE_LOCK . $this->asyncId); // remove lock
 
         if (isset($blpop[1])) {
             $this->result = unserialize($blpop[1]);
         } else {
             throw new TimeoutException();
         }
+
+        redis()->del(FUTURE_LOCK . $this->asyncId); // remove lock
 
         if ($this->result instanceof Exception) {
             throw $this->result;
