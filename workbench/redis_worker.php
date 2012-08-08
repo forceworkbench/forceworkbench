@@ -4,7 +4,7 @@ require_once 'config/constants.php';
 require_once 'config/WorkbenchConfig.php';
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
-require_once "AsyncJob.php";
+require_once "async/FutureTask.php";
 
 // session prep
 //$sessionStore = $_ENV['REDISTOGO_URL'];
@@ -19,15 +19,13 @@ require_once "AsyncJob.php";
 //ini_set("session.cache_limiter", "");
 
 while (true) {
-    $job = AsyncJob::dequeue();
+    $job = FutureTask::dequeue();
 
     if ($job == null) {
         continue;
     }
 
     var_dump($job);
-    WorkbenchContext::establish($job->getConnConfig());
-    var_dump(WorkbenchContext::get()->getUserInfo());
-    WorkbenchContext::get()->release();
+    $job->execute();
 }
 ?>

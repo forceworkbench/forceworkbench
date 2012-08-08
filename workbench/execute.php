@@ -3,6 +3,7 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'header.php';
 require_once 'soapclient/SforceApexClient.php';
+require_once 'async/ApexExecuteFutureTask.php';
 
 //correction for dynamic magic quotes
 if (isset($_POST['scriptInput']) && get_magic_quotes_gpc()) {
@@ -64,8 +65,9 @@ if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptIn
     print "<h2>Results</h2>";
 
     try {
-        WorkbenchContext::get()->getApexConnection()->setDebugLevels($_POST['LogCategory'], $_POST['LogCategoryLevel']);
-        $executeAnonymousResultWithDebugLog = WorkbenchContext::get()->getApexConnection()->executeAnonymous($_POST['scriptInput']);
+        $asyncJob = new ApexExecuteFutureTask($_POST['scriptInput'], $_POST['LogCategory'], $_POST['LogCategoryLevel']);
+        $future = $asyncJob->enqueue();
+        $executeAnonymousResultWithDebugLog = $future->get();
     } catch(Exception $e) {
         displayError($e->getMessage(),false,true);
     }
