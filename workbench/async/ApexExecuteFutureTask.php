@@ -7,11 +7,11 @@ class ApexExecuteFutureTask extends FutureTask {
     private $logCategory;
     private $logCategoryLevel;
 
-    function __construct($executeAnonymousBlock) {
+    function __construct($executeAnonymousBlock, $logCategory, $logCategoryLevel) {
         parent::__construct();
         $this->executeAnonymousBlock = $executeAnonymousBlock;
-        $this->logCategory = $executeAnonymousBlock;
-        $this->logCategoryLevel = $executeAnonymousBlock;
+        $this->logCategory = $logCategory;
+        $this->logCategoryLevel = $logCategoryLevel;
     }
 
     function perform() {
