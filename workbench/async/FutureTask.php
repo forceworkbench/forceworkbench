@@ -15,9 +15,6 @@ abstract class FutureTask {
         $this->connConfig = WorkbenchContext::get()->getConnConfig();
     }
 
-    /**
-     * @return string
-     */
     public function enqueue() {
         redis()->rpush(self::ASYNC_JOB_QUEUE, serialize($this));
         return new Future($this->asyncId);
