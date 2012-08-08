@@ -6,7 +6,7 @@
     session_write_close();
 
     try {
-        echo FutureResult::fromId($_REQUEST['async_id'])->get(5);
+        echo FutureResult::fromId($_REQUEST['async_id'])->get(10);
     } catch (TimeoutException $te) {
         httpError("202", "Accepted");
     } catch (UnknownAsyncIdException $ue) {

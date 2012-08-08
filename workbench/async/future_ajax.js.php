@@ -20,10 +20,10 @@
         var container = document.getElementById('async-container-<?php echo $asyncId ?>');
         container.innerHTML = "<img src='<?php echo getPathToStaticResource('/images/wait16trans.gif') ?>'/>&nbsp; Loading...";
 
-        getFutureInternal(container);
+        getFutureInternal(container, 0);
     }
 
-    function getFutureInternal(container) {
+    function getFutureInternal(container, attempts) {
         var ajax = getHTTPObject();
         if (ajax != null) {
             ajax.open("GET", "future_get.php?async_id=<?php echo $asyncId ?>", true);
@@ -32,13 +32,17 @@
                 if (ajax.readyState == 4) {
                     if (ajax.status == 200) {
                         container.innerHTML = ajax.responseText;
-                        return;
                     } else if (ajax.status == 202) {
                         container.innerHTML += ".";
-                        getFutureInternal(container);
+                        if (attempts > 50){
+                            container.innerHTML = "<span style='color:red;'>Timed out waiting for asynchronous job to complete</span>";
+                        } else {
+                            getFutureInternal(container, attempts++);
+                        }
                     } else if (ajax.status == 404) {
                         container.innerHTML = "<span style='color:red;'>Unknown Asynchronous Job</span>";
-                        return;
+                    } else {
+                        container.innerHTML = "<span style='color:red;'>Unknown Asynchronous State</span>";
                     }
                 }
             };
