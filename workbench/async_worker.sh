@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+touch ${forceworkbench__logFile__default}
 tail -F ${forceworkbench__logFile__default} &
 
 while true; do
