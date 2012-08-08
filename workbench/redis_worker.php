@@ -5,6 +5,7 @@ require_once 'config/WorkbenchConfig.php';
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
 require_once "async/FutureTask.php";
+require_once "async/asyncUtils.php";
 
 // session prep
 //$sessionStore = $_ENV['REDISTOGO_URL'];
