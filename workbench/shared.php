@@ -223,11 +223,15 @@ function handleAllErrors($errno, $errstr, $errfile, $errline, $errcontext) {
 }
 
 
-/**
- * @param  Exception $e
- * @return void
- */
 function handleAllExceptions($e) {
+    handleAllExceptionsInternal($e, true);
+}
+
+function handleAllExceptionsNoHeaders($e) {
+    handleAllExceptionsInternal($e, false);
+}
+
+function handleAllExceptionsInternal($e, $showHeadersFooters) {
     $cause = $e;
     $fullMessage = "";
     while ($cause != null) {
@@ -253,8 +257,8 @@ function handleAllExceptions($e) {
 
     print "<p/>";
     if ($e instanceof WorkbenchHandledException) {
-        try { include_once 'header.php'; } catch (Exception $e) {}
-        displayError($e->getMessage(), false, true);
+        if ($showHeadersFooters) try { include_once 'header.php'; } catch (Exception $e) {}
+        displayError($e->getMessage(), false, $showHeadersFooters);
     } else {
         if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
             handleAllExceptions(new WorkbenchAuthenticationException("Your Salesforce session is invalid or has expired. Please login again."));
@@ -264,9 +268,9 @@ function handleAllExceptions($e) {
             handleAllExceptions(new WorkbenchAuthenticationException($e->getMessage()));
         }
 
-        try { include_once 'header.php'; } catch (Exception $e) {}
-        workbenchLog(LOG_ERR, "E", $fullMessage);
-        displayError("UNKNOWN ERROR: " . $e->getMessage(), false, true);
+        if ($showHeadersFooters)  try { include_once 'header.php'; } catch (Exception $e) {}
+//        workbenchLog(LOG_ERR, "E", $fullMessage);
+        displayError("UNKNOWN ERROR: " . $e->getMessage(), false, $showHeadersFooters);
     }
     exit;
 }
