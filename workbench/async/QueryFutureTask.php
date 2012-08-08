@@ -335,5 +335,41 @@ class QueryFutureTask extends FutureTask {
         }
         include_once 'footer.php';
     }
+
+    function exportQueryAsCsv($records,$queryAction) {
+        if (!WorkbenchConfig::get()->value("allowQueryCsvExport")) {
+            throw new Exception("Export to CSV not allowed");
+        }
+
+        if ($records) {
+            try {
+                $csvFile = fopen('php://output','w') or die("Error opening php://output");
+                $csvFilename = "export" . date('YmdHis') . ".csv";
+                header("Content-Type: application/csv");
+                header("Content-Disposition: attachment; filename=$csvFilename");
+
+                //Write first row to CSV and unset variable
+                fputcsv($csvFile, $this->getQueryResultHeaders(new SObject($records[0])));
+
+                //Export remaining rows and write to CSV line-by-line
+                foreach ($records as $record) {
+                    fputcsv($csvFile, $this->getQueryResultRow(new SObject($record),false));
+                }
+
+                fclose($csvFile) or die("Error closing php://output");
+
+            } catch (Exception $e) {
+                require_once("header.php");
+                displayQueryForm(new QueryRequest($_POST),'csv',$queryAction);
+                print "<p />";
+                displayError($e->getMessage(),false,true);
+            }
+        } else {
+            require_once("header.php");
+            displayQueryForm(new QueryRequest($_POST),'csv',$queryAction);
+            print "<p />";
+            displayWarning("No records returned for CSV output.",false,true);
+        }
+    }
 }
 ?>
