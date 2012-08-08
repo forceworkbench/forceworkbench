@@ -65,7 +65,6 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
 // just display the blank form. When the user selects the SCREEN or CSV options, the
 //query is processed by the correct function
 if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
-    $_SESSION['queryLocator'] = $_POST['queryLocator']; //todo <---
     require_once 'header.php';
     //    $queryRequest->setExportTo('screen');
     displayQueryForm($queryRequest);
@@ -82,11 +81,6 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
         displayWarning("Both column and row must be specified for Matrix view.", false, true);
         return;
     }
-//    $queryTimeStart = microtime(true);
-//    $records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction());
-//    $queryTimeEnd = microtime(true);
-//    $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
-//    displayQueryResults($records,$queryTimeElapsed,$queryRequest);
 
     $asyncJob = new QueryFutureTask($queryRequest);
     $future = $asyncJob->enqueue();
@@ -920,6 +914,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
             print " seconds:</p>\n";
 
             if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $_SESSION['queryLocator']) {
+                print "<p><input type='hidden' name='queryLocator' value='" . $_SESSION['queryLocator'] . "' /></p>\n";
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
             }
 
@@ -928,6 +923,7 @@ function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryReq
             createQueryResultTable($records, $rowNum));
 
             if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $_SESSION['queryLocator']) {
+                print "<p><input type='hidden' name='queryLocator' value='" . $_SESSION['queryLocator'] . "' /></p>\n";
                 print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
             }
 

@@ -6,6 +6,7 @@ include_once "futures.php";
 class QueryFutureTask extends FutureTask {
 
     private $queryRequest;
+    private $nextQueryLocator;
 
     function __construct($queryRequest) {
         parent::__construct();
@@ -63,9 +64,7 @@ class QueryFutureTask extends FutureTask {
             $_SESSION['totalQuerySize'] = $queryResponse->size;
 
             if (!$queryResponse->done) {
-                $_SESSION['queryLocator'] = $queryResponse->queryLocator;
-            } else {
-                $_SESSION['queryLocator'] = null;
+                $this->nextQueryLocator = $queryResponse->queryLocator;
             }
 
             //correction for documents and attachments with body. issue #176
@@ -294,8 +293,8 @@ class QueryFutureTask extends FutureTask {
             try {
                 $rowNum = 0;
                 print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
-                if (isset($_SESSION['queryLocator']) && !WorkbenchConfig::get()->value("autoRunQueryMore")) {
-                    preg_match("/-(\d+)/",$_SESSION['queryLocator'],$lastRecord);
+                if (isset($this->nextQueryLocator) && !WorkbenchConfig::get()->value("autoRunQueryMore")) {
+                    preg_match("/-(\d+)/",$this->nextQueryLocator,$lastRecord);
                     $rowNum = ($lastRecord[1] - count($records) + 1);
                     print "<p>Returned records $rowNum - " . $lastRecord[1] . " of ";
                 } else if (!WorkbenchConfig::get()->value("autoRunQueryMore")) {
@@ -312,7 +311,8 @@ class QueryFutureTask extends FutureTask {
                 printf ("%01.3f", $queryTimeElapsed);
                 print " seconds:</p>\n";
 
-                if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $_SESSION['queryLocator']) {
+                if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->nextQueryLocator) {
+                    print "<p><input type='hidden' name='queryLocator' value='" . $this->nextQueryLocator . "' /></p>\n";
                     print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
                 }
 
@@ -320,7 +320,8 @@ class QueryFutureTask extends FutureTask {
                 $this->createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
                 $this->createQueryResultTable($records, $rowNum));
 
-                if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $_SESSION['queryLocator']) {
+                if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->nextQueryLocator) {
+                    print "<p><input type='hidden' name='queryLocator' value='" . $this->nextQueryLocator . "' /></p>\n";
                     print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
                 }
 
