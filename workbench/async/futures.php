@@ -18,13 +18,14 @@ abstract class FutureTask {
     public function enqueue() {
         redis()->rpush(self::QUEUE, serialize($this));                         // actual job
         redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, session_id());   // expiring existence handle
+        workbenchLog(LOG_INFO, "FutureEnqueued", $this->asyncId);
         return new FutureResult($this->asyncId);
     }
 
     abstract function perform();
 
     function execute() {
-        print "Execute asyncId " . $this->asyncId . " START" . "\n"; //TODO: log
+        workbenchLog(LOG_INFO, "FutureExecuteStart", $this->asyncId);
         $future = new FutureResult($this->asyncId);
         try {
             WorkbenchContext::establish($this->connConfig);
@@ -33,7 +34,7 @@ abstract class FutureTask {
         } catch (Exception $e) {
             $future->redeem($e);
         }
-        print "Execute asyncId " . $this->asyncId . " END" . "\n"; //TODO: log
+        workbenchLog(LOG_INFO, "FutureExecuteEnd", $this->asyncId);
     }
 
     /**

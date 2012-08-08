@@ -14,6 +14,9 @@ if (php_sapi_name() != 'cli') {
     httpError(404, "Not Found");
 }
 
+$_SERVER['REMOTE_ADDR'] = 'CLI';
+$_SERVER['REQUEST_METHOD'] = 'ASYNC';
+
 while (true) {
     try {
         $job = FutureTask::dequeue(30);
