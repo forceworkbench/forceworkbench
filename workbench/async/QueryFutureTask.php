@@ -50,7 +50,6 @@ class QueryFutureTask extends FutureTask {
                 $countString .= ($queryResponse->size == 1) ? "." : "s.";
                 displayInfo($countString);
                 $records = $queryResponse->size;
-                include_once 'footer.php';
                 exit;
             }
 
@@ -333,7 +332,6 @@ class QueryFutureTask extends FutureTask {
             print "<p><a name='qr'>&nbsp;</a></p>";
             displayWarning("Sorry, no records returned.");
         }
-        include_once 'footer.php';
     }
 
     function exportQueryAsCsv($records,$queryAction) {
