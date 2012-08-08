@@ -1,23 +1,22 @@
 <?php
 include_once "futures.php";
-//include_once '../soxl/QueryObjects.php';
-//include_once '../shared.php';
 
 class QueryFutureTask extends FutureTask {
 
     private $queryRequest;
-    private $nextQueryLocator;
+    private $queryLocator;
 
-    function __construct($queryRequest) {
+    function __construct($queryRequest, $queryLocator = null) {
         parent::__construct();
         $this->queryRequest = $queryRequest;
+        $this->queryLocator = $queryLocator;
     }
 
     function perform() {
         ob_start();
 
         $queryTimeStart = microtime(true);
-        $records = $this->query($this->queryRequest->getSoqlQuery(), $this->queryRequest->getQueryAction());
+        $records = $this->query($this->queryRequest->getSoqlQuery(), $this->queryRequest->getQueryAction(), $this->queryLocator);
         $queryTimeEnd = microtime(true);
         $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
         $this->displayQueryResults($records, $queryTimeElapsed, $this->queryRequest);
@@ -64,7 +63,7 @@ class QueryFutureTask extends FutureTask {
             $_SESSION['totalQuerySize'] = $queryResponse->size;
 
             if (!$queryResponse->done) {
-                $this->nextQueryLocator = $queryResponse->queryLocator;
+                $this->queryLocator = $queryResponse->queryLocator;
             }
 
             //correction for documents and attachments with body. issue #176
@@ -293,8 +292,8 @@ class QueryFutureTask extends FutureTask {
             try {
                 $rowNum = 0;
                 print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
-                if (isset($this->nextQueryLocator) && !WorkbenchConfig::get()->value("autoRunQueryMore")) {
-                    preg_match("/-(\d+)/",$this->nextQueryLocator,$lastRecord);
+                if (isset($this->queryLocator) && !WorkbenchConfig::get()->value("autoRunQueryMore")) {
+                    preg_match("/-(\d+)/",$this->queryLocator,$lastRecord);
                     $rowNum = ($lastRecord[1] - count($records) + 1);
                     print "<p>Returned records $rowNum - " . $lastRecord[1] . " of ";
                 } else if (!WorkbenchConfig::get()->value("autoRunQueryMore")) {
@@ -311,8 +310,8 @@ class QueryFutureTask extends FutureTask {
                 printf ("%01.3f", $queryTimeElapsed);
                 print " seconds:</p>\n";
 
-                if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->nextQueryLocator) {
-                    print "<p><input type='hidden' name='queryLocator' value='" . $this->nextQueryLocator . "' /></p>\n";
+                if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->queryLocator) {
+                    print "<p><input type='hidden' name='queryLocator' value='" . $this->queryLocator . "' /></p>\n";
                     print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
                 }
 
@@ -320,8 +319,8 @@ class QueryFutureTask extends FutureTask {
                 $this->createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
                 $this->createQueryResultTable($records, $rowNum));
 
-                if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->nextQueryLocator) {
-                    print "<p><input type='hidden' name='queryLocator' value='" . $this->nextQueryLocator . "' /></p>\n";
+                if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->queryLocator) {
+                    print "<p><input type='hidden' name='queryLocator' value='" . $this->queryLocator . "' /></p>\n";
                     print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
                 }
 

@@ -66,13 +66,10 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
 //query is processed by the correct function
 if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
     require_once 'header.php';
-    //    $queryRequest->setExportTo('screen');
     displayQueryForm($queryRequest);
-    $queryTimeStart = microtime(true);
-    $records = query(null,'QueryMore',$_POST['queryLocator']);
-    $queryTimeEnd = microtime(true);
-    $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
-    displayQueryResults($records,$queryTimeElapsed,$queryRequest);
+    $queryRequest->setQueryAction('QueryMore');
+    $asyncJob = new QueryFutureTask($queryRequest, $_POST['queryLocator']);
+    echo $asyncJob->perform();
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && ($queryRequest->getExportTo() == 'screen' || $queryRequest->getExportTo() == 'matrix')) {
     require_once 'header.php';
@@ -84,6 +81,8 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
 
     $asyncJob = new QueryFutureTask($queryRequest);
     $future = $asyncJob->enqueue();
+
+    echo "<p><a name='qr'>&nbsp;</a></p>";
     echo $future->ajax();
 
     include_once 'footer.php';
