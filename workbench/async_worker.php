@@ -17,7 +17,7 @@ if (php_sapi_name() != 'cli') {
 $_SERVER['REMOTE_ADDR'] = 'CLI';
 $_SERVER['REQUEST_METHOD'] = 'ASYNC';
 
-// gc
+// future result gc
 $frKeys = redis()->keys(FutureResult::RESULT . "*");
 foreach ($frKeys as $frKey) {
     $asyncId = substr($frKey, strlen(FutureResult::RESULT));
