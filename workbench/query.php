@@ -763,7 +763,7 @@ function getQueryResultRow($sobject, $escapeHtmlChars=true) {
 }
 
 function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
-    $matrix;
+    $matrix = array();
     $allColNames = array();
     $allRowNames = array();
 
