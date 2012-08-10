@@ -59,6 +59,7 @@
             <fileset dir="." includes="${dir.src}/**" >
                 <exclude name="**/*Mock*"/>
                 <exclude name="**/*.log"/>
+                <exclude name="**/*.rdb"/>
             </fileset>
         </copy>
 	</target>
