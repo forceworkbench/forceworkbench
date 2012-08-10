@@ -1,5 +1,4 @@
 <?php
-include_once "redis.php";
 
 const FUTURE_LOCK = "FUTURE_LOCK";
 

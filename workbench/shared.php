@@ -1,6 +1,25 @@
 <?php
 require_once "util/ExpandableTree.php";
 
+function redis() {
+    if (!isset($GLOBALS['REDIS'])) {
+
+        $redisUrl = WorkbenchConfig::get()->value("redisUrl");
+        if (empty($redisUrl)) {
+            throw new Exception("Redis connection requested but not configured.");
+        }
+
+        $r = new Redis();
+        $r->pconnect(parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT));
+        if (!is_array(parse_url($redisUrl, PHP_URL_PASS))) {
+            $r->auth(parse_url($redisUrl, PHP_URL_PASS));
+        }
+
+        $GLOBALS['REDIS'] = $r;
+    }
+    return $GLOBALS['REDIS'];
+}
+
 function workbenchLog($logLevel, $type, $message = "") {
     if (!WorkbenchConfig::get()->value("enableLogging")) {
         return;
