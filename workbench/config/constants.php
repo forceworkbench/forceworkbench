@@ -7,7 +7,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-$GLOBALS["WORKBENCH_VERSION"] = "25.0.0";
+$GLOBALS["WORKBENCH_VERSION"] = "25.0.1 Beta 1";
 
 class Page {
     public $title;
@@ -81,7 +81,8 @@ $GLOBALS["MENUS"] = array(
         'downloadResultsWithData.php' => new Page('Download DML Results','Downloads DML results.',true,true,false,false,true,''),
         'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload.',true,true,false,false,true,''),
         'jumpToSfdc.php'              => new Page('Jump to SFDC','Jumps to SFDC user interface for a given id.',true,true,false,false,true,''),
-        'cometdProxy.php'             => new Page('CometD Proxy','CometD Proxy for Streaming API support.',true,true,false,false,false,'')
+        'cometdProxy.php'             => new Page('CometD Proxy','CometD Proxy for Streaming API support.',true,true,false,false,false,''),
+        'future_get.php'              => new Page('Future Get','Future Get',true,false,false,false,false,'')
      )
 );
 ?>

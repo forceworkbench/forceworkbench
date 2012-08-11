@@ -3,6 +3,7 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'header.php';
 require_once 'soapclient/SforceApexClient.php';
+require_once 'async/ApexExecuteFutureTask.php';
 
 //correction for dynamic magic quotes
 if (isset($_POST['scriptInput']) && get_magic_quotes_gpc()) {
@@ -63,52 +64,10 @@ if (isset($_POST['execute'])) {
 if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != "") {
     print "<h2>Results</h2>";
 
-    try {
-        WorkbenchContext::get()->getApexConnection()->setDebugLevels($_POST['LogCategory'], $_POST['LogCategoryLevel']);
-        $executeAnonymousResultWithDebugLog = WorkbenchContext::get()->getApexConnection()->executeAnonymous($_POST['scriptInput']);
-    } catch(Exception $e) {
-        displayError($e->getMessage(),false,true);
-    }
+    $asyncJob = new ApexExecuteFutureTask($_POST['scriptInput'], $_POST['LogCategory'], $_POST['LogCategoryLevel']);
+    $future = $asyncJob->enqueue();
+    print $future->ajax();
 
-    if ($executeAnonymousResultWithDebugLog->executeAnonymousResult->success) {
-        if (isset($executeAnonymousResultWithDebugLog->debugLog) && $executeAnonymousResultWithDebugLog->debugLog != "") {
-            print("<pre>" . addLinksToIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES)) . '</pre>');
-        } else {
-            displayInfo("Execution was successful, but returned no results. Confirm log category and level.");
-        }
-
-    } else {
-        $error = null;
-
-        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem)) {
-            $error .=  "COMPILE ERROR: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->compileProblem;
-        }
-
-        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage)) {
-            $error .= "\nEXCEPTION: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionMessage;
-        }
-
-        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace)) {
-            $error .= "\nSTACKTRACE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->exceptionStackTrace;
-        }
-
-
-        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->line)) {
-            $error .=  "\nLINE: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->line;
-        }
-
-        if (isset($executeAnonymousResultWithDebugLog->executeAnonymousResult->column)) {
-            $error .=  " COLUMN: " . $executeAnonymousResultWithDebugLog->executeAnonymousResult->column;
-        }
-
-        displayError($error);
-
-        print('<pre style="color: red;">' . addLinksToIds(htmlspecialchars($executeAnonymousResultWithDebugLog->debugLog,ENT_QUOTES)) . '</pre>');
-    }
-
-    //    print('<pre>');
-    //    print_r($executeAnonymousResultWithDebugLog);
-    //    print('</pre>');
 } else if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] == "") {
     displayInfo("Anonymous block must not be blank.");
 }

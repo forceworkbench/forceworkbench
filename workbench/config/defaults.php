@@ -915,6 +915,14 @@ $config["header_internal"] = array(
     "isHeader" => true
 );
 
+    $config["redisUrl"] = array(
+        "label" => "Redis URL",
+        "description" => "Redis URL used for async processing.",
+        "default" => "",
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
     $config["sessionStore"] = array(
         "label" => "Session Store",
         "description" => "Only redis:// URL are currently supported; otherwise, blank for default value",
