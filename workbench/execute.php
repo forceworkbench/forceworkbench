@@ -65,8 +65,14 @@ if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptIn
     print "<h2>Results</h2>";
 
     $asyncJob = new ApexExecuteFutureTask($_POST['scriptInput'], $_POST['LogCategory'], $_POST['LogCategoryLevel']);
-    $future = $asyncJob->enqueue();
-    print $future->ajax();
+
+    if ($_ENV['ENABLE_ASYNC_APEX_EXECUTE']) { // TODO: REMOVE FEATURE FLAG
+        $future = $asyncJob->enqueue();
+        print $future->ajax();
+    } else {
+        print $asyncJob->perform();
+    }
+
 
 } else if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] == "") {
     displayInfo("Anonymous block must not be blank.");
