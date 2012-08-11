@@ -15,8 +15,9 @@ abstract class FutureTask {
     }
 
     public function enqueue() {
-        redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, session_id());   // expiring existence handle
-        redis()->rpush(self::QUEUE, serialize($this));                         // actual job
+        WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp(); // check user has active session before going into async land
+        redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, session_id());   // set an expiring lock on this async id so GC doesn't get it
+        redis()->rpush(self::QUEUE, serialize($this));                         // place actual job on the queue
         workbenchLog(LOG_INFO, "FutureTaskEnqueue", $this->asyncId);
         return new FutureResult($this->asyncId);
     }
