@@ -10,7 +10,7 @@ function redis() {
         }
 
         $r = new Redis();
-        $r->pconnect(parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT));
+        $r->connect(parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT));
         if (!is_array(parse_url($redisUrl, PHP_URL_PASS))) {
             $r->auth(parse_url($redisUrl, PHP_URL_PASS));
         }
