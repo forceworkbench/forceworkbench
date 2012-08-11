@@ -64,13 +64,9 @@ if (isset($_POST['execute'])) {
 if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] != "") {
     print "<h2>Results</h2>";
 
-    try {
-        $asyncJob = new ApexExecuteFutureTask($_POST['scriptInput'], $_POST['LogCategory'], $_POST['LogCategoryLevel']);
-        $future = $asyncJob->enqueue();
-        print $future->ajax();
-    } catch(Exception $e) {
-        displayError($e->getMessage(),false,true);
-    }
+    $asyncJob = new ApexExecuteFutureTask($_POST['scriptInput'], $_POST['LogCategory'], $_POST['LogCategoryLevel']);
+    $future = $asyncJob->enqueue();
+    print $future->ajax();
 
 } else if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptInput'] == "") {
     displayInfo("Anonymous block must not be blank.");
