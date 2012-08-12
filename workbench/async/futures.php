@@ -8,12 +8,12 @@ abstract class FutureTask {
 
     private $asyncId;
     private $connConfig;
-    private $workbenchConfig;
+    private $cookies;
 
     function __construct() {
         $this->asyncId = uniqid();
         $this->connConfig = WorkbenchContext::get()->getConnConfig();
-        $this->workbenchConfig = WorkbenchConfig::get();
+        $this->cookies = $_COOKIE;
     }
 
     public function enqueue() {
@@ -30,16 +30,19 @@ abstract class FutureTask {
         workbenchLog(LOG_INFO, "FutureTaskExecuteStart", $this->asyncId);
         $future = new FutureResult($this->asyncId);
         try {
-            WorkbenchConfig::set($this->workbenchConfig);
+            WorkbenchConfig::destroy(); // destroy the WorkbenchConfig, if one happens to exist
+            $_COOKIE = $this->cookies;  // reestablish the user's cookies so they'll be picked up by new WorkbenchConfig, if required
             WorkbenchContext::establish($this->connConfig);
 
             $future->redeem($this->perform());
-
-            WorkbenchContext::get()->release();
-            WorkbenchConfig::destroy();
         } catch (Exception $e) {
             $future->redeem($e);
         }
+
+        WorkbenchContext::get()->release();
+        WorkbenchConfig::destroy();
+        $_COOKIE = array();
+
         workbenchLog(LOG_INFO, "FutureTaskExecuteEnd", $this->asyncId);
     }
 
