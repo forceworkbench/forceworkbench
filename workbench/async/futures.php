@@ -8,10 +8,12 @@ abstract class FutureTask {
 
     private $asyncId;
     private $connConfig;
+    private $workbenchConfig;
 
     function __construct() {
         $this->asyncId = uniqid();
         $this->connConfig = WorkbenchContext::get()->getConnConfig();
+        $this->workbenchConfig = WorkbenchConfig::get();
     }
 
     public function enqueue() {
@@ -28,9 +30,13 @@ abstract class FutureTask {
         workbenchLog(LOG_INFO, "FutureTaskExecuteStart", $this->asyncId);
         $future = new FutureResult($this->asyncId);
         try {
+            WorkbenchConfig::set($this->workbenchConfig);
             WorkbenchContext::establish($this->connConfig);
+
             $future->redeem($this->perform());
+
             WorkbenchContext::get()->release();
+            WorkbenchConfig::destroy();
         } catch (Exception $e) {
             $future->redeem($e);
         }

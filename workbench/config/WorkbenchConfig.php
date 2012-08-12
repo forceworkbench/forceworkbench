@@ -18,6 +18,14 @@ class WorkbenchConfig {
         return $GLOBALS[self::INSTANCE];
     }
 
+    static function set($config) {
+        $GLOBALS[self::INSTANCE] = $config;
+    }
+
+    static function destroy() {
+        unset($GLOBALS[self::INSTANCE]);
+    }
+
     function __construct() {
         // initialize in case load issues
         $config = array();
