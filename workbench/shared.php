@@ -1,13 +1,17 @@
 <?php
 require_once "util/ExpandableTree.php";
-
 function redis() {
     if (!isset($GLOBALS['REDIS'])) {
 
         $redisUrl = WorkbenchConfig::get()->value("redisUrl");
         if (empty($redisUrl)) {
-            throw new Exception("Redis connection requested but not configured.");
+            throw new Exception("Redis connection requested but 'redisUrl' not configured.");
         }
+
+        if (!class_exists("Redis")) {
+            throw new Exception("Redis connection requested but Redis library not found.");
+        }
+
 
         $r = new Redis();
         $r->connect(parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT));
