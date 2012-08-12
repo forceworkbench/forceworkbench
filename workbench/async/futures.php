@@ -16,6 +16,15 @@ abstract class FutureTask {
         $this->cookies = $_COOKIE;
     }
 
+    public function enqueueAndGet($timeout) {
+        $future = $this->enqueue();
+        try {
+            return $future->get($timeout);
+        } catch (TimeoutException $e) {
+            return $future->ajax();
+        }
+    }
+
     public function enqueue() {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp(); // check user has active session before going into async land
         redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, session_id());   // set an expiring lock on this async id so GC doesn't get it
