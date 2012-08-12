@@ -3,6 +3,7 @@
 require_once 'soxl/QueryObjects.php';
 require_once 'session.php';
 require_once 'shared.php';
+require_once 'async/QueryFutureTask.php';
 
 $defaultSettings['numFilters'] = 1;
 //clear the form if the user changes the object
@@ -63,15 +64,12 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
 //show the query results with default object selected on a previous page, otherwise
 // just display the blank form. When the user selects the SCREEN or CSV options, the
 //query is processed by the correct function
-if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
+if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
     require_once 'header.php';
-    //    $queryRequest->setExportTo('screen');
     displayQueryForm($queryRequest);
-    $queryTimeStart = microtime(true);
-    $records = query(null,'QueryMore',$_SESSION['queryLocator']);
-    $queryTimeEnd = microtime(true);
-    $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
-    displayQueryResults($records,$queryTimeElapsed,$queryRequest);
+    $queryRequest->setQueryAction('QueryMore');
+    $asyncJob = new QueryFutureTask($queryRequest, $_POST['queryLocator']);
+    echo $asyncJob->perform();
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && ($queryRequest->getExportTo() == 'screen' || $queryRequest->getExportTo() == 'matrix')) {
     require_once 'header.php';
@@ -80,18 +78,21 @@ if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
         displayWarning("Both column and row must be specified for Matrix view.", false, true);
         return;
     }
-    $queryTimeStart = microtime(true);
-    $records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction());
-    $queryTimeEnd = microtime(true);
-    $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
-    displayQueryResults($records,$queryTimeElapsed,$queryRequest);
+
+    $asyncJob = new QueryFutureTask($queryRequest);
+    $future = $asyncJob->enqueue();
+
+    echo "<p><a name='qr'>&nbsp;</a></p>";
+    echo $future->ajax();
+
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && strpos($queryRequest->getExportTo(), 'async_') === 0) {
     queryAsync($queryRequest);
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
     if (!substr_count($_POST['soql_query'],"count()")) {
-        $records = query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction(),null,true);
-        exportQueryAsCsv($records,$queryRequest->getExportTo());
+        $task = new QueryFutureTask($queryRequest);
+        $records = $task->query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction(),null,true);
+        $task->exportQueryAsCsv($records,$queryRequest->getExportTo());
     } else {
         require_once 'header.php';
         displayQueryForm($queryRequest);
@@ -110,14 +111,13 @@ if (isset($_POST['queryMore']) && isset($_SESSION['queryLocator'])) {
 }
 
 
-
 //Show the main SOQL query form with default query or last submitted query and export action (screen or CSV)
 
 function displayQueryForm($queryRequest) {
-    
-   registerShortcut("Ctrl+Alt+W",
-                    "addFilterRow(document.getElementById('numFilters').value++);".
-                    "toggleFieldDisabled();");
+
+    registerShortcut("Ctrl+Alt+W",
+        "addFilterRow(document.getElementById('numFilters').value++);".
+            "toggleFieldDisabled();");
 
     if ($queryRequest->getObject()) {;
         $describeSObjectResult = WorkbenchContext::get()->describeSObjects($queryRequest->getObject());
@@ -153,15 +153,15 @@ function displayQueryForm($queryRequest) {
         'NOT IN' => 'not in',
         'INCLUDES' => 'includes',
         'EXCLUDES' => 'excludes'
-        );
+    );
 
 
-        print "var compOper_array = new Array();\n";
-        foreach ($ops as $opValue => $opLabel) {
-            print " compOper_array[\"$opValue\"]=[\"$opLabel\"];\n";
-        }
-        
-        print <<<QUERY_BUILDER_SCRIPT
+    print "var compOper_array = new Array();\n";
+    foreach ($ops as $opValue => $opLabel) {
+        print " compOper_array[\"$opValue\"]=[\"$opLabel\"];\n";
+    }
+
+    print <<<QUERY_BUILDER_SCRIPT
 
 function parentChildRelationshipQueryBlocker() {
     var soql = document.getElementById('soql_query_textarea').value.toUpperCase();
@@ -448,120 +448,120 @@ function toggleMatrixSortSelectors(hasChanged) {
 QUERY_BUILDER_SCRIPT;
 
 
-        if (WorkbenchConfig::get()->value("autoJumpToResults")) {
-            print "<form method='POST' id='query_form' name='query_form' action='#qr'>\n";
-        } else {
-            print "<form method='POST' id='query_form' name='query_form' action=''>\n";
+    if (WorkbenchConfig::get()->value("autoJumpToResults")) {
+        print "<form method='POST' id='query_form' name='query_form' action='#qr'>\n";
+    } else {
+        print "<form method='POST' id='query_form' name='query_form' action=''>\n";
+    }
+    print "<input type='hidden' name='justUpdate' value='0' />";
+    print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
+    print "<p class='instructions'>Choose the object, fields, and critera to build a SOQL query below:</p>\n";
+    print "<table border='0' style='width: 100%;'>\n";
+    print "<tr><td valign='top' width='1'>Object:";
+
+    printObjectSelection($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
+
+    print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='buildQuery();'>\n";
+    if (isset($describeSObjectResult)) {
+
+        print   " <option value='count()'";
+        if ($queryRequest->getFields() != null) { //check to make sure something is selected; otherwise warnings will display
+            foreach ($queryRequest->getFields() as $selectedField) {
+                if ('count()' == $selectedField) print " selected='selected' ";
+            }
         }
-        print "<input type='hidden' name='justUpdate' value='0' />";
-        print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
-        print "<p class='instructions'>Choose the object, fields, and critera to build a SOQL query below:</p>\n";
-        print "<table border='0' style='width: 100%;'>\n";
-        print "<tr><td valign='top' width='1'>Object:";
+        print ">count()</option>\n";
 
-        printObjectSelection($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
-
-        print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='buildQuery();'>\n";
-        if (isset($describeSObjectResult)) {
-
-            print   " <option value='count()'";
+        //print ">$field->name</option>\n";
+        foreach ($describeSObjectResult->fields as $fields => $field) {
+            print   " <option value='$field->name'";
             if ($queryRequest->getFields() != null) { //check to make sure something is selected; otherwise warnings will display
                 foreach ($queryRequest->getFields() as $selectedField) {
-                    if ('count()' == $selectedField) print " selected='selected' ";
+                    if ($field->name == $selectedField) print " selected='selected' ";
                 }
             }
-            print ">count()</option>\n";
-
-            //print ">$field->name</option>\n";
-            foreach ($describeSObjectResult->fields as $fields => $field) {
-                print   " <option value='$field->name'";
-                if ($queryRequest->getFields() != null) { //check to make sure something is selected; otherwise warnings will display
-                    foreach ($queryRequest->getFields() as $selectedField) {
-                        if ($field->name == $selectedField) print " selected='selected' ";
-                    }
-                }
-                print ">$field->name</option>\n";
-            }
+            print ">$field->name</option>\n";
         }
-        print "</select></td>\n";
-        print "<td valign='top'>";
+    }
+    print "</select></td>\n";
+    print "<td valign='top'>";
 
 
 
 
-        print "<table border='0' align='right' style='width:100%'>\n";
-        print "<tr><td valign='top' colspan=2>View as:<br/>" .
-            "<label><input type='radio' id='export_action_screen' name='export_action' value='screen' ";
-        if ($queryRequest->getExportTo() == 'screen') print "checked='true'";
-        print " onClick='toggleMatrixSortSelectors(true);'>List</label>&nbsp;";
+    print "<table border='0' align='right' style='width:100%'>\n";
+    print "<tr><td valign='top' colspan=2>View as:<br/>" .
+        "<label><input type='radio' id='export_action_screen' name='export_action' value='screen' ";
+    if ($queryRequest->getExportTo() == 'screen') print "checked='true'";
+    print " onClick='toggleMatrixSortSelectors(true);'>List</label>&nbsp;";
 
-        print "<label><input type='radio' id='export_action_matrix' name='export_action' value='matrix' ";
-        if ($queryRequest->getExportTo() == 'matrix') print "checked='true'";
-        print " onClick='toggleMatrixSortSelectors(true);'>Matrix</label>";
+    print "<label><input type='radio' id='export_action_matrix' name='export_action' value='matrix' ";
+    if ($queryRequest->getExportTo() == 'matrix') print "checked='true'";
+    print " onClick='toggleMatrixSortSelectors(true);'>Matrix</label>";
 
-        if (WorkbenchConfig::get()->value("allowQueryCsvExport")) {
-            print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
-            if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
-            print " onClick='toggleMatrixSortSelectors(true);'>CSV</label>&nbsp;";
+    if (WorkbenchConfig::get()->value("allowQueryCsvExport")) {
+        print "<label><input type='radio' id='export_action_csv' name='export_action' value='csv' ";
+        if ($queryRequest->getExportTo() == 'csv') print "checked='true'";
+        print " onClick='toggleMatrixSortSelectors(true);'>CSV</label>&nbsp;";
+    }
+
+    print "<label><input type='radio' id='export_action_async_csv' name='export_action' value='async_CSV' ";
+    if ($queryRequest->getExportTo() == 'async_CSV') print "checked='true'";
+    print " onClick='toggleMatrixSortSelectors(true);'>Bulk CSV</label>&nbsp;";
+
+    print "<label><input type='radio' id='export_action_async_xml' name='export_action' value='async_XML' ";
+    if ($queryRequest->getExportTo() == 'async_XML') print "checked='true'";
+    print " onClick='toggleMatrixSortSelectors(true);'>Bulk XML</label>&nbsp;";
+
+
+    print "<td valign='top' colspan=2>Deleted and archived records:<br/>" .
+        "<label><input type='radio' name='query_action' value='Query' ";
+    if ($queryRequest->getQueryAction() == 'Query') print "checked='true'";
+    print " >Exclude</label>&nbsp;";
+
+    print "<label><input type='radio' name='query_action' value='QueryAll' ";
+    if ($queryRequest->getQueryAction() == 'QueryAll') print "checked='true'";
+    print " >Include</label></td></tr></table>\n";
+
+
+    print "<table id='QB_right_sub_table' border='0' align='right' style='width:100%'>\n";
+
+    print "<tr id='matrix_selection_headers' style='display: none;'><td><br/>Columns:</td> <td><br/>Rows:</td> <td>&nbsp;</td></tr>\n";
+    print "<tr id='matrix_selection_row' style='display: none;'><td><select id='matrix_cols' name='matrix_cols' style='width: 15em;' onChange='toggleFieldDisabled();buildQuery();' onkeyup='toggleFieldDisabled();buildQuery();'>";
+    if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixCols());
+    print "</select></td> <td><select id='matrix_rows' name='matrix_rows' style='width: 15em;' onChange='toggleFieldDisabled();buildQuery();' onkeyup='toggleFieldDisabled();buildQuery();'>";
+    if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixRows());
+    print "</select></td> <td><img onmouseover=\"Tip('Matrix view groups records into columns and rows of common field values.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/></td></tr>\n";
+
+    print "<tr id='sort_selection_headers'><td colspan='2'><br/>Sort results by:</td> <td><br/>Max Records:</td></tr>\n";
+    print "<tr id='sort_selection_row'>";
+    print "<td colspan='2'><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='buildQuery();'>\n";
+    print "<option value=''></option>\n";
+    if (isset($describeSObjectResult)) {
+        foreach ($describeSObjectResult->fields as $fields => $field) {
+            print   " <option value='$field->name'";
+            if ($queryRequest->getOrderByField() != null && $field->name == $queryRequest->getOrderByField()) print " selected='selected' ";
+            print ">$field->name</option>\n";
         }
+    }
+    print "</select>\n";
 
-        print "<label><input type='radio' id='export_action_async_csv' name='export_action' value='async_CSV' ";
-        if ($queryRequest->getExportTo() == 'async_CSV') print "checked='true'";
-        print " onClick='toggleMatrixSortSelectors(true);'>Bulk CSV</label>&nbsp;";
-
-        print "<label><input type='radio' id='export_action_async_xml' name='export_action' value='async_XML' ";
-        if ($queryRequest->getExportTo() == 'async_XML') print "checked='true'";
-        print " onClick='toggleMatrixSortSelectors(true);'>Bulk XML</label>&nbsp;";
-
-
-        print "<td valign='top' colspan=2>Deleted and archived records:<br/>" .
-            "<label><input type='radio' name='query_action' value='Query' ";
-        if ($queryRequest->getQueryAction() == 'Query') print "checked='true'";
-        print " >Exclude</label>&nbsp;";
-
-        print "<label><input type='radio' name='query_action' value='QueryAll' ";
-        if ($queryRequest->getQueryAction() == 'QueryAll') print "checked='true'";
-        print " >Include</label></td></tr></table>\n";
-
-
-        print "<table id='QB_right_sub_table' border='0' align='right' style='width:100%'>\n";
-
-        print "<tr id='matrix_selection_headers' style='display: none;'><td><br/>Columns:</td> <td><br/>Rows:</td> <td>&nbsp;</td></tr>\n";
-        print "<tr id='matrix_selection_row' style='display: none;'><td><select id='matrix_cols' name='matrix_cols' style='width: 15em;' onChange='toggleFieldDisabled();buildQuery();' onkeyup='toggleFieldDisabled();buildQuery();'>";
-        if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixCols());
-        print "</select></td> <td><select id='matrix_rows' name='matrix_rows' style='width: 15em;' onChange='toggleFieldDisabled();buildQuery();' onkeyup='toggleFieldDisabled();buildQuery();'>";
-        if(isset($fieldValuesToLabels)) printSelectOptions(array_merge(array(""=>""),$fieldValuesToLabels), $queryRequest->getMatrixRows());
-        print "</select></td> <td><img onmouseover=\"Tip('Matrix view groups records into columns and rows of common field values.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/></td></tr>\n";
-
-        print "<tr id='sort_selection_headers'><td colspan='2'><br/>Sort results by:</td> <td><br/>Max Records:</td></tr>\n";
-        print "<tr id='sort_selection_row'>";
-        print "<td colspan='2'><select id='QB_orderby_field' name='QB_orderby_field' style='width: 16em;' onChange='buildQuery();'>\n";
-        print "<option value=''></option>\n";
-        if (isset($describeSObjectResult)) {
-            foreach ($describeSObjectResult->fields as $fields => $field) {
-                print   " <option value='$field->name'";
-                if ($queryRequest->getOrderByField() != null && $field->name == $queryRequest->getOrderByField()) print " selected='selected' ";
-                print ">$field->name</option>\n";
-            }
-        }
-        print "</select>\n";
-
-        $qBOrderbySortOptions = array(
+    $qBOrderbySortOptions = array(
         'ASC' => 'A to Z',
         'DESC' => 'Z to A'
-        );
+    );
 
-        print "<select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='buildQuery();' onkeyup='buildQuery();'>\n";
-        foreach ($qBOrderbySortOptions as $opKey => $op) {
-            print "<option value='$opKey'";
-            if (isset($_POST['QB_orderby_sort']) && $opKey == $_POST['QB_orderby_sort']) print " selected='selected' ";
-            print ">$op</option>\n";
-        }
-        print "</select>\n";
+    print "<select id='QB_orderby_sort' name='QB_orderby_sort' style='width: 6em;' onChange='buildQuery();' onkeyup='buildQuery();'>\n";
+    foreach ($qBOrderbySortOptions as $opKey => $op) {
+        print "<option value='$opKey'";
+        if (isset($_POST['QB_orderby_sort']) && $opKey == $_POST['QB_orderby_sort']) print " selected='selected' ";
+        print ">$op</option>\n";
+    }
+    print "</select>\n";
 
-        $qBNullsOptions = array(
-    'FIRST' => 'Nulls First',
-    'LAST' => 'Nulls Last'
+    $qBNullsOptions = array(
+        'FIRST' => 'Nulls First',
+        'LAST' => 'Nulls Last'
     );
     print "<select id='QB_nulls' name='QB_nulls' style='width: 10em;' onChange='buildQuery();' onkeyup='buildQuery();'>\n";
     foreach ($qBNullsOptions as $opKey => $op) {
@@ -581,29 +581,29 @@ QUERY_BUILDER_SCRIPT;
     $filterRowNum = 0;
     foreach ($queryRequest->getFilters() as $filter) {
         print "<script>addFilterRow(" .
-        $filterRowNum++ . ", " .
-        "\"" . $filter->getField()     . "\", " . 
-        "\"" . $filter->getCompOper()  . "\", " . 
-        "\"" . htmlspecialchars($filter->getValue(), ENT_QUOTES)     . "\"" .
-        ");</script>";
+            $filterRowNum++ . ", " .
+            "\"" . $filter->getField()     . "\", " .
+            "\"" . $filter->getCompOper()  . "\", " .
+            "\"" . htmlspecialchars($filter->getValue(), ENT_QUOTES)     . "\"" .
+            ");</script>";
     }
 
 
     print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
         "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . WorkbenchConfig::get()->value("textareaRows") . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES) . "</textarea>\n" .
-      "</td></tr>\n";
+        "</td></tr>\n";
 
 
     print "<tr><td colspan=1><input type='submit' name='querySubmit' value='Query' onclick='return parentChildRelationshipQueryBlocker();' />\n" .
-          "<input type='reset' value='Reset' />\n" .
-          "</td>";
+        "<input type='reset' value='Reset' />\n" .
+        "</td>";
 
     //save and retrieve named queries
     print "<td colspan=4 align='right'>";
 
     print "&nbsp;Run: " .
-          "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();'>" . 
-          "<option value='' selected='selected'></option>";
+        "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();'>" .
+        "<option value='' selected='selected'></option>";
     if (isset($_SESSION['savedQueryRequests'])) {
         foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr) {
             if($qrName != null) print "<option value='$qrName'>$qrName</option>";
@@ -618,360 +618,11 @@ QUERY_BUILDER_SCRIPT;
     print "<input type='submit' name='clearAllQr' value='Clear All' onclick='return confirm(\"Are you sure you would like to clear all saved queries?\");'/>\n";
 
     print "&nbsp;&nbsp;" .
-          "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
+        "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
 
     print "</td></tr></table><p/>\n";
 
     print "<script>toggleFieldDisabled();toggleMatrixSortSelectors(false);</script>";
-}
-
-
-function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false) {
-    try {
-        if (!WorkbenchConfig::get()->value("allowParentRelationshipQueries") && preg_match("/SELECT.*?(\w+\.\w+).*FROM/i", $soqlQuery, $matches)) {
-
-            $msg = "Parent relationship queries are disabled in Workbench: " . $matches[1];
-
-            if (WorkbenchConfig::get()->overrideable("allowParentRelationshipQueries")) {
-                $msg .= "\n\nDue to issues rendering query results, parent relationship queries are disabled by default. " .
-                         "If you understand these limitations, parent relationship queries can be enabled under Settings. " .
-                         "Alternatively, parent relationship queries can be run with REST Explorer under the Utilities menu without issue.";
-            }
-
-            throw new WorkbenchHandledException($msg);
-        }
-
-        if ($queryAction == 'Query') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->query($soqlQuery);
-        if ($queryAction == 'QueryAll') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryAll($soqlQuery);
-        if ($queryAction == 'QueryMore' && isset($queryLocator)) $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryMore($queryLocator);
-
-        if (substr_count($soqlQuery,"count()") && $suppressScreenOutput == false) {
-            $countString = "Query would return " . $queryResponse->size . " record";
-            $countString .= ($queryResponse->size == 1) ? "." : "s.";
-            displayInfo($countString);
-            $records = $queryResponse->size;
-            include_once 'footer.php';
-            exit;
-        }
-
-        if (isset($queryResponse->records)) {
-            $records = $queryResponse->records;
-        } else {
-            $records = null;
-        }
-
-        $_SESSION['totalQuerySize'] = $queryResponse->size;
-
-        if (!$queryResponse->done) {
-            $_SESSION['queryLocator'] = $queryResponse->queryLocator;
-        } else {
-            $_SESSION['queryLocator'] = null;
-        }
-
-        //correction for documents and attachments with body. issue #176
-        if ($queryResponse->size > 0 && !is_array($records)) {
-            $records = array($records);
-        }
-
-        $memLimitBytes = toBytes(ini_get("memory_limit"));
-        $memWarningThreshold = WorkbenchConfig::get()->value("memoryUsageWarningThreshold") / 100;
-        while(($suppressScreenOutput || WorkbenchConfig::get()->value("autoRunQueryMore")) && !$queryResponse->done) {
-
-            if ($memLimitBytes != 0 && (memory_get_usage() / $memLimitBytes > $memWarningThreshold)) {
-                displayError("Workbench almost exhausted all its memory after only processing " . count($records) . " rows of data.
-                When performing a large queries, it is recommended to export as Bulk CSV or Bulk XML.",
-                $suppressScreenOutput, true);
-                return; // bail out
-            }
-
-            $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryMore($queryResponse->queryLocator);
-
-            if (!is_array($queryResponse->records)) {
-                $queryResponse->records = array($queryResponse->records);
-            }
-
-            $records = array_merge($records, $queryResponse->records); //todo: do memory check here
-        }
-
-        return $records;
-
-    } catch (Exception $e) {
-        print "<p><a name='qr'>&nbsp;</a></p>";
-        displayError($e->getMessage(),true,true);
-    }
-}
-
-function getQueryResultHeaders($sobject, $tail="") {
-    if (!isset($headerBufferArray)) {
-        $headerBufferArray = array();
-    }
-
-    if (isset($sobject->Id) && !isset($sobject->fields->Id)) {
-        $headerBufferArray[] = $tail . "Id";
-    }
-
-    if (isset($sobject->fields)) {
-        foreach ($sobject->fields->children() as $field) {
-            $headerBufferArray[] = $tail . htmlspecialchars($field->getName(),ENT_QUOTES);
-        }
-    }
-
-    if (isset($sobject->sobjects)) {
-        foreach ($sobject->sobjects as $sobjects) {
-            $recurse = getQueryResultHeaders($sobjects, $tail . htmlspecialchars($sobjects->type,ENT_QUOTES) . ".");
-            $headerBufferArray = array_merge($headerBufferArray, $recurse);
-        }
-    }
-
-    if (isset($sobject->queryResult)) {
-        if(!is_array($sobject->queryResult)) $sobject->queryResult = array($sobject->queryResult);
-        foreach ($sobject->queryResult as $qr) {
-            $headerBufferArray[] = $qr->records[0]->type;
-        }
-    }
-
-    return $headerBufferArray;
-}
-
-function getQueryResultRow($sobject, $escapeHtmlChars=true) {
-
-    if (!isset($rowBuffer)) {
-        $rowBuffer = array();
-    }
-     
-    if (isset($sobject->Id) && !isset($sobject->fields->Id)) {
-        $rowBuffer[] = $sobject->Id;
-    }
-
-    if (isset($sobject->fields)) {
-        foreach ($sobject->fields as $datum) {
-            $rowBuffer[] = ($escapeHtmlChars ? htmlspecialchars($datum,ENT_QUOTES) : $datum);
-        }
-    }
-
-    if (isset($sobject->sobjects)) {
-        foreach ($sobject->sobjects as $sobjects) {
-            $rowBuffer = array_merge($rowBuffer, getQueryResultRow($sobjects,$escapeHtmlChars));
-        }
-    }
-
-    if (isset($sobject->queryResult)) {
-        $rowBuffer[] = $sobject->queryResult;
-    }
-
-    return localizeDateTimes($rowBuffer);
-}
-
-function createQueryResultsMatrix($records, $matrixCols, $matrixRows) {
-    $matrix = array();
-    $allColNames = array();
-    $allRowNames = array();
-
-    foreach ($records as $rawRecord) {
-        $record = new SObject($rawRecord);
-
-        $data = "";
-        if (isset($record->Id)) $record->fields->Id = $record->Id;
-
-        foreach ($record->fields as $fieldName => $fieldValue) {
-            if ($fieldName == $matrixCols || $fieldName == $matrixRows) {
-                continue;
-            }
-
-            $data .= "<em>" . htmlspecialchars($fieldName) . ":</em>  " . htmlspecialchars($fieldValue,ENT_QUOTES) . "<br/>";
-        }
-
-        foreach ($record->fields as $rowName => $rowValue) {
-            if ($rowName != $matrixRows) continue;
-            foreach ($record->fields as $colName => $colValue) {
-                if ($colName != $matrixCols) continue;
-                $allColNames["$colValue"] = $colValue;
-                $allRowNames["$rowValue"] = $rowValue;
-                $matrix["$rowValue"]["$colValue"][] = $data;
-            }
-        }
-    }
-
-    if (count($allColNames) == 0 || count($allRowNames) == 0) {
-        displayWarning("No records match matrix column and row selections.", false, true);
-        return;
-    }
-
-    $table =  "<table id='query_results_matrix' border='1' class='" . getTableClass() . "'>";
-
-    $hw = false;
-    foreach ($allRowNames as $rowName) {
-        if (!$hw) {
-            $table .= "<tr><td></td>";
-            foreach ($allColNames as $colName) {
-                $table .= "<th>" . htmlspecialchars($colName) . "</th>";
-            }
-            $table .= "</tr>";
-            $hw = true;
-        }
-
-        $table .= "<tr>";
-        $table .= "<th>" . htmlspecialchars($rowName) . "</th>";
-
-        foreach ($allColNames as $colName) {
-            $table .= "<td>";
-
-            if (isset($matrix["$rowName"]["$colName"])) {
-                foreach ($matrix["$rowName"]["$colName"] as $data) {
-                    $table .= "<div class='matrixItem'" . ($data == "" ? "style='width: 0px;'" : "") . ">$data</div>";
-                }
-            }
-             
-            $table .= "</td>";
-        }
-        $table .= "</tr>";
-    }
-
-    $table .= "</table>";
-
-    return localizeDateTimes($table);
-}
-
-function createQueryResultTable($records, $rowNum) {
-    $table = "<table id='query_results' class='" . getTableClass() . "'>\n";
-
-    //call shared recusive function above for header printing
-    $table .= "<tr><th>&nbsp;</th><th>";
-    if ($records[0] instanceof SObject) {
-        $table .= implode("</th><th>", getQueryResultHeaders($records[0]));
-    } else {
-        $table .= implode("</th><th>", getQueryResultHeaders(new SObject($records[0])));
-    }
-    $table .= "</th></tr>\n";
-
-
-    //Print the remaining rows in the body
-    foreach ($records as $record) {
-        //call shared recusive function above for row printing
-        $table .= "<tr><td>" . $rowNum++ . "</td><td>";
-
-        if ($record instanceof SObject) {
-            $row = getQueryResultRow($record);
-        } else {
-            $row = getQueryResultRow(new SObject($record));
-        }
-
-
-        for ($i = 0; $i < count($row); $i++) {
-            if($row[$i] instanceof QueryResult && !is_array($row[$i])) $row[$i] = array($row[$i]);
-            if (isset($row[$i][0]) && $row[$i][0] instanceof QueryResult) {
-                foreach ($row[$i] as $qr) {
-                    $table .= createQueryResultTable($qr->records, 1);
-                    if($qr != end($row[$i])) $table .= "</td><td>";
-                }
-            } else {
-                $table .= $row[$i];
-            }
-
-            if ($i+1 != count($row)) {
-                $table .= "</td><td>";
-            }
-        }
-
-        $table .= "</td></tr>\n";
-    }
-
-    $table .= "</table>";
-
-    return $table;
-}
-
-
-//If the user selects to display the form on screen, they are routed to this function
-function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryRequest) {
-
-    //Check if records were returned
-    if ($records) {
-        if (WorkbenchConfig::get()->value("areTablesSortable")) {
-            addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/sortable.js') . "></script>");
-        }
-        
-        try {
-            $rowNum = 0;
-            print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
-            if (isset($_SESSION['queryLocator']) && !WorkbenchConfig::get()->value("autoRunQueryMore")) {
-                preg_match("/-(\d+)/",$_SESSION['queryLocator'],$lastRecord);
-                $rowNum = ($lastRecord[1] - count($records) + 1);
-                print "<p>Returned records $rowNum - " . $lastRecord[1] . " of ";
-            } else if (!WorkbenchConfig::get()->value("autoRunQueryMore")) {
-                $rowNum = ($_SESSION['totalQuerySize'] - count($records) + 1);
-                print "<p>Returned records $rowNum - " . $_SESSION['totalQuerySize'] . " of ";
-            } else {
-                $rowNum = 1;
-                print "<p>Returned ";
-            }
-             
-            print $_SESSION['totalQuerySize'] . " total record";
-            if ($_SESSION['totalQuerySize'] !== 1) print 's';
-            print " in ";
-            printf ("%01.3f", $queryTimeElapsed);
-            print " seconds:</p>\n";
-
-            if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $_SESSION['queryLocator']) {
-                print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
-            }
-
-            print addLinksToIds($queryRequest->getExportTo() == 'matrix' ?
-            createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
-            createQueryResultTable($records, $rowNum));
-
-            if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $_SESSION['queryLocator']) {
-                print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
-            }
-
-            print    "</form></div>\n";
-        } catch (Exception $e) {
-            print "<p />";
-            displayError($e->getMessage(), false, true);
-        }
-    } else {
-        print "<p><a name='qr'>&nbsp;</a></p>";
-        displayWarning("Sorry, no records returned.");
-    }
-    include_once 'footer.php';
-}
-
-
-//Export the above query to a CSV file
-function exportQueryAsCsv($records,$queryAction) {
-    if (!WorkbenchConfig::get()->value("allowQueryCsvExport")) {
-        throw new Exception("Export to CSV not allowed");
-    }
-
-    if ($records) {
-        try {
-            $csvFile = fopen('php://output','w') or die("Error opening php://output");
-            $csvFilename = "export" . date('YmdHis') . ".csv";
-            header("Content-Type: application/csv");
-            header("Content-Disposition: attachment; filename=$csvFilename");
-
-            //Write first row to CSV and unset variable
-            fputcsv($csvFile,getQueryResultHeaders(new SObject($records[0])));
-
-            //Export remaining rows and write to CSV line-by-line
-            foreach ($records as $record) {
-                fputcsv($csvFile, getQueryResultRow(new SObject($record),false));
-            }
-
-            fclose($csvFile) or die("Error closing php://output");
-
-        } catch (Exception $e) {
-            require_once("header.php");
-            displayQueryForm(new QueryRequest($_POST),'csv',$queryAction);
-            print "<p />";
-            displayError($e->getMessage(),false,true);
-        }
-    } else {
-        require_once("header.php");
-        displayQueryForm(new QueryRequest($_POST),'csv',$queryAction);
-        print "<p />";
-        displayWarning("No records returned for CSV output.",false,true);
-    }
 }
 
 function queryAsync($queryRequest) {
