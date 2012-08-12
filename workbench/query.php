@@ -80,10 +80,16 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
     }
 
     $asyncJob = new QueryFutureTask($queryRequest);
-    $future = $asyncJob->enqueue();
-
-    echo "<p><a name='qr'>&nbsp;</a></p>";
-    echo $future->ajax();
+    $asyncStartTime = time(); // TODO: remove timing
+    if (WorkbenchConfig::get()->isConfigured("ENABLE_ASYNC_QUERY") && time() % 2) { // TODO: REMOVE FEATURE FLAG & A/B TESTING
+        $future = $asyncJob->enqueue();
+        echo "<p><a name='qr'>&nbsp;</a></p>";
+        echo $future->ajax();
+        workbenchLog(LOG_DEBUG, "QUERY_ELAPSED_TIME_ASYNC", time() - $asyncStartTime);
+    } else {
+        echo $asyncJob->perform();
+        workbenchLog(LOG_DEBUG, "QUERY_ELAPSED_TIME_SYNC",  time() - $asyncStartTime);
+    }
 
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && strpos($queryRequest->getExportTo(), 'async_') === 0) {
