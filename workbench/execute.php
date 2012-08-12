@@ -67,8 +67,7 @@ if (isset($_POST['execute']) && isset($_POST['scriptInput']) && $_POST['scriptIn
     $asyncJob = new ApexExecuteFutureTask($_POST['scriptInput'], $_POST['LogCategory'], $_POST['LogCategoryLevel']);
 
     if (WorkbenchConfig::get()->isConfigured("ENABLE_ASYNC_APEX_EXECUTE")) { // TODO: REMOVE FEATURE FLAG
-        $future = $asyncJob->enqueue();
-        print $future->ajax();
+        print $asyncJob->enqueueAndGet(1);
     } else {
         print $asyncJob->perform();
     }
