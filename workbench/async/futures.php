@@ -29,14 +29,14 @@ abstract class FutureTask {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp(); // check user has active session before going into async land
         redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, session_id());   // set an expiring lock on this async id so GC doesn't get it
         redis()->rpush(self::QUEUE, serialize($this));                         // place actual job on the queue
-        workbenchLog(LOG_INFO, "FutureTaskEnqueue", $this->asyncId);
+        workbenchLog(LOG_INFO, "FutureTaskEnqueue", get_class($this) . "-" . $this->asyncId);
         return new FutureResult($this->asyncId);
     }
 
     abstract function perform();
 
     function execute() {
-        workbenchLog(LOG_INFO, "FutureTaskExecuteStart", $this->asyncId);
+        workbenchLog(LOG_INFO, "FutureTaskExecuteStart", get_class($this) . "-" . $this->asyncId);
         $future = new FutureResult($this->asyncId);
         try {
             WorkbenchConfig::destroy(); // destroy the WorkbenchConfig, if one happens to exist
@@ -52,7 +52,7 @@ abstract class FutureTask {
         WorkbenchConfig::destroy();
         $_COOKIE = array();
 
-        workbenchLog(LOG_INFO, "FutureTaskExecuteEnd", $this->asyncId);
+        workbenchLog(LOG_INFO, "FutureTaskExecuteEnd", get_class($this) . "-" . $this->asyncId);
     }
 
     /**
@@ -65,7 +65,7 @@ abstract class FutureTask {
             $task = unserialize($blpop[1]);
 
             if (!redis()->exists(FUTURE_LOCK . $task->asyncId)) {
-                workbenchLog(LOG_INFO, "FutureTaskGC", $task->asyncId);
+                workbenchLog(LOG_INFO, "FutureTaskGC", get_class($task) . "-" . $task->asyncId);
                 throw new TimeoutException();
             }
 
