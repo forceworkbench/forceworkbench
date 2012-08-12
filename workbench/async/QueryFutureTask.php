@@ -109,7 +109,7 @@ class QueryFutureTask extends FutureTask {
 
         if (isset($sobject->sobjects)) {
             foreach ($sobject->sobjects as $sobjects) {
-                $recurse = getQueryResultHeaders($sobjects, $tail . htmlspecialchars($sobjects->type,ENT_QUOTES) . ".");
+                $recurse = $this->getQueryResultHeaders($sobjects, $tail . htmlspecialchars($sobjects->type,ENT_QUOTES) . ".");
                 $headerBufferArray = array_merge($headerBufferArray, $recurse);
             }
         }
@@ -142,7 +142,7 @@ class QueryFutureTask extends FutureTask {
 
         if (isset($sobject->sobjects)) {
             foreach ($sobject->sobjects as $sobjects) {
-                $rowBuffer = array_merge($rowBuffer, getQueryResultRow($sobjects,$escapeHtmlChars));
+                $rowBuffer = array_merge($rowBuffer, $this->getQueryResultRow($sobjects,$escapeHtmlChars));
             }
         }
 
