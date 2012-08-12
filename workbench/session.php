@@ -7,6 +7,11 @@ require_once 'context/WorkbenchContext.php';
 set_exception_handler('handleAllExceptions');
 set_error_handler('handleAllErrors');
 
+if (!ini_get("date.timezone")) {
+    date_default_timezone_set('UTC');
+}
+
+
 $sessionStore = WorkbenchConfig::get()->value("sessionStore");
 // If $sessionStore starts with redis://, convert to format for Redis extension and set as the session save handler
 // IN:  redis://user:pass@host:port/
