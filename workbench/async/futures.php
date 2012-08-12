@@ -1,6 +1,6 @@
 <?php
 
-const FUTURE_LOCK = "FUTURE_LOCK";
+define("FUTURE_LOCK", "FUTURE_LOCK");
 
 abstract class FutureTask {
 
