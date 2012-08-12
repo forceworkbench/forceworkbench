@@ -6,5 +6,5 @@ if [ -n "${forceworkbench__logFile__default}" ]; then
 fi
 
 while true; do
-    $1 async_worker.php
+    php async_worker.php
 done
