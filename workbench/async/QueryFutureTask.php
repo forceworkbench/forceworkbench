@@ -274,57 +274,50 @@ class QueryFutureTask extends FutureTask {
 
     //If the user selects to display the form on screen, they are routed to this function
     function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryRequest) {
-
-        //Check if records were returned
-        if ($records) {
-            if (WorkbenchConfig::get()->value("areTablesSortable")) {
-                addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/sortable.js') . "></script>");
-            }
-
-            try {
-                $rowNum = 0;
-                print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
-                if (isset($this->queryLocator) && !WorkbenchConfig::get()->value("autoRunQueryMore")) {
-                    preg_match("/-(\d+)/",$this->queryLocator,$lastRecord);
-                    $rowNum = ($lastRecord[1] - count($records) + 1);
-                    print "<p>Returned records $rowNum - " . $lastRecord[1] . " of ";
-                } else if (!WorkbenchConfig::get()->value("autoRunQueryMore")) {
-                    $rowNum = ($_SESSION['totalQuerySize'] - count($records) + 1);
-                    print "<p>Returned records $rowNum - " . $_SESSION['totalQuerySize'] . " of ";
-                } else {
-                    $rowNum = 1;
-                    print "<p>Returned ";
-                }
-
-                print $_SESSION['totalQuerySize'] . " total record";
-                if ($_SESSION['totalQuerySize'] !== 1) print 's';
-                print " in ";
-                printf ("%01.3f", $queryTimeElapsed);
-                print " seconds:</p>\n";
-
-                if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->queryLocator) {
-                    print "<p><input type='hidden' name='queryLocator' value='" . $this->queryLocator . "' /></p>\n";
-                    print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
-                }
-
-                print addLinksToIds($queryRequest->getExportTo() == 'matrix' ?
-                $this->createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
-                $this->createQueryResultTable($records, $rowNum));
-
-                if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->queryLocator) {
-                    print "<p><input type='hidden' name='queryLocator' value='" . $this->queryLocator . "' /></p>\n";
-                    print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
-                }
-
-                print    "</form></div>\n";
-            } catch (Exception $e) {
-                print "<p />";
-                displayError($e->getMessage(), false, true);
-            }
-        } else {
-            print "<p><a name='qr'>&nbsp;</a></p>";
+        if (!$records) {
             displayWarning("Sorry, no records returned.");
+            return;
         }
+
+        if (WorkbenchConfig::get()->value("areTablesSortable")) {
+            addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/sortable.js') . "></script>");
+        }
+
+        $rowNum = 0;
+        print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
+        if (isset($this->queryLocator) && !WorkbenchConfig::get()->value("autoRunQueryMore")) {
+            preg_match("/-(\d+)/",$this->queryLocator,$lastRecord);
+            $rowNum = ($lastRecord[1] - count($records) + 1);
+            print "<p>Returned records $rowNum - " . $lastRecord[1] . " of ";
+        } else if (!WorkbenchConfig::get()->value("autoRunQueryMore")) {
+            $rowNum = ($_SESSION['totalQuerySize'] - count($records) + 1);
+            print "<p>Returned records $rowNum - " . $_SESSION['totalQuerySize'] . " of ";
+        } else {
+            $rowNum = 1;
+            print "<p>Returned ";
+        }
+
+        print $_SESSION['totalQuerySize'] . " total record";
+        if ($_SESSION['totalQuerySize'] !== 1) print 's';
+        print " in ";
+        printf ("%01.3f", $queryTimeElapsed);
+        print " seconds:</p>\n";
+
+        if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->queryLocator) {
+            print "<p><input type='hidden' name='queryLocator' value='" . $this->queryLocator . "' /></p>\n";
+            print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
+        }
+
+        print addLinksToIds($queryRequest->getExportTo() == 'matrix' ?
+        $this->createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
+        $this->createQueryResultTable($records, $rowNum));
+
+        if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->queryLocator) {
+            print "<p><input type='hidden' name='queryLocator' value='" . $this->queryLocator . "' /></p>\n";
+            print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
+        }
+
+        print    "</form></div>\n";
     }
 
     function exportQueryAsCsv($records,$queryAction) {
