@@ -81,7 +81,7 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
 
     $asyncJob = new QueryFutureTask($queryRequest);
     $asyncStartTime = time(); // TODO: remove timing
-    if (WorkbenchConfig::get()->isConfigured("ENABLE_ASYNC_QUERY") && time() % 2) { // TODO: REMOVE FEATURE FLAG & A/B TESTING
+    if (WorkbenchConfig::get()->isConfigured("ENABLE_ASYNC_QUERY") && time() % 4) { // TODO: REMOVE FEATURE FLAG & A/B TESTING
         $future = $asyncJob->enqueue();
         echo "<p><a name='qr'>&nbsp;</a></p>";
         echo $future->ajax();
