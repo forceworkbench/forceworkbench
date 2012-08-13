@@ -27,6 +27,8 @@ foreach ($frKeys as $frKey) {
     }
 }
 
+workbenchLog(LOG_INFO, "FutureTaskQueueDepth", redis()->llen(FutureTask::QUEUE));
+
 while (true) {
     try {
         $job = FutureTask::dequeue(30);
