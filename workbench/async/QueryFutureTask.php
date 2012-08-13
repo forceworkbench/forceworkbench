@@ -47,9 +47,10 @@ class QueryFutureTask extends FutureTask {
         if (substr_count($soqlQuery,"count()") && $suppressScreenOutput == false) {
             $countString = "Query would return " . $queryResponse->size . " record";
             $countString .= ($queryResponse->size == 1) ? "." : "s.";
-            displayInfo($countString);
-            $records = $queryResponse->size;
-            exit;
+            throw new WorkbenchHandledException($countString); //TODO: ASYNC STOP-GAP: REPLACE WITH NON-EXCEPTION!
+//            displayInfo($countString);
+//            $records = $queryResponse->size;
+//            exit;
         }
 
         if (isset($queryResponse->records)) {
