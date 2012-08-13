@@ -36,6 +36,7 @@ while (true) {
     } catch (TimeoutException $e) {
         continue;
     }
+    redis()->close();
     exit();
 }
 ?>

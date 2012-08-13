@@ -36,6 +36,10 @@ if (WorkbenchContext::isEstablished() && (memory_get_peak_usage()/toBytes(ini_ge
    WorkbenchContext::get()->clearCache();
 }
 
+if (isset($GLOBALS['REDIS'])) {
+    redis()->close();
+}
+
 //USAGE: debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null)
 debug(true,true,null,null);
 ?>
