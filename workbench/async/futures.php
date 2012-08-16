@@ -26,6 +26,10 @@ abstract class FutureTask {
     }
 
     public function enqueue() {
+        if (WorkbenchConfig::get()->isConfigured("blockFutureTaskEnqueue")) {
+            throw new WorkbenchHandledException("Tasks are currently not being accepted. Try again in a few moments.");
+        }
+
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp(); // check user has active session before going into async land
         redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, session_id());   // set an expiring lock on this async id so GC doesn't get it
         redis()->rpush(self::QUEUE, serialize($this));                         // place actual job on the queue
