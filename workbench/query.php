@@ -81,14 +81,11 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
     echo "<p><a name='qr'>&nbsp;</a></p>";
 
     $asyncJob = new QueryFutureTask($queryRequest);
-    $asyncStartTime = time(); // TODO: remove timing
     if (WorkbenchConfig::get()->isConfigured("ENABLE_ASYNC_QUERY")) { // TODO: REMOVE FEATURE FLAG
         $future = $asyncJob->enqueue();
         echo $future->ajax();
-        workbenchLog(LOG_DEBUG, "QUERY_ELAPSED_TIME_ASYNC", time() - $asyncStartTime);
     } else {
         echo $asyncJob->perform();
-        workbenchLog(LOG_DEBUG, "QUERY_ELAPSED_TIME_SYNC",  time() - $asyncStartTime);
     }
 
     include_once 'footer.php';
