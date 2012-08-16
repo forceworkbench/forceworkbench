@@ -4,11 +4,11 @@ include_once 'rc4.php';
 define("FUTURE_LOCK", "FUTURE_LOCK");
 
 function crypto_serialize($data) {
-    return rc4(base64_encode(serialize($data)), "abc", true);
+    return rc4(base64_encode(serialize($data)), WorkbenchConfig::get()->value("futureSecret"), true);
 }
 
 function crypto_unserialize($data) {
-    return unserialize(base64_decode(rc4($data, "abc", false)));
+    return unserialize(base64_decode(rc4($data, WorkbenchConfig::get()->value("futureSecret"), false)));
 }
 
 abstract class FutureTask {
