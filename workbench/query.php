@@ -600,8 +600,8 @@ QUERY_BUILDER_SCRIPT;
         "</td></tr>\n";
 
 
-    print "<tr><td colspan=1><input type='submit' name='querySubmit' value='Query' onclick='return parentChildRelationshipQueryBlocker();' />\n" .
-        "<input type='reset' value='Reset' />\n" .
+    print "<tr><td colspan=1><input type='submit' name='querySubmit' class='disableWhileAsyncLoading' value='Query' onclick='return parentChildRelationshipQueryBlocker();' />\n" .
+        "<input type='reset' value='Reset' class='disableWhileAsyncLoading' />\n" .
         "</td>";
 
     //save and retrieve named queries
@@ -620,8 +620,8 @@ QUERY_BUILDER_SCRIPT;
 
     print "&nbsp;&nbsp;Save as: <input type='text' id='saveQr' name='saveQr' value='" . htmlspecialchars($queryRequest->getName(),ENT_QUOTES) . "' style='width: 10em;'/>\n";
 
-    print "<input type='submit' name='doSaveQr' value='Save' onclick='return doesQueryHaveName();' />\n";
-    print "<input type='submit' name='clearAllQr' value='Clear All' onclick='return confirm(\"Are you sure you would like to clear all saved queries?\");'/>\n";
+    print "<input type='submit' name='doSaveQr' value='Save' class='disableWhileAsyncLoading' onclick='return doesQueryHaveName();' />\n";
+    print "<input type='submit' name='clearAllQr' value='Clear All' class='disableWhileAsyncLoading' onclick='return confirm(\"Are you sure you would like to clear all saved queries?\");'/>\n";
 
     print "&nbsp;&nbsp;" .
         "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";

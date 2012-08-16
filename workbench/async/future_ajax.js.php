@@ -2,6 +2,8 @@
 
 <div id="async-container-<?php echo $asyncId ?>"></div>
 
+<script type='text/javascript' src='<?php echo getPathToStaticResource('/script/getElementsByClassName.js') ?>'></script>
+
 <script type="text/javascript">
     <!--
 
@@ -19,9 +21,9 @@
         };
 
         this.getFuture = function() {
+            this.disableWhileAsyncLoading(true);
             var container = document.getElementById('async-container-<?php echo $asyncId ?>');
             container.innerHTML = "<img src='<?php echo getPathToStaticResource('/images/wait16trans.gif') ?>'/>&nbsp; Loading...";
-
             this.getFutureInternal(container, 0);
         };
 
@@ -39,17 +41,27 @@
                             if (attempts > 50){
                                 container.innerHTML = "<span style='color:red;'>Timed out waiting for asynchronous job to complete</span>";
                             } else {
-                                getFutureInternal(container, attempts++);
+                                WorkbenchFuture<?php echo $asyncId ?>.getFutureInternal(container, attempts++);
+                                return;
                             }
                         } else if (ajax.status == 404) {
                             container.innerHTML = "<span style='color:red;'>Unknown Asynchronous Job</span>";
                         } else {
                             container.innerHTML = "<span style='color:red;'>Unknown Asynchronous State</span>";
                         }
+                        WorkbenchFuture<?php echo $asyncId ?>.disableWhileAsyncLoading(false);
                     }
                 };
             } else {
                 container.innerHTML = "Unknown error loading content";
+            }
+        };
+
+        this.disableWhileAsyncLoading = function(isAllowed) {
+            var disableWhileAsyncLoadingElements = getElementsByClassName("disableWhileAsyncLoading");
+
+            for (i in disableWhileAsyncLoadingElements) {
+                disableWhileAsyncLoadingElements[i].disabled = isAllowed;
             }
         };
     };
