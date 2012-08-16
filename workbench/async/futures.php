@@ -70,8 +70,8 @@ abstract class FutureTask {
 
         workbenchLog(LOG_INFO, "FutureTaskExecuteEnd",
             get_class($this) . "-" . $this->asyncId .
-            " queueTime=" . $execStartTime - $this->enqueueTime .
-            " execTime=" . time() - $execStartTime);
+            " queueTime=" . ($execStartTime - $this->enqueueTime) .
+            " execTime=" . (time() - $execStartTime));
     }
 
     /**
