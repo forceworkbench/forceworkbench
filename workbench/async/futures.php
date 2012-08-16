@@ -18,6 +18,7 @@ abstract class FutureTask {
     private $asyncId;
     private $connConfig;
     private $cookies;
+    private $enqueueTime;
 
     function __construct() {
         $this->asyncId = uniqid();
@@ -39,6 +40,7 @@ abstract class FutureTask {
             throw new WorkbenchHandledException("Tasks are currently not being accepted. Try again in a few moments.");
         }
 
+        $this->enqueueTime = time();
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp(); // check user has active session before going into async land
         redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, crypto_serialize(session_id()));   // set an expiring lock on this async id so GC doesn't get it
         redis()->rpush(self::QUEUE, crypto_serialize($this));                         // place actual job on the queue
@@ -49,6 +51,7 @@ abstract class FutureTask {
     abstract function perform();
 
     function execute() {
+        $execStartTime = time();
         workbenchLog(LOG_INFO, "FutureTaskExecuteStart", get_class($this) . "-" . $this->asyncId);
         $future = new FutureResult($this->asyncId);
         try {
@@ -65,7 +68,10 @@ abstract class FutureTask {
         WorkbenchConfig::destroy();
         $_COOKIE = array();
 
-        workbenchLog(LOG_INFO, "FutureTaskExecuteEnd", get_class($this) . "-" . $this->asyncId);
+        workbenchLog(LOG_INFO, "FutureTaskExecuteEnd",
+            get_class($this) . "-" . $this->asyncId .
+            " queueTime=" . $execStartTime - $this->enqueueTime .
+            " execTime=" . time() - $execStartTime);
     }
 
     /**
