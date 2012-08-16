@@ -52,26 +52,27 @@ abstract class FutureTask {
 
     function execute() {
         $execStartTime = time();
-        workbenchLog(LOG_INFO, "FutureTaskExecuteStart", get_class($this) . "-" . $this->asyncId);
         $future = new FutureResult($this->asyncId);
         try {
             WorkbenchConfig::destroy(); // destroy the WorkbenchConfig, if one happens to exist
             $_COOKIE = $this->cookies;  // reestablish the user's cookies so they'll be picked up by new WorkbenchConfig, if required
             WorkbenchContext::establish($this->connConfig);
 
+            workbenchLog(LOG_INFO, "FutureTaskExecuteStart", get_class($this) . "-" . $this->asyncId);
+
             $future->redeem($this->perform());
         } catch (Exception $e) {
             $future->redeem($e);
         }
 
-        WorkbenchContext::get()->release();
-        WorkbenchConfig::destroy();
-        $_COOKIE = array();
-
         workbenchLog(LOG_INFO, "FutureTaskExecuteEnd",
             get_class($this) . "-" . $this->asyncId .
             " queueTime=" . ($execStartTime - $this->enqueueTime) .
             " execTime=" . (time() - $execStartTime));
+
+        WorkbenchContext::get()->release();
+        WorkbenchConfig::destroy();
+        $_COOKIE = array();
     }
 
     /**
