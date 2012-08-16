@@ -823,6 +823,15 @@ $config["header_SecurityOptions"] = array(
     );
 
     // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
+    $config["futureSecret"] = array(
+        "label" => "Future Salting Secret",
+        "description" => "Used for salting the async futures.",
+        "default" => "OVERRIDE_ME_IN_CONFIG_OVERRIDES_PHP",
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["orgIdWhiteList"] = array(
         "label" => "Organization Id Whitelist",
         "description" => "A comma-separated list of organization ids which are the only ones allowed to connect to Workbench.",

@@ -1,6 +1,15 @@
 <?php
+include_once 'rc4.php';
 
 define("FUTURE_LOCK", "FUTURE_LOCK");
+
+function crypto_serialize($data) {
+    return rc4(base64_encode(serialize($data)), WorkbenchConfig::get()->value("futureSecret"), true);
+}
+
+function crypto_unserialize($data) {
+    return unserialize(base64_decode(rc4($data, WorkbenchConfig::get()->value("futureSecret"), false)));
+}
 
 abstract class FutureTask {
 
@@ -31,8 +40,8 @@ abstract class FutureTask {
         }
 
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp(); // check user has active session before going into async land
-        redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, session_id());   // set an expiring lock on this async id so GC doesn't get it
-        redis()->rpush(self::QUEUE, serialize($this));                         // place actual job on the queue
+        redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, crypto_serialize(session_id()));   // set an expiring lock on this async id so GC doesn't get it
+        redis()->rpush(self::QUEUE, crypto_serialize($this));                         // place actual job on the queue
         workbenchLog(LOG_INFO, "FutureTaskEnqueue", get_class($this) . "-" . $this->asyncId);
         return new FutureResult($this->asyncId);
     }
@@ -66,7 +75,7 @@ abstract class FutureTask {
     public static function dequeue($timeout) {
         $blpop = redis()->blpop(self::QUEUE, $timeout);
         if (isset($blpop[1])) {
-            $task = unserialize($blpop[1]);
+            $task = crypto_unserialize($blpop[1]);
 
             if (!redis()->exists(FUTURE_LOCK . $task->asyncId)) {
                 workbenchLog(LOG_INFO, "FutureTaskGC", get_class($task) . "-" . $task->asyncId);
@@ -98,7 +107,7 @@ class FutureResult {
      */
     public static function fromId($asyncId) {
         // check lock is there and is for this session
-        $sid = redis()->get(FUTURE_LOCK . $asyncId);
+        $sid = crypto_unserialize(redis()->get(FUTURE_LOCK . $asyncId));
         if ($sid == null || $sid !== session_id()) {
             throw new UnknownAsyncIdException();
         }
@@ -108,7 +117,7 @@ class FutureResult {
 
     function redeem($result) {
         $this->result = $result;
-        redis()->rpush(self::RESULT . $this->asyncId, serialize($this->result));
+        redis()->rpush(self::RESULT . $this->asyncId, crypto_serialize($this->result));
     }
 
     public function getAsyncId() {
@@ -119,7 +128,7 @@ class FutureResult {
         $blpop = redis()->blpop(self::RESULT . $this->asyncId, $timeout);
 
         if (isset($blpop[1])) {
-            $this->result = unserialize($blpop[1]);
+            $this->result = crypto_unserialize($blpop[1]);
         } else {
             throw new TimeoutException();
         }
