@@ -45,19 +45,12 @@ class QueryFutureTask extends FutureTask {
         if ($queryAction == 'QueryMore' && isset($queryLocator)) $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryMore($queryLocator);
 
         if (substr_count($soqlQuery,"count()") && $suppressScreenOutput == false) {
-            $countString = "Query would return " . $queryResponse->size . " record";
-            $countString .= ($queryResponse->size == 1) ? "." : "s.";
-            throw new WorkbenchHandledException($countString); //TODO: ASYNC STOP-GAP: REPLACE WITH NON-EXCEPTION!
-//            displayInfo($countString);
-//            $records = $queryResponse->size;
-//            exit;
+            return $queryResponse->size;
+        } else if (!isset($queryResponse->records)) {
+            return null;
         }
 
-        if (isset($queryResponse->records)) {
-            $records = $queryResponse->records;
-        } else {
-            $records = null;
-        }
+        $records = $queryResponse->records;
 
         $_SESSION['totalQuerySize'] = $queryResponse->size;
 
@@ -277,6 +270,13 @@ class QueryFutureTask extends FutureTask {
     function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryRequest) {
         if (!$records) {
             displayWarning("Sorry, no records returned.");
+            return;
+        }
+
+        if (is_numeric($records)) {
+            $countString = "Query would return $records record";
+            $countString .= ($records == 1) ? "." : "s.";
+            displayInfo($countString);
             return;
         }
 
