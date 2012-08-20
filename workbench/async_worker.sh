@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 
-if [ -n "${forceworkbench__logFile__default}" ]; then
-    touch "${forceworkbench__logFile__default}"
-    tail -F "${forceworkbench__logFile__default}" &
+export forceworkbench__logHandler__default='stdout';
+MAX_WORKERS=${MAX_WORKERS:-1}
+
+if [ $MAX_WORKERS -eq 0 ]; then
+    echo "MAX_WORKERS of 0 not allowed"
+    exit 1
 fi
 
-while true; do
-    php async_worker.php
-done
+inf() {
+    while true; do
+        echo 0
+    done
+}
+
+inf | xargs --max-args=1 --max-procs=$MAX_WORKERS php async_worker.php

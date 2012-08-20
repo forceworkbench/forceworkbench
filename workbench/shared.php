@@ -71,6 +71,10 @@ function _handle_logs_file($logLevel, $msg) {
     fclose($logFile);
 }
 
+function _handle_logs_stdout($logLevel, $msg) {
+    echo "forceworkbench=$msg\n";
+}
+
 function logLevelToStr($logLevel) {
     switch($logLevel) {
         case LOG_EMERG:   return "EMERGENCY";

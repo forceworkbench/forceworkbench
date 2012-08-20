@@ -14,7 +14,7 @@ if (php_sapi_name() != 'cli') {
     httpError(404, "Not Found");
 }
 
-$_SERVER['REMOTE_ADDR'] = 'CLI';
+$_SERVER['REMOTE_ADDR'] = 'CLI-' . getmypid();
 $_SERVER['REQUEST_METHOD'] = 'ASYNC';
 
 // future result gc
