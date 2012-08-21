@@ -6,7 +6,7 @@
     set_exception_handler('handleAllExceptionsNoHeaders');
 
     try {
-        echo FutureResult::fromId($_REQUEST['async_id'])->get($_REQUEST['wait_for']);
+        echo FutureResult::fromId($_REQUEST['async_id'])->get((int) $_REQUEST['wait_for']);
     } catch (TimeoutException $te) {
         httpError("202", "Accepted");
     } catch (UnknownAsyncIdException $ue) {
