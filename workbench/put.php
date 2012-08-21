@@ -834,6 +834,11 @@ function displayFieldMappings($fieldMap,$extId,$showRefCol) {
 
     foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
         print "<tr><td>$salesforceField</td>";
+
+        if (!isset($fieldMapArray['csvField'])) {
+            throw new Exception("Unknown CSV field mapping to Salesforce field: " . $salesforceField);
+        }
+
         print "<td>" . $fieldMapArray['csvField'] . "</td>";
         if ($showRefCol && WorkbenchConfig::get()->value("showReferenceBy")) {
             print "<td>";
