@@ -1052,12 +1052,14 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
                     //create new row
                     $asyncCsvRow = array();
                     foreach ($fieldMap as $salesforceField=>$fieldMapArray) {
-                        $col = array_search($fieldMapArray['csvField'],$csvHeader);
-                        if (isset($salesforceField) && isset($fieldMapArray['csvField'])) {
-                            if ($csvArrayBatch[$row][$col] == "" && WorkbenchConfig::get()->value("fieldsToNull")) {
-                                $asyncCsvRow[] = "#N/A";
-                            } else {
-                                $asyncCsvRow[] = htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES);
+                        if (isset($fieldMapArray['csvField'])) {
+                            $col = array_search($fieldMapArray['csvField'],$csvHeader);
+                            if (isset($salesforceField) && isset($fieldMapArray['csvField'])) {
+                                if ($csvArrayBatch[$row][$col] == "" && WorkbenchConfig::get()->value("fieldsToNull")) {
+                                    $asyncCsvRow[] = "#N/A";
+                                } else {
+                                    $asyncCsvRow[] = htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES);
+                                }
                             }
                         }
                     }
