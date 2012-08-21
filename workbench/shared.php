@@ -296,7 +296,7 @@ function handleAllExceptionsInternal($e, $showHeadersFooters) {
         }
 
         if ($showHeadersFooters)  try { include_once 'header.php'; } catch (Exception $e) {}
-//        workbenchLog(LOG_ERR, "E", $fullMessage);
+        workbenchLog(LOG_ERR, "E", $fullMessage);
         displayError("UNKNOWN ERROR: " . $e->getMessage(), false, $showHeadersFooters);
     }
     exit;
