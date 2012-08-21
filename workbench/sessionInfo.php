@@ -18,6 +18,12 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
         }
     }
 
+
+    if (WorkbenchContext::get()->getDefaultObject()) {
+        if (!in_array(WorkbenchContext::get()->getDefaultObject(), WorkbenchContext::get()->describeGlobal()->types)) {
+            WorkbenchContext::get()->setDefaultObject(null);
+        }
+    }
 }
 
 require_once 'header.php';
