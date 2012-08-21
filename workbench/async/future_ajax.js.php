@@ -27,21 +27,23 @@
             this.getFutureInternal(container, 0);
         };
 
-        this.getFutureInternal = function(container, attempts) {
+        this.getFutureInternal = function(container, totalTimeWaiting) {
             var ajax = this.getHTTPObject();
             if (ajax != null) {
-                ajax.open("GET", "future_get.php?async_id=<?php echo $asyncId ?>", true);
+                var longPollTimeout = 10;
+                ajax.open("GET", "future_get.php?async_id=<?php echo $asyncId ?>&wait_for=" + longPollTimeout, true);
                 ajax.send(null);
                 ajax.onreadystatechange = function () {
                     if (ajax.readyState == 4) {
                         if (ajax.status == 200) {
                             container.innerHTML = ajax.responseText;
                         } else if (ajax.status == 202) {
+                            // 202 means that long poll ended, but still waiting for result
                             container.innerHTML += ".";
-                            if (attempts > 50){
+                            if (totalTimeWaiting > (35 * 60)) {
                                 container.innerHTML = "<span style='color:red;'>Timed out waiting for asynchronous job to complete</span>";
                             } else {
-                                WorkbenchFuture<?php echo $asyncId ?>.getFutureInternal(container, attempts++);
+                                WorkbenchFuture<?php echo $asyncId ?>.getFutureInternal(container, totalTimeWaiting + longPollTimeout);
                                 return;
                             }
                         } else if (ajax.status == 404) {
