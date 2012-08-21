@@ -40,8 +40,17 @@ class QueryFutureTask extends FutureTask {
             throw new WorkbenchHandledException($msg);
         }
 
-        if ($queryAction == 'Query') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->query($soqlQuery);
-        if ($queryAction == 'QueryAll') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryAll($soqlQuery);
+        try {
+            if ($queryAction == 'Query') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->query($soqlQuery);
+            if ($queryAction == 'QueryAll') $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryAll($soqlQuery);
+        } catch (SoapFault $e) {
+            if (strpos($e->getMessage(), "MALFORMED_QUERY") > -1 || strpos($e->getMessage(), "INVALID_FIELD") > -1) {
+                throw new WorkbenchHandledException($e->getMessage(), 0, $e);
+            } else {
+                throw $e;
+            }
+        }
+
         if ($queryAction == 'QueryMore' && isset($queryLocator)) $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryMore($queryLocator);
 
         if (substr_count($soqlQuery,"count()") && $suppressScreenOutput == false) {
