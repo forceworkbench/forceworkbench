@@ -81,6 +81,7 @@ class LoginController {
 
         if ((isset($_POST['signed_request'])) && isset($_POST['loginUrl'])){
             $this->processSignedRequest($_POST['signed_request'], $_POST['loginUrl']);
+            return;
         }
 
         if (isset($_REQUEST["code"])) {
