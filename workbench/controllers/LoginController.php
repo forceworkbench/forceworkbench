@@ -79,8 +79,8 @@ class LoginController {
 
     public function processRequest() {
 
-        if ((isset($_POST['signed_request'])) && isset($_POST['loginUrl'])){
-            $this->processSignedRequest($_POST['signed_request'], $_POST['loginUrl']);
+        if ((isset($_POST['signed_request'])) && isset($_GET['loginUrl'])){
+            $this->processSignedRequest($_POST['signed_request'], $_GET['loginUrl']);
             return;
         }
 
@@ -138,12 +138,12 @@ class LoginController {
         $encodedSig = substr($signedRequest, 0, $sep);
         $encodedEnv = substr($signedRequest, $sep + 1);
 
-        preg_match("/https:\/\/(.*).\//", $loginUrl, $m);
+        preg_match("/https:\/\/(.*)\//", $loginUrl, $m);
         $host = $m[1];
 
         $oauthConfigs = WorkbenchConfig::get()->value("oauthConfigs");
         if (!isset($oauthConfigs[$host]['key']) || !isset($oauthConfigs[$host]['secret'])) {
-            throw new Exception("Misconfigured OAuth Host");
+            throw new Exception("Misconfigured OAuth Host: $host");
         }
         $secret = $oauthConfigs[$host]['secret'];
 
@@ -153,8 +153,7 @@ class LoginController {
         }
 
         $req = json_decode(base64_decode($encodedEnv));
-
-        $this->processLogin(null, null, $req['instanceUrl'] . $req['links']['partnerUrl'], $req['oauthToken'], "select.php");
+        $this->processLogin(null, null, $req->instanceUrl . $req->context->links->partnerUrl, $req->oauthToken, "select.php");
     }
 
     public function processRememberUserCookie() {
