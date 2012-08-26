@@ -83,11 +83,24 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
 </div>
 
 <?php
+if (!termsOk() && $myPage->requiresSfdcSession) {
+    ?>
+    <div style="margin-left: 95px; margin-top: 10px;">
+        <form method="POST" action="">
+            <input type="checkbox" id="termsAccepted" name="termsAccepted"/>
+            <label for="termsAccepted"><a href="terms.php" target="_blank">I agree to the terms of service</a></label>
+            <input type="submit" value="Continue" style="margin-left: 10px; "/>
+        </form>
+    </div>
+   <?php
+    exit;
+}
+
 print "<table width='100%' border='0'><tr>";
 if ($myPage->showTitle) {
     print "<td id='pageTitle'>" . $myPage->title . "</td>";
 }
-if (isLoggedIn() && termsOk()) {
+if (isLoggedIn()) {
     $userInfo = WorkbenchContext::get()->getUserInfo();
     $infoTips = array("Username: " . $userInfo->userName,
                       "Instance: " . WorkbenchContext::get()->getHost(),
