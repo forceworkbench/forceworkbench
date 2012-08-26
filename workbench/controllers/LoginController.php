@@ -78,6 +78,12 @@ class LoginController {
     }
 
     public function processRequest() {
+
+        if ((isset($_POST['signed_request'])) && isset($_GET['loginUrl'])){
+            $this->processSignedRequest($_POST['signed_request'], $_GET['loginUrl']);
+            return;
+        }
+
         if (isset($_REQUEST["code"])) {
             if (!isset($_SESSION['oauth']) || !isset($_SESSION['oauth']['host']) || !isset($_SESSION['oauth']['apiVersion']) ) {
                 throw new Exception("Invalid OAuth State");
@@ -125,6 +131,29 @@ class LoginController {
 
             $this->processLogin($this->username, $pw, $serverUrl, $sid, $this->startUrl);
         }
+    }
+
+    private function processSignedRequest($signedRequest, $loginUrl) {
+        $sep = strpos($signedRequest, '.');
+        $encodedSig = substr($signedRequest, 0, $sep);
+        $encodedEnv = substr($signedRequest, $sep + 1);
+
+        preg_match("/https:\/\/(.*)\//", $loginUrl, $m);
+        $host = $m[1];
+
+        $oauthConfigs = WorkbenchConfig::get()->value("oauthConfigs");
+        if (!isset($oauthConfigs[$host]['key']) || !isset($oauthConfigs[$host]['secret'])) {
+            throw new Exception("Misconfigured OAuth Host: $host");
+        }
+        $secret = $oauthConfigs[$host]['secret'];
+
+        $calcedSig = base64_encode(hash_hmac("sha256", $encodedEnv, $secret, true));
+        if ($calcedSig != $encodedSig) {
+            throw new WorkbenchAuthenticationException("Signed request authentication failed");
+        }
+
+        $req = json_decode(base64_decode($encodedEnv));
+        $this->processLogin(null, null, $req->instanceUrl . $req->context->links->partnerUrl, $req->oauthToken, "select.php");
     }
 
     public function processRememberUserCookie() {
@@ -240,6 +269,10 @@ class LoginController {
             }
 
             return;
+        }
+
+        if (isset($_POST['termsAccepted'])) {
+            WorkbenchContext::get()->agreeToTerms();
         }
 
         // test the connection and prime the UserInfo cache

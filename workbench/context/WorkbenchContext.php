@@ -37,6 +37,7 @@ class WorkbenchContext {
     private $cache;
     private $defaultObject;
     private $sfdcUiSidLikelySet;
+    private $agreedToTerms;
 
     /**
      * @static
@@ -89,6 +90,7 @@ class WorkbenchContext {
         $this->defaultObject = false;
         $this->defaultObjectChanged = false;
         $this->sfdcUiSidLikelySet = false;
+        $this->agreedToTerms = false;
     }
 
     function login($username, $password, $orgId, $portalId) {
@@ -190,6 +192,14 @@ class WorkbenchContext {
 
     function setIsUiSessionLikelySet($sfdcUiSidLikelySet) {
         $this->sfdcUiSidLikelySet = $sfdcUiSidLikelySet;
+    }
+
+    function agreeToTerms() {
+        $this->agreedToTerms = true;
+    }
+
+    function hasAgreedToTerms() {
+        return $this->agreedToTerms;
     }
 
     /**

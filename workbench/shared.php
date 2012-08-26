@@ -346,6 +346,14 @@ function isLoggedIn() {
     return WorkbenchContext::isEstablished() && WorkbenchContext::get()->isLoggedIn();
 }
 
+function termsOk() {
+    if (!strlen(WorkbenchConfig::get()->value("termsFile"))) {
+        return true;
+    }
+
+    return WorkbenchContext::isEstablished() && WorkbenchContext::get()->hasAgreedToTerms();
+}
+
 function getMyPage() {
     foreach ($GLOBALS["MENUS"] as $pages) {
         foreach ($pages as $href => $page) {

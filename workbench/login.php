@@ -8,7 +8,9 @@ if (isset($_POST['uiLogin'])
     || !empty($_REQUEST["pw"])
     || !empty($_REQUEST["sid"])
     || isset($_POST["oauth_Login"])
-    || isset($_GET["code"])) {
+    || isset($_GET["code"])
+    || isset($_POST["signed_request"])
+) {
     $c->processRequest();
 }
 

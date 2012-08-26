@@ -57,6 +57,7 @@ abstract class FutureTask {
             WorkbenchConfig::destroy(); // destroy the WorkbenchConfig, if one happens to exist
             $_COOKIE = $this->cookies;  // reestablish the user's cookies so they'll be picked up by new WorkbenchConfig, if required
             WorkbenchContext::establish($this->connConfig);
+            WorkbenchContext::get()->agreeToTerms();
 
             workbenchLog(LOG_INFO, "FutureTaskExecuteStart", get_class($this) . "-" . $this->asyncId);
 
