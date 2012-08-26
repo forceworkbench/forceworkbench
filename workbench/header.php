@@ -76,7 +76,7 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
         }
         print "</ul></li>";
     
-        if(!isLoggedIn()) break; //only show first "Workbench" menu if not logged in
+        if(!isLoggedIn() || !termsOk()) break; //only show first "Workbench" menu in these cases
     }
     ?>
     </ul>
@@ -87,7 +87,7 @@ print "<table width='100%' border='0'><tr>";
 if ($myPage->showTitle) {
     print "<td id='pageTitle'>" . $myPage->title . "</td>";
 }
-if (isLoggedIn()) {
+if (isLoggedIn() && termsOk()) {
     $userInfo = WorkbenchContext::get()->getUserInfo();
     $infoTips = array("Username: " . $userInfo->userName,
                       "Instance: " . WorkbenchContext::get()->getHost(),

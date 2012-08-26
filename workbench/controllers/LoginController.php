@@ -271,6 +271,10 @@ class LoginController {
             return;
         }
 
+        if (isset($_POST['termsAccepted'])) {
+            WorkbenchContext::get()->agreeToTerms();
+        }
+
         // test the connection and prime the UserInfo cache
         // exceptions will be caught by top-level handler
         $userInfo = WorkbenchContext::get()->getUserInfo();
