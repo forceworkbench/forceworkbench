@@ -40,7 +40,7 @@
                         } else if (ajax.status == 202) {
                             // 202 means that long poll ended, but still waiting for result
                             container.innerHTML += ".";
-                            if (totalTimeWaiting > (35 * 60)) {
+                            if (totalTimeWaiting > (<?php echo WorkbenchConfig::get()->value('asyncTimeoutSeconds'); ?>)) {
                                 container.innerHTML = "<span style='color:red;'>Timed out waiting for asynchronous job to complete</span>";
                             } else {
                                 WorkbenchFuture<?php echo $asyncId ?>.getFutureInternal(container, totalTimeWaiting + longPollTimeout);

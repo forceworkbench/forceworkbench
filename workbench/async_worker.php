@@ -32,6 +32,7 @@ workbenchLog(LOG_INFO, "FutureTaskQueueDepth", redis()->llen(FutureTask::QUEUE))
 while (true) {
     try {
         $job = FutureTask::dequeue(30);
+        set_time_limit(WorkbenchConfig::get()->value('asyncTimeoutSeconds'));
         $job->execute();
     } catch (TimeoutException $e) {
         continue;

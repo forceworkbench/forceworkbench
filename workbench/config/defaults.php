@@ -183,6 +183,14 @@ $config["header_General"] = array(
         "dataType" => "String"
     );
 
+    $config["asyncTimeoutSeconds"] = array(
+        "label" => "Async Timeout in Seconds",
+        "description" => "Async Timeout in Seconds",
+        "default" => 35 * 60,
+        "overrideable" => false,
+        "dataType" => "int"
+    );
+
 $config["header_LoginOptions"] = array(
     "label" => "Login Options",
     "display" => true,
