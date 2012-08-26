@@ -405,6 +405,8 @@ class LoginController {
             throw new Exception("OAuth response missing instance name");
         }
 
+        $_POST['termsAccepted'] = 1; // re-apply terms acceptance on oauth redirect
+
         $this->processLogin(null, null, $serverUrlPrefix . "/services/Soap/u/" . $apiVersion, $accessToken, "select.php"); // TODO: work w/ startUrls
     }
 
