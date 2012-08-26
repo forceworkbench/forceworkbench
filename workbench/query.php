@@ -605,7 +605,7 @@ QUERY_BUILDER_SCRIPT;
     print "<td colspan=4 align='right'>";
 
     print "&nbsp;Run: " .
-        "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();'>" .
+        "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();' class='disableWhileAsyncLoading'>" .
         "<option value='' selected='selected'></option>";
     if (isset($_SESSION['savedQueryRequests'])) {
         foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr) {
