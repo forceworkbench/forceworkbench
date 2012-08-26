@@ -122,6 +122,12 @@ function displayQueryForm($queryRequest) {
 
         $fieldValuesToLabels = array();
         foreach ($describeSObjectResult->fields as $field) {
+            // TODO: REMOVE ONCE DEBUGGING COMPLETED
+            if (!is_object($field)) {
+                workbenchLog(LOG_DEBUG, "fieldValuesToLabelsUnexpectedNonObject", 'object: '. $queryRequest->getObject()  . '; field: ' . print_r($field, true));
+                continue;
+            }
+
             $fieldValuesToLabels[$field->name] = $field->name;
         }
     } else {
