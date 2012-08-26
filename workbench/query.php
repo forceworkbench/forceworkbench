@@ -81,12 +81,7 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
     echo "<p><a name='qr'>&nbsp;</a></p>";
 
     $asyncJob = new QueryFutureTask($queryRequest);
-    if (WorkbenchConfig::get()->isConfigured("ENABLE_ASYNC_QUERY")) { // TODO: REMOVE FEATURE FLAG
-        $future = $asyncJob->enqueue();
-        echo $future->ajax();
-    } else {
-        echo $asyncJob->perform();
-    }
+    echo $asyncJob->enqueueOrPerform();
 
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && strpos($queryRequest->getExportTo(), 'async_') === 0) {

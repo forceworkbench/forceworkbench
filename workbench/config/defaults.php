@@ -824,9 +824,9 @@ $config["header_SecurityOptions"] = array(
     );
 
     // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
-    $config["futureSecret"] = array(
-        "label" => "Future Salting Secret",
-        "description" => "Used for salting the async futures.",
+    $config["rc4Secret"] = array(
+        "label" => "RC4 Salting Secret",
+        "description" => "Used for salting the RC4 encryption.",
         "default" => "OVERRIDE_ME_IN_CONFIG_OVERRIDES_PHP",
         "overrideable" => false,
         "dataType" => "string"
