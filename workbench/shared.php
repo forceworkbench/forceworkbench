@@ -227,6 +227,7 @@ function isKnownAuthenticationError($errorMessage) {
         "API_DISABLED_FOR_ORG",
         "REQUEST_LIMIT_EXCEEDED",
         "INVALID_OPERATION_WITH_EXPIRED_PASSWORD",
+        "UNSUPPORTED_API_VERSION",
         "Could not connect to host"
     );
 
