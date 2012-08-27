@@ -651,7 +651,7 @@ function queryAsync($queryRequest) {
     try {
         $job = $asyncConnection->createJob($job);
     } catch (Exception $e) {
-        if (strpos($e->getMessage(), 'Unable to find object') > -1) {
+        if ((strpos($e->getMessage(), 'Unable to find object') > -1) || (strpos($e->getMessage(), 'InvalidEntity') > -1)) {
             throw new WorkbenchHandledException($e->getMessage());
         } else {
             throw $e;
