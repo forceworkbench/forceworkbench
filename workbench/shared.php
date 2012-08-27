@@ -109,13 +109,13 @@ function getCsrfToken() {
 function validateCsrfToken($doError = true) {
    if (!isset($_REQUEST['CSRF_TOKEN']) || $_REQUEST['CSRF_TOKEN'] != getCsrfToken()) {
 
-       workbenchLog(LOG_ERR, "C", (isset($_REQUEST['CSRF_TOKEN']) ? $_REQUEST['CSRF_TOKEN'] : "NULL") .
-                                  "`" .
-                                  getCsrfToken());
-       
        if ($doError) {
            httpError("403 Forbidden", "Invalid or missing required CSRF token");
        } else {
+           workbenchLog(LOG_ERR, "C", (isset($_REQUEST['CSRF_TOKEN']) ? $_REQUEST['CSRF_TOKEN'] : "NULL") .
+                        "`" .
+                        getCsrfToken());
+
            return false;
        }
    }
