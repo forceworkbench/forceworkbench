@@ -648,7 +648,16 @@ function queryAsync($queryRequest) {
     $job->setContentType(substr($queryRequest->getExportTo(), strlen("async_")));
     $job->setConcurrencyMode(WorkbenchConfig::get()->value("asyncConcurrencyMode"));
 
-    $job = $asyncConnection->createJob($job);
+    try {
+        $job = $asyncConnection->createJob($job);
+    } catch (Exception $e) {
+        if (strpos($e->getMessage(), 'Unable to find object') > -1) {
+            throw new WorkbenchHandledException($e->getMessage());
+        } else {
+            throw $e;
+        }
+    }
+
     $asyncConnection->createBatch($job, $queryRequest->getSoqlQuery());
     $job = $asyncConnection->updateJobState($job->getId(), "Closed");
 
