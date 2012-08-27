@@ -1,16 +1,10 @@
 <?php
-include_once 'rc4.php';
 
 define("FUTURE_LOCK", "FUTURE_LOCK");
 
-function crypto_serialize($data) {
-    return rc4(base64_encode(serialize($data)), WorkbenchConfig::get()->value("futureSecret"), true);
-}
-
-function crypto_unserialize($data) {
-    return unserialize(base64_decode(rc4($data, WorkbenchConfig::get()->value("futureSecret"), false)));
-}
-
+/**
+ * A task intended to be performed asynchronously. Should be subclassed for particular tasks.
+ */
 abstract class FutureTask {
 
     const QUEUE = "FUTURE_TASK_REQUESTS";
@@ -26,37 +20,67 @@ abstract class FutureTask {
         $this->cookies = $_COOKIE;
     }
 
-    public function enqueueAndGet($timeout) {
-        $future = $this->enqueue();
-        try {
-            return $future->get($timeout);
-        } catch (TimeoutException $e) {
+    /**
+     * Convenience method that
+     * enqueues for async processing if Redis is available;
+     * otherwise performs sync processing.
+     * Either way, callers should `echo` the return value back to the page.
+     *
+     * @return string
+     */
+    public function enqueueOrPerform() {
+        if (hasRedis()) {
+            $future = $this->enqueue();
             return $future->ajax();
+        } else {
+            return $this->perform();
         }
     }
 
+    /**
+     * Enqueue for async processing.
+     * A FutureResult is returned immediately while processing continues asynchronously in the background.
+     *
+     * @return FutureResult
+     * @throws WorkbenchHandledException
+     */
     public function enqueue() {
         if (WorkbenchConfig::get()->isConfigured("blockFutureTaskEnqueue")) {
             throw new WorkbenchHandledException("Tasks are currently not being accepted. Try again in a few moments.");
         }
 
         $this->enqueueTime = time();
-        WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp(); // check user has active session before going into async land
-        redis()->setex(FUTURE_LOCK . $this->asyncId, 30 * 60, crypto_serialize(session_id()));   // set an expiring lock on this async id so GC doesn't get it
-        redis()->rpush(self::QUEUE, crypto_serialize($this));                         // place actual job on the queue
+        WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();                                                                // check user has active session before going into async land
+        redis()->setex(FUTURE_LOCK . $this->asyncId, WorkbenchConfig::get()->value('asyncTimeoutSeconds'), crypto_serialize(session_id()));   // set an expiring lock on this async id so GC doesn't get it
+        redis()->rpush(self::QUEUE, crypto_serialize($this));                                                                                 // place actual job on the queue
         workbenchLog(LOG_INFO, "FutureTaskEnqueue", get_class($this) . "-" . $this->asyncId);
         return new FutureResult($this->asyncId);
     }
 
+    /**
+     * Subclasses should override for whatever they need to perform.
+     * This can be called for sync processing of task
+     *
+     * @abstract
+     * @return mixed
+     */
     abstract function perform();
 
+    /**
+     * Executes the task within the user's config and context.
+     * The result or any thrown exception is redeemed to a FutureResult with the same async id.
+     * Only to be called by CLI. Will error if called from a web process.
+     */
     function execute() {
+        verifyCallingFromCLI();
+
         $execStartTime = time();
         $future = new FutureResult($this->asyncId);
         try {
             WorkbenchConfig::destroy(); // destroy the WorkbenchConfig, if one happens to exist
             $_COOKIE = $this->cookies;  // reestablish the user's cookies so they'll be picked up by new WorkbenchConfig, if required
             WorkbenchContext::establish($this->connConfig);
+            WorkbenchContext::get()->agreeToTerms();
 
             workbenchLog(LOG_INFO, "FutureTaskExecuteStart", get_class($this) . "-" . $this->asyncId);
 
@@ -76,10 +100,15 @@ abstract class FutureTask {
     }
 
     /**
+     * Dequeues the next task for processing. Blocks until $timeout is reached.
+     * Only to be called by CLI. Will error if called from a web process.
+     *
      * @static
      * @return FutureTask
      */
     public static function dequeue($timeout) {
+        verifyCallingFromCLI();
+
         $blpop = redis()->blpop(self::QUEUE, $timeout);
         if (isset($blpop[1])) {
             $task = crypto_unserialize($blpop[1]);
@@ -96,6 +125,11 @@ abstract class FutureTask {
     }
 }
 
+/**
+ * The promise of the result of a FutureTask.
+ * This is returned immediately by FutureTask::enqueue()
+ * as a handle for the caller to get the actual result once it has been redeemed.
+ */
 class FutureResult {
 
     const RESULT = "FUTURE_RESULT";
@@ -108,6 +142,9 @@ class FutureResult {
     }
 
     /**
+     * Get the FutureResult associated with an asyncId.
+     * Users can only get FutureResults of FutureTasks they previously enqueued.
+     *
      * @static
      * @param $asyncId
      * @return FutureResult
@@ -122,15 +159,28 @@ class FutureResult {
         return new FutureResult($asyncId);
     }
 
+    /**
+     * Redeems the result (or exception) after async processing has completed.
+     *
+     * @param $result
+     */
     function redeem($result) {
+        verifyCallingFromCLI();
         $this->result = $result;
         redis()->rpush(self::RESULT . $this->asyncId, crypto_serialize($this->result));
     }
 
-    public function getAsyncId() {
-        return $this->asyncId;
-    }
 
+    /**
+     * Gets the actual result when available.
+     * If timeout is reached before actual result is redeemed, a TimeoutException will be thrown.
+     * If the actual result is an Exception, that Exception will be thrown.
+     *
+     * @param $timeout
+     * @return mixed
+     * @throws TimeoutException
+     * @throws
+     */
     public function get($timeout) {
         $blpop = redis()->blpop(self::RESULT . $this->asyncId, $timeout);
 
@@ -149,6 +199,12 @@ class FutureResult {
         return $this->result;
     }
 
+    /**
+     * Returns HTML and JavaScript snippet that can be rendered to the page
+     * to call get() on this FutureResult until actual result redeemed.
+     *
+     * @return string
+     */
     public function ajax() {
         ob_start();
         require "future_ajax.js.php";

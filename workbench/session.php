@@ -83,6 +83,10 @@ if (WorkbenchContext::isEstablished() && !$myPage->isReadOnly  && $_SERVER['REQU
     validateCsrfToken();
 }
 
+if (WorkbenchContext::isEstablished() && isset($_POST['termsAccepted'])) {
+    WorkbenchContext::get()->agreeToTerms();
+}
+
 if (isLoggedIn()) {
     // todo: should this be in the ctx?
     if (!in_array(basename($_SERVER['PHP_SELF'], ".php"), array("login", "logout")) && isset($_SESSION['lastRequestTime'])) {

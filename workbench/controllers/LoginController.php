@@ -271,6 +271,10 @@ class LoginController {
             return;
         }
 
+        if (isset($_POST['termsAccepted'])) {
+            WorkbenchContext::get()->agreeToTerms();
+        }
+
         // test the connection and prime the UserInfo cache
         // exceptions will be caught by top-level handler
         $userInfo = WorkbenchContext::get()->getUserInfo();
@@ -400,6 +404,8 @@ class LoginController {
         if (empty($serverUrlPrefix)) {
             throw new Exception("OAuth response missing instance name");
         }
+
+        $_POST['termsAccepted'] = 1; // re-apply terms acceptance on oauth redirect
 
         $this->processLogin(null, null, $serverUrlPrefix . "/services/Soap/u/" . $apiVersion, $accessToken, "select.php"); // TODO: work w/ startUrls
     }

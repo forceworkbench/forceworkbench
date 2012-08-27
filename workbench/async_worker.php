@@ -1,9 +1,9 @@
 <?php
+require_once 'shared.php';
 require_once 'config/constants.php';
 require_once 'config/WorkbenchConfig.php';
-require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
-require_once 'soxl/QueryObjects.php'; // TODO
+require_once 'soxl/QueryObjects.php';
 foreach (scandir('async') as $f) {
     if ($f == "." || $f == "..") continue;
     require_once "async/$f";
@@ -32,6 +32,7 @@ workbenchLog(LOG_INFO, "FutureTaskQueueDepth", redis()->llen(FutureTask::QUEUE))
 while (true) {
     try {
         $job = FutureTask::dequeue(30);
+        set_time_limit(WorkbenchConfig::get()->value('asyncTimeoutSeconds'));
         $job->execute();
     } catch (TimeoutException $e) {
         continue;

@@ -8,7 +8,7 @@ class ConnectionConfiguration {
     private $overriddenClientId;
 
     function __construct($sessionId, $isSecure, $host, $apiVersion, $overriddenClientId) {
-        $this->sessionId = $sessionId;
+        $this->sessionId = crypto_serialize($sessionId);
         $this->isSecure = $isSecure;
         $this->host = $host;
         $this->setApiVersion($apiVersion);
@@ -16,7 +16,7 @@ class ConnectionConfiguration {
     }
 
     function getSessionId() {
-        return $this->sessionId;
+        return crypto_unserialize($this->sessionId);
     }
 
     function isSecure() {
@@ -44,7 +44,7 @@ class ConnectionConfiguration {
         $port = parse_url($loginResult->serverUrl, PHP_URL_PORT);
         $this->host .= !empty($port) ? ":$port" : "";
 
-        $this->sessionId = $loginResult->sessionId;
+        $this->sessionId = crypto_serialize($loginResult->sessionId);
     }
 
     static function fromUrl($serviceUrl, $sessionId, $clientId) {

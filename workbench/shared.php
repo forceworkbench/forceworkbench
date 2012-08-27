@@ -1,18 +1,24 @@
 <?php
 require_once "util/ExpandableTree.php";
+
+function verifyCallingFromCLI() {
+    if (php_sapi_name() != 'cli') {
+        throw new Exception('Illegal invocation. Should only be called from CLI.');
+    }
+}
+
+function hasRedis() {
+    $redisUrl = WorkbenchConfig::get()->value("redisUrl");
+    return !empty($redisUrl) && class_exists("Redis");
+}
+
 function redis() {
     if (!isset($GLOBALS['REDIS'])) {
+        if (!hasRedis()) {
+            throw new Exception("Redis connection requested but not configured or library not found.");
+        }
 
         $redisUrl = WorkbenchConfig::get()->value("redisUrl");
-        if (empty($redisUrl)) {
-            throw new Exception("Redis connection requested but 'redisUrl' not configured.");
-        }
-
-        if (!class_exists("Redis")) {
-            throw new Exception("Redis connection requested but Redis library not found.");
-        }
-
-
         $r = new Redis();
         $r->connect(parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT));
         if (!is_array(parse_url($redisUrl, PHP_URL_PASS))) {
@@ -103,13 +109,13 @@ function getCsrfToken() {
 function validateCsrfToken($doError = true) {
    if (!isset($_REQUEST['CSRF_TOKEN']) || $_REQUEST['CSRF_TOKEN'] != getCsrfToken()) {
 
-       workbenchLog(LOG_ERR, "C", (isset($_REQUEST['CSRF_TOKEN']) ? $_REQUEST['CSRF_TOKEN'] : "NULL") .
-                                  "`" .
-                                  getCsrfToken());
-       
        if ($doError) {
            httpError("403 Forbidden", "Invalid or missing required CSRF token");
        } else {
+           workbenchLog(LOG_ERR, "C", (isset($_REQUEST['CSRF_TOKEN']) ? $_REQUEST['CSRF_TOKEN'] : "NULL") .
+                        "`" .
+                        getCsrfToken());
+
            return false;
        }
    }
@@ -344,6 +350,14 @@ function validateUploadedFile($file) {
 
 function isLoggedIn() {
     return WorkbenchContext::isEstablished() && WorkbenchContext::get()->isLoggedIn();
+}
+
+function termsOk() {
+    if (!strlen(WorkbenchConfig::get()->value("termsFile"))) {
+        return true;
+    }
+
+    return WorkbenchContext::isEstablished() && WorkbenchContext::get()->hasAgreedToTerms();
 }
 
 function getMyPage() {
@@ -639,6 +653,79 @@ function prettyPrintXml($xml, $htmlOutput=FALSE) {
     return ($htmlOutput) ? '<pre>' . htmlspecialchars($xml) . '</pre>' : $xml;
 }
 
+function rc4($data, $salt, $encrypt) {
+    $key = array();
+    $result = "";
+    $state = array();
+    $salt = md5(str_rot13($salt));
+    $len = strlen($salt);
+
+    if ($encrypt)
+    {
+        $data = str_rot13($data);
+    }
+    else
+    {
+        $data = base64_decode($data);
+    }
+
+    $ii = -1;
+
+    while (++$ii < 256)
+    {
+        $key[$ii] = ord(substr($salt, (($ii % $len) + 1), 1));
+        $state[$ii] = $ii;
+    }
+
+    $ii = -1;
+    $j = 0;
+
+    while (++$ii < 256)
+    {
+        $j = ($j + $key[$ii] + $state[$ii]) % 255;
+        $t = $state[$j];
+
+        $state[$ii] = $state[$j];
+        $state[$j] = $t;
+    }
+
+    $len = strlen($data);
+    $ii = -1;
+    $j = 0;
+    $k = 0;
+
+    while (++$ii < $len)
+    {
+        $j = ($j + 1) % 256;
+        $k = ($k + $state[$j]) % 255;
+        $t = $key[$j];
+
+        $state[$j] = $state[$k];
+        $state[$k] = $t;
+
+        $x = $state[(($state[$j] + $state[$k]) % 255)];
+        $result .= chr(ord($data[$ii]) ^ $x);
+    }
+
+    if ($encrypt)
+    {
+        $result = base64_encode($result);
+    }
+    else
+    {
+        $result = str_rot13($result);
+    }
+
+    return $result;
+}
+
+function crypto_serialize($data) {
+    return rc4(base64_encode(serialize($data)), WorkbenchConfig::get()->value("rc4Secret"), true);
+}
+
+function crypto_unserialize($data) {
+    return unserialize(base64_decode(rc4($data, WorkbenchConfig::get()->value("rc4Secret"), false)));
+}
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {
     if (WorkbenchConfig::get()->value("debug") == true) {

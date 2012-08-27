@@ -81,12 +81,7 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
     echo "<p><a name='qr'>&nbsp;</a></p>";
 
     $asyncJob = new QueryFutureTask($queryRequest);
-    if (WorkbenchConfig::get()->isConfigured("ENABLE_ASYNC_QUERY")) { // TODO: REMOVE FEATURE FLAG
-        $future = $asyncJob->enqueue();
-        echo $future->ajax();
-    } else {
-        echo $asyncJob->perform();
-    }
+    echo $asyncJob->enqueueOrPerform();
 
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && strpos($queryRequest->getExportTo(), 'async_') === 0) {
@@ -127,6 +122,12 @@ function displayQueryForm($queryRequest) {
 
         $fieldValuesToLabels = array();
         foreach ($describeSObjectResult->fields as $field) {
+            // TODO: REMOVE ONCE DEBUGGING COMPLETED
+            if (!is_object($field)) {
+                workbenchLog(LOG_DEBUG, "fieldValuesToLabelsUnexpectedNonObject", 'object: '. $queryRequest->getObject()  . '; field: ' . print_r($field, true));
+                continue;
+            }
+
             $fieldValuesToLabels[$field->name] = $field->name;
         }
     } else {
@@ -605,7 +606,7 @@ QUERY_BUILDER_SCRIPT;
     print "<td colspan=4 align='right'>";
 
     print "&nbsp;Run: " .
-        "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();'>" .
+        "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();' class='disableWhileAsyncLoading'>" .
         "<option value='' selected='selected'></option>";
     if (isset($_SESSION['savedQueryRequests'])) {
         foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr) {
