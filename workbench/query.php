@@ -85,7 +85,13 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
 
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && strpos($queryRequest->getExportTo(), 'async_') === 0) {
-    queryAsync($queryRequest);
+    try {
+        queryAsync($queryRequest);
+    } catch (Exception $e) {
+        require_once 'header.php';
+        displayQueryForm($queryRequest);
+        throw $e;
+    }
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
     if (!substr_count($_POST['soql_query'],"count()")) {
         $task = new QueryFutureTask($queryRequest);
