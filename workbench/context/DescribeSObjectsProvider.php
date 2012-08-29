@@ -79,8 +79,13 @@ class DescribeSObjectsProvider extends CacheableValueProvider {
             throw new Exception("Unknown Describe SObject results");
         }
 
-        if (WorkbenchConfig::get()->value("abcOrder")) {
-            foreach ($loadedTypes as $name => $result) {
+
+        foreach ($loadedTypes as $name => $result) {
+            if (!is_array($result->fields)) {
+                $loadedTypes[$name]->fields = array($result->fields);
+            }
+
+            if (WorkbenchConfig::get()->value("abcOrder")) {
                 $loadedTypes[$name] = $this->alphaOrderFields($result);
             }
         }
