@@ -3,23 +3,20 @@ require_once 'soapclient/SforceMetadataClient.php';
 require_once 'session.php';
 require_once 'shared.php';
 if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
-    displayError("Metadata API not supported prior to version 10.0", true, true);
-    exit;
+    throw new WorkbenchHandledException("Metadata API not supported prior to version 10.0");
 }
 
 if (isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
     $retrieveRequestId = htmlspecialchars($_POST["retrieveRequestId"]);
 
     if (!isset($_SESSION[$retrieveRequestId])) {
-        displayError("No retrieve request found. To re-retrieve, create a new retrieve request.", true, true);
-        exit;
+        throw new Exception("No retrieve request found. To re-retrieve, create a new retrieve request.");
     }
 
     $retrieveAsyncResults = WorkbenchContext::get()->getMetadataConnection()->retrieve($_SESSION[$retrieveRequestId]);
 
     if (!isset($retrieveAsyncResults->id)) {
-        displayError("Unknown retrieval error.\n" . isset($retrieveAsyncResults->message) ? $retrieveAsyncResults->message : "", true, true);
-        exit;
+        throw new Exception("Unknown retrieval error.\n" . isset($retrieveAsyncResults->message) ? $retrieveAsyncResults->message : "");
     }
 
     unset($_SESSION[$retrieveRequestId]);
@@ -28,8 +25,7 @@ if (isset($_POST['retrievalConfirmed']) && isset($_POST["retrieveRequestId"])) {
 
 else if (isset($_POST['stageForRetrieval'])) {
     if (isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] == "" && isset($_POST['packageNames']) && $_POST['packageNames'] == "") {
-        displayError("Must specify at least an unpackaged manifest file or a package name.", true, true);
-        exit;
+        throw new WorkbenchHandledException("Must specify at least an unpackaged manifest file or a package name.");
     }
 
     $retrieveRequest = new RetrieveRequest();
@@ -39,13 +35,11 @@ else if (isset($_POST['stageForRetrieval'])) {
     if (isset($_FILES["packageXmlFile"]["name"]) && $_FILES["packageXmlFile"]["name"] != "") {
         $validationErrors = validateUploadedFile($_FILES["packageXmlFile"]);
         if ($validationErrors) {
-            displayError($validationErrors, true, true);
-            exit;
+            throw new WorkbenchHandledException($validationErrors);
         }
 
         if (!endsWith($_FILES["packageXmlFile"]["name"], ".xml", true)) {
-            displayError("The file uploaded is not a valid XML file. Please try again.", true, true);
-            exit;
+            throw new WorkbenchHandledException("The file uploaded is not a valid XML file. Please try again.");
         }
 
         $retrieveRequest->unpackaged = parseUnpackagedManifest($_FILES["packageXmlFile"]["tmp_name"]);
@@ -54,6 +48,10 @@ else if (isset($_POST['stageForRetrieval'])) {
     if (isset($_POST['packageNames']) && $_POST['packageNames'] != "") {
         $encodedPackageNames = array();
         foreach(explodeCommaSeparated(htmlspecialchars($_POST['packageNames'])) as $p) {
+            if ($p == "unpackaged") {
+                throw new WorkbenchHandledException("Cannot retrieve a package named 'unpackaged' -- to retrieve metadata not in a package, upload an unpackaged manifest file (i.e. 'package.xml').");
+            }
+
             $encodedPackageNames[] = urlencode($p);
         }
         $retrieveRequest->packageNames = $encodedPackageNames;
