@@ -327,9 +327,9 @@ class LoginController {
         $oauthConfigs = WorkbenchConfig::get()->value("oauthConfigs");
         $authUrl = "https://" . $hostName .
                     "/services/oauth2/authorize?response_type=code&display=popup".
-                    "&client_id=" . $oauthConfigs[$hostName]["key"] .
-                    "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl() .
-                    "&state=" . urlencode($state));
+                    "&client_id=" . urlencode($oauthConfigs[$hostName]["key"]) .
+                    "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl()) .
+                    "&state=" . urlencode($state);
 
         header('Location: ' . $authUrl);
     }
