@@ -91,6 +91,11 @@ class LoginController {
 
             $state = json_decode($_REQUEST['state']);
 
+            if (WorkbenchConfig::get()->value("loginCsrfEnabled")) {
+                $_REQUEST['CSRF_TOKEN'] = $state->csrfToken;
+                validateCsrfToken();
+            }
+
             $this->oauthProcessLogin($_REQUEST["code"], $state->host, $state->apiVersion);
             return;
         }
@@ -114,7 +119,8 @@ class LoginController {
 
             $state = json_encode(array(
                 "host" => $_POST["oauth_host"],
-                "apiVersion" => $_POST["oauth_apiVersion"]
+                "apiVersion" => $_POST["oauth_apiVersion"],
+                "csrfToken" => getCsrfToken()
             ));
 
             $this->oauthRedirect($_POST["oauth_host"], $state);
