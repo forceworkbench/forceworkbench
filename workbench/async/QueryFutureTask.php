@@ -278,15 +278,15 @@ class QueryFutureTask extends FutureTask {
 
     //If the user selects to display the form on screen, they are routed to this function
     function displayQueryResults($records, $queryTimeElapsed, QueryRequest $queryRequest) {
-        if (!$records) {
-            displayWarning("Sorry, no records returned.");
-            return;
-        }
-
         if (is_numeric($records)) {
             $countString = "Query would return $records record";
             $countString .= ($records == 1) ? "." : "s.";
             displayInfo($countString);
+            return;
+        }
+
+        if (!$records) {
+            displayWarning("Sorry, no records returned.");
             return;
         }
 
