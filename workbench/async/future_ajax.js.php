@@ -48,6 +48,8 @@
                             }
                         } else if (ajax.status == 404) {
                             container.innerHTML = "<span style='color:red;'>Unknown Asynchronous Job</span>";
+                        } else if (ajax.status == 503) {
+                            container.innerHTML = "<span style='color:red;'>Service was temporarily interrupted or is unavailable. Please try again in a moment.</span>";
                         } else {
                             container.innerHTML = "<span style='color:red;'>Unknown Asynchronous State</span>";
                         }
