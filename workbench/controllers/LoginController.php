@@ -85,11 +85,13 @@ class LoginController {
         }
 
         if (isset($_REQUEST["code"])) {
-            if (!isset($_SESSION['oauth']) || !isset($_SESSION['oauth']['host']) || !isset($_SESSION['oauth']['apiVersion']) ) {
+            if (!isset($_REQUEST['state'])) {
                 throw new Exception("Invalid OAuth State");
             }
 
-            $this->oauthProcessLogin($_REQUEST["code"], $_SESSION['oauth']['host'], $_SESSION['oauth']['apiVersion']);
+            $state = json_decode($_REQUEST['state']);
+
+            $this->oauthProcessLogin($_REQUEST["code"], $state->host, $state->apiVersion);
             return;
         }
 
@@ -110,13 +112,12 @@ class LoginController {
                 throw new Exception("Invalid parameters for Oauth login");
             }
 
-            // load into session for redirect
-            $_SESSION['oauth'] = array(
+            $state = json_encode(array(
                 "host" => $_POST["oauth_host"],
                 "apiVersion" => $_POST["oauth_apiVersion"]
-            );
+            ));
 
-            $this->oauthRedirect($_POST["oauth_host"]);
+            $this->oauthRedirect($_POST["oauth_host"], $state);
         } else {
             $pw   = isset($_REQUEST['pw'])  ? $_REQUEST['pw']  : null;
             $sid  = isset($_REQUEST['sid']) ? $_REQUEST['sid'] : null;
@@ -318,15 +319,17 @@ class LoginController {
         header("Location: $actionJump");
     }
 
-    private function oauthRedirect($hostName) {
+    private function oauthRedirect($hostName, $state) {
         if (!$this->oauthEnabled) {
             throw new Exception("OAuth not enabled");
         }
 
         $oauthConfigs = WorkbenchConfig::get()->value("oauthConfigs");
         $authUrl = "https://" . $hostName .
-                    "/services/oauth2/authorize?response_type=code&display=popup&client_id=" .
-                    $oauthConfigs[$hostName]["key"] . "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl());
+                    "/services/oauth2/authorize?response_type=code&display=popup".
+                    "&client_id=" . $oauthConfigs[$hostName]["key"] .
+                    "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl() .
+                    "&state=" . urlencode($state));
 
         header('Location: ' . $authUrl);
     }
