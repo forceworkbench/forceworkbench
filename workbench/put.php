@@ -979,6 +979,11 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
                 include_once("footer.php");
                 exit;
             }
+
+            if (isset($resultsMore) && !is_array($resultsMore)) {
+                $resultsMore = array($resultsMore);
+            }
+
             if (!$results) {
                 $results = $resultsMore;
             } else {
