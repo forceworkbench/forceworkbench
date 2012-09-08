@@ -37,6 +37,10 @@
                     if (ajax.readyState == 4) {
                         if (ajax.status == 200) {
                             container.innerHTML = ajax.responseText;
+                            var evalables = getElementsByClassName("evalable", "script", container);
+                            for (i in evalables) {
+                                eval(evalables[i].innerHTML)
+                            }
                         } else if (ajax.status == 202) {
                             // 202 means that long poll ended, but still waiting for result
                             container.innerHTML += ".";

@@ -7,7 +7,8 @@ class RestExplorerController {
     private $DEFAULT_REQUEST_HEADERS = "Content-Type: application/json; charset=UTF-8\nAccept: application/json";
 
     private $wbCtx;
-    
+
+    public $pageSelf;
     public $errors;
     public $url;
     public $requestMethod;
@@ -16,6 +17,7 @@ class RestExplorerController {
     public $instResponse;
     public $showResponse;
     public $autoExec;
+    public $doExecute;
 
     public function __construct(WorkbenchContext $wbCtx) {
         $this->wbCtx = $wbCtx;
@@ -25,6 +27,7 @@ class RestExplorerController {
     }
     
     public function onPageLoad() {
+        $this->pageSelf = $_SERVER['PHP_SELF'];
         $this->errors = null;
         $this->showResponse = false;
         $this->requestMethod = isset($_REQUEST['requestMethod']) ? $_REQUEST['requestMethod'] : $this->requestMethod;
@@ -49,18 +52,10 @@ class RestExplorerController {
 
         $this->autoExec = isset($_REQUEST['autoExec']) ? $_REQUEST['autoExec'] : $this->autoExec;
 
-        $doExecute = isset($_REQUEST['doExecute']) ? $_REQUEST['doExecute'] : null;
-    	
-    	if ($doExecute != null || $this->autoExec == '1') {
-            $this->execute();
-        }    	
+        $this->doExecute = isset($_REQUEST['doExecute']) ? $_REQUEST['doExecute'] : null;
     }
 
-    private function execute() {
-        if ($this->requestMethod !== 'GET') {
-            validateCsrfToken();
-        }
-
+    public function execute() {
         try {
             // clear any old values, in case we don't populate them on this request
             $this->rawResponse = null;
@@ -92,7 +87,7 @@ class RestExplorerController {
             } else if ($expectBinary) {
                 return;
             } else if (stripos($this->rawResponse->header, "Content-Type: application/json") !== false) {
-                $insturmenter = new RestResponseInstrumenter(htmlspecialchars($_SERVER['PHP_SELF']));
+                $insturmenter = new RestResponseInstrumenter(htmlspecialchars($this->pageSelf));
                 $this->instResponse = $insturmenter->instrumentJson($this->rawResponse->body);
                 $this->showResponse = true;
             } else {

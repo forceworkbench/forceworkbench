@@ -1,6 +1,7 @@
 <?php
 require_once 'restclient/RestClient.php';
 require_once 'controllers/RestExplorerController.php';
+require_once 'async/RestExplorerFutureTask.php';
 require_once 'session.php';
 require_once 'shared.php';
 
@@ -97,35 +98,27 @@ if ($c->errors != null) {
 </form>
 
 <p />
+
+<div>
 <?php
 if (isset($c->autoExec) && !$c->autoExec) {
     displayError("This URI needs to be completed before executing. " .
                        "For example, it may need a merge field populated (e.g. {ID}) or a query string appended (e.g. ?q=)");
 }
+
+if ($c->doExecute || $c->autoExec == '1') {
+    if ($c->requestMethod !== 'GET') {
+        validateCsrfToken();
+    }
+    $f = new RestExplorerFutureTask($c);
+    if (strpos($c->url, "/query") > -1) {
+        echo $f->enqueueOrPerform();
+    } else {
+        echo $f->perform();
+    }
+}
 ?>
-
-<p/>
-
-<?php if ($c->showResponse) { ?>
-<div style="float: left;">
-    <?php if (trim($c->instResponse) != "") { ?>
-            <a href="javascript:ddtreemenu.flatten('responseList', 'expand')">Expand All</a> | 
-            <a href="javascript:ddtreemenu.flatten('responseList', 'contact')">Collapse All</a> |
-            <a id="codeViewPortToggler" href="javascript:toggleCodeViewPort();">Show Raw Response</a>
-            
-            <div id="responseListContainer" class="results"></div>
-            
-            <script type='text/javascript'>convert(<?php echo $c->instResponse ?>);</script>
-    <?php } ?>
 </div>
-
-<div id="codeViewPortContainer" style="display: <?php echo trim($c->instResponse) != "" ? "none; right:10px;" : "block"  ?>;">
-    <strong>Raw Response</strong> 
-    <p id="codeViewPort"><?php echo htmlspecialchars($c->rawResponse->header); ?><br /><?php echo htmlspecialchars($c->rawResponse->body); ?></p>
-</div>
-
-
-<?php } ?>
 
 <script type="text/javascript">
     var restExplorer = function() {
