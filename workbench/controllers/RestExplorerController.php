@@ -53,21 +53,38 @@ class RestExplorerController {
         $this->autoExec = isset($_REQUEST['autoExec']) ? $_REQUEST['autoExec'] : $this->autoExec;
 
         $this->doExecute = isset($_REQUEST['doExecute']) ? $_REQUEST['doExecute'] : null;
+
+        if ($this->doExecute || $this->autoExec == '1') {
+            $this->preExecute();
+        }
     }
 
+    /**
+     * Called synchronously before possibly submitting to async framework
+     */
+    public function preExecute() {
+        if ($this->requestMethod !== 'GET') {
+            validateCsrfToken();
+        }
+
+        // clean up the URL
+        $this->url = str_replace(' ', '+', trim($this->url));
+
+        if (in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) && trim($this->requestBody) == "") {
+            throw new WorkbenchHandledException("Must include a Request Body.");
+        }
+    }
+
+    /**
+     * Could be called by sync or by async framework
+     *
+     */
     public function execute() {
         try {
             // clear any old values, in case we don't populate them on this request
             $this->rawResponse = null;
             $this->instResponse = null;
             $this->autoExec = null;
-            
-            // clean up the URL
-            $this->url = str_replace(' ', '+', trim($this->url));
-            
-            if (in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) && trim($this->requestBody) == "") {
-                throw new WorkbenchHandledException("Must include a Request Body.");
-            }
 
             $expectBinary = $this->prepareBinaryResponseAsDownload();
             $this->rawResponse = $this->wbCtx->getRestDataConnection()->send(

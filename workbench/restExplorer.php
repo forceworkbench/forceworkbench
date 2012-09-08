@@ -76,7 +76,7 @@ if ($c->errors != null) {
     	   style="width: 35em; height: 1.2em; font-size: 18px; font-weight: bold;"
     	   onKeyPress="if (checkEnter(event)) {document.getElementById('execBtn').click(); return false;}" />
     &nbsp; 
-    <input id="execBtn" name="doExecute" type="submit" value="Execute" style="font-size: 18px;"/>
+    <input id="execBtn" name="doExecute" type="submit" value="Execute" class="disableWhileAsyncLoading" style="font-size: 18px;"/>
 
     <div id="requestHeaderContainer" style="display: none;">
         <p>
@@ -107,9 +107,6 @@ if (isset($c->autoExec) && !$c->autoExec) {
 }
 
 if ($c->doExecute || $c->autoExec == '1') {
-    if ($c->requestMethod !== 'GET') {
-        validateCsrfToken();
-    }
     $f = new RestExplorerFutureTask($c);
     if (strpos($c->url, "/query") > -1) {
         echo $f->enqueueOrPerform();
