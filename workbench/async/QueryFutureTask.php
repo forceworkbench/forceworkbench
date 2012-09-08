@@ -5,6 +5,8 @@ class QueryFutureTask extends FutureTask {
 
     private $queryRequest;
     private $queryLocator;
+    private $nextQueryLocator;
+    private $totalQuerySize;
 
     function __construct($queryRequest, $queryLocator = null) {
         parent::__construct();
@@ -62,10 +64,10 @@ class QueryFutureTask extends FutureTask {
 
         $records = $queryResponse->records;
 
-        $_SESSION['totalQuerySize'] = $queryResponse->size;
+        $this->totalQuerySize = $queryResponse->size;
 
         if (!$queryResponse->done) {
-            $this->queryLocator = $queryResponse->queryLocator;
+            $this->nextQueryLocator = $queryResponse->queryLocator;
         }
 
         //correction for documents and attachments with body. issue #176
@@ -294,37 +296,33 @@ class QueryFutureTask extends FutureTask {
             addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/sortable.js') . "></script>");
         }
 
-        $rowNum = 0;
         print "<a name='qr'></a><div style='clear: both;'><br/><h2>Query Results</h2>\n";
-        if (isset($this->queryLocator) && !WorkbenchConfig::get()->value("autoRunQueryMore")) {
-            preg_match("/-(\d+)/",$this->queryLocator,$lastRecord);
-            $rowNum = ($lastRecord[1] - count($records) + 1);
-            print "<p>Returned records $rowNum - " . $lastRecord[1] . " of ";
-        } else if (!WorkbenchConfig::get()->value("autoRunQueryMore")) {
-            $rowNum = ($_SESSION['totalQuerySize'] - count($records) + 1);
-            print "<p>Returned records $rowNum - " . $_SESSION['totalQuerySize'] . " of ";
+
+        if (isset($this->queryLocator)) {
+            preg_match("/-(\d+)/", $this->queryLocator, $lastRecord);
+            $rowOffset = $lastRecord[1];
         } else {
-            $rowNum = 1;
-            print "<p>Returned ";
+            $rowOffset = 0;
         }
 
-        print $_SESSION['totalQuerySize'] . " total record";
-        if ($_SESSION['totalQuerySize'] !== 1) print 's';
-        print " in ";
-        printf ("%01.3f", $queryTimeElapsed);
-        print " seconds:</p>\n";
+        $minRowNum = $rowOffset + 1;
+        $maxRowNum = $rowOffset + count($records);
 
-        if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->queryLocator) {
-            print "<p><input type='hidden' name='queryLocator' value='" . $this->queryLocator . "' /></p>\n";
+        print "<p>Returned records $minRowNum - $maxRowNum of " . $this->totalQuerySize . " total record" .
+              ($this->totalQuerySize !== 1 ? "s": "") . " in " . sprintf ("%01.3f", $queryTimeElapsed) . " seconds:</p>\n";
+
+        if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->nextQueryLocator) {
+            print "<p><input type='hidden' name='queryLocator' value='" . $this->nextQueryLocator . "' /></p>\n";
             print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
         }
 
-        print addLinksToIds($queryRequest->getExportTo() == 'matrix' ?
-        $this->createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows()) :
-        $this->createQueryResultTable($records, $rowNum));
+        print addLinksToIds($queryRequest->getExportTo() == 'matrix'
+            ? $this->createQueryResultsMatrix($records, $queryRequest->getMatrixCols(), $queryRequest->getMatrixRows())
+            : $this->createQueryResultTable($records, $minRowNum)
+        );
 
-        if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->queryLocator) {
-            print "<p><input type='hidden' name='queryLocator' value='" . $this->queryLocator . "' /></p>\n";
+        if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->nextQueryLocator) {
+            print "<p><input type='hidden' name='queryLocator' value='" . $this->nextQueryLocator . "' /></p>\n";
             print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
         }
 
