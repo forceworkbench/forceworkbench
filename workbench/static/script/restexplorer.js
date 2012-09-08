@@ -14,6 +14,10 @@ function upUrl() {
 			}
 		}
 	}
+
+    if (urlInput.value.indexOf('/id/') == 0) {
+        resetUrl();
+    }
 }
 
 function checkEnter(e) { //e is event object passed from function invocation
