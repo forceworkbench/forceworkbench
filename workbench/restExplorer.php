@@ -99,7 +99,7 @@ if ($c->errors != null) {
 
 <p />
 
-<div>
+<div id="restExplorerResultsContainer">
 <?php
 if (isset($c->autoExec) && !$c->autoExec) {
     displayError("This URI needs to be completed before executing. " .
@@ -125,11 +125,9 @@ if ($c->doExecute || $c->autoExec == '1') {
 
         bindEvent(document.getElementById('execBtn'), 'click', showWaitingIndicator);
 
-        if (document.getElementsByClassName) {
-            var linkables = document.getElementsByClassName('RestLinkable');
-            for (var link in linkables) {
-                bindEvent(linkables[link], 'click', showWaitingIndicator);
-            }
+        var linkables = document.getElementById('restExplorerResultsContainer').getElementsByClassName('RestLinkable');
+        for (var link in linkables) {
+            bindEvent(linkables[link], 'click', showWaitingIndicator);
         }
     }();
 </script>
