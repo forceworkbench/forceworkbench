@@ -1,6 +1,22 @@
 =Version History=
-'''25.0.0 Beta''' 2012/08/04
-:* Upgraded Partner, Apex, Bulk, REST, and Streaming clients to Force.com API 25.0
+'''25.0.1 Beta''' 2012/09/08
+:* Redis-based queueing and async processing framework
+:* Async processing for SOQL Query, Apex Execute, and REST Explorer pages
+:* Added support for signed request-based logins with the pilot Canvas Framework in Winter '13
+:* Encryption of Salesforce session id in the PHP session
+:* Set default timezone to UTF if not already set in php.ini.
+:* Partial upgrade of Partner, Metadata, and Apex clients to Force.com API 26.0
+:* Added favicon.ico in web root
+:* OAuth login uses state parameter instead of PHP session with added CSRF protection
+:* Reenabled logging of unknown exceptions with greater number of known exceptions
+:* Check user agreed to terms of service on every request
+:* Bug Fix: Block DML requests with different number of rows per column
+:* Bug Fix: Corrected HTML escaping in debug mode
+:* Bug Fix: DML results with batch size + 1 rows display correctly
+:* Bug Fix: Handle objects with only one field
+
+'''25.0.0''' 2012/08/10
+:* Upgraded Partner, Metadata, Apex, Bulk, REST, and Streaming clients to Force.com API 25.0
 :* Added new Salesforce instances to instance picklist
 :* Bug Fix: Allow more than one error per row to displayed on DML operation failures (e.g two triggered validation rules)
 :* Bug Fix: Scrub additional headers of REST Explorer to be compatible with CURL versions that do not already do this
@@ -20,7 +36,7 @@
 :* Add BAYEUX_BROWSER cookie support to Streaming API client
 
 '''24.0.0''' 2012/02/27
-:* Upgraded Partner, Apex, Bulk, REST, and Streaming clients to Force.com API 24.0
+:* Upgraded Partner, Metadata, Apex, Bulk, REST, and Streaming clients to Force.com API 24.0
 :* Added partial support for Phing-based builds
 :* Added support for environment variable based configuration
 :* Added script for converting file-based configuration to environment variable-based configuration
@@ -32,7 +48,7 @@
 :* Bug Fix: Improve query table copy and pasting
 
 '''23.0.0''' 2011/10/26
-:* Upgraded Partner, Apex, Bulk, REST, and Streaming clients to Force.com API 23.0
+:* Upgraded Partner, Metadata, Apex, Bulk, REST, and Streaming clients to Force.com API 23.0
 :* Removed streaming 22.0/23.0 stagger support for Streaming API GA in API 23.0
 :* Bug Fix: Treat various expected API errors as WorkbenchHandledExceptions
 :* Bug Fix: Logout OAuth users without API access
@@ -76,7 +92,7 @@
 :* Bug Fix: Content-Type Header Not Being Set in PhpReverseProxy if !function_exists('getallheaders') 
 
 '''22.0.0''' 2011/06/26
-:* Upgraded Partner, Apex, Bulk, REST, and Streaming clients to Force.com API 22.0
+:* Upgraded Partner, Metadata, Apex, Bulk, REST, and Streaming clients to Force.com API 22.0
 :* Added Streaming API (pilot) support. Manage Push Topics, subscriptions, and monitor meta channels. Includes reverse proxy to handle cross-domain traffic
 :* Revamped API connection and cache management with new Workbench Context. Additional items will be folded into this in the coming releases to allow for a common way for accessing connections, caching values, and other application-wide coordination.
 :* Added proxy support for Bulk and REST API clients and tools
@@ -105,7 +121,7 @@
 :* Bug Fix: Auto-execute REST-based queryMore requests in REST Explorer.
 
 '''21.0.0''' 2011/02/23
-:* Upgraded Partner, Apex, Bulk, and Rest clients to Force.com API 21.0
+:* Upgraded Partner, Metadata, Apex, Bulk, and Rest clients to Force.com API 21.0
 :* Added Rest API discovery with REST Explorer integrated into Workbench and added support for custom request headers, support for PUT verb, and automatic display of raw non-JSON responses (JSON responses are shown in expandable tree).
 :* Added Bulk API Query support for running SOQL queries asynchronously and returning results in either CSV or XML format.
 :* Enhanced links from Workbench to Salesforce to only pass sessions where needed.
@@ -116,7 +132,7 @@
 
 
 '''20.0.0''' 2010/10/10
-:* Upgraded Partner, Apex, and Bulk clients to Force.com API 20.0
+:* Upgraded Partner, Metadata, Apex, and Bulk clients to Force.com API 20.0
 :* SOQL Matrix View to view SOQL query results on a matrix grid with arbitrary columns and rows
 :* Support for binary file DML operations with new Bulk API ZIP_CSV and ZIP_XML content types
 :* Timezone conversion for date times
