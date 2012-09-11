@@ -11,6 +11,15 @@ if(!isset($_SESSION['restExplorerController']) || isset($_GET['reset'])) {
 $c = $_SESSION['restExplorerController'];
 $c->onPageLoad();
 
+if ($c->doExecute || $c->autoExec == '1') {
+    $f = new RestExplorerFutureTask($c);
+    if (strpos($c->url, "/query") > -1) {
+        $result = $f->enqueueOrPerform();
+    } else {
+        $result = $f->perform();
+    }
+}
+
 require_once 'header.php';
 ?>
 <link
@@ -106,13 +115,8 @@ if (isset($c->autoExec) && !$c->autoExec) {
                        "For example, it may need a merge field populated (e.g. {ID}) or a query string appended (e.g. ?q=)");
 }
 
-if ($c->doExecute || $c->autoExec == '1') {
-    $f = new RestExplorerFutureTask($c);
-    if (strpos($c->url, "/query") > -1) {
-        echo $f->enqueueOrPerform();
-    } else {
-        echo $f->perform();
-    }
+if (isset($result)) {
+    echo $result;
 }
 ?>
 </div>
