@@ -112,6 +112,8 @@ class RestExplorerController {
 
         } catch (Exception $e) {
             $this->errors = $e->getMessage();
+            $this->rawResponse = null;
+            $this->instResponse = null;
         }
     }
 

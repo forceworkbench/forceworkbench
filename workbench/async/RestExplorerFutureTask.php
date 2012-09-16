@@ -21,6 +21,9 @@ class RestExplorerFutureTask extends FutureTask {
 
     private function result() {
         ob_start();
+        if ($this->c->errors != null) {
+            displayError($this->c->errors);
+        }
         ?>
         <div style="float: left;">
             <?php if (trim($this->c->instResponse) != "") { ?>
@@ -34,11 +37,13 @@ class RestExplorerFutureTask extends FutureTask {
             <?php } ?>
         </div>
 
+        <?php if (isset($this->c->rawResponse)) { ?>
         <div id="codeViewPortContainer" style="display: <?php echo trim($this->c->instResponse) != "" ? "none; right:10px;" : "block"  ?>;">
             <strong>Raw Response</strong>
             <p id="codeViewPort"><?php echo htmlspecialchars($this->c->rawResponse->header); ?><br /><?php echo htmlspecialchars($this->c->rawResponse->body); ?></p>
         </div>
         <?php
+        }
         $result = ob_get_contents();
         ob_end_clean();
         return $result;
