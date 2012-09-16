@@ -49,7 +49,7 @@ class RestExplorerController {
                                     : $_REQUEST['requestBody'])
                                 : $this->requestBody;
 
-        $this->autoExec = isset($_REQUEST['autoExec']) ? $_REQUEST['autoExec'] : $this->autoExec;
+        $this->autoExec = $_SERVER['REQUEST_METHOD'] == 'GET' && isset($_REQUEST['autoExec']) ? $_REQUEST['autoExec'] : $this->autoExec;
 
         $this->doExecute = isset($_REQUEST['doExecute']) ? $_REQUEST['doExecute'] : null;
 
