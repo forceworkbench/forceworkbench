@@ -13,11 +13,7 @@ $c->onPageLoad();
 
 if ($c->doExecute || $c->autoExec == '1') {
     $f = new RestExplorerFutureTask($c);
-    if (strpos($c->url, "/query") > -1) {
-        $result = $f->enqueueOrPerform();
-    } else {
-        $result = $f->perform();
-    }
+    $result = $f->enqueueOrPerform();
 }
 
 require_once 'header.php';
