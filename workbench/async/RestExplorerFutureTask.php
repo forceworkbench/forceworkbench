@@ -23,6 +23,7 @@ class RestExplorerFutureTask extends FutureTask {
         ob_start();
         if ($this->c->errors != null) {
             displayError($this->c->errors);
+            ?><p/><?php
         }
         ?>
         <div style="float: left;">
