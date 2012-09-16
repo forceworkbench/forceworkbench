@@ -123,11 +123,13 @@ if (isset($result)) {
             document.getElementById('waitingIndicator').style.display = 'inline';
         }
 
-        bindEvent(document.getElementById('execBtn'), 'click', showWaitingIndicator);
+        if (<?php echo !hasRedis() ?>) {
+            bindEvent(document.getElementById('execBtn'), 'click', showWaitingIndicator);
 
-        var linkables = document.getElementById('restExplorerResultsContainer').getElementsByClassName('RestLinkable');
-        for (var link in linkables) {
-            bindEvent(linkables[link], 'click', showWaitingIndicator);
+            var linkables = document.getElementById('restExplorerResultsContainer').getElementsByClassName('RestLinkable');
+            for (var link in linkables) {
+                bindEvent(linkables[link], 'click', showWaitingIndicator);
+            }
         }
     }();
 </script>
