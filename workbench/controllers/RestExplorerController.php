@@ -6,8 +6,6 @@ class RestExplorerController {
     private $BASE_REST_URL_PREFIX = '/services';
     private $DEFAULT_REQUEST_HEADERS = "Content-Type: application/json; charset=UTF-8\nAccept: application/json";
 
-    private $wbCtx;
-
     public $pageSelf;
     public $errors;
     public $url;
@@ -19,8 +17,7 @@ class RestExplorerController {
     public $autoExec;
     public $doExecute;
 
-    public function __construct(WorkbenchContext $wbCtx) {
-        $this->wbCtx = $wbCtx;
+    public function __construct() {
         $this->requestMethod = 'GET';
         $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->BASE_REST_URL_PREFIX . '/data';
         $this->requestHeaders = $this->DEFAULT_REQUEST_HEADERS;
@@ -29,6 +26,8 @@ class RestExplorerController {
     public function onPageLoad() {
         $this->pageSelf = $_SERVER['PHP_SELF'];
         $this->errors = null;
+        $this->autoExec = null;
+        $this->doExecute = null;
         $this->showResponse = false;
         $this->requestMethod = isset($_REQUEST['requestMethod']) ? $_REQUEST['requestMethod'] : $this->requestMethod;
 
@@ -87,7 +86,7 @@ class RestExplorerController {
             $this->autoExec = null;
 
             $expectBinary = $this->prepareBinaryResponseAsDownload();
-            $this->rawResponse = $this->wbCtx->getRestDataConnection()->send(
+            $this->rawResponse =  WorkbenchContext::get()->getRestDataConnection()->send(
                                   $this->requestMethod,
                                   $this->url,
                                   explode("\n", $this->requestHeaders),
@@ -136,27 +135,27 @@ class RestExplorerController {
         
         // Handle the different fields that support binary data in their own special way.
         if (in_arrayi($binSobjectType, array("Document", "Attachment", "StaticResource"))) {
-            $binInfo = new SObject($this->wbCtx->getPartnerConnection()->retrieve("Name, ContentType, BodyLength", $binSobjectType, $binId));
+            $binInfo = new SObject(WorkbenchContext::get()->getPartnerConnection()->retrieve("Name, ContentType, BodyLength", $binSobjectType, $binId));
             $binFilename = $binInfo->fields->Name;
             $binContentType = $binInfo->fields->ContentType;
             $binContentLength = $binInfo->fields->BodyLength;
         } else if ($binSobjectType == "ContentVersion") {
-            $binInfo = new SObject($this->wbCtx->getPartnerConnection()->retrieve("PathOnClient, FileType, ContentSize", $binSobjectType, $binId));
+            $binInfo = new SObject(WorkbenchContext::get()->getPartnerConnection()->retrieve("PathOnClient, FileType, ContentSize", $binSobjectType, $binId));
             $binFilename= basename($binInfo->fields->PathOnClient);
             $binContentType = "application/" . $binInfo->fields->FileType;
             $binContentLength = $binInfo->fields->ContentSize;
         } else if (stripos($this->url, "ContentData")) {
-            $binInfo = new SObject($this->wbCtx->getPartnerConnection()->retrieve("ContentFileName, ContentType, ContentSize", $binSobjectType, $binId));
+            $binInfo = new SObject(WorkbenchContext::get()->getPartnerConnection()->retrieve("ContentFileName, ContentType, ContentSize", $binSobjectType, $binId));
             $binFilename= $binInfo->fields->ContentFileName;
             $binContentType = $binInfo->fields->ContentType;
             $binContentLength = $binInfo->fields->ContentSize;
         } else if ($binSobjectType == "MailmergeTemplate") {
-            $binInfo = new SObject($this->wbCtx->getPartnerConnection()->retrieve("Filename, BodyLength", $binSobjectType, $binId));
+            $binInfo = new SObject(WorkbenchContext::get()->getPartnerConnection()->retrieve("Filename, BodyLength", $binSobjectType, $binId));
             $binFilename= $binInfo->fields->Filename;
             $binContentType = "application/msword";
             $binContentLength = $binInfo->fields->BodyLength;
         } else if ($binSobjectType == "QuoteDocument") {
-            $binInfo = new SObject($this->wbCtx->getPartnerConnection()->retrieve("Name", $binSobjectType, $binId));
+            $binInfo = new SObject(WorkbenchContext::get()->getPartnerConnection()->retrieve("Name", $binSobjectType, $binId));
             $binFilename= $binInfo->fields->Name;
         } else {
             return false;
