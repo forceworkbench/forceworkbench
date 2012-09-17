@@ -666,6 +666,11 @@ Please note that the '''Workbench is NOT a supported product of or supported by 
 Have something you want to discuss about the Workbench? Have a great idea for a new feature? Looking for support from the community? Want to find out the latest news about the Workbench? Visit the [http://groups.google.com/group/forceworkbench Feedback & Discussion] page today.
 
 =Version History=
+'''25.0.2~4''' 2012/09/16
+:* Enable async processing for all REST Explorer operations
+:* Remove full WorkbenchContext from RestExplorerController to optimize serialization used for async processing
+:* Fix error handling for REST Explorer async operations
+
 '''25.0.1''' 2012/09/09
 :* Redis-based queueing and async processing framework
 :* Async processing for SOQL Query, Apex Execute, and REST Explorer pages
