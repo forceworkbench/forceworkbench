@@ -367,18 +367,13 @@ function queryCurrentRecord($describeSObjectResult, $id) {
             " FROM " . $describeSObjectResult->name .
             " WHERE Id = '" . $id . "'";
 
-    // TODO: run multiple queries and remove this stupid restriction
-    if (strlen($soql) >= 10000) {
-        throw new WorkbenchHandledException("This feature is currently unavailable because " . $describeSObjectResult->name . " contains too many fields, " .
-                                            "This limitation should be fixed in a future version of Workbench.");
-    }
-
     try {
         $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryAll($soql);
         if ($queryResponse->size == 1) {
             return new SObject($queryResponse->records[0]);
         }
     } catch (Exception $e) {
+        workbenchLog(LOG_DEBUG, "queryCurrentRecord failed", $e->getMessage());
         return null;
     }
 
