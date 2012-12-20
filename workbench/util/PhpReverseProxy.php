@@ -140,13 +140,10 @@ class PhpReverseProxy {
                     if (stripos("Set-Cookie", $whl) > -1) {
                         $replaceExistingHeader = false;
 
-                        // temp workaround for incorrect path
-                        $h = str_replace(";Path=", "; path=", $h);
-
                         // ouch, recursive regex. strip off the end of the fwd path to make a new regex
                         $fwdPathRegEx = preg_replace("`(/\w+)/.*`", "$1(.*)", $this->forward_path);
-                        $h = preg_replace("`path=([^;]*)$fwdPathRegEx`",
-						                  "path=". ((strlen(dirname($_SERVER['PHP_SELF'])) == 1)
+                        $h = preg_replace("`[Pp]ath=([^;]*)$fwdPathRegEx`",
+						                  "Path=". ((strlen(dirname($_SERVER['PHP_SELF'])) == 1)
 										             ? "$1"
 											         : (dirname($_SERVER['PHP_SELF'])."$1"))
 										   , $h);
