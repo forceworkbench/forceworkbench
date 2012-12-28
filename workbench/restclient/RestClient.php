@@ -60,7 +60,11 @@ class RestApiClient {
         return $matches[1];
     }
 
-    public function send($method, $url, $additionalHeaders, $data, $expectBinary) {
+    public function send($method, $path, $additionalHeaders, $data, $expectBinary) {
+        if (strpos($path, "/") !== 0) {
+            throw new WorkbenchHandledException("Path must start with /");
+        }
+
         $this->log("INITIALIZING cURL \n" . print_r(curl_version(), true));
 
         $ch = curl_init();
@@ -107,7 +111,7 @@ class RestApiClient {
                 throw new Exception($method . ' method not supported.');
         }
 
-        curl_setopt($ch, CURLOPT_URL, $this->baseUrl . $url);
+        curl_setopt($ch, CURLOPT_URL, $this->baseUrl . $path);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $httpHeaders);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, $expectBinary ? 0 : 1);
         curl_setopt($ch, CURLOPT_HEADER, $expectBinary ? 0 : 1);
@@ -134,7 +138,7 @@ class RestApiClient {
             curl_setopt($ch, CURLOPT_COOKIE, implode("; ", $cookies));
         }
 
-        $this->log("REQUEST \n METHOD: $method \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlspecialchars($data));
+        $this->log("REQUEST \n METHOD: $method \n PATH: $path \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlspecialchars($data));
 
         $chResponse = curl_exec($ch);
         $this->log("RESPONSE \n" . htmlspecialchars($chResponse));
