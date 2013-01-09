@@ -233,6 +233,7 @@ $config["header_LoginOptions"] = array(
             "na10-api" => array("NA10","F"),
             "na11-api" => array("NA11","G"),
             "na12-api" => array("NA12","U"),
+            "na13-api" => array("NA13",""), // TODO
             "na14-api" => array("NA14","d"),
             "ap0-api" => array("AP0 (ap)","1"),
             "ap1-api" => array("AP1","9"),
