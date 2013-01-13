@@ -1069,7 +1069,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
                                 if ($csvArrayBatch[$row][$col] == "" && WorkbenchConfig::get()->value("fieldsToNull")) {
                                     $asyncCsvRow[] = "#N/A";
                                 } else {
-                                    $asyncCsvRow[] = htmlspecialchars($csvArrayBatch[$row][$col],ENT_QUOTES);
+                                    $asyncCsvRow[] = $csvArrayBatch[$row][$col];
                                 }
                             }
                         }
