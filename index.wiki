@@ -94,6 +94,10 @@ This is very helpful for users who commonly log into multiple orgs or jump betwe
 
 =Automatic Login with Workbench Tools Browser Extensions=
 After you have Workbench up and running, install [https://addons.mozilla.org/en-US/firefox/addon/235866/?src=external-developerforce Workbench Tools for Firefox] or [http://forceworkbench.googlecode.com/files/workbenchtoolsforchrome-1.0.0.crx Workbench Tools for Google Chrome] to get a new toolbar button in your browser to automatically log into Workbench from an active Salesforce.com session. 
+[Google Chrome Install:
+1) Download the .crx extension file.
+2) Go to Settings > Extensions in Chrome.
+3) Drag and drop the .crx file from your machine into the page.]
 
 If you are logged into Salesforce, simply click the toolbar button and you will be automatically logged into Workbench. If you are not logged into Salesforce, the Firefox extension will simply direct you to the standard Workbench login screen. In Google Chrome, the extension will only be shown when logged into Salesforce.
 
@@ -666,6 +670,13 @@ Please note that the '''Workbench is NOT a supported product of or supported by 
 Have something you want to discuss about the Workbench? Have a great idea for a new feature? Looking for support from the community? Want to find out the latest news about the Workbench? Visit the [http://groups.google.com/group/forceworkbench Feedback & Discussion] page today.
 
 =Version History=
+'''26.0.0''' 2013/01/12
+:* Upgraded Partner, Metadata, Apex, and Streaming clients to Force.com API 26.0
+:* Bug Fix: Eliminated double escaping of HTML entities for Bulk API DML operations
+:* Bug Fix: Corrected handling of cookie Path component in CometD reverse proxy
+:* Bug Fix: Require REST Explorer resource paths to begin with a slash
+:* Bug Fix: Temporarily block DML operations on objects with more than 10000 chars 
+
 '''25.0.2~4''' 2012/09/16
 :* Enable async processing for all REST Explorer operations
 :* Remove full WorkbenchContext from RestExplorerController to optimize serialization used for async processing
