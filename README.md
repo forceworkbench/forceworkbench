@@ -12,17 +12,22 @@ such as customizable SOAP headers, debug logs for API traffic, backward
 compatibility testing with previous API versions, and single sign-on
 integration within the Salesforce application.
 
-Use
----
-Workbench is available both for download and is hosted publicly at [https://workbench.developerforce.com workbench.developerforce.com].
+Getting Started
+---------------
+Workbench is available both for [download](https://github.com/ryanbrainard/forceworkbench/tags)
+ and is hosted at [workbench.developerforce.com](https://workbench.developerforce.com).
 
 For installation of Workbench, please see the [installation](http://wiki.developerforce.com/index.php/Workbench#Installation)
 section of the [wiki](http://wiki.developerforce.com/index.php/Workbench).
-If you running into problems, post a message on the Workbench [discussion group](http://groups.google.com/group/forceworkbench).
 
-Resources
----------
+Support
+------
+If you running into problems, post a message on the Workbench [discussion group](http://groups.google.com/group/forceworkbench).
+Please note that the Workbench is NOT a supported product of or supported by salesforce.com, inc.
+
+Learning more about Workbench
+-----------------------------
  - [Wiki](http://wiki.apexdevnet.com/index.php/Workbench)
+ - [FAQs](http://wiki.developerforce.com/page/Workbench#FAQ)
  - [Video demo](http://youtu.be/ThAxdDy4iMI)
- - [Database.com Workbook](http://www.salesforce.com/us/developer/docs/workbook_database/index.htm)(featuring Workbench)
- - [Discussion group](http://groups.google.com/group/forceworkbench)
+ - [Database.com Workbook](http://www.salesforce.com/us/developer/docs/workbook_database/index.htm)
