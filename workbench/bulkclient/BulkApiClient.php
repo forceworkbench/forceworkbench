@@ -16,7 +16,7 @@ require_once 'BatchInfo.php';
  * For support from the Open Source community, please visit the resources below:
  *
  * * Main Project Site
- *   http://code.google.com/p/forceworkbench
+ *   https://github.com/ryanbrainard/forceworkbench
  *
  * * Feedback & Discussion
  *   http://groups.google.com/group/forceworkbench
