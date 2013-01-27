@@ -1,4 +1,3 @@
-<!--
 Copyright (c) 2012, salesforce.com, inc.
 All rights reserved.
 
@@ -22,52 +21,3 @@ TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
 HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
--->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-<head>
-    <meta http-equiv="Content-Language" content="UTF-8" />
-    <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
-    <title>Workbench: Readme</title>
-    <style type="text/css">
-        * {
-            font-family: Verdana, Arial, Kalimati, Utkal, FreeSans, sans-serif;
-            font-size: 12px;
-        }
-        
-        #mainBlock {
-            margin: 0 auto;
-            width: 750px;
-            text-align: left;
-        }
-        
-        pre,pre a {
-            font-family: monospace;
-            font-size: 12px;
-        }
-        
-        h1 {
-            font-size: large;
-        }
-        
-        h2 {
-            font-size: medium;
-        }
-        
-        h1, h2, h3, a {
-            color: rgb(66, 150, 231);
-        }
-    </style>
-</head>
-<body>
-    <div id='mainBlock'>
-    <h1>Workbench</h1>
-
-    For installation of Workbench, please see the
-    <a href="http://wiki.developerforce.com/index.php/Workbench#Installation">installation</a>
-    section of the <a href="http://wiki.developerforce.com/index.php/Workbench">wiki</a>.
-    If you running into problems, post a message on the Workbench 
-    <a href="http://groups.google.com/group/forceworkbench">discussion group</a>.
-    </div>
-</body>
-</html>
