@@ -1,4 +1,4 @@
-PHP BULK API CLIENT 24.0.0
+PHP BULK API CLIENT
 Distributed under the Open Source BSD License.
 Developed By Ryan Brainard
 
@@ -33,7 +33,7 @@ For support from the Open Source community, please visit the resources below:
 * Feedback & Discussion 
   http://groups.google.com/group/forceworkbench
 
-Copyright (c) 2012, salesforce.com, inc.
+Copyright (c) 2013, salesforce.com, inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided

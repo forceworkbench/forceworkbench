@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PHP BULK API CLIENT 25.0.0
+ * PHP BULK API CLIENT
  * @author Ryan Brainard
  *
  * JobInfo.php
