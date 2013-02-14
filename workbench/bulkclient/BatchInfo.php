@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PHP BULK API CLIENT 25.0.0
+ * PHP BULK API CLIENT
  * @author Ryan Brainard
  *
  * BatchInfo.php
@@ -15,12 +15,12 @@
  * For support from the Open Source community, please visit the resources below:
  *
  * * Main Project Site
- *   http://code.google.com/p/forceworkbench
+ *   https://github.com/ryanbrainard/forceworkbench
  *
  * * Feedback & Discussion
  *   http://groups.google.com/group/forceworkbench
  *
- * Copyright (c) 2012, salesforce.com, inc.
+ * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided

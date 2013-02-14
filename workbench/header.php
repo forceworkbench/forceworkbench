@@ -29,23 +29,58 @@ if (WorkbenchConfig::get()->isConfigured("displayLiveMaintenanceMessage")) {
 }
 
 //check for latest version
+function strip_seps($haystack) {
+    foreach (array(' ', '_', '-') as $n) {
+        $haystack = str_replace($n, "", $haystack);
+    }
+    return $haystack;
+}
+
 if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('curl') && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))) {
     try {
         $ch = curl_init();
-        if (stristr($GLOBALS["WORKBENCH_VERSION"],'beta')) {
-            curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailableBeta.txt');
-        } else {
-            curl_setopt ($ch, CURLOPT_URL, 'http://forceworkbench.sourceforge.net/latestVersionAvailable.txt');
-        }
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt ($ch, CURLOPT_URL, 'https://api.github.com/repos/ryanbrainard/forceworkbench/tags');
+        curl_setopt($ch, CURLOPT_TIMEOUT, 2);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $latestVersionAvailable = trim(curl_exec($ch));
+        $tagsResponse = curl_exec($ch);
+        $info = curl_getinfo($ch);
         curl_close($ch);
+        if ($tagsResponse === false || $info['http_code'] != 200) {
+            throw new Exception("Could not access GitHub tags");
+        }
 
-        if (preg_match('/^[0-9]+.[0-9]+/',$latestVersionAvailable) && !stristr($GLOBALS["WORKBENCH_VERSION"],'trunk') && !stristr($GLOBALS["WORKBENCH_VERSION"],'alpha') && !stristr($GLOBALS["WORKBENCH_VERSION"],'i')) {
-            if ($latestVersionAvailable != $GLOBALS["WORKBENCH_VERSION"]) {
-                print "<div style='background-color: #EAE9E4; width: 100%; padding: 2px;'><a href='http://code.google.com/p/forceworkbench/' target='_blank' style='font-size: 8pt; font-weight: bold; color: #0046ad;'>A newer version of Workbench is available for download</a></div><br/>";
+        $tags = json_decode($tagsResponse);
+
+        $betaTagNames = array();
+        $gaTagNames = array();
+        foreach ($tags as $tag) {
+            if (preg_match('/^[0-9]+.[0-9]+/',$tag->name) === 0) {
+                continue;
+            } else if (stristr($tag->name, 'beta') ) {
+                $betaTagNames[] = $tag->name;
+            } else {
+                $gaTagNames[] = $tag->name;
             }
+        }
+        rsort($betaTagNames);
+        rsort($gaTagNames);
+
+        $latestBetaVersion = strip_seps($betaTagNames[0]);
+        $latestGaVersion = strip_seps($gaTagNames[0]);
+        $currentVersion = strip_seps($GLOBALS["WORKBENCH_VERSION"]);
+
+        if (stristr($currentVersion, 'beta') && !stristr($latestBetaVersion, $latestGaVersion)) {
+            $latestChannelVersion = $latestBetaVersion;
+        } else {
+            $latestChannelVersion = $latestGaVersion;
+        }
+
+        if ($latestChannelVersion != $currentVersion) {
+            print "<div style='background-color: #EAE9E4; width: 100%; padding: 2px;'>" .
+                    "<a href='https://github.com/ryanbrainard/forceworkbench/tags' target='_blank' " .
+                        "style='font-size: 8pt; font-weight: bold; color: #0046ad;'>" .
+                        "A newer version of Workbench is available for download</a>" .
+                  "</div><br/>";
         }
     } catch (Exception $e) {
         //do nothing

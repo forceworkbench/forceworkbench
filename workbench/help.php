@@ -36,7 +36,7 @@ below:
     </li>
     <li><a href="http://groups.google.com/group/forceworkbench"
         target="help">Feedback &amp; Discussion</a></li>
-    <li><a href="http://code.google.com/p/forceworkbench/issues/list"
+    <li><a href="https://github.com/ryanbrainard/forceworkbench/issues"
         target="help">Report an Issue</a></li>
 </ul>
 <?php
