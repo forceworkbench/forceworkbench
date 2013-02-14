@@ -48,6 +48,7 @@ class SforceBaseClient {
     // Header Options
     protected $callOptions;
     protected $assignmentRuleHeader;
+    protected $ownerChangeOptionsHeader;
     protected $emailHeader;
     protected $loginScopeHeader;
     protected $mruHeader;
@@ -198,6 +199,16 @@ class SforceBaseClient {
             }
         }
 
+        if ($call == "merge" ||
+            $call == "update" ||
+            $call == "upsert"
+        ) {
+            $header = $this->ownerChangeOptionsHeader;
+            if ($header != NULL) {
+                array_push($headerArray, $header);
+            }
+        }
+
         if ($call == "login") {
             $header = $this->loginScopeHeader;
             if ($header != NULL) {
@@ -302,6 +313,17 @@ class SforceBaseClient {
             ));
         } else {
             $this->assignmentRuleHeader = NULL;
+        }
+    }
+
+    public function setOwnerChangeOptionsHeader($header) {
+        if ($header != NULL) {
+            $this->ownerChangeOptionsHeader = new SoapHeader($this->namespace, 'OwnerChangeOptions', array (
+             'transferAttachments' => $header->transferAttachments,
+             'transferOpenActivities' => $header->transferOpenActivities
+            ));
+        } else {
+            $this->ownerChangeOptionsHeader = NULL;
         }
     }
 

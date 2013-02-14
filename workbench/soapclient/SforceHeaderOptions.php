@@ -71,6 +71,18 @@ class AssignmentRuleHeader {
     }
 }
 
+class OwnerChangeOptionsHeader {
+    // boolean
+    public $transferAttachments;
+    // boolean
+    public $transferOpenActivities;
+
+    public function __construct($transferAttachments = true, $transferOpenActivities = true) {
+        $this->transferAttachments    = $transferAttachments;
+        $this->transferOpenActivities = $transferOpenActivities;
+    }
+}
+
 /**
  * To be used with Create and Update operations.
  *
