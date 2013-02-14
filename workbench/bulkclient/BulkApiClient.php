@@ -7,7 +7,7 @@ require_once 'BatchInfo.php';
  * @author Ryan Brainard
  *
  * BulkApiClient.php
- * Main client for interacting with the REST-based Force.com Bulk API 25.0
+ * Main client for interacting with the REST-based Force.com Bulk API
  * to asynchronously insert, update, and upsert data to Salesforce.
  * Requires PHP cURL library to be installed.
  *

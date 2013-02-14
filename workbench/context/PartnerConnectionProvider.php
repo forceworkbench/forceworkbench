@@ -11,6 +11,17 @@ class PartnerConnectionProvider extends AbstractSoapConnectionProvider {
         $connection->setSessionHeader($connConfig->getSessionId());
         $connection->setCallOptions(new CallOptions($connConfig->getClientId(), WorkbenchConfig::get()->value('callOptions_defaultNamespace')));
 
+        if (WorkbenchContext::get()->isApiVersionAtLeast(27.0)) {
+            if (!WorkbenchConfig::get()->value('ownerChangeOptions_transferAttachments') || !WorkbenchConfig::get()->value('ownerChangeOptions_transferOpenActivities')) {
+                $connection->setOwnerChangeOptionsHeader(
+                    new OwnerChangeOptionsHeader(
+                        WorkbenchConfig::get()->value('ownerChangeOptions_transferAttachments'),
+                        WorkbenchConfig::get()->value('ownerChangeOptions_transferOpenActivities')
+                    )
+                );
+            }
+        }
+
         if (WorkbenchConfig::get()->value('assignmentRuleHeader_assignmentRuleId') || WorkbenchConfig::get()->value('assignmentRuleHeader_useDefaultRule')) {
             $connection->setAssignmentRuleHeader(
                 new AssignmentRuleHeader(

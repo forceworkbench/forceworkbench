@@ -182,9 +182,6 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
 
 <hr />
-<p><a href="http://code.google.com/p/phing-googlecode/">Phing Google Upload Task</a>
-    from <a href="http://code.google.com/u/110432330590552655097/">Geoff Catlin</a>
-</p>
 
 <?php
 include_once 'footer.php';
