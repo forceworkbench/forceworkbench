@@ -476,7 +476,7 @@ $config["header_DataManagement"] = array(
         "minApiVersion" => 27.0
     );
 
-    $config["ownerChangeOptions_transferOpenActivitiesownerChangeOptions_transferOpenActivities"] = array(
+    $config["ownerChangeOptions_transferOpenActivities"] = array(
         "label" => "Transfer Open Activities on Owner Change",
         "description" => "If true, the record’s open activities are transferred to the new record owner. If false, the original record owner retains ownership.",
         "default" => true,
