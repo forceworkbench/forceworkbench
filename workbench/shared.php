@@ -49,12 +49,12 @@ function workbenchLog($logLevel, $type, $message = "") {
         }
     }
 
-    $pieces = array(logLevelToStr($logLevel),
-                    $type,
-                    $_SERVER['REQUEST_METHOD'],
-                    $_SERVER['SCRIPT_NAME'],
+    $pieces = array($type,
+                    "at="      . logLevelToStr($logLevel),
+                    "method="  . $_SERVER['REQUEST_METHOD'],
+                    "path="    . $_SERVER['SCRIPT_NAME'],
                     "origin="  . (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']),
-                    "version=" . $GLOBALS["WORKBENCH_VERSION"],
+                    "v="       . $GLOBALS["WORKBENCH_VERSION"],
                     "sfdc="    . $sfdcHost,
                     "org="     . $orgId,
                     "user="    . $userId
