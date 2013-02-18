@@ -49,20 +49,20 @@ function workbenchLog($logLevel, $type, $message = "") {
         }
     }
 
-    $pieces = array("timestamp" => date(DATE_ISO8601),
-                    "level"     => logLevelToStr($logLevel),
-                    "type"      => $type,
-                    "origin"    => isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'],
-                    "method"    => $_SERVER['REQUEST_METHOD'],
-                    "version"   => $GLOBALS["WORKBENCH_VERSION"],
-                    "script"    => $_SERVER['SCRIPT_NAME'],
-                    "sfdc"      => $sfdcHost,
-                    "org"       => $orgId,
-                    "user"      => $userId,
-                    "message"   => $message
+    $pieces = array(logLevelToStr($logLevel),
+                    $type,
+                    "origin="  . isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'],
+                    "method="  . $_SERVER['REQUEST_METHOD'],
+                    "version=" . $GLOBALS["WORKBENCH_VERSION"],
+                    "script="  . $_SERVER['SCRIPT_NAME'],
+                    "sfdc="    . $sfdcHost,
+                    "org="     . $orgId,
+                    "user="    . $userId
               );
 
-    call_user_func('_handle_logs_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, json_encode($pieces));
+    $pieces[] = $message;
+
+    call_user_func('_handle_logs_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, implode(' ', $pieces));
 }
 
 function _handle_logs_syslog($logLevel, $msg) {
@@ -73,7 +73,7 @@ function _handle_logs_syslog($logLevel, $msg) {
 
 function _handle_logs_file($logLevel, $msg) {
     $logFile = fopen(WorkbenchConfig::get()->value("logFile"), 'a') or die("can't open log file");
-    fwrite($logFile, "forceworkbench=$msg\n");
+    fwrite($logFile, "forceworkbench: $msg\n");
     fclose($logFile);
 }
 
