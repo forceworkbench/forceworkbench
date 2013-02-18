@@ -14,11 +14,11 @@ if (!ini_get("date.timezone")) {
 $logTail = '';
 
 if (isset($_SERVER['HTTP_X_REQUEST_START'])) {
-    $logTail = "wait=" . (round(microtime(true) * 1000) - $_SERVER['HTTP_X_REQUEST_START'])  . ' ';
+    $logTail .= "wait=" . (round(microtime(true) * 1000) - $_SERVER['HTTP_X_REQUEST_START'])  . ' ';
 }
 
 if (isset($_SERVER['HTTP_X_HEROKU_DYNOS_IN_USE'])) {
-    $logTail = "dynos=" . $_SERVER['HTTP_X_HEROKU_DYNOS_IN_USE'] . ' ';
+    $logTail .= "dynos=" . $_SERVER['HTTP_X_HEROKU_DYNOS_IN_USE'] . ' ';
 }
 
 $sessionStore = WorkbenchConfig::get()->value("sessionStore");
