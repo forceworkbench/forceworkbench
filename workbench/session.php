@@ -11,6 +11,10 @@ if (!ini_get("date.timezone")) {
     date_default_timezone_set('UTC');
 }
 
+$logTail = '';
+if (isset($_SERVER['X-Request-Start'])) {
+    $logTail = "wait=" . microtime() - $_SERVER['X-Request-Start'];
+}
 
 $sessionStore = WorkbenchConfig::get()->value("sessionStore");
 // If $sessionStore starts with redis://, convert to format for Redis extension and set as the session save handler
@@ -33,7 +37,8 @@ if (WorkbenchConfig::get()->value("redirectToHTTPS") && !usingSslFromUserToWorkb
     exit;
 }
 
-workbenchLog(LOG_INFO, "U");
+
+workbenchLog(LOG_INFO, "U", $logTail);
 
 if (WorkbenchContext::isEstablished()) {
     WorkbenchContext::get()->beginRequestHook();
