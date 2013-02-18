@@ -51,7 +51,7 @@ function workbenchLog($logLevel, $type, $message = "") {
 
     $pieces = array(logLevelToStr($logLevel),
                     $type,
-                    "origin="  . isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'],
+                    "origin="  . (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']),
                     "method="  . $_SERVER['REQUEST_METHOD'],
                     "version=" . $GLOBALS["WORKBENCH_VERSION"],
                     "script="  . $_SERVER['SCRIPT_NAME'],

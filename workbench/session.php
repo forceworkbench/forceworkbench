@@ -13,7 +13,7 @@ if (!ini_get("date.timezone")) {
 
 $logTail = '';
 if (isset($_SERVER['HTTP_X_REQUEST_START']) && isset($_SERVER['REQUEST_TIME'])) {
-    $logTail = "wait=" . $_SERVER['REQUEST_TIME'] - ($_SERVER['HTTP_X_REQUEST_START'] / 1000);
+    $logTail = "wait=" . ($_SERVER['REQUEST_TIME'] - ($_SERVER['HTTP_X_REQUEST_START'] / 1000));
 }
 
 $sessionStore = WorkbenchConfig::get()->value("sessionStore");
@@ -37,8 +37,8 @@ if (WorkbenchConfig::get()->value("redirectToHTTPS") && !usingSslFromUserToWorkb
     exit;
 }
 
-
-workbenchLog(LOG_INFO, "U", $logTail);
+//var_dump($logTail);
+workbenchLog(LOG_INFO, "U");
 
 if (WorkbenchContext::isEstablished()) {
     WorkbenchContext::get()->beginRequestHook();
