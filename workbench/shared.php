@@ -78,7 +78,7 @@ function _handle_logs_file($logLevel, $msg) {
 }
 
 function _handle_logs_stdout($logLevel, $msg) {
-    echo "forceworkbench=$msg\n";
+    echo "forceworkbench $msg\n";
 }
 
 function logLevelToStr($logLevel) {
