@@ -12,8 +12,8 @@ if (!ini_get("date.timezone")) {
 }
 
 $logTail = '';
-if (isset($_SERVER['X-Request-Start'])) {
-    $logTail = "wait=" . microtime() - $_SERVER['X-Request-Start'];
+if (isset($_SERVER['HTTP_X_REQUEST_START']) && isset($_SERVER['REQUEST_TIME'])) {
+    $logTail = "wait=" . $_SERVER['REQUEST_TIME'] - ($_SERVER['HTTP_X_REQUEST_START'] / 1000);
 }
 
 $sessionStore = WorkbenchConfig::get()->value("sessionStore");
