@@ -5,3 +5,4 @@ dump.rdb
 .vagrant
 forceworkbench.box
 Vagrantfile
+.env
