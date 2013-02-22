@@ -56,7 +56,7 @@ class QueryFutureTask extends FutureTask {
 
         if ($queryAction == 'QueryMore' && isset($queryLocator)) $queryResponse = WorkbenchContext::get()->getPartnerConnection()->queryMore($queryLocator);
 
-        if (substr_count($soqlQuery,"count()") && $suppressScreenOutput == false) {
+        if (stripos($_POST['soql_query'], "count()") !== false) {
             return $queryResponse->size;
         } else if (!isset($queryResponse->records)) {
             return null;
