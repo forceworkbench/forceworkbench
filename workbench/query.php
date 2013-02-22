@@ -93,7 +93,7 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
         throw $e;
     }
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && $queryRequest->getExportTo() == 'csv') {
-    if (!substr_count($_POST['soql_query'],"count()")) {
+    if (stripos($_POST['soql_query'], "count()") !== false) {
         $task = new QueryFutureTask($queryRequest);
         $records = $task->query($queryRequest->getSoqlQuery(),$queryRequest->getQueryAction(),null,true);
         $task->exportQueryAsCsv($records,$queryRequest->getExportTo());
