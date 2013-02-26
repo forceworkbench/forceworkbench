@@ -147,10 +147,10 @@ class LoginController {
 
         $req = json_decode(base64_decode($encodedEnv));
 
-        preg_match("/https:\/\/(.*)\//", $req->instanceUrl, $m);
+        preg_match("/https:\/\/(.*)\//", $req->client->instanceUrl, $m);
         $host = $m[1];
 
-        // resolve to login url // TODO: this used to be in signed request. investigate this.
+        // resolve to login url // TODO: this used to be in signed request. investigate this. replace with client->clientId lookup...
         if (strpos($host, "cs") == 0 || strpos($host, "tapp0") == 0) {
             $host = "test.salesforce.com";
         } else {
@@ -168,7 +168,7 @@ class LoginController {
             throw new WorkbenchAuthenticationException("Signed request authentication failed");
         }
 
-        $this->processLogin(null, null, $req->instanceUrl . $req->context->links->partnerUrl, $req->oauthToken, "select.php");
+        $this->processLogin(null, null, $req->client->instanceUrl . $req->context->links->partnerUrl, $req->client->oauthToken, "select.php");
     }
 
     public function processRememberUserCookie() {
