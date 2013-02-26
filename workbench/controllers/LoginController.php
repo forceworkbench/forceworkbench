@@ -79,8 +79,8 @@ class LoginController {
 
     public function processRequest() {
 
-        if ((isset($_POST['signed_request'])) && isset($_GET['loginUrl'])){
-            $this->processSignedRequest($_POST['signed_request'], $_GET['loginUrl']);
+        if ((isset($_POST['signed_request']))){
+            $this->processSignedRequest($_POST['signed_request']);
             return;
         }
 
@@ -140,13 +140,22 @@ class LoginController {
         }
     }
 
-    private function processSignedRequest($signedRequest, $loginUrl) {
+    private function processSignedRequest($signedRequest) {
         $sep = strpos($signedRequest, '.');
         $encodedSig = substr($signedRequest, 0, $sep);
         $encodedEnv = substr($signedRequest, $sep + 1);
 
-        preg_match("/https:\/\/(.*)\//", $loginUrl, $m);
+        $req = json_decode(base64_decode($encodedEnv));
+
+        preg_match("/https:\/\/(.*)\//", $req->instanceUrl, $m);
         $host = $m[1];
+
+        // resolve to login url // TODO: this used to be in signed request. investigate this.
+        if (strpos($host, "cs") == 0 || strpos($host, "tapp0") == 0) {
+            $host = "test.salesforce.com";
+        } else {
+            $host = "login.salesforce.com";
+        }
 
         $oauthConfigs = WorkbenchConfig::get()->value("oauthConfigs");
         if (!isset($oauthConfigs[$host]['key']) || !isset($oauthConfigs[$host]['secret'])) {
@@ -159,7 +168,6 @@ class LoginController {
             throw new WorkbenchAuthenticationException("Signed request authentication failed");
         }
 
-        $req = json_decode(base64_decode($encodedEnv));
         $this->processLogin(null, null, $req->instanceUrl . $req->context->links->partnerUrl, $req->oauthToken, "select.php");
     }
 
