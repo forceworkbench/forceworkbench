@@ -7,7 +7,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-$GLOBALS["WORKBENCH_VERSION"] = "27.0.4";
+$GLOBALS["WORKBENCH_VERSION"] = "27.0.5";
 
 class Page {
     public $title;
@@ -73,7 +73,6 @@ $GLOBALS["MENUS"] = array(
     'Utilities' => array(
         'restExplorer.php'            => new Page('REST Explorer','Explore and discover the REST API.',true,false,true,true,true,''),
         'execute.php'                 => new Page('Apex Execute','Execute Apex code as an anonymous block.',true,false,true,true,true,''),
-        'runAllApexTests.php'         => new Page('Jump to Run All Apex Tests', 'Jumps to Salesforce user interface to run Apex tests.',true,true,true,false,true,'runAllApexTests'),
         'pwdMgmt.php'                 => new Page('Password Management','Set and Reset Passwords.',true,false,true,false,true,''),
         'asyncStatus.php'             => new Page('Bulk API Job Status','Asynchronous data load status and results.',true,true,true,false,true,''),
         'metadataStatus.php'          => new Page('Metadata API Process Status','Metadata API status and results.',true,true,true,false,true,''),
