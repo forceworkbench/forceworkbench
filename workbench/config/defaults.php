@@ -259,7 +259,8 @@ $config["header_LoginOptions"] = array(
             "cs15-api" => array("Sandbox: CS15","e"),
             "cs16-api" => array("Sandbox: CS16","f"),
             "cs17-api" => array("Sandbox: CS17","g"),
-            "prerelna1.pre" => array("Pre-Release: NA1","t")
+            "prerelna1.pre" => array("Pre-Release: NA1","t"),
+            "mobile1.t" => array("Mobile 1","")
         )
     );
 
