@@ -6,6 +6,7 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
     $previousVersion = WorkbenchContext::get()->getApiVersion();
     WorkbenchContext::get()->clearCache();
     WorkbenchContext::get()->setApiVersion($_REQUEST['switchApiVersionTo']);
+    unset($_SESSION['restExplorerController']);
     try {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
     } catch (Exception $e) {
