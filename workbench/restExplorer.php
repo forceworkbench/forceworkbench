@@ -64,7 +64,7 @@ if ($c->errors != null) {
 	<input  id="resetButton"
 	        type="button"
 			value="Reset"
-			onclick="resetUrl();"/>
+			onclick="resetUrl('<?php print WorkbenchContext::get()->getApiVersion(); ?>');"/>
     &nbsp;
 	<input  id="upButton"
 	        type="button" 

@@ -1,5 +1,6 @@
-function resetUrl() {
-    document.getElementById("urlInput").value = '/services/data';
+function resetUrl(apiVersion) {
+    var versionSegment = apiVersion ? ('/v' + apiVersion) : '';
+    document.getElementById("urlInput").value = '/services/data' + versionSegment;
 };
 
 function upUrl() {
