@@ -51,18 +51,18 @@ class RestApiClient {
     }
 
     private function getBaseUrlFromPartnerEndpoint($partnerEndpoint) {
-        preg_match("!(https?://.*)/services/Soap/u/(\d{1,2}\.\d)(/.*)?!", $partnerEndpoint, $matches);
-        
-        if ($matches[2] < 20.0) {
-            throw new WorkbenchHandledException("REST API operations only supported in API 20.0 and higher.");
-        }
-        
+        preg_match("!(https?://.*)/!", $partnerEndpoint, $matches);
         return $matches[1];
     }
 
     public function send($method, $path, $additionalHeaders, $data, $expectBinary) {
         if (strpos($path, "/") !== 0) {
             throw new WorkbenchHandledException("Path must start with /");
+        }
+
+        preg_match("!/v(\d{1,2}\.\d)/!", $partnerEndpoint, $matches);
+        if (isset($matches[1]) && $matches[1] < 20.0) {
+            throw new WorkbenchHandledException("REST API operations only supported in API 20.0 and higher.");
         }
 
         $this->log("INITIALIZING cURL \n" . print_r(curl_version(), true));
