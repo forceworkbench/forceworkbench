@@ -19,7 +19,7 @@ class RestExplorerController {
 
     public function __construct() {
         $this->requestMethod = 'GET';
-        $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->BASE_REST_URL_PREFIX . '/data';
+        $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->BASE_REST_URL_PREFIX . '/data/v' + WorkbenchContext::get()->getApiVersion();
         $this->requestHeaders = $this->DEFAULT_REQUEST_HEADERS;
     }
     
