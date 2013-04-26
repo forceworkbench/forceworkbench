@@ -60,7 +60,7 @@ class RestApiClient {
             throw new WorkbenchHandledException("Path must start with /");
         }
 
-        preg_match("!/v(\d{1,2}\.\d)/!", $partnerEndpoint, $matches);
+        preg_match("!/v(\d{1,2}\.\d)/?!", $path, $matches);
         if (isset($matches[1]) && $matches[1] < 20.0) {
             throw new WorkbenchHandledException("REST API operations only supported in API 20.0 and higher.");
         }
