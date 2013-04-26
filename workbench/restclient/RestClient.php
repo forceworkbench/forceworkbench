@@ -51,7 +51,7 @@ class RestApiClient {
     }
 
     private function getBaseUrlFromPartnerEndpoint($partnerEndpoint) {
-        preg_match("!(https?://.*)/!", $partnerEndpoint, $matches);
+        preg_match("!(https?://.*)/services/Soap!", $partnerEndpoint, $matches);
         return $matches[1];
     }
 
