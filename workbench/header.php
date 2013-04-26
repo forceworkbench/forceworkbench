@@ -40,6 +40,7 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
     try {
         $ch = curl_init();
         curl_setopt ($ch, CURLOPT_URL, 'https://api.github.com/repos/ryanbrainard/forceworkbench/tags');
+        curl_setopt ($ch, CURLOPT_USERAGENT, getWorkbenchUserAgent());
         curl_setopt($ch, CURLOPT_TIMEOUT, 2);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $tagsResponse = curl_exec($ch);
