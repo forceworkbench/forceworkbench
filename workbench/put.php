@@ -448,10 +448,6 @@ function setFieldMappings($action,$csvArray) {
         }
     }
 
-    print "<div id='setFieldMappingster_block_loading' style='display:block; color:#888;'><img src='" . getPathToStaticResource('/images/wait16trans.gif') . "' align='absmiddle'/> Loading...</div>";
-
-    print "<div id='setFieldMappingster_block' style='display:none;'>";
-
     print "<form method='POST' action=''>" . getCsrfFormTag();
 
     if ($action == 'upsert') {
@@ -561,9 +557,7 @@ function setFieldMappings($action,$csvArray) {
     }
 
 
-    print "</form>\n</div>\n";
-    print "<script>document.getElementById('setFieldMappingster_block_loading').style.display = 'none';</script>";
-    print "<script>document.getElementById('setFieldMappingster_block').style.display = 'block';</script>";
+    print "</form>\n";
 }
 
 function printPutFieldForMappingId($csvArray, $showRefCol, $currentRecord) {
