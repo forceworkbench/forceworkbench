@@ -519,7 +519,11 @@ class LoginController {
         $serverIdMap = array();
         foreach (WorkbenchConfig::get()->valuesToLabels("defaultInstance") as $subdomain => $info) {
             if (isset($info[1]) && $info[1] != "") {
-                $serverIdMap[$info[1]] = $subdomain;
+                $serverId = $info[1];
+                if (strlen($serverId) == 1) {
+                    $serverId .= "0";
+                }
+                $serverIdMap[$serverId] = $subdomain;
             }
         }
         return $serverIdMap;

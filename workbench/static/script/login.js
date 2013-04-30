@@ -135,7 +135,7 @@ var WorkbenchLogin = new function() {
         var sidIndex = sid.indexOf('00D');
 
         if (sidIndex > -1) {
-            var serverId = sid.substring(sidIndex + 3, sidIndex + 4);
+            var serverId = sid.substring(sidIndex + 3, sidIndex + 5);
             var inst = wbLoginConfig.serverIdMap[serverId];
             if (inst != null) {
                 form.inst.value = inst;
