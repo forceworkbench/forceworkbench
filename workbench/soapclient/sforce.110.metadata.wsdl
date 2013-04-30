@@ -1123,7 +1123,7 @@ Copyright 2006-2007 Salesforce.com, inc. All Rights Reserved
  <service name="MetadataService">
   <documentation>Manage your Salesforce.com metadata</documentation>
   <port binding="tns:MetadataBinding" name="Metadata">
-   <soap:address location="https://na4-api.salesforce.com/services/Soap/m/11.0"/>
+   <soap:address location="https://login.salesforce.com/services/Soap/m/11.0"/>
   </port>
  </service>
 </definitions>

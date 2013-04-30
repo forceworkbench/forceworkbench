@@ -231,7 +231,7 @@ Yes,  you can login using query parameters that support everything that could be
 | Must be used without ''inst'' or ''api''. Can be used with ''un''/''pw'' OR ''sid''.
 |-
 | inst
-| Organization's API instance (i.e. na1-api, eu0-api, cs0-api). This parameter overrides the Default Instance specified in Settings.
+| Organization's API instance (i.e. na1, eu0, cs0). This parameter overrides the Default Instance specified in Settings.
 | Used to dynamically build the Server URL. Can be used optionally with ''api''; otherwise default API version is used. Must not be used with ''serverUrl''.
 |-
 | api

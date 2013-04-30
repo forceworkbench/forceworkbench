@@ -523,7 +523,7 @@ Copyright 2006-2008 Salesforce.com, inc. All Rights Reserved
  <service name="ApexService">
   <documentation>Manage your Salesforce.com Apex classes and triggers</documentation>
   <port binding="tns:ApexBinding" name="Apex">
-   <soap:address location="https://na4-api.salesforce.com/services/Soap/s/14.0"/>
+   <soap:address location="https://login.salesforce.com/services/Soap/s/14.0"/>
   </port>
  </service>
 </definitions>
