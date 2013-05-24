@@ -35,6 +35,10 @@ function workbenchLog($logLevel, $type, $message = "") {
         return;
     }
 
+    if (is_array($message)) {
+        $message = implode('=', $message);
+    }
+
     $sfdcHost = "";
     $orgId = "";
     $userId = "";
@@ -60,11 +64,7 @@ function workbenchLog($logLevel, $type, $message = "") {
                     "user="    . $userId
               );
 
-    if (is_array($message)) {
-        $pieces = array_merge($pieces, $message);
-    } else {
-        $pieces[] = $message;
-    }
+    $pieces[] = $message;
 
     call_user_func('_handle_logs_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, implode(' ', $pieces));
 }
