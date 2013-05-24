@@ -54,7 +54,7 @@ abstract class FutureTask {
         redis()->setex(FUTURE_LOCK . $this->asyncId, WorkbenchConfig::get()->value('asyncTimeoutSeconds'), crypto_serialize(session_id()));   // set an expiring lock on this async id so GC doesn't get it
         $payload = crypto_serialize($this);
         redis()->rpush(self::QUEUE, $payload);                                                                                 // place actual job on the queue
-        workbenchLog(LOG_INFO, "FutureTaskEnqueue", get_class($this) . "-" . $this->asyncId . " size=" . strlen($payload));
+        workbenchLog(LOG_INFO, "FutureTaskEnqueue", array("async_id" =>  $this->asyncId, ("measure.async.enqueue." . get_class($this)) => 1, ("measure.async.enqueue." . get_class($this) . ".size") => strlen($payload)));
         return new FutureResult($this->asyncId);
     }
 
@@ -115,7 +115,7 @@ abstract class FutureTask {
             $task = crypto_unserialize($blpop[1]);
 
             if (!redis()->exists(FUTURE_LOCK . $task->asyncId)) {
-                workbenchLog(LOG_INFO, "FutureTaskGC", get_class($task) . "-" . $task->asyncId);
+                workbenchLog(LOG_INFO, "FutureTaskGC", array("async_id" =>  $task->asyncId, "class" => get_class($task), "measure.async.gc.task" => 1));
                 throw new TimeoutException();
             }
 

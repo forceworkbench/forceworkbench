@@ -60,7 +60,11 @@ function workbenchLog($logLevel, $type, $message = "") {
                     "user="    . $userId
               );
 
-    $pieces[] = $message;
+    if (is_array($message)) {
+        $pieces = array_merge($pieces, $message);
+    } else {
+        $pieces[] = $message;
+    }
 
     call_user_func('_handle_logs_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, implode(' ', $pieces));
 }
@@ -112,10 +116,6 @@ function validateCsrfToken($doError = true) {
        if ($doError) {
            httpError("403 Forbidden", "Invalid or missing required CSRF token");
        } else {
-           workbenchLog(LOG_ERR, "C", (isset($_REQUEST['CSRF_TOKEN']) ? $_REQUEST['CSRF_TOKEN'] : "NULL") .
-                        "`" .
-                        getCsrfToken());
-
            return false;
        }
    }
@@ -242,7 +242,7 @@ function isKnownAuthenticationError($errorMessage) {
 
 function handleAllErrors($errno, $errstr, $errfile, $errline, $errcontext) {
     $errorId = basename($errfile, ".php") . "-$errline-" . time();
-    workbenchLog(LOG_CRIT, "F", $errorId . ":$errstr:" . print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), true));
+    workbenchLog(LOG_CRIT, "F",  "measure.fatal=1 " . $errorId . ":$errstr:" . print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), true));
 
     switch ($errno) {
         case E_PARSE:
@@ -303,7 +303,7 @@ function handleAllExceptionsInternal($e, $showHeadersFooters) {
         }
 
         if ($showHeadersFooters)  try { include_once 'header.php'; } catch (Exception $e) {}
-        workbenchLog(LOG_ERR, "E", $fullMessage);
+        workbenchLog(LOG_ERR, "E", "measure.exception=1 " . $fullMessage);
         displayError("UNKNOWN ERROR: " . $e->getMessage(), false, $showHeadersFooters);
     }
     exit;

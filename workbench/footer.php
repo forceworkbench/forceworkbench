@@ -11,7 +11,9 @@ if (WorkbenchConfig::get()->value("checkSSL") && !usingSslEndToEnd()) {
 }
 
 if (WorkbenchContext::isEstablished() && WorkbenchContext::get()->isRequestStartTimeSet() && WorkbenchConfig::get()->value("displayRequestTime")) {
-    printf ("Requested in %01.3f sec<BR/>", WorkbenchContext::get()->getRequestProcessingTime());
+    $requestProcessingTime = WorkbenchContext::get()->getRequestProcessingTime();
+    workbenchLog(LOG_INFO, "RequestProcessingMetrics", array(("measure.request." . $_SERVER['SCRIPT_NAME'] . ".time") => $requestProcessingTime));
+    printf ("Requested in %01.3f sec<BR/>", $requestProcessingTime);
 }
 
 print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKBENCH_VERSION"] : "") . "<br/>\n";
@@ -32,8 +34,11 @@ if (isset($_REQUEST["footerScripts"])) {
 </html>
 
 <?php
-if (WorkbenchContext::isEstablished() && (memory_get_peak_usage()/toBytes(ini_get("memory_limit"))) > 0.7) {
+$peak = memory_get_peak_usage();
+workbenchLog(LOG_INFO, "MemoryUsageCheck", array("measure.memory.peak" => $peak));
+if (WorkbenchContext::isEstablished() && ($peak/toBytes(ini_get("memory_limit"))) > 0.7) {
    WorkbenchContext::get()->clearCache();
+   workbenchLog(LOG_INFO, "MemoryUsageCacheClear", array("measure.memory.cache_clear" => 1));
 }
 
 if (isset($GLOBALS['REDIS'])) {
