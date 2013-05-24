@@ -12,7 +12,7 @@ if (WorkbenchConfig::get()->value("checkSSL") && !usingSslEndToEnd()) {
 
 if (WorkbenchContext::isEstablished() && WorkbenchContext::get()->isRequestStartTimeSet() && WorkbenchConfig::get()->value("displayRequestTime")) {
     $requestProcessingTime = WorkbenchContext::get()->getRequestProcessingTime();
-    workbenchLog(LOG_INFO, "RequestProcessingMetrics", array(("measure.request." . $_SERVER['SCRIPT_NAME'] . ".time") => $requestProcessingTime));
+    workbenchLog(LOG_INFO, "RequestProcessingMetrics", array(("measure.request." . basename($_SERVER['SCRIPT_NAME']) . ".time") => $requestProcessingTime));
     printf ("Requested in %01.3f sec<BR/>", $requestProcessingTime);
 }
 
