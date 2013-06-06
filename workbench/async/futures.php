@@ -57,7 +57,7 @@ abstract class FutureTask {
         workbenchLog(LOG_INFO, "FutureTaskEnqueue", array(
             "async_id" =>  $this->asyncId,
             "source" => get_class($this),
-            "measure.async.enqueue.size" => strlen($payload)));
+            "measure.async.enqueue.size" => strlen($payload)) . "task");
         return new FutureResult($this->asyncId);
     }
 
@@ -89,7 +89,7 @@ abstract class FutureTask {
             workbenchLog(LOG_INFO, "FutureTaskExecuteStart", array(
                 "async_id" =>  $this->asyncId,
                 "source" => get_class($this),
-                "measure.async.queue_time" => ($execStartTime - $this->enqueueTime)));
+                "measure.async.queue_time" => ($execStartTime - $this->enqueueTime) . "sec"));
 
             $future->redeem($this->perform());
         } catch (Exception $e) {
@@ -99,7 +99,7 @@ abstract class FutureTask {
         workbenchLog(LOG_INFO, "FutureTaskExecuteEnd", array(
             "async_id" =>  $this->asyncId,
             "source" => get_class($this),
-            "measure.async.exec_time" => (time() - $execStartTime)));
+            "measure.async.exec_time" => (time() - $execStartTime) . "sec"));
 
         WorkbenchContext::get()->release();
         WorkbenchConfig::destroy();
@@ -124,7 +124,7 @@ abstract class FutureTask {
                 workbenchLog(LOG_INFO, "FutureTaskGC", array(
                     "async_id" =>  $task->asyncId,
                     "source" => get_class($task),
-                    "measure.async.gc.task" => 1));
+                    "measure.async.gc.task" => 1 . "task"));
                 throw new TimeoutException();
             }
 

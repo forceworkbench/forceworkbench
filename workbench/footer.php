@@ -12,7 +12,7 @@ if (WorkbenchConfig::get()->value("checkSSL") && !usingSslEndToEnd()) {
 
 if (WorkbenchContext::isEstablished() && WorkbenchContext::get()->isRequestStartTimeSet() && WorkbenchConfig::get()->value("displayRequestTime")) {
     $requestProcessingTime = WorkbenchContext::get()->getRequestProcessingTime();
-    workbenchLog(LOG_INFO, "RequestProcessingMetrics", array(("measure.request.service") => $requestProcessingTime, "source" => basename($_SERVER['SCRIPT_NAME'])));
+    workbenchLog(LOG_INFO, "RequestProcessingMetrics", array(("measure.request.service") => $requestProcessingTime . "sec", "source" => basename($_SERVER['SCRIPT_NAME'])));
     printf ("Requested in %01.3f sec<BR/>", $requestProcessingTime);
 }
 
@@ -35,7 +35,7 @@ if (isset($_REQUEST["footerScripts"])) {
 
 <?php
 $peak = memory_get_peak_usage();
-workbenchLog(LOG_INFO, "MemoryUsageCheck", array("measure.memory.peak" => $peak));
+workbenchLog(LOG_INFO, "MemoryUsageCheck", array("measure.memory.peak" => $peak . "byte"));
 if (WorkbenchContext::isEstablished() && ($peak/toBytes(ini_get("memory_limit"))) > 0.7) {
    WorkbenchContext::get()->clearCache();
    workbenchLog(LOG_INFO, "MemoryUsageCacheClear", array("measure.memory.cache_clear" => 1));

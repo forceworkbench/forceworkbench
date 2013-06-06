@@ -23,11 +23,11 @@ foreach ($frKeys as $frKey) {
     $asyncId = substr($frKey, strlen(FutureResult::RESULT));
     if (!redis()->exists(FUTURE_LOCK . $asyncId)) {
         redis()->del($frKey);
-        workbenchLog(LOG_INFO, "FutureResultGC", array("async_id" => $asyncId, "measure.async.gc.result" => 1));
+        workbenchLog(LOG_INFO, "FutureResultGC", array("async_id" => $asyncId, "measure.async.gc.result" => 1 . "result"));
     }
 }
 
-workbenchLog(LOG_INFO, "FutureTaskQueueDepth", array("measure.async.queue_depth" => redis()->llen(FutureTask::QUEUE)));
+workbenchLog(LOG_INFO, "FutureTaskQueueDepth", array("measure.async.queue_depth" => redis()->llen(FutureTask::QUEUE)) . "task");
 
 while (true) {
     try {
