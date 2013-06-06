@@ -27,7 +27,7 @@ foreach ($frKeys as $frKey) {
     }
 }
 
-workbenchLog(LOG_INFO, "FutureTaskQueueDepth", array("measure.async.queue_depth" => redis()->llen(FutureTask::QUEUE)) . "task");
+workbenchLog(LOG_INFO, "FutureTaskQueueDepth", array("measure.async.queue_depth" => redis()->llen(FutureTask::QUEUE) . "task"));
 
 while (true) {
     try {
