@@ -18,7 +18,7 @@ if (isset($_SERVER['HTTP_X_REQUEST_START'])) {
 }
 
 if (isset($_SERVER['HTTP_X_HEROKU_DYNOS_IN_USE'])) {
-    $logTail .= "measures.dynos=" . $_SERVER['HTTP_X_HEROKU_DYNOS_IN_USE'] . ' ';
+    $logTail .= "measure.dynos=" . $_SERVER['HTTP_X_HEROKU_DYNOS_IN_USE'] . ' ';
 }
 
 $sessionStore = WorkbenchConfig::get()->value("sessionStore");
