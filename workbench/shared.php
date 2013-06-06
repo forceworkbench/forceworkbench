@@ -38,7 +38,7 @@ function workbenchLog($logLevel, $type, $message = "") {
     if (is_array($message)) {
         $as_str = '';
         foreach ($message as $k => $v) {
-            $as_str = "$k=$v ";
+            $as_str .= " $k=$v";
         }
         $message = $as_str;
     }
