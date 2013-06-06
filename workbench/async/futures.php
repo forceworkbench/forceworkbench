@@ -56,9 +56,8 @@ abstract class FutureTask {
         redis()->rpush(self::QUEUE, $payload);                                                                                 // place actual job on the queue
         workbenchLog(LOG_INFO, "FutureTaskEnqueue", array(
             "async_id" =>  $this->asyncId,
-            "class" => get_class($this),
-            ("measure.async.enqueue." . get_class($this)) => 1,
-            ("measure.async.enqueue." . get_class($this) . ".size") => strlen($payload)));
+            "source" => get_class($this),
+            "measure.async.enqueue.size" => strlen($payload)));
         return new FutureResult($this->asyncId);
     }
 
@@ -89,7 +88,7 @@ abstract class FutureTask {
 
             workbenchLog(LOG_INFO, "FutureTaskExecuteStart", array(
                 "async_id" =>  $this->asyncId,
-                "class" => get_class($this),
+                "source" => get_class($this),
                 "measure.async.queue_time" => ($execStartTime - $this->enqueueTime)));
 
             $future->redeem($this->perform());
@@ -99,8 +98,8 @@ abstract class FutureTask {
 
         workbenchLog(LOG_INFO, "FutureTaskExecuteEnd", array(
             "async_id" =>  $this->asyncId,
-            "class" => get_class($this),
-            ("measure.async.exec_time." . get_class($this)) => (time() - $execStartTime)));
+            "source" => get_class($this),
+            "measure.async.exec_time" => (time() - $execStartTime)));
 
         WorkbenchContext::get()->release();
         WorkbenchConfig::destroy();
@@ -124,7 +123,7 @@ abstract class FutureTask {
             if (!redis()->exists(FUTURE_LOCK . $task->asyncId)) {
                 workbenchLog(LOG_INFO, "FutureTaskGC", array(
                     "async_id" =>  $task->asyncId,
-                    "class" => get_class($task),
+                    "source" => get_class($task),
                     "measure.async.gc.task" => 1));
                 throw new TimeoutException();
             }
