@@ -6,3 +6,4 @@ dump.rdb
 forceworkbench.box
 Vagrantfile
 .env
+.idea
