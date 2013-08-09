@@ -110,7 +110,9 @@ class ExpandableTree {
                     $processedSubResults = self::processResults($rawValue, null, $unCamelCaseKeys);
                     $subCount = " (" . count($processedSubResults) . ")";
 
-                    if (isset($rawValue->name) && $rawValue->name != "") {
+                    if (isset($rawValue->name) && isset($rawValue->methodName) ) {
+                        $processed[$rawValue->name . "." . $rawValue->methodName] = $processedSubResults;
+                    } else if (isset($rawValue->name) && $rawValue->name != "") {
                         $processed[$rawValue->name] = $processedSubResults;
                     } else if (isset($rawValue->fileName) && $rawValue->fileName != "") {
                         $processed[$rawValue->fileName] = $processedSubResults;
