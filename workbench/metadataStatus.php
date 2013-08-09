@@ -40,7 +40,23 @@ print "<p class='instructions'>A Metadata API operation has been performed, whic
 
 require_once 'soapclient/SforceMetadataClient.php';
 try {
-    $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkStatus($asyncProcessId);
+
+        //if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
+    $isDeployOperation = isset($_REQUEST['op'])
+                    ? htmlspecialchars($_REQUEST['op'])
+                    : (isset($asyncResults->checkOnly)
+                        ? true 
+                        : false);
+    if ($isDeployOperation && WorkbenchContext::get()->isApiVersionAtLeast(29.0)) {
+        $deployOn29OrHigher = true;  
+    } else {
+        $deployOn29OrHigher = false;  
+    }
+    if ($deployOn29OrHigher) {
+        $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, true);
+    } else {
+        $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkStatus($asyncProcessId);
+    }
 
     if (!isset($asyncResults)) {
         displayError("No results returned for '$asyncProcessId'", false, true);
@@ -50,7 +66,20 @@ try {
         printAsyncRefreshBlock();
     }
 
-    $orderedAsyncResults = array("id"=>null,"done"=>null,"state"=>null);
+    if ($deployOn29OrHigher) {
+        $orderedAsyncResults = array(
+            "id"=>null, "done"=>null, 
+            "status"=>null, "checkOnly"=>null, 
+            "rollbackOnError"=>null, "ignoreWarnings"=>null,
+            "numberComponentErrors"=>null, "numberComponentsDeployed"=>null,
+            "numberComponentsTotal"=>null, "numberTestErrors"=>null, 
+            "numberTestsCompleted"=>null, "numberTestsTotal"=>null,
+            "createdDate"=>null, "startDate"=>null,
+            "lastModifiedDate"=>null, "completedDate"=>null
+        );
+    } else {
+        $orderedAsyncResults = array("id"=>null,"done"=>null,"state"=>null);
+    }
     foreach ($asyncResults as $resultName => $resultValue) {
         $orderedAsyncResults[$resultName] = $resultValue;
     }
@@ -59,6 +88,8 @@ try {
     print "<table class='lightlyBoxed' cellpadding='5' width='100%'>\n";
     $rowNum = 0;
     foreach ($orderedAsyncResults as $resultName => $resultValue) {
+        // Details will be displayed in results section, skip for now.
+        if ($resultName == 'details') continue;
         if (++$rowNum % 2) {
             print "<tr>";
             printStatusCell($resultName, $resultValue);
@@ -72,19 +103,43 @@ try {
     }
     print "</table>\n";
 
-    if ($asyncResults->done) {
+    if (deployOn29OrHigher && ! $asyncResults->done && $asyncResults->status == 'InProgress') {
+        print "<p>&nbsp;</p><h3>Failures encountered so far</h3>";
+        $hasInProgressDetailsToPrint = false;
+        $results = array();
+
+        if (isset($asyncResults->details)) {
+            if (isset($asyncResults->details->componentFailures)) {
+                $hasInProgressDetailsToPrint = true;
+                $results['componentFailures'] = $asyncResults->details->componentFailures;
+            }
+            if (isset($asyncResults->details->runTestResult) && isset($asyncResults->details->runTestResult->failures) ) {
+                $hasInProgressDetailsToPrint = true;
+                $results['testFailures'] = $asyncResults->details->runTestResult->failures;
+            }
+        }
+        if ($hasInProgressDetailsToPrint) {
+	    $processedResult = ExpandableTree::processResults($results);
+
+            $tree = new ExpandableTree("metadataInProgressDetailsTree", $processedResult);
+	    $tree->setForceCollapse(false);
+	    $tree->setContainsIds(true);
+	    $tree->setContainsDates(true);
+	    $tree->printTree();
+        }
+        else {
+            print "<p>None</p>";
+        }
+    } else if ($asyncResults->done) {
         print "<p>&nbsp;</p><h3>Results</h3>";
 
-        //if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
-        $operation = isset($_REQUEST['op'])
-                        ? htmlspecialchars($_REQUEST['op'])
-                        : (isset($asyncResults->checkOnly)
-                            ? "D"
-                            : "R");
-
-        $results = $operation == "D"
-                    ? WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, $debugInfo)
+        if ($deployOn29OrHigher) {
+            $results = $asyncResults->details;
+        } else {
+            $results = $isDeployOperation
+                    ? WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, false, $debugInfo)
                     : WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
+        }
 
         $zipLink = null;
         if (isset($results->zipFile) || isset($results->retrieveResult->zipFile) ) {
@@ -104,7 +159,9 @@ try {
                        "</a></p>";
         }
 
-        $tree = new ExpandableTree("metadataStatusResultsTree", ExpandableTree::processResults($results));
+        
+        $processedResult = ExpandableTree::processResults($results);
+        $tree = new ExpandableTree("metadataStatusResultsTree", $processedResult);
         $tree->setForceCollapse(true);
         $tree->setAdditionalMenus($zipLink);
         $tree->setContainsIds(true);
@@ -117,7 +174,7 @@ try {
         }
 
         // if metadata changes were deployed, clear the cache because describe results will probably be different
-        if ($operation == "D") {
+        if ($isDeployOperation) {
             WorkbenchContext::get()->clearCache();
         }
     }
