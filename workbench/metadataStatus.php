@@ -42,11 +42,12 @@ require_once 'soapclient/SforceMetadataClient.php';
 try {
 
         //if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
-    $isDeployOperation = isset($_REQUEST['op'])
+    $operation = isset($_REQUEST['op'])
                     ? htmlspecialchars($_REQUEST['op'])
                     : (isset($asyncResults->checkOnly)
-                        ? true 
-                        : false);
+                        ? "D"
+                        : "R"); 
+    $isDeployOperation = ($operation == "D");
     if ($isDeployOperation && WorkbenchContext::get()->isApiVersionAtLeast(29.0)) {
         $deployOn29OrHigher = true;  
     } else {
