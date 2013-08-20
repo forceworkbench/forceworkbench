@@ -7,20 +7,39 @@ if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
     exit;
 }
 
-if (!isset($_GET['asyncProcessId'])) {
+if (isset($_GET['asyncProcessId'])) {
+    $asyncProcessId = htmlspecialchars($_GET['asyncProcessId']);
+}
+else {
+    $asyncProcessId = "";
+}
+
+if (isset($_GET['op'])) {
+    $operation = htmlspecialchars($_GET['op']);
+    $isDeployOperation = ($operation == 'D');
+    $isRetrieveOperation = ($operation == 'R');
+}
+else {
+    $isDeployOperation = false;
+    $isRetrieveOperation = false;
+}
+
+if ($asyncProcessId == "" || (!$isDeployOperation && !$isRetrieveOperation)) {
     require_once 'header.php';
     print "<p/>";
-    displayInfo("Parameter 'asyncProcessId' must be specified.",false,false);
+    displayInfo("Parameters 'asyncProcessId' and 'op' must be specified.",false,false);
     print     "<p/>" .
             "<form action='' method='GET'>" .
-            "Async Process Id: <input type='text' name='asyncProcessId'/> &nbsp;" .  
-            "<input type='submit' value='Get Status'/>".
+            "<table><tr><td>AsyncProcessId:</td>" .
+            "<td><input type='text' name='asyncProcessId'" . "value='" . $asyncProcessId . "'/></td></tr>" .
+            "<tr><td>Async Operation:</td>" .  
+            "<td><input type='radio' name='op' value='D'" .  ($isDeployOperation ? "checked='checked'":"") . ">Deploy<input type='radio' name='op' value='R'" .  ($isRetrieveOperation ? "checked='checked'":"") . ">Retrieve</td></tr>" .  
+            "<tr><td>&nbsp;</td><td>&nbsp;</td></tr>".
+            "<tr><td><input type='submit' value='Get Status'/></td><td>&nbsp;</td></tr></table>".
             "</form>";
     include_once 'footer.php';
     exit;
 }
-
-$asyncProcessId = htmlspecialchars($_GET['asyncProcessId']);
 
 if (isset($_GET['downloadZip'])) {
     if (!isset($_SESSION['retrievedZips'][$asyncProcessId])) {
@@ -41,13 +60,6 @@ print "<p class='instructions'>A Metadata API operation has been performed, whic
 require_once 'soapclient/SforceMetadataClient.php';
 try {
 
-        //if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
-    $operation = isset($_REQUEST['op'])
-                    ? htmlspecialchars($_REQUEST['op'])
-                    : (isset($asyncResults->checkOnly)
-                        ? "D"
-                        : "R"); 
-    $isDeployOperation = ($operation == "D");
     if ($isDeployOperation && WorkbenchContext::get()->isApiVersionAtLeast(29.0)) {
         $deployOn29OrHigher = true;  
     } else {
