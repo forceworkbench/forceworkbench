@@ -117,7 +117,7 @@ try {
     print "</table>\n";
 
     if (deployOn29OrHigher && ! $asyncResults->done && $asyncResults->status == 'InProgress') {
-        print "<p>&nbsp;</p><h3>Failures encountered so far</h3>";
+        print "<p>&nbsp;</p><h3>Failures <img src='" . getPathToStaticResource('/images/wait16trans.gif') . " align='absmiddle'/> </h3>";
         $hasInProgressDetailsToPrint = false;
         $results = array();
 
