@@ -84,9 +84,9 @@ try {
             "id"=>null, "done"=>null, 
             "status"=>null, "checkOnly"=>null, 
             "rollbackOnError"=>null, "ignoreWarnings"=>null,
-            "numberComponentErrors"=>null, "numberComponentsDeployed"=>null,
-            "numberComponentsTotal"=>null, "numberTestErrors"=>null, 
-            "numberTestsCompleted"=>null, "numberTestsTotal"=>null,
+            "numberComponentErrors"=>null, "numberTestErrors"=>null,
+            "numberComponentsDeployed"=>null,"numberTestsCompleted"=>null,
+            "numberComponentsTotal"=>null, "numberTestsTotal"=>null,
             "createdDate"=>null, "startDate"=>null,
             "lastModifiedDate"=>null, "completedDate"=>null
         );
@@ -101,8 +101,8 @@ try {
     print "<table class='lightlyBoxed' cellpadding='5' width='100%'>\n";
     $rowNum = 0;
     foreach ($orderedAsyncResults as $resultName => $resultValue) {
-        // Details will be displayed in results section, skip for now.
-        if ($resultName == 'details') continue;
+        // Details and success flag will be displayed in results section, skip for now.
+        if ($resultName == 'details' || $resultName == 'success') continue;
         if (++$rowNum % 2) {
             print "<tr>";
             printStatusCell($resultName, $resultValue);
@@ -149,7 +149,12 @@ try {
 
         if ($deployOn29OrHigher) {
             processDeployResultsForApiVersion29AndHigher($asyncResults);
+
+            $results_extra_params= array();
+            $results_extra_params['success'] = $asyncResults->success;
+
             $results = $asyncResults->details;
+            $results = (object) array_merge($results_extra_params, (array) $results);
         } else {
             if ($isDeployOperation) {
                $results = WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, false, $debugInfo);
