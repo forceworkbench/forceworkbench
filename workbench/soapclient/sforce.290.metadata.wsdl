@@ -34,15 +34,15 @@ Copyright 2006-2013 Salesforce.com, inc. All Rights Reserved
    <xsd:complexType name="DeployResult">
     <xsd:sequence>
      <xsd:element name="checkOnly" type="xsd:boolean"/>
-     <xsd:element name="completedDate" type="xsd:dateTime"/>
+     <xsd:element name="completedDate" minOccurs="0" type="xsd:dateTime"/>
      <xsd:element name="createdDate" type="xsd:dateTime"/>
      <xsd:element name="details" type="tns:DeployDetails"/>
      <xsd:element name="done" type="xsd:boolean"/>
-     <xsd:element name="errorMessage" type="xsd:string"/>
-     <xsd:element name="errorStatusCode" type="xsd:string"/>
+     <xsd:element name="errorMessage" minOccurs="0" type="xsd:string"/>
+     <xsd:element name="errorStatusCode" minOccurs="0" type="tns:StatusCode"/>
      <xsd:element name="id" type="tns:ID"/>
      <xsd:element name="ignoreWarnings" type="xsd:boolean"/>
-     <xsd:element name="lastModifiedDate" type="xsd:dateTime"/>
+     <xsd:element name="lastModifiedDate" minOccurs="0" type="xsd:dateTime"/>
      <xsd:element name="numberComponentErrors" type="xsd:int"/>
      <xsd:element name="numberComponentsDeployed" type="xsd:int"/>
      <xsd:element name="numberComponentsTotal" type="xsd:int"/>
@@ -50,8 +50,8 @@ Copyright 2006-2013 Salesforce.com, inc. All Rights Reserved
      <xsd:element name="numberTestsCompleted" type="xsd:int"/>
      <xsd:element name="numberTestsTotal" type="xsd:int"/>
      <xsd:element name="rollbackOnError" type="xsd:boolean"/>
-     <xsd:element name="startDate" type="xsd:dateTime"/>
-     <xsd:element name="stateDetail" type="xsd:string"/>
+     <xsd:element name="startDate" minOccurs="0" type="xsd:dateTime"/>
+     <xsd:element name="stateDetail" minOccurs="0" type="xsd:string"/>
      <xsd:element name="status" type="tns:DeployStatus"/>
      <xsd:element name="success" type="xsd:boolean"/>
     </xsd:sequence>
@@ -3705,6 +3705,8 @@ Copyright 2006-2013 Salesforce.com, inc. All Rights Reserved
     <xsd:restriction base="xsd:string">
      <xsd:enumeration value="Siteforce"/>
      <xsd:enumeration value="Visualforce"/>
+     <xsd:enumeration value="ChatterNetwork"/>
+     <xsd:enumeration value="ChatterNetworkPicasso"/>
     </xsd:restriction>
    </xsd:simpleType>
    <xsd:complexType name="KnowledgeSettings">
@@ -6512,7 +6514,7 @@ Copyright 2006-2013 Salesforce.com, inc. All Rights Reserved
  <service name="MetadataService">
   <documentation>Manage your Salesforce.com metadata</documentation>
   <port binding="tns:MetadataBinding" name="Metadata">
-   <soap:address location="http://localhost:8080/services/Soap/m/29.0"/>
+   <soap:address location="https://login.salesforce.com/services/Soap/m/29.0"/>
   </port>
  </service>
 </definitions>
