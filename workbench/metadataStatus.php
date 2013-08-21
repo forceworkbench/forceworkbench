@@ -122,6 +122,7 @@ try {
         $results = array();
 
         if (isset($asyncResults->details)) {
+            processDeployResultsForApiVersion29AndHigher($asyncResults);
             if (isset($asyncResults->details->componentFailures)) {
                 $hasInProgressDetailsToPrint = true;
                 $results['componentFailures'] = $asyncResults->details->componentFailures;
@@ -147,11 +148,16 @@ try {
         print "<p>&nbsp;</p><h3>Results</h3>";
 
         if ($deployOn29OrHigher) {
+            processDeployResultsForApiVersion29AndHigher($asyncResults);
             $results = $asyncResults->details;
         } else {
-            $results = $isDeployOperation
-                    ? WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, false, $debugInfo)
-                    : WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
+            if ($isDeployOperation) {
+               $results = WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, false, $debugInfo);
+               processDeployResultsForApiVersion28AndLower($results);
+            }
+            else {
+                $results = WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
+            }
         }
 
         $zipLink = null;
@@ -220,4 +226,53 @@ function printStatusCell($resultName, $resultValue) {
     }
     print "</td>";
 }
+
+function processDeployResultsForApiVersion29AndHigher($deployResults) {
+    if (!isset($deployResults->details)) return;
+
+    if (isset($deployResults->details->componentFailures)) {
+       if (!is_array($deployResults->details->componentFailures)) {
+           $deployResults->details->componentFailures = array($deployResults->details->componentFailures);
+       }
+    }
+
+    if (isset($deployResults->details->componentSuccesses)) {
+       if (!is_array($deployResults->details->componentSuccesses)) {
+           $deployResults->details->componentSuccesses = array($deployResults->details->componentSuccesses);
+       }
+    }
+
+    if (isset($deployResults->details->runTestResult)) {
+        $runTestResult = $deployResults->details->runTestResult;
+        processRunTestResult($runTestResult);
+    }
+}
+
+function processDeployResultsForApiVersion28AndLower($deployResults) {
+
+    if (isset($deployResults->messages)) {
+       if (!is_array($deployResults->messages)) {
+           $deployResults->messages = array($deployResults->messages);
+       }
+    }
+
+    if (isset($deployResults->runTestResult)) {
+        $runTestResult = $deployResults->runTestResult;
+        processRunTestResult($runTestResult);
+    }
+}
+
+function processRunTestResult($runTestResult) {
+    if (isset($runTestResult->failures)) {
+        if (!is_array($runTestResult->failures)) {
+            $runTestResult->failures = array($runTestResult->failures);
+        }
+    }
+    if (isset($runTestResult->successes)) {
+        if (!is_array($runTestResult->successes)) {
+            $runTestResult->successes = array($runTestResult->successes);
+        }
+    }
+}
+
 ?>
