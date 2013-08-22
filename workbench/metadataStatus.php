@@ -74,17 +74,29 @@ try {
 
     if ($deployOn29OrHigher) {
         $orderedAsyncResults = array(
-            "id"=>null, "done"=>null, 
-            "status"=>null, "checkOnly"=>null, 
-            "rollbackOnError"=>null, "ignoreWarnings"=>null,
-            "numberComponentErrors"=>null, "numberTestErrors"=>null,
-            "numberComponentsDeployed"=>null,"numberTestsCompleted"=>null,
-            "numberComponentsTotal"=>null, "numberTestsTotal"=>null,
-            "createdDate"=>null, "startDate"=>null,
-            "lastModifiedDate"=>null, "completedDate"=>null
+            "id" => null,
+            "done" => null,
+            "status" => null,
+            "checkOnly" => null,
+            "rollbackOnError" => null,
+            "ignoreWarnings" => null,
+            "numberComponentErrors" => null,
+            "numberTestErrors" => null,
+            "numberComponentsDeployed" => null,
+            "numberTestsCompleted" => null,
+            "numberComponentsTotal" => null,
+            "numberTestsTotal" => null,
+            "createdDate" => null,
+            "startDate" => null,
+            "lastModifiedDate" => null,
+            "completedDate" => null
         );
     } else {
-        $orderedAsyncResults = array("id"=>null,"done"=>null,"state"=>null);
+        $orderedAsyncResults = array(
+            "id" => null,
+            "done" => null,
+            "state" => null
+        );
     }
     foreach ($asyncResults as $resultName => $resultValue) {
         $orderedAsyncResults[$resultName] = $resultValue;
