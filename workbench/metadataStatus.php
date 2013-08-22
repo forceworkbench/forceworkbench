@@ -35,13 +35,13 @@ if (isset($_GET['op'])) {
 if (!isset($asyncProcessId) || (!$isDeployOperation && !$isRetrieveOperation)) {
     require_once 'header.php';
     print "<p/>";
-    displayInfo("Parameters 'asyncProcessId' and 'op' must be specified.",false,false);
+    displayInfo("Specify process details",false,false);
     print     "<p/>" .
             "<form action='' method='GET'>" .
             "<table><tr><td>AsyncProcessId:</td>" .
             "<td><input type='text' name='asyncProcessId'" . "value='" . $asyncProcessId . "'/></td></tr>" .
             "<tr><td>Async Operation:</td>" .  
-            "<td><input type='radio' name='op' value='D'" .  ($isDeployOperation ? "checked='checked'":"") . ">Deploy<input type='radio' name='op' value='R'" .  ($isRetrieveOperation ? "checked='checked'":"") . ">Retrieve</td></tr>" .  
+            "<td><input type='radio' name='op' value='D'" .  ($isDeployOperation ? "checked='checked'":"") . ">Deploy <input type='radio' name='op' value='R'" .  ($isRetrieveOperation ? "checked='checked'":"") . ">Retrieve</td></tr>" .
             "<tr><td>&nbsp;</td><td>&nbsp;</td></tr>".
             "<tr><td><input type='submit' value='Get Status'/></td><td>&nbsp;</td></tr></table>".
             "</form>";
