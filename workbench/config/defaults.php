@@ -236,11 +236,13 @@ $config["header_LoginOptions"] = array(
             "na13" => array("NA13","a"),
             "na14" => array("NA14","d"),
             "na15" => array("NA15","i"),
+            "na16" => array("NA15","j"),
             "ap" => array("AP0 (ap)","1"),
             "ap1" => array("AP1","9"),
             "emea" => array("EU0 (emea)","2"),
             "eu1" => array("EU1","D"),
             "eu2" => array("EU2","b"),
+            "eu3" => array("EU3","w"),
             "tapp0" => array("Sandbox: CS0 (tapp0)","T"),
             "cs1" => array("Sandbox: CS1","S"),
             "cs2" => array("Sandbox: CS2","R"),
@@ -265,6 +267,7 @@ $config["header_LoginOptions"] = array(
     );
 
     $GLOBALS['API_VERSIONS'] = array(
+        "29.0" => "29.0",
         "28.0" => "28.0",
         "27.0" => "27.0",
         "26.0" => "26.0",
@@ -285,8 +288,8 @@ $config["header_LoginOptions"] = array(
         "11.1" => "11.1",
         "11.0" => "11.0",
         "10.0" => "10.0",
-        "9.0" => "9.0",
-        "8.0" => "8.0"
+        "9.0"  => "9.0",
+        "8.0"  => "8.0"
     );
 
     $config["defaultApiVersion"]  = array(
