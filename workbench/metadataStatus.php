@@ -56,11 +56,8 @@ print "<p class='instructions'>A Metadata API operation has been performed, whic
 require_once 'soapclient/SforceMetadataClient.php';
 try {
 
-    if ($isDeployOperation && WorkbenchContext::get()->isApiVersionAtLeast(29.0)) {
-        $deployOn29OrHigher = true;  
-    } else {
-        $deployOn29OrHigher = false;  
-    }
+    $deployOn29OrHigher = $isDeployOperation && WorkbenchContext::get()->isApiVersionAtLeast(29.0);
+
     if ($deployOn29OrHigher) {
         $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, true);
     } else {
