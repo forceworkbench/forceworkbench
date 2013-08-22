@@ -10,21 +10,29 @@ if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
 if (isset($_GET['asyncProcessId'])) {
     $asyncProcessId = htmlspecialchars($_GET['asyncProcessId']);
 }
-else {
-    $asyncProcessId = "";
+
+if (isset($asyncProcessId) && isset($_GET['downloadZip'])) {
+    if (!isset($_SESSION['retrievedZips'][$asyncProcessId])) {
+        displayError("No zip file found for async process id '$asyncProcessId'. Note, retrieve results are deleted after first download or navigating away from this page.", true, true);
+    }
+
+    header("Content-Type: application/zip");
+    header("Content-Disposition: attachment; filename=retrieve_$asyncProcessId.zip");
+    print $_SESSION['retrievedZips'][$asyncProcessId];
+    unset($_SESSION['retrievedZips'][$asyncProcessId]);
+    exit;
 }
+
+$isDeployOperation = false;
+$isRetrieveOperation = false;
 
 if (isset($_GET['op'])) {
     $operation = htmlspecialchars($_GET['op']);
     $isDeployOperation = ($operation == 'D');
     $isRetrieveOperation = ($operation == 'R');
 }
-else {
-    $isDeployOperation = false;
-    $isRetrieveOperation = false;
-}
 
-if ($asyncProcessId == "" || (!$isDeployOperation && !$isRetrieveOperation)) {
+if (!isset($asyncProcessId) || (!$isDeployOperation && !$isRetrieveOperation)) {
     require_once 'header.php';
     print "<p/>";
     displayInfo("Parameters 'asyncProcessId' and 'op' must be specified.",false,false);
@@ -38,18 +46,6 @@ if ($asyncProcessId == "" || (!$isDeployOperation && !$isRetrieveOperation)) {
             "<tr><td><input type='submit' value='Get Status'/></td><td>&nbsp;</td></tr></table>".
             "</form>";
     include_once 'footer.php';
-    exit;
-}
-
-if (isset($_GET['downloadZip'])) {
-    if (!isset($_SESSION['retrievedZips'][$asyncProcessId])) {
-        displayError("No zip file found for async process id '$asyncProcessId'. Note, retrieve results are deleted after first download or navigating away from this page.", true, true);
-    }
-
-    header("Content-Type: application/zip");
-    header("Content-Disposition: attachment; filename=retrieve_$asyncProcessId.zip");
-    print $_SESSION['retrievedZips'][$asyncProcessId];
-    unset($_SESSION['retrievedZips'][$asyncProcessId]);
     exit;
 }
 
