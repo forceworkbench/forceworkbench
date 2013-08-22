@@ -121,8 +121,8 @@ try {
     }
     print "</table>\n";
 
-    if (deployOn29OrHigher && ! $asyncResults->done && $asyncResults->status == 'InProgress') {
-        print "<p>&nbsp;</p><h3>Failures <img src='" . getPathToStaticResource('/images/wait16trans.gif') . " align='absmiddle'/> </h3>";
+    if ($deployOn29OrHigher && !$asyncResults->done && $asyncResults->status == 'InProgress') {
+        print "<p>&nbsp;</p><h3>Results <img src='" . getPathToStaticResource('/images/wait16trans.gif') . " align='absmiddle'/> </h3>";
         $hasInProgressDetailsToPrint = false;
         $results = array();
 
@@ -138,16 +138,13 @@ try {
             }
         }
         if ($hasInProgressDetailsToPrint) {
-	    $processedResult = ExpandableTree::processResults($results);
+            $processedResult = ExpandableTree::processResults($results);
 
             $tree = new ExpandableTree("metadataInProgressDetailsTree", $processedResult);
-	    $tree->setForceCollapse(false);
-	    $tree->setContainsIds(true);
-	    $tree->setContainsDates(true);
-	    $tree->printTree();
-        }
-        else {
-            print "<p>None</p>";
+            $tree->setForceCollapse(false);
+            $tree->setContainsIds(true);
+            $tree->setContainsDates(true);
+            $tree->printTree();
         }
     } else if ($asyncResults->done) {
         print "<p>&nbsp;</p><h3>Results</h3>";
