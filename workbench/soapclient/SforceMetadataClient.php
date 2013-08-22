@@ -70,9 +70,12 @@ class SforceMetadataClient extends SoapBaseClient {
         }
     }
 
-    public function checkDeployStatus($asyncProcessId,&$outputHeaders) {
+    public function checkDeployStatus($asyncProcessId,$includeDetails,&$outputHeaders) {
         $request = new stdClass();
         $request->asyncProcessId = $asyncProcessId;
+        if (isset($includeDetails)) {
+            $request->includeDetails = $includeDetails;
+        } 
 
         $response = $this->sforce->__soapCall("checkDeployStatus",array($request),null,null,$outputHeaders);
 

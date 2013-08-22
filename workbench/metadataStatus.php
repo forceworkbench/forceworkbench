@@ -7,20 +7,39 @@ if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
     exit;
 }
 
-if (!isset($_GET['asyncProcessId'])) {
+if (isset($_GET['asyncProcessId'])) {
+    $asyncProcessId = htmlspecialchars($_GET['asyncProcessId']);
+}
+else {
+    $asyncProcessId = "";
+}
+
+if (isset($_GET['op'])) {
+    $operation = htmlspecialchars($_GET['op']);
+    $isDeployOperation = ($operation == 'D');
+    $isRetrieveOperation = ($operation == 'R');
+}
+else {
+    $isDeployOperation = false;
+    $isRetrieveOperation = false;
+}
+
+if ($asyncProcessId == "" || (!$isDeployOperation && !$isRetrieveOperation)) {
     require_once 'header.php';
     print "<p/>";
-    displayInfo("Parameter 'asyncProcessId' must be specified.",false,false);
+    displayInfo("Parameters 'asyncProcessId' and 'op' must be specified.",false,false);
     print     "<p/>" .
             "<form action='' method='GET'>" .
-            "Async Process Id: <input type='text' name='asyncProcessId'/> &nbsp;" .  
-            "<input type='submit' value='Get Status'/>".
+            "<table><tr><td>AsyncProcessId:</td>" .
+            "<td><input type='text' name='asyncProcessId'" . "value='" . $asyncProcessId . "'/></td></tr>" .
+            "<tr><td>Async Operation:</td>" .  
+            "<td><input type='radio' name='op' value='D'" .  ($isDeployOperation ? "checked='checked'":"") . ">Deploy<input type='radio' name='op' value='R'" .  ($isRetrieveOperation ? "checked='checked'":"") . ">Retrieve</td></tr>" .  
+            "<tr><td>&nbsp;</td><td>&nbsp;</td></tr>".
+            "<tr><td><input type='submit' value='Get Status'/></td><td>&nbsp;</td></tr></table>".
             "</form>";
     include_once 'footer.php';
     exit;
 }
-
-$asyncProcessId = htmlspecialchars($_GET['asyncProcessId']);
 
 if (isset($_GET['downloadZip'])) {
     if (!isset($_SESSION['retrievedZips'][$asyncProcessId])) {
@@ -40,7 +59,17 @@ print "<p class='instructions'>A Metadata API operation has been performed, whic
 
 require_once 'soapclient/SforceMetadataClient.php';
 try {
-    $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkStatus($asyncProcessId);
+
+    if ($isDeployOperation && WorkbenchContext::get()->isApiVersionAtLeast(29.0)) {
+        $deployOn29OrHigher = true;  
+    } else {
+        $deployOn29OrHigher = false;  
+    }
+    if ($deployOn29OrHigher) {
+        $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, true);
+    } else {
+        $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkStatus($asyncProcessId);
+    }
 
     if (!isset($asyncResults)) {
         displayError("No results returned for '$asyncProcessId'", false, true);
@@ -50,7 +79,20 @@ try {
         printAsyncRefreshBlock();
     }
 
-    $orderedAsyncResults = array("id"=>null,"done"=>null,"state"=>null);
+    if ($deployOn29OrHigher) {
+        $orderedAsyncResults = array(
+            "id"=>null, "done"=>null, 
+            "status"=>null, "checkOnly"=>null, 
+            "rollbackOnError"=>null, "ignoreWarnings"=>null,
+            "numberComponentErrors"=>null, "numberTestErrors"=>null,
+            "numberComponentsDeployed"=>null,"numberTestsCompleted"=>null,
+            "numberComponentsTotal"=>null, "numberTestsTotal"=>null,
+            "createdDate"=>null, "startDate"=>null,
+            "lastModifiedDate"=>null, "completedDate"=>null
+        );
+    } else {
+        $orderedAsyncResults = array("id"=>null,"done"=>null,"state"=>null);
+    }
     foreach ($asyncResults as $resultName => $resultValue) {
         $orderedAsyncResults[$resultName] = $resultValue;
     }
@@ -59,6 +101,8 @@ try {
     print "<table class='lightlyBoxed' cellpadding='5' width='100%'>\n";
     $rowNum = 0;
     foreach ($orderedAsyncResults as $resultName => $resultValue) {
+        // Details and success flag will be displayed in results section, skip for now.
+        if ($resultName == 'details' || $resultName == 'success') continue;
         if (++$rowNum % 2) {
             print "<tr>";
             printStatusCell($resultName, $resultValue);
@@ -72,19 +116,54 @@ try {
     }
     print "</table>\n";
 
-    if ($asyncResults->done) {
+    if (deployOn29OrHigher && ! $asyncResults->done && $asyncResults->status == 'InProgress') {
+        print "<p>&nbsp;</p><h3>Failures <img src='" . getPathToStaticResource('/images/wait16trans.gif') . " align='absmiddle'/> </h3>";
+        $hasInProgressDetailsToPrint = false;
+        $results = array();
+
+        if (isset($asyncResults->details)) {
+            processDeployResultsForApiVersion29AndHigher($asyncResults);
+            if (isset($asyncResults->details->componentFailures)) {
+                $hasInProgressDetailsToPrint = true;
+                $results['componentFailures'] = $asyncResults->details->componentFailures;
+            }
+            if (isset($asyncResults->details->runTestResult) && isset($asyncResults->details->runTestResult->failures) ) {
+                $hasInProgressDetailsToPrint = true;
+                $results['testFailures'] = $asyncResults->details->runTestResult->failures;
+            }
+        }
+        if ($hasInProgressDetailsToPrint) {
+	    $processedResult = ExpandableTree::processResults($results);
+
+            $tree = new ExpandableTree("metadataInProgressDetailsTree", $processedResult);
+	    $tree->setForceCollapse(false);
+	    $tree->setContainsIds(true);
+	    $tree->setContainsDates(true);
+	    $tree->printTree();
+        }
+        else {
+            print "<p>None</p>";
+        }
+    } else if ($asyncResults->done) {
         print "<p>&nbsp;</p><h3>Results</h3>";
 
-        //if they don't tell us the operation name, let's guess from the deploy-specific checkOnly flag (doesn't work for all api versions).
-        $operation = isset($_REQUEST['op'])
-                        ? htmlspecialchars($_REQUEST['op'])
-                        : (isset($asyncResults->checkOnly)
-                            ? "D"
-                            : "R");
+        if ($deployOn29OrHigher) {
+            processDeployResultsForApiVersion29AndHigher($asyncResults);
 
-        $results = $operation == "D"
-                    ? WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, $debugInfo)
-                    : WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
+            $results_extra_params= array();
+            $results_extra_params['success'] = $asyncResults->success;
+
+            $results = $asyncResults->details;
+            $results = (object) array_merge($results_extra_params, (array) $results);
+        } else {
+            if ($isDeployOperation) {
+               $results = WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, false, $debugInfo);
+               processDeployResultsForApiVersion28AndLower($results);
+            }
+            else {
+                $results = WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
+            }
+        }
 
         $zipLink = null;
         if (isset($results->zipFile) || isset($results->retrieveResult->zipFile) ) {
@@ -104,7 +183,9 @@ try {
                        "</a></p>";
         }
 
-        $tree = new ExpandableTree("metadataStatusResultsTree", ExpandableTree::processResults($results));
+        
+        $processedResult = ExpandableTree::processResults($results);
+        $tree = new ExpandableTree("metadataStatusResultsTree", $processedResult);
         $tree->setForceCollapse(true);
         $tree->setAdditionalMenus($zipLink);
         $tree->setContainsIds(true);
@@ -117,7 +198,7 @@ try {
         }
 
         // if metadata changes were deployed, clear the cache because describe results will probably be different
-        if ($operation == "D") {
+        if ($isDeployOperation) {
             WorkbenchContext::get()->clearCache();
         }
     }
@@ -150,4 +231,53 @@ function printStatusCell($resultName, $resultValue) {
     }
     print "</td>";
 }
+
+function processDeployResultsForApiVersion29AndHigher($deployResults) {
+    if (!isset($deployResults->details)) return;
+
+    if (isset($deployResults->details->componentFailures)) {
+       if (!is_array($deployResults->details->componentFailures)) {
+           $deployResults->details->componentFailures = array($deployResults->details->componentFailures);
+       }
+    }
+
+    if (isset($deployResults->details->componentSuccesses)) {
+       if (!is_array($deployResults->details->componentSuccesses)) {
+           $deployResults->details->componentSuccesses = array($deployResults->details->componentSuccesses);
+       }
+    }
+
+    if (isset($deployResults->details->runTestResult)) {
+        $runTestResult = $deployResults->details->runTestResult;
+        processRunTestResult($runTestResult);
+    }
+}
+
+function processDeployResultsForApiVersion28AndLower($deployResults) {
+
+    if (isset($deployResults->messages)) {
+       if (!is_array($deployResults->messages)) {
+           $deployResults->messages = array($deployResults->messages);
+       }
+    }
+
+    if (isset($deployResults->runTestResult)) {
+        $runTestResult = $deployResults->runTestResult;
+        processRunTestResult($runTestResult);
+    }
+}
+
+function processRunTestResult($runTestResult) {
+    if (isset($runTestResult->failures)) {
+        if (!is_array($runTestResult->failures)) {
+            $runTestResult->failures = array($runTestResult->failures);
+        }
+    }
+    if (isset($runTestResult->successes)) {
+        if (!is_array($runTestResult->successes)) {
+            $runTestResult->successes = array($runTestResult->successes);
+        }
+    }
+}
+
 ?>
