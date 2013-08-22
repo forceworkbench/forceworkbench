@@ -59,7 +59,7 @@ try {
     $deployOn29OrHigher = $isDeployOperation && WorkbenchContext::get()->isApiVersionAtLeast(29.0);
 
     if ($deployOn29OrHigher) {
-        $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, true);
+        $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, true, $debugInfo);
     } else {
         $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkStatus($asyncProcessId);
     }
