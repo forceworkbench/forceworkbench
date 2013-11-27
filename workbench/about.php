@@ -26,10 +26,10 @@ integration within the Salesforce application.</p>
 For support from the open source community, please visit the resources
 below:</p>
 <ul>
-    <li><a href="http://wiki.apexdevnet.com/index.php/Workbench"
+    <li><a href="http://wiki.developerforce.com/page/Workbench"
         target="_blank">Main Page</a></li>
 
-    <li><a href="http://wiki.apexdevnet.com/index.php/Workbench#FAQ"
+    <li><a href="http://wiki.developerforce.com/page/Workbench#FAQ"
         target="_blank">FAQ</a></li>
 
     <li><a href="http://groups.google.com/group/forceworkbench"

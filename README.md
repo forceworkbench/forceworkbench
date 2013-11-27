@@ -29,7 +29,7 @@ Please note that the Workbench is NOT a supported product of or supported by sal
 
 Learning more about Workbench
 -----------------------------
- - [Wiki](http://wiki.apexdevnet.com/index.php/Workbench)
+ - [Wiki](http://wiki.developerforce.com/page/Workbench)
  - [FAQs](http://wiki.developerforce.com/page/Workbench#FAQ)
  - [Video demo](http://youtu.be/ThAxdDy4iMI)
  - [Database.com Workbook](http://www.salesforce.com/us/developer/docs/workbook_database/index.htm)

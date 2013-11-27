@@ -8,29 +8,29 @@ For support from the open source community, please visit the resources
 below:
 
 <ul>
-    <li><a href="http://wiki.apexdevnet.com/index.php/Workbench#FAQ"
+    <li><a href="http://wiki.developerforce.com/page/Workbench#FAQ"
         target="help">FAQs</a>
     <ul>
         <li><a
-            href="http://wiki.apexdevnet.com/index.php/Workbench#General"
+            href="http://wiki.developerforce.com/page/Workbench#General"
             target="help">General</a></li>
         <li><a
-            href="http://wiki.apexdevnet.com/index.php/Workbench#Login"
+            href="http://wiki.developerforce.com/page/Workbench#Login"
             target="help">Login</a></li>
         <li><a
-            href="http://wiki.apexdevnet.com/index.php/Workbench#Data_Management"
+            href="http://wiki.developerforce.com/page/Workbench#Data_Management"
             target="help">Data Management</a></li>
         <li><a
-            href="http://wiki.apexdevnet.com/index.php/Workbench#Query_.26_Search"
+            href="http://wiki.developerforce.com/page/Workbench#Query_.26_Search"
             target="help">Query &amp; Search</a></li>
         <li><a
-            href="http://wiki.apexdevnet.com/index.php/Workbench#Metadata"
+            href="http://wiki.developerforce.com/page/Workbench#Metadata"
             target="help">Metadata</a></li>
         <li><a
-            href="http://wiki.apexdevnet.com/index.php/Workbench#Utilities"
+            href="http://wiki.developerforce.com/page/Workbench#Utilities"
             target="help">Utilities</a></li>
         <li><a
-            href="http://wiki.apexdevnet.com/index.php/Workbench#Settings"
+            href="http://wiki.developerforce.com/page/Workbench#Settings"
             target="help">Settings</a></li>
     </ul>
     </li>
