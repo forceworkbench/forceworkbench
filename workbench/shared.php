@@ -38,9 +38,7 @@ function workbenchLog($logLevel, $type, $message = "") {
     if (is_array($message)) {
         $as_str = '';
         foreach ($message as $k => $v) {
-            if (strpos($k, 'measure.') === 0) {
-                $k = WorkbenchConfig::get()->value("logPrefix") . '.' . $k;
-            }
+            $k = preg_replace('/^(measure\.)(.*$)/', '$1' . WorkbenchConfig::get()->value("logPrefix") . '.$2', $k);
             $as_str .= " $k=$v";
         }
         $message = $as_str;
