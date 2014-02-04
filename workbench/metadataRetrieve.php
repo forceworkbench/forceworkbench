@@ -129,17 +129,21 @@ include_once 'footer.php';
 
 function parseUnpackagedManifest($xmlFile) {
     libxml_use_internal_errors(true);
-    $packageXml = simplexml_load_file($xmlFile);
+    libxml_disable_entity_loader(true);
+    $xmlString = file_get_contents($xmlFile);
+    $packageXml = simplexml_load_string($xmlString);
     if (!isset($packageXml) || !$packageXml) {
         $xmlErrors = array();
-        foreach(libxml_get_errors() as $xmlError) {
-            $xmlErrors[] = "$xmlError->message [Line $xmlError->line : Column: $xmlError->column]";
-        }
+            foreach(libxml_get_errors() as $xmlError) {
+                $msg = preg_replace('!"/tmp/php.*"!', "", $xmlError->message);
+                $xmlErrors[] = "$msg [Line $xmlError->line : Column: $xmlError->column]";
+            }
         displayError($xmlErrors, true, true);
         libxml_clear_errors();
         exit;
     }
     libxml_use_internal_errors(false);
+    libxml_disable_entity_loader(false);
 
     $unpackaged = new Package();
 
