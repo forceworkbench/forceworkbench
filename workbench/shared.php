@@ -39,7 +39,7 @@ function workbenchLog($logLevel, $type, $message = "") {
         $as_str = '';
         foreach ($message as $k => $v) {
             if (strpos($k, 'measure.') === 0) {
-                $k = 'forceworkbench.' . $k;
+                $k = WorkbenchConfig::get()->value("logPrefix") . '.' . $k;
             }
             $as_str .= " $k=$v";
         }
@@ -77,19 +77,19 @@ function workbenchLog($logLevel, $type, $message = "") {
 }
 
 function _handle_logs_syslog($logLevel, $msg) {
-    openlog("forceworkbench", LOG_ODELAY, WorkbenchConfig::get()->value("syslogFacility"));
+    openlog(WorkbenchConfig::get()->value("logPrefix"), LOG_ODELAY, WorkbenchConfig::get()->value("syslogFacility"));
     syslog($logLevel, $msg);
     closelog();
 }
 
 function _handle_logs_file($logLevel, $msg) {
     $logFile = fopen(WorkbenchConfig::get()->value("logFile"), 'a') or die("can't open log file");
-    fwrite($logFile, "forceworkbench $msg\n");
+    fwrite($logFile, WorkbenchConfig::get()->value("logPrefix") . " $msg\n");
     fclose($logFile);
 }
 
 function _handle_logs_stdout($logLevel, $msg) {
-    echo "forceworkbench $msg\n";
+    echo WorkbenchConfig::get()->value("logPrefix") . " $msg\n";
 }
 
 function logLevelToStr($logLevel) {

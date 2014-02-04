@@ -159,6 +159,14 @@ $config["header_General"] = array(
         "dataType" => "boolean"
     );
 
+    $config["logPrefix"] = array(
+        "label" => "Logging Prefix",
+        "description" => "String to append to logs",
+        "default" => "forceworkbench",
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
     $config["logHandler"] = array(
         "label" => "Logging Handle",
         "description" => "Log handler to which to log. Valid values are 'syslog' or 'file'",
