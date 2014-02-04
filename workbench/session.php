@@ -11,14 +11,10 @@ if (!ini_get("date.timezone")) {
     date_default_timezone_set('UTC');
 }
 
-$logTail = '';
+$logMeasures = array();
 
 if (isset($_SERVER['HTTP_X_REQUEST_START'])) {
-    $logTail .= "measure.request.wait=" . (round(microtime(true) * 1000) - $_SERVER['HTTP_X_REQUEST_START'])  . 'ms ';
-}
-
-if (isset($_SERVER['HTTP_X_HEROKU_DYNOS_IN_USE'])) {
-    $logTail .= "measure.dynos=" . $_SERVER['HTTP_X_HEROKU_DYNOS_IN_USE'] . 'dynos ';
+    $logMeasures["measure.request.wait"] = (round(microtime(true) * 1000) - $_SERVER['HTTP_X_REQUEST_START'])  . 'ms ';
 }
 
 $sessionStore = WorkbenchConfig::get()->value("sessionStore");
@@ -42,7 +38,7 @@ if (WorkbenchConfig::get()->value("redirectToHTTPS") && !usingSslFromUserToWorkb
     exit;
 }
 
-workbenchLog(LOG_INFO, "U", $logTail);
+workbenchLog(LOG_INFO, "U", $logMeasures);
 
 if (WorkbenchContext::isEstablished()) {
     WorkbenchContext::get()->beginRequestHook();
