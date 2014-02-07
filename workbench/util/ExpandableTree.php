@@ -103,6 +103,7 @@ class ExpandableTree {
         $processed = array();
 
         foreach (array(true, false) as $scalarProcessing) {
+            $fileNameWithCount = array();
             foreach ($raw as $rawKey => $rawValue) {
                 if (is_array($rawValue) || is_object($rawValue)) {
                     if ($scalarProcessing) continue;
@@ -115,11 +116,20 @@ class ExpandableTree {
                     } else if (isset($rawValue->name) && $rawValue->name != "") {
                         $processed[$rawValue->name] = $processedSubResults;
                     } else if (isset($rawValue->fileName) && $rawValue->fileName != "") {
-                        
                         if (isset($rawValue->fullName) && $rawValue->fullName != "" && strpos($rawValue->fileName, $rawValue->fullName) === false) {
                             $processed[$rawValue->fileName . " (" . $rawValue->fullName . ")"] = $processedSubResults;
                         } else {
-                            $processed[$rawValue->fileName] = $processedSubResults;
+                            // We don't have a real identifier for this raw value.  If we have multiple occurrences of the same file name, we want to suffix it with the count so
+                            // $processed does not get overwritten with the new raw value.
+                            if (isset($fileNameWithCount[$rawValue->fileName])) {
+                                $fileNameCount = $fileNameWithCount[$rawValue->fileName] + 1;
+                                $fileNameSuffix = " - " . $fileNameCount;
+                            } else {
+                                $fileNameCount = 1;
+                                $fileNameSuffix = "";
+                            }
+                            $processed[$rawValue->fileName . $fileNameSuffix] = $processedSubResults;
+                            $fileNameWithCount[$rawValue->fileName] = $fileNameCount;
                         } 
                     } else if (isset($rawValue->fullName) && $rawValue->fullName != "") {
                         $processed[$rawValue->fullName] = $processedSubResults;
