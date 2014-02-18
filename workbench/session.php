@@ -80,7 +80,7 @@ $myPage = getMyPage();
 if (!isLoggedIn() && $myPage->requiresSfdcSession) {
     session_unset();
     session_destroy();
-    header('Location: login.php');
+    header('Location: login.php?startUrl=' . urlencode($_SERVER['REQUEST_URI']));
     exit;
 }
 
