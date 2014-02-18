@@ -69,6 +69,10 @@ function workbenchLog($logLevel, $type, $message = "") {
                     "user="    . $userId
               );
 
+    if (isset($_SERVER['HTTP_X_REQUEST_ID'])) {
+        $pieces[] = "request_id=" . $_SERVER['HTTP_X_REQUEST_ID'];
+    }
+
     $pieces[] = $message;
 
     call_user_func('_handle_logs_' . WorkbenchConfig::get()->value("logHandler"), $logLevel, implode(' ', $pieces));

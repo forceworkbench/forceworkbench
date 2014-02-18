@@ -16,6 +16,7 @@ abstract class FutureTask {
 
     function __construct() {
         $this->asyncId = uniqid();
+        $this->requestId = $_SERVER['HTTP_X_REQUEST_ID'];
         $this->connConfig = WorkbenchContext::get()->getConnConfig();
         $this->cookies = $_COOKIE;
     }
@@ -82,6 +83,7 @@ abstract class FutureTask {
         $future = new FutureResult($this->asyncId);
         try {
             WorkbenchConfig::destroy(); // destroy the WorkbenchConfig, if one happens to exist
+            $_SERVER['HTTP_X_REQUEST_ID'] = $this->requestId; // reestablish the original requestId for logging
             $_COOKIE = $this->cookies;  // reestablish the user's cookies so they'll be picked up by new WorkbenchConfig, if required
             WorkbenchContext::establish($this->connConfig);
             WorkbenchContext::get()->agreeToTerms();
@@ -123,6 +125,7 @@ abstract class FutureTask {
             if (!redis()->exists(FUTURE_LOCK . $task->asyncId)) {
                 workbenchLog(LOG_INFO, "FutureTaskGC", array(
                     "async_id" =>  $task->asyncId,
+                    "request_id" =>  $task->requestId, // explicitly log here because not available in context yet
                     "source" => get_class($task),
                     "measure.async.gc.task" => 1 . "task"));
                 throw new TimeoutException();
