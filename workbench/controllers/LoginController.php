@@ -96,7 +96,7 @@ class LoginController {
                 validateCsrfToken();
             }
 
-            $this->oauthProcessLogin($_REQUEST["code"], $state->host, $state->apiVersion);
+            $this->oauthProcessLogin($_REQUEST["code"], $state->host, $state->apiVersion, $state->startUrl);
             return;
         }
 
@@ -120,7 +120,8 @@ class LoginController {
             $state = json_encode(array(
                 "host" => $_POST["oauth_host"],
                 "apiVersion" => $_POST["oauth_apiVersion"],
-                "csrfToken" => getCsrfToken()
+                "csrfToken" => getCsrfToken(),
+                "startUrl" => $this->startUrl
             ));
 
             $this->oauthRedirect($_POST["oauth_host"], $state);
@@ -346,7 +347,7 @@ class LoginController {
         header('Location: ' . $authUrl);
     }
 
-    private function oauthProcessLogin($code, $hostName, $apiVersion) {
+    private function oauthProcessLogin($code, $hostName, $apiVersion, $startUrl) {
         if (!$this->oauthEnabled) {
             throw new Exception("OAuth not enabled");
         }
@@ -422,7 +423,7 @@ class LoginController {
 
         $_POST['termsAccepted'] = 1; // re-apply terms acceptance on oauth redirect
 
-        $this->processLogin(null, null, $serverUrlPrefix . "/services/Soap/u/" . $apiVersion, $accessToken, "select.php"); // TODO: work w/ startUrls
+        $this->processLogin(null, null, $serverUrlPrefix . "/services/Soap/u/" . $apiVersion, $accessToken, $startUrl);
     }
 
     private function oauthBuildRedirectUrl() {
