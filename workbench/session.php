@@ -17,6 +17,10 @@ if (isset($_SERVER['HTTP_X_REQUEST_START'])) {
     $logMeasures["measure.request.wait"] = (round(microtime(true) * 1000) - $_SERVER['HTTP_X_REQUEST_START'])  . 'ms ';
 }
 
+if (isset($_SERVER['HTTP_X_REQUEST_ID'])) {
+    header('X-Request-ID: ' . $_SERVER['HTTP_X_REQUEST_ID']);
+}
+
 $sessionStore = WorkbenchConfig::get()->value("sessionStore");
 // If $sessionStore starts with redis://, convert to format for Redis extension and set as the session save handler
 // IN:  redis://user:pass@host:port/
