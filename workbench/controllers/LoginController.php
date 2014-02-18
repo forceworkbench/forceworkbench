@@ -504,17 +504,6 @@ class LoginController {
         return WorkbenchConfig::get()->valuesToLabels("defaultApiVersion");
     }
 
-    public function getStartUrlSelectOptions() {
-        $urls = array();
-        $urls["select.php"] = "";
-        foreach ($GLOBALS["MENUS"] as $pages) {
-            foreach ($pages as $href => $page) {
-                if ($page->onMenuSelect) $urls[$href] = $page->title;
-            }
-        }
-        return $urls;
-    }
-
     public function getServerIdMap() {
         $serverIdMap = array();
         foreach (WorkbenchConfig::get()->valuesToLabels("defaultInstance") as $subdomain => $info) {

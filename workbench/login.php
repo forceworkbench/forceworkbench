@@ -24,6 +24,7 @@ require_once "header.php";
 <div id="loginBlockContainer">
     <form id="login_form" action="login.php" method="post">
         <?php print getCsrfFormTag(); ?>
+        <input type="hidden" id="startUrl" name="startUrl" value="<?php print $c->getStartUrl(); ?>">
         <div id="login_type_selection" style="text-align: right; <?php if ($c->isOAuthRequired()) { print "display:none;"; } ?>">
             <input type="radio" id="loginType_std" name="loginType" value="std"/>
             <label for="loginType_std">Standard</label>
@@ -101,13 +102,6 @@ require_once "header.php";
         </div>
 
         <div class="loginType_std loginType_oauth loginType_adv">
-            <p style="display: <?php print WorkbenchConfig::get()->value("displayJumpTo") ? "block" : "none"; ?>">
-                <label for="startUrl">Jump to:</label>
-                <select id="startUrl" name="startUrl" style="width: 18em;">
-                    <?php printSelectOptions($c->getStartUrlSelectOptions(), $c->getStartUrl()); ?>
-                </select>
-            </p>
-
             <?php if ($c->getTermsFile()) { ?>
             <div style="margin-left: 95px;">
                 <input type="checkbox" id="termsAccepted" name="termsAccepted"/>
