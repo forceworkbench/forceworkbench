@@ -1,41 +1,41 @@
 <?php
 class QueryRequest {
     //FIELDS
-    private $name             = null;
+    private $name         = null;
 
-    private $exportTo         = "screen";
-    private $queryAction    = "Query";
+    private $exportTo     = "screen";
+    private $queryAction  = "Query";
 
-    private $object            = null;
-    private $fields            = null;
+    private $object       = null;
+    private $fields       = null;
 
-    private $orderByField    = null;
-    private $orderByDir     = "ASC";
-    private $orderByNulls    = "FIRST";
+    private $orderByField = null;
+    private $orderByDir   = "ASC";
+    private $orderByNulls = "FIRST";
 
-    private $limit            = null;
+    private $limit        = null;
 
-    private $matrixRows      = null;
-    private $matrixCols      = null;
+    private $matrixRows   = null;
+    private $matrixCols   = null;
 
-    private $filters        = array();
-    private $numFilters        = null;
+    private $filters      = array();
+    private $numFilters   = null;
 
-    private $soqlQuery        = null;
+    private $soqlQuery    = null;
 
     //CONSTRUCTORS
     public function __construct($source) {
-        if(isset($source['saveQr']))             $this->name          = $source['saveQr'];
-        if(isset($source['QB_object_sel']))     $this->object        = $source['QB_object_sel'];
-        if(isset($source['QB_field_sel']))         $this->fields          = $source['QB_field_sel'];
-        if(isset($source['QB_orderby_field']))     $this->orderByField  = $source['QB_orderby_field'];
-        if(isset($source['QB_orderby_sort']))     $this->orderByDir     = $source['QB_orderby_sort'];
-        if(isset($source['QB_nulls']))             $this->orderByNulls  = $source['QB_nulls'];
-        if(isset($source['QB_limit_txt']))         $this->limit         = $source['QB_limit_txt'];
-        if(isset($source['QB_orderby_field']))     $this->orderByField  = $source['QB_orderby_field'];
-        if(isset($source['matrix_rows']))         $this->matrixRows    = $source['matrix_rows'];
-        if(isset($source['matrix_cols']))         $this->matrixCols    = $source['matrix_cols'];
-        if(isset($source['numFilters']))         $this->numFilters    = $source['numFilters'];
+        if(isset($source['saveQr']))           $this->name         = $source['saveQr'];
+        if(isset($source['QB_object_sel']))    $this->object       = $source['QB_object_sel'];
+        if(isset($source['QB_field_sel']))     $this->fields       = $source['QB_field_sel'];
+        if(isset($source['QB_orderby_field'])) $this->orderByField = $source['QB_orderby_field'];
+        if(isset($source['QB_orderby_sort']))  $this->orderByDir   = $source['QB_orderby_sort'];
+        if(isset($source['QB_nulls']))         $this->orderByNulls = $source['QB_nulls'];
+        if(isset($source['QB_limit_txt']))     $this->limit        = $source['QB_limit_txt'];
+        if(isset($source['QB_orderby_field'])) $this->orderByField = $source['QB_orderby_field'];
+        if(isset($source['matrix_rows']))      $this->matrixRows   = $source['matrix_rows'];
+        if(isset($source['matrix_cols']))      $this->matrixCols   = $source['matrix_cols'];
+        if(isset($source['numFilters']))       $this->numFilters   = $source['numFilters'];
 
         for ($f = 0; $f < $this->numFilters; $f++) {
             if (isset($source["QB_filter_field_$f"]) && isset($source["QB_filter_compOper_$f"]) && isset($source["QB_filter_value_$f"])) {
@@ -53,8 +53,8 @@ class QueryRequest {
             }
         }
 
-        if(isset($source['export_action']))        $this->exportTo         = $source['export_action'];
-        if(isset($source['query_action']))        $this->queryAction     = $source['query_action'];
+        if(isset($source['export_action'])) $this->exportTo    = $source['export_action'];
+        if(isset($source['query_action']))  $this->queryAction = $source['query_action'];
     }
 
     //GETTERS
@@ -129,10 +129,10 @@ class QueryRequest {
 }
 
 class QueryRequestFilter {
-    private $logicOper    = "AND";
-    private $field         = null;
-    private $compOper    = "=";
-    private $value        = null;
+    private $logicOper = "AND";
+    private $field     = null;
+    private $compOper  = "=";
+    private $value     = null;
 
     public function __construct($field, $compOper, $value, $logicOper = "AND") {
         $this->field = $field;
