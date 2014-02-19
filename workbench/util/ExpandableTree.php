@@ -80,8 +80,15 @@ class ExpandableTree {
             }
 
             if (is_array($nodeValue) || is_object($nodeValue)) {
+                if (is_numeric($nodeKey)) {
+                    $nodeKey = $nodeKey + 1;
+                }
                 print "<li>$nodeKey<ul style='display:none;'>\n";
-                $this->printNode($nodeValue, $nodeKey);
+                if (is_array($nodeValue) && count($nodeValue) == 1 && is_array($nodeValue[0])) {
+                    $this->printNode($nodeValue[0], $nodeKey); // flatten single element arrays
+                } else {
+                    $this->printNode($nodeValue, $nodeKey);
+                }
                 print "</ul></li>\n";
             } else {
                 $nodeKey = is_numeric($nodeKey) ? "" : $nodeKey . ": ";
@@ -111,29 +118,28 @@ class ExpandableTree {
                     $subCount = " (" . count($processedSubResults) . ")";
 
                     if (isset($rawValue->name) && isset($rawValue->methodName) ) {
-                        $processed[$rawValue->name . "." . $rawValue->methodName] = $processedSubResults;
+                        $processed[$rawValue->name . "." . $rawValue->methodName][] = $processedSubResults;
                     } else if (isset($rawValue->name) && $rawValue->name != "") {
-                        $processed[$rawValue->name] = $processedSubResults;
+                        $processed[$rawValue->name][] = $processedSubResults;
                     } else if (isset($rawValue->fileName) && $rawValue->fileName != "") {
-                        
                         if (isset($rawValue->fullName) && $rawValue->fullName != "" && strpos($rawValue->fileName, $rawValue->fullName) === false) {
-                            $processed[$rawValue->fileName . " (" . $rawValue->fullName . ")"] = $processedSubResults;
+                            $processed[$rawValue->fileName . " (" . $rawValue->fullName . ")"][] = $processedSubResults;
                         } else {
-                            $processed[$rawValue->fileName] = $processedSubResults;
+                            $processed[$rawValue->fileName][] = $processedSubResults;
                         } 
                     } else if (isset($rawValue->fullName) && $rawValue->fullName != "") {
-                        $processed[$rawValue->fullName] = $processedSubResults;
+                        $processed[$rawValue->fullName][] = $processedSubResults;
                     } else if (isset($rawValue->label) && $rawValue->label != "") {
-                        $processed[$rawValue->label] = $processedSubResults;
+                        $processed[$rawValue->label][] = $processedSubResults;
                     } else if (isset($rawValue->column) && isset($rawValue->line)) {
-                        $processed[$rawValue->column . ":" . $rawValue->line] = $processedSubResults;
-                        krsort($processed);
+                        $processed[$rawValue->column . ":" . $rawValue->line][] = $processedSubResults;
+                        krsort($processed[$rawValue->column . ":" . $rawValue->line]);
                     } else if (isset($rawValue->childSObject) && isset($rawValue->field)) {
-                        $processed[$rawValue->childSObject . "." . $rawValue->field] = $processedSubResults;
+                        $processed[$rawValue->childSObject . "." . $rawValue->field][] = $processedSubResults;
                     } else if ($unCamelCaseKeys) {
-                        $processed[unCamelCase($rawKey) . $subCount] = $processedSubResults;
+                        $processed[unCamelCase($rawKey) . $subCount][] = $processedSubResults;
                     } else {
-                        $processed[$rawKey . $subCount] = $processedSubResults;
+                        $processed[$rawKey . $subCount][] = $processedSubResults;
                     }
                 } else {
                     if ($groupTopLevelScalarsIn != null) {
