@@ -131,7 +131,7 @@ function shareUrl($queryRequest) {
 function displayQueryForm($queryRequest) {
 
     if (isset($_REQUEST['queryShare'])) {
-        addFooterScript("<script>window.prompt('To share this query, copy and paste the URL below. Other users must have access to this object and fields to view results.','" . shareUrl($queryRequest) . "');</script>");
+        addFooterScript("<script type='text/javascript'>window.prompt('To share this query, copy and paste the URL below. Other users must have access to this object and fields to view results.','" . shareUrl($queryRequest) . "');</script>");
     }
 
     registerShortcut("Ctrl+Alt+W",
