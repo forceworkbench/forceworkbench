@@ -10,6 +10,7 @@ $defaultSettings['numFilters'] = 1;
 
 if (isset($_REQUEST['qrz'])) {
     $queryRequest = unserialize(gzuncompress(base64_decode($_REQUEST['qrz'])));
+    $_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
 } else if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     $queryRequest = new QueryRequest($defaultSettings);
     $queryRequest->setObject($_POST['QB_object_sel']);
