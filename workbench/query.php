@@ -8,9 +8,17 @@ require_once 'async/QueryFutureTask.php';
 $defaultSettings['numFilters'] = 1;
 //clear the form if the user changes the object
 
-if (isset($_REQUEST['qrs'])) {
-    $queryRequest = unserialize(base64_decode($_REQUEST['qrs']));
-    $_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
+if (isset($_REQUEST['qrjb'])) {
+    if ($queryRequestJsonString = base64_decode($_REQUEST['qrjb'], true)) {
+        if ($queryRequestJson = json_decode($queryRequestJsonString, true)) {
+            $queryRequest = new QueryRequest($queryRequestJson);
+            $_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
+        } else {
+            throw new WorkbenchHandledException("Could not parse shared query");
+        }
+    } else {
+        throw new WorkbenchHandledException("Could not decode shared query");
+    }
 } else if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     $queryRequest = new QueryRequest($defaultSettings);
     $queryRequest->setObject($_POST['QB_object_sel']);
@@ -122,8 +130,8 @@ function shareUrl($queryRequest) {
     return "http" . (usingSslFromUserToWorkbench() ? "s" : "") . "://" .
         $_SERVER['HTTP_HOST'] .
         $_SERVER['SCRIPT_NAME'] .
-        '?qrs=' .
-        urlencode(base64_encode(serialize($queryRequest)));
+        '?qrjb=' .
+        urlencode(base64_encode($queryRequest->toJson()));
 }
 
 //Show the main SOQL query form with default query or last submitted query and export action (screen or CSV)
