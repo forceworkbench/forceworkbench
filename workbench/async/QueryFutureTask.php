@@ -48,7 +48,7 @@ class QueryFutureTask extends FutureTask {
         } catch (SoapFault $e) {
             foreach (array("MALFORMED_QUERY", "INVALID_FIELD", "INVALID_TYPE", "INVALID_QUERY_FILTER_OPERATOR", "QUERY_TIMEOUT", "EXCEEDED_ID_LIMIT") as $known) {
                 if (strpos($e->getMessage(), $known) > -1) {
-                    throw new WorkbenchHandledException($e->getMessage(), 0, $e);
+                    throw new WorkbenchHandledException($e->getMessage());
                 }
             }
             throw $e;
