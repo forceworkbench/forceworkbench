@@ -7,7 +7,11 @@ require_once 'async/QueryFutureTask.php';
 
 $defaultSettings['numFilters'] = 1;
 //clear the form if the user changes the object
-if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
+
+if (isset($_REQUEST['qrz'])) {
+    $queryRequest = unserialize(gzuncompress(base64_decode($_REQUEST['qrz'])));
+    $_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
+} else if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     $queryRequest = new QueryRequest($defaultSettings);
     $queryRequest->setObject($_POST['QB_object_sel']);
 } else {
@@ -15,7 +19,7 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     $lastQr = new QueryRequest($_REQUEST);
 
     //save last query. always do this even if named.
-    if ((isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query') || (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' )) {
+    if (isset($_POST['querySubmit']) || isset($_POST['queryShare']) || isset($_POST['doSaveQr'])) {
         $_SESSION['lastQueryRequest'] = $lastQr;
     }
 
@@ -114,10 +118,21 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
     include_once 'footer.php';
 }
 
+function shareUrl($queryRequest) {
+    return "http" . (usingSslFromUserToWorkbench() ? "s" : "") . "://" .
+        $_SERVER['HTTP_HOST'] .
+        $_SERVER['SCRIPT_NAME'] .
+        '?qrz=' .
+        urlencode(base64_encode(gzcompress(serialize($queryRequest), 9)));
+}
 
 //Show the main SOQL query form with default query or last submitted query and export action (screen or CSV)
 
 function displayQueryForm($queryRequest) {
+
+    if (isset($_REQUEST['queryShare'])) {
+        addFooterScript("<script>window.prompt('Copy to clipboard: Ctrl+C, Enter','" . shareUrl($queryRequest) . "');</script>");
+    }
 
     registerShortcut("Ctrl+Alt+W",
         "addFilterRow(document.getElementById('numFilters').value++);".
@@ -453,9 +468,9 @@ QUERY_BUILDER_SCRIPT;
 
 
     if (WorkbenchConfig::get()->value("autoJumpToResults")) {
-        print "<form method='POST' id='query_form' name='query_form' action='#qr'>\n";
+        print "<form method='POST' id='query_form' name='query_form' action='query.php#qr'>\n";
     } else {
-        print "<form method='POST' id='query_form' name='query_form' action=''>\n";
+        print "<form method='POST' id='query_form' name='query_form' action='query.php'>\n";
     }
     print "<input type='hidden' name='justUpdate' value='0' />";
     print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
@@ -599,6 +614,7 @@ QUERY_BUILDER_SCRIPT;
 
 
     print "<tr><td colspan=1><input type='submit' name='querySubmit' class='disableWhileAsyncLoading' value='Query' onclick='return parentChildRelationshipQueryBlocker();' />\n" .
+        "<input type='submit' name='queryShare' value='Share' class='disableWhileAsyncLoading' />\n" .
         "<input type='reset' value='Reset' class='disableWhileAsyncLoading' />\n" .
         "</td>";
 
