@@ -8,8 +8,8 @@ require_once 'async/QueryFutureTask.php';
 $defaultSettings['numFilters'] = 1;
 //clear the form if the user changes the object
 
-if (isset($_REQUEST['qrz'])) {
-    $queryRequest = unserialize(gzuncompress(base64_decode($_REQUEST['qrz'])));
+if (isset($_REQUEST['qrs'])) {
+    $queryRequest = unserialize(base64_decode($_REQUEST['qrs']));
     $_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
 } else if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
     $queryRequest = new QueryRequest($defaultSettings);
@@ -122,8 +122,8 @@ function shareUrl($queryRequest) {
     return "http" . (usingSslFromUserToWorkbench() ? "s" : "") . "://" .
         $_SERVER['HTTP_HOST'] .
         $_SERVER['SCRIPT_NAME'] .
-        '?qrz=' .
-        urlencode(base64_encode(gzcompress(serialize($queryRequest), 9)));
+        '?qrs=' .
+        urlencode(base64_encode(serialize($queryRequest)));
 }
 
 //Show the main SOQL query form with default query or last submitted query and export action (screen or CSV)
