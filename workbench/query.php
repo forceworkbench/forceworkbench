@@ -289,7 +289,7 @@ function displayQueryForm($queryRequest) {
 
     print "<td colspan=4 align='right'>";
     print "&nbsp;&nbsp;" .
-        "<img onmouseover=\"Tip('Where did saved queries go? They have been replaced with bookmarkable and shareable queries! Just bookmark the URL to save or copy and paste to share.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
+        "<img onmouseover=\"Tip('Where did saved queries go? They have been replaced with bookmarkable and shareable queries! Just run a query and bookmark the URL to save or copy and paste to share.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
     print "</td></tr></table><p/>\n";
 
     print "<script>toggleFieldDisabled();toggleMatrixSortSelectors(false);</script>";
