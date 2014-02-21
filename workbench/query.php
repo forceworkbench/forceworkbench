@@ -12,13 +12,6 @@ if (isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
     setcookie($persistedSavedQueryRequestsKey, null, time() - 3600);
 }
 
-function displayErrorBeforeForm($msg) {
-    include_once("header.php");
-    print "<p>";
-    displayError($msg);
-    print "</p>";
-}
-
 $defaultSettings['numFilters'] = 1;
 
 if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
@@ -70,7 +63,7 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
 
     $asyncJob = new QueryFutureTask($queryRequest);
     echo $asyncJob->enqueueOrPerform();
-
+    echo updateUrlScript($queryRequest);
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && strpos($queryRequest->getExportTo(), 'async_') === 0) {
     try {
@@ -336,6 +329,22 @@ function queryAsync($queryRequest) {
 
 
     header("Location: asyncStatus.php?jobId=" . $job->getId());
+}
+
+function displayErrorBeforeForm($msg) {
+    include_once("header.php");
+    print "<p>";
+    displayError($msg);
+    print "</p>";
+}
+
+function updateUrlScript($queryRequest) {
+    return "<script type='text/javascript'>window.history.replaceState({}, document.title, '" . qrjb($queryRequest) . "');</script>";
+}
+
+function qrjb($queryRequest) {
+    return '/query.php?qrjb=' . urlencode(base64_encode($queryRequest->toJson())) .
+        (WorkbenchConfig::get()->value("autoJumpToResults") ? '#qr' : '');
 }
 
 ?>
