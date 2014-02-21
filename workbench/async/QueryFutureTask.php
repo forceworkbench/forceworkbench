@@ -18,6 +18,7 @@ class QueryFutureTask extends FutureTask {
         ob_start();
 
         $queryTimeStart = microtime(true);
+        $this->updateUrl();
         $records = $this->query($this->queryRequest->getSoqlQuery(), $this->queryRequest->getQueryAction(), $this->queryLocator);
         $queryTimeEnd = microtime(true);
         $queryTimeElapsed = $queryTimeEnd - $queryTimeStart;
@@ -26,6 +27,15 @@ class QueryFutureTask extends FutureTask {
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
+    }
+
+    function updateUrl() {
+        print "<script type='text/javascript'>window.history.replaceState({}, document.title, '" . $this->qrjb() . "');</script>";
+    }
+
+    function qrjb() {
+        return '/query.php?qrjb=' . urlencode(base64_encode($this->queryRequest->toJson())) .
+                (WorkbenchConfig::get()->value("autoJumpToResults") ? '#qr' : '');
     }
 
     function query($soqlQuery,$queryAction,$queryLocator = null,$suppressScreenOutput=false) {

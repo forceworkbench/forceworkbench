@@ -5,8 +5,6 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'async/QueryFutureTask.php';
 
-$defaultSettings['numFilters'] = 1;
-
 //clear all saved queries in cookies
 // TODO: remove after next version
 $persistedSavedQueryRequestsKey = "PSQR@";
@@ -15,8 +13,9 @@ if (isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
 }
 
 // build query request
+$defaultSettings['numFilters'] = 1;
+$queryRequest = new QueryRequest($defaultSettings);
 if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
-    $queryRequest = new QueryRequest($defaultSettings);
     $queryRequest->setObject($_POST['QB_object_sel']);
 } else if (isset($_GET['qrjb'])) {
     if ($queryRequestJsonString = base64_decode($_REQUEST['qrjb'], true)) {
@@ -35,7 +34,6 @@ if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
 } else if(isset($_SESSION['lastQueryRequest'])) {
     $queryRequest = $_SESSION['lastQueryRequest'];
 } else {
-    $queryRequest = new QueryRequest($defaultSettings);
     $queryRequest->setObject(WorkbenchContext::get()->getDefaultObject());
 }
 
@@ -93,17 +91,9 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
     include_once 'footer.php';
 }
 
-function qrjb($queryRequest) {
-    return $_SERVER['SCRIPT_NAME'] .
-           '?qrjb=' . urlencode(base64_encode($queryRequest->toJson())) .
-           (WorkbenchConfig::get()->value("autoJumpToResults") ? '#qr' : '');
-}
-
 //Show the main SOQL query form with default query or last submitted query and export action (screen or CSV)
 
 function displayQueryForm($queryRequest) {
-
-    addFooterScript("<script type='text/javascript'>window.history.replaceState({}, document.title, '" . qrjb($queryRequest) . "');</script>");
 
     registerShortcut("Ctrl+Alt+W",
         "addFilterRow(document.getElementById('numFilters').value++);".
