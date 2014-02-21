@@ -12,30 +12,41 @@ if (isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
     setcookie($persistedSavedQueryRequestsKey, null, time() - 3600);
 }
 
-// build query request
+function displayErrorBeforeForm($msg) {
+    include_once("header.php");
+    print "<p>";
+    displayError($msg);
+    print "</p>";
+}
+
 $defaultSettings['numFilters'] = 1;
-$queryRequest = new QueryRequest($defaultSettings);
+
 if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
+    $queryRequest = new QueryRequest($defaultSettings);
     $queryRequest->setObject($_POST['QB_object_sel']);
-} else if (isset($_GET['qrjb'])) {
+} else if (isset($_POST['querySubmit'])) {
+    $queryRequest = new QueryRequest($_REQUEST);
+} else if(isset($_SESSION['lastQueryRequest'])) {
+    $queryRequest = $_SESSION['lastQueryRequest'];
+} else {
+    $queryRequest = new QueryRequest($defaultSettings);
+    $queryRequest->setObject(WorkbenchContext::get()->getDefaultObject());
+}
+
+if (isset($_GET['qrjb'])) {
     if ($queryRequestJsonString = base64_decode($_REQUEST['qrjb'], true)) {
         if ($queryRequestJson = json_decode($queryRequestJsonString, true)) {
             $queryRequest = new QueryRequest($queryRequestJson);
             $_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
         } else {
-            throw new WorkbenchHandledException("Could not parse query request");
+            displayErrorBeforeForm('Could not parse query request');
         }
     } else {
-        throw new WorkbenchHandledException("Could not decode query request");
+        displayErrorBeforeForm('Could not decode query request');
     }
-} else if (isset($_POST['querySubmit'])) {
-    $queryRequest = new QueryRequest($_REQUEST);
-    $_SESSION['lastQueryRequest'] = $queryRequest;
-} else if(isset($_SESSION['lastQueryRequest'])) {
-    $queryRequest = $_SESSION['lastQueryRequest'];
-} else {
-    $queryRequest->setObject(WorkbenchContext::get()->getDefaultObject());
 }
+
+$_SESSION['lastQueryRequest'] = $queryRequest;
 
 //Main form logic: When the user first enters the page, display form defaulted to
 //show the query results with default object selected on a previous page, otherwise
