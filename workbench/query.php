@@ -61,9 +61,9 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
     }
     echo "<p><a name='qr'>&nbsp;</a></p>";
 
+    echo updateUrlScript($queryRequest);
     $asyncJob = new QueryFutureTask($queryRequest);
     echo $asyncJob->enqueueOrPerform();
-    echo updateUrlScript($queryRequest);
     include_once 'footer.php';
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && strpos($queryRequest->getExportTo(), 'async_') === 0) {
     try {
