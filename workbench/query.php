@@ -6,70 +6,37 @@ require_once 'shared.php';
 require_once 'async/QueryFutureTask.php';
 
 $defaultSettings['numFilters'] = 1;
-//clear the form if the user changes the object
 
-if (isset($_REQUEST['qrjb'])) {
+//clear all saved queries in cookies
+// TODO: remove after next version
+$persistedSavedQueryRequestsKey = "PSQR@";
+if (isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
+    setcookie($persistedSavedQueryRequestsKey, null, time() - 3600);
+}
+
+// build query request
+if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
+    $queryRequest = new QueryRequest($defaultSettings);
+    $queryRequest->setObject($_POST['QB_object_sel']);
+} else if (isset($_GET['qrjb'])) {
     if ($queryRequestJsonString = base64_decode($_REQUEST['qrjb'], true)) {
         if ($queryRequestJson = json_decode($queryRequestJsonString, true)) {
             $queryRequest = new QueryRequest($queryRequestJson);
             $_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
         } else {
-            throw new WorkbenchHandledException("Could not parse shared query");
+            throw new WorkbenchHandledException("Could not parse query request");
         }
     } else {
-        throw new WorkbenchHandledException("Could not decode shared query");
+        throw new WorkbenchHandledException("Could not decode query request");
     }
-} else if (isset($_POST['justUpdate']) && $_POST['justUpdate'] == true) {
-    $queryRequest = new QueryRequest($defaultSettings);
-    $queryRequest->setObject($_POST['QB_object_sel']);
+} else if (isset($_POST['querySubmit'])) {
+    $queryRequest = new QueryRequest($_REQUEST);
+    $_SESSION['lastQueryRequest'] = $queryRequest;
+} else if(isset($_SESSION['lastQueryRequest'])) {
+    $queryRequest = $_SESSION['lastQueryRequest'];
 } else {
-    //create a new QueryRequest object to save named and/or last query
-    $lastQr = new QueryRequest($_REQUEST);
-
-    //save last query. always do this even if named.
-    if (isset($_POST['querySubmit']) || isset($_POST['queryShare']) || isset($_POST['doSaveQr'])) {
-        $_SESSION['lastQueryRequest'] = $lastQr;
-    }
-
-    $persistedSavedQueryRequestsKey = "PSQR@";
-    if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == 'USER') {
-        $persistedSavedQueryRequestsKey .= WorkbenchContext::get()->getUserInfo()->userId . "@" . WorkbenchContext::get()->getUserInfo()->organizationId;
-    } else if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == "ORG") {
-        $persistedSavedQueryRequestsKey .= WorkbenchContext::get()->getUserInfo()->organizationId;
-    } else if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == 'ALL') {
-        $persistedSavedQueryRequestsKey .= "ALL";
-    }
-
-    //populate queryRequest for this page view. first see if user wants to retreive a saved query,
-    //then see if there was a last query, else just show a null query with default object.
-    if (isset($_REQUEST['getQr']) && $_REQUEST['getQr'] != "" && isset($_SESSION['savedQueryRequests'][$_REQUEST['getQr']])) {
-        $queryRequest = $_SESSION['savedQueryRequests'][$_REQUEST['getQr']];
-        $_POST['querySubmit'] = 'Query'; //simulate the user clicking 'Query' to run immediately
-    } else if (isset($_SESSION['lastQueryRequest'])) {
-        $queryRequest = $_SESSION['lastQueryRequest'];
-    } else {
-        $queryRequest = new QueryRequest($defaultSettings);
-        $queryRequest->setObject(WorkbenchContext::get()->getDefaultObject());
-        if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE' && !isset($_SESSION['savedQueryRequests']) && isset($_COOKIE[$persistedSavedQueryRequestsKey])) {
-            $_SESSION['savedQueryRequests'] = unserialize($_COOKIE[$persistedSavedQueryRequestsKey]);
-        }
-    }
-
-    //clear  all saved queries in scope if user requests
-    if (isset($_POST['clearAllQr']) && $_POST['clearAllQr'] == 'Clear All') {
-        $_SESSION['savedQueryRequests'] = null;
-        if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
-            setcookie($persistedSavedQueryRequestsKey,null,time()-3600);
-        }
-    }
-
-    //save as named query
-    if (isset($_POST['doSaveQr']) && $_POST['doSaveQr'] == 'Save' && isset($_REQUEST['saveQr']) && strlen($_REQUEST['saveQr']) > 0) {
-        $_SESSION['savedQueryRequests'][htmlspecialchars($_REQUEST['saveQr'],ENT_QUOTES)] = $lastQr;
-        if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
-            setcookie($persistedSavedQueryRequestsKey,serialize($_SESSION['savedQueryRequests']),time()+60*60*24*7);
-        }
-    }
+    $queryRequest = new QueryRequest($defaultSettings);
+    $queryRequest->setObject(WorkbenchContext::get()->getDefaultObject());
 }
 
 //Main form logic: When the user first enters the page, display form defaulted to
@@ -126,21 +93,17 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
     include_once 'footer.php';
 }
 
-function shareUrl($queryRequest) {
-    return "http" . (usingSslFromUserToWorkbench() ? "s" : "") . "://" .
-        $_SERVER['HTTP_HOST'] .
-        $_SERVER['SCRIPT_NAME'] .
-        '?qrjb=' .
-        urlencode(base64_encode($queryRequest->toJson()));
+function qrjb($queryRequest) {
+    return $_SERVER['SCRIPT_NAME'] .
+           '?qrjb=' . urlencode(base64_encode($queryRequest->toJson())) .
+           (WorkbenchConfig::get()->value("autoJumpToResults") ? '#qr' : '');
 }
 
 //Show the main SOQL query form with default query or last submitted query and export action (screen or CSV)
 
 function displayQueryForm($queryRequest) {
 
-    if (isset($_REQUEST['queryShare'])) {
-        addFooterScript("<script type='text/javascript'>window.prompt('To share this query, copy and paste the URL below. Recipient must have access to selected fields to view.','" . shareUrl($queryRequest) . "');</script>");
-    }
+    addFooterScript("<script type='text/javascript'>window.history.replaceState({}, document.title, '" . qrjb($queryRequest) . "');</script>");
 
     registerShortcut("Ctrl+Alt+W",
         "addFilterRow(document.getElementById('numFilters').value++);".
@@ -475,11 +438,7 @@ function toggleMatrixSortSelectors(hasChanged) {
 QUERY_BUILDER_SCRIPT;
 
 
-    if (WorkbenchConfig::get()->value("autoJumpToResults")) {
-        print "<form method='POST' id='query_form' name='query_form' action='query.php#qr'>\n";
-    } else {
-        print "<form method='POST' id='query_form' name='query_form' action='query.php'>\n";
-    }
+    print "<form method='POST' id='query_form' name='query_form' action='query.php'>\n";
     print "<input type='hidden' name='justUpdate' value='0' />";
     print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
     print "<p class='instructions'>Choose the object, fields, and critera to build a SOQL query below:</p>\n";
@@ -512,9 +471,6 @@ QUERY_BUILDER_SCRIPT;
     }
     print "</select></td>\n";
     print "<td valign='top'>";
-
-
-
 
     print "<table border='0' align='right' style='width:100%'>\n";
     print "<tr><td valign='top' colspan=2>View as:<br/>" .
@@ -621,33 +577,11 @@ QUERY_BUILDER_SCRIPT;
         "</td></tr>\n";
 
 
-    print "<tr><td colspan=1><input type='submit' name='querySubmit' class='disableWhileAsyncLoading' value='Query' onclick='return parentChildRelationshipQueryBlocker();' />\n" .
-        "<input type='submit' name='queryShare' value='Share' class='disableWhileAsyncLoading' />\n" .
-        "<input type='reset' value='Reset' class='disableWhileAsyncLoading' />\n" .
-        "</td>";
+    print "<tr><td colspan=1><input type='submit' name='querySubmit' class='disableWhileAsyncLoading' value='Query' onclick='return parentChildRelationshipQueryBlocker();' /></td>";
 
-    //save and retrieve named queries
     print "<td colspan=4 align='right'>";
-
-    print "&nbsp;Run: " .
-        "<select name='getQr' style='width: 10em;' onChange='document.query_form.submit();' class='disableWhileAsyncLoading'>" .
-        "<option value='' selected='selected'></option>";
-    if (isset($_SESSION['savedQueryRequests'])) {
-        foreach ($_SESSION['savedQueryRequests'] as $qrName => $qr) {
-            if($qrName != null) print "<option value='$qrName'>$qrName</option>";
-        }
-    }
-    print "</select>";
-
-
-    print "&nbsp;&nbsp;Save as: <input type='text' id='saveQr' name='saveQr' value='" . htmlspecialchars($queryRequest->getName(),ENT_QUOTES) . "' style='width: 10em;'/>\n";
-
-    print "<input type='submit' name='doSaveQr' value='Save' class='disableWhileAsyncLoading' onclick='return doesQueryHaveName();' />\n";
-    print "<input type='submit' name='clearAllQr' value='Clear All' class='disableWhileAsyncLoading' onclick='return confirm(\"Are you sure you would like to clear all saved queries?\");'/>\n";
-
     print "&nbsp;&nbsp;" .
-        "<img onmouseover=\"Tip('Save a query with a name and run it at a later time during your session. Note, if a query is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
-
+        "<img onmouseover=\"Tip('Where did saved queries go? They have been replaced with bookmarkable and shareable queries! Just bookmark the URL to save or copy and paste to share.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
     print "</td></tr></table><p/>\n";
 
     print "<script>toggleFieldDisabled();toggleMatrixSortSelectors(false);</script>";
