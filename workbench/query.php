@@ -343,7 +343,7 @@ function updateUrlScript($queryRequest) {
 }
 
 function qrjb($queryRequest) {
-    return '/query.php?qrjb=' . urlencode(base64_encode($queryRequest->toJson())) .
+    return  basename($_SERVER['SCRIPT_NAME']) . '?qrjb=' . urlencode(base64_encode($queryRequest->toJson())) .
         (WorkbenchConfig::get()->value("autoJumpToResults") ? '#qr' : '');
 }
 
