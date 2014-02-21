@@ -84,7 +84,7 @@ class ExpandableTree {
                     $nodeKey = $nodeKey + 1;
                 }
                 print "<li>$nodeKey<ul style='display:none;'>\n";
-                if (is_array($nodeValue) && count($nodeValue) == 1 && is_array($nodeValue[0])) {
+                if (is_array($nodeValue) && count($nodeValue) == 1 && isset($nodeValue[0]) && is_array($nodeValue[0])) {
                     $this->printNode($nodeValue[0], $nodeKey); // flatten single element arrays
                 } else {
                     $this->printNode($nodeValue, $nodeKey);
