@@ -36,6 +36,14 @@ class QueryRequest {
         $o['matrix_rows']      = $this->matrixRows   ;
         $o['matrix_cols']      = $this->matrixCols   ;
         $o['numFilters']       = $this->numFilters   ;
+        for ($f = 0; $f < $this->numFilters; $f++) {
+            if ($this->filters[$f]->isPopulated()) {
+                $o["QB_filter_field_$f"]    = $this->filters[$f]->getField();
+                $o["QB_filter_compOper_$f"] = $this->filters[$f]->getCompOper();
+                $o["QB_filter_value_$f"]    = $this->filters[$f]->getValue();
+            }
+
+        }
         $o['soql_query']       = $this->soqlQuery    ;
         return json_encode($o);
     }
@@ -169,5 +177,8 @@ class QueryRequestFilter {
         return $this->value;
     }
 
+    public function isPopulated() {
+        return isset($this->field) && isset($this->compOper) && isset($this->value);
+    }
 }
 ?>
