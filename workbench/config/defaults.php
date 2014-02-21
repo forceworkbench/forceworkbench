@@ -576,20 +576,6 @@ $config["header_queryAndSearchOptions"] = array(
         "maxValue" => 2000
     );
 
-    $config["savedQueriesAndSearchesPersistanceLevel"]  = array(
-        "label" => "Persist Saved Queries and Searches",
-        "description" => "Scope at which to save queries and searches across Workbench sessions. Larger scopes could allow users to see queries and searches saved from other users and organizations on Workbench sessions in this browser.",
-        "default" => "USER",
-        "overrideable" => true,
-        "dataType" => "picklist",
-        "valuesToLabels" => array(
-            "NONE" => "Disabled",
-            "USER" => "User-specific",
-            "ORG" => "Organization-specific",
-            "ALL" => "All"
-        )
-    );
-
     $config["allowParentRelationshipQueries"] = array(
         "label" => "Allows SOQL Parent Relationship Queries",
         "description" => "Allows parent relationship queries in SOQL.",
