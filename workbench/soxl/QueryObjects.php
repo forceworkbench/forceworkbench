@@ -23,34 +23,9 @@ class QueryRequest {
 
     private $soqlQuery    = null;
 
-    public function toJson() {
-        $o = array();
-        $o['saveQr']           = $this->name         ;
-        $o['QB_object_sel']    = $this->object       ;
-        $o['QB_field_sel']     = $this->fields       ;
-        $o['QB_orderby_field'] = $this->orderByField ;
-        $o['QB_orderby_sort']  = $this->orderByDir   ;
-        $o['QB_nulls']         = $this->orderByNulls ;
-        $o['QB_limit_txt']     = $this->limit        ;
-        $o['QB_orderby_field'] = $this->orderByField ;
-        $o['matrix_rows']      = $this->matrixRows   ;
-        $o['matrix_cols']      = $this->matrixCols   ;
-        $o['numFilters']       = $this->numFilters   ;
-        for ($f = 0; $f < $this->numFilters; $f++) {
-            if ($this->filters[$f]->isPopulated()) {
-                $o["QB_filter_field_$f"]    = $this->filters[$f]->getField();
-                $o["QB_filter_compOper_$f"] = $this->filters[$f]->getCompOper();
-                $o["QB_filter_value_$f"]    = $this->filters[$f]->getValue();
-            }
-
-        }
-        $o['soql_query']       = $this->soqlQuery    ;
-        return json_encode($o);
-    }
 
     //CONSTRUCTORS
     public function __construct($source) {
-        if(isset($source['saveQr']))           $this->name         = $source['saveQr'];
         if(isset($source['QB_object_sel']))    $this->object       = $source['QB_object_sel'];
         if(isset($source['QB_field_sel']))     $this->fields       = $source['QB_field_sel'];
         if(isset($source['QB_orderby_field'])) $this->orderByField = $source['QB_orderby_field'];
@@ -80,6 +55,30 @@ class QueryRequest {
 
         if(isset($source['export_action'])) $this->exportTo    = $source['export_action'];
         if(isset($source['query_action']))  $this->queryAction = $source['query_action'];
+    }
+
+    public function toJson() {
+        $o = array();
+        $o['QB_object_sel']    = $this->object       ;
+        $o['QB_field_sel']     = $this->fields       ;
+        $o['QB_orderby_field'] = $this->orderByField ;
+        $o['QB_orderby_sort']  = $this->orderByDir   ;
+        $o['QB_nulls']         = $this->orderByNulls ;
+        $o['QB_limit_txt']     = $this->limit        ;
+        $o['QB_orderby_field'] = $this->orderByField ;
+        $o['matrix_rows']      = $this->matrixRows   ;
+        $o['matrix_cols']      = $this->matrixCols   ;
+        $o['numFilters']       = $this->numFilters   ;
+        for ($f = 0; $f < $this->numFilters; $f++) {
+            if ($this->filters[$f]->isPopulated()) {
+                $o["QB_filter_field_$f"]    = $this->filters[$f]->getField();
+                $o["QB_filter_compOper_$f"] = $this->filters[$f]->getCompOper();
+                $o["QB_filter_value_$f"]    = $this->filters[$f]->getValue();
+            }
+
+        }
+        $o['soql_query']       = $this->soqlQuery    ;
+        return json_encode($o);
     }
 
     //GETTERS

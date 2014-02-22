@@ -3,54 +3,37 @@ require_once 'soxl/SearchObjects.php';
 require_once 'session.php';
 require_once 'shared.php';
 
-$lastSr = new SearchRequest($_REQUEST);
-
-
-//save last search. always do this even if named.
-if ((isset($_POST['searchSubmit']) && $_POST['searchSubmit']=='Search') || (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' )) {
-    $_SESSION['lastSearchRequest'] = $lastSr;
-}
-
+//clear all saved queries in cookies
+// TODO: remove after next version
 $persistedSavedSearchRequestsKey = "PSSR@";
-if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == 'USER') {
-    $persistedSavedSearchRequestsKey .= WorkbenchContext::get()->getUserInfo()->userId . "@" . WorkbenchContext::get()->getUserInfo()->organizationId;
-} else if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == "ORG") {
-    $persistedSavedSearchRequestsKey .= WorkbenchContext::get()->getUserInfo()->organizationId;
-} else if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") == 'ALL') {
-    $persistedSavedSearchRequestsKey .= "ALL";
+if (isset($_COOKIE[$persistedSavedSearchRequestsKey])) {
+    setcookie($persistedSavedSearchRequestsKey, null, time() - 3600);
 }
 
-//populate searchRequest for this page view. first see if user wants to retreive a saved search,
-//then see if there was a last search, else just show a null search with default object.
-if (isset($_REQUEST['getSr']) && $_REQUEST['getSr'] != "" && isset($_SESSION['savedSearchRequests'][$_REQUEST['getSr']])) {
-    $searchRequest = $_SESSION['savedSearchRequests'][$_REQUEST['getSr']];
-    $_POST['searchSubmit'] = 'Search'; //simulate the user clicking 'search' to run immediately
-} else if (isset($_SESSION['lastSearchRequest'])) {
+$defaultSettings['numReturningObjects'] = 1;
+
+if (isset($_POST['searchSubmit'])) {
+    $searchRequest = new SearchRequest($_REQUEST);
+} else if(isset($_SESSION['lastSearchRequest'])) {
     $searchRequest = $_SESSION['lastSearchRequest'];
 } else {
-    $defaultSettings['numReturningObjects'] = 1;
     $searchRequest = new SearchRequest($defaultSettings);
-    if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE' && !isset($_SESSION['savedSearchRequests']) && isset($_COOKIE[$persistedSavedSearchRequestsKey])) {
-        $_SESSION['savedSearchRequests'] = unserialize($_COOKIE[$persistedSavedSearchRequestsKey]);
+}
+
+if (isset($_GET['srjb'])) {
+    if ($searchRequestJsonString = base64_decode($_REQUEST['srjb'], true)) {
+        if ($searchRequestJson = json_decode($searchRequestJsonString, true)) {
+            $searchRequest = new SearchRequest($searchRequestJson);
+            $_POST['searchSubmit'] = 'Search'; //simulate the user clicking 'Search' to run immediately
+        } else {
+            displayErrorBeforeForm('Could not parse search request');
+        }
+    } else {
+        displayErrorBeforeForm('Could not decode search request');
     }
 }
 
-//clear  all saved searches in scope if user requests
-if (isset($_POST['clearAllSr']) && $_POST['clearAllSr'] == 'Clear All') {
-    $_SESSION['savedSearchRequests'] = null;
-    if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
-        setcookie($persistedSavedSearchRequestsKey,null,time()-3600);
-    }
-}
-
-//save as named search
-if (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST['saveSr']) && strlen($_REQUEST['saveSr']) > 0) {
-    $_SESSION['savedSearchRequests'][htmlspecialchars($_REQUEST['saveSr'],ENT_QUOTES)] = $lastSr;
-    if (WorkbenchConfig::get()->value("savedQueriesAndSearchesPersistanceLevel") != 'NONE') {
-        setcookie($persistedSavedSearchRequestsKey,serialize($_SESSION['savedSearchRequests']),time()+60*60*24*7);
-    }
-}
-
+$_SESSION['lastSearchRequest'] = $searchRequest;
 
 //Main form logic: When the user first enters the page, display form defaulted to
 //show the search results with default object selected on a previous page, otherwise
@@ -58,6 +41,7 @@ if (isset($_POST['doSaveSr']) && $_POST['doSaveSr'] == 'Save' && isset($_REQUEST
 if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
     require_once 'header.php';
     displaySearchForm($searchRequest);
+    print updateUrlScript($searchRequest);
     $searchTimeStart = microtime(true);
     $records = search($searchRequest);
     $searchTimeEnd = microtime(true);
@@ -69,8 +53,6 @@ if (isset($_POST['searchSubmit']) && isset($searchRequest)) {
     displaySearchForm($searchRequest);
     include_once 'footer.php';
 }
-
-
 
 //Show the main SOSL search form with default search or last submitted search and export action (screen or CSV)
 
@@ -86,153 +68,10 @@ function displaySearchForm($searchRequest) {
         print "searchable_objects[\"$obj\"]=\"$obj\";\n";
     }
     
-    print <<<SEARCH_BUILDER_SCRIPT
+    print "</script>\n";
+    print "<script src='" . getPathToStaticResource('/script/search.js') . "' type='text/javascript'></script>\n";
 
-function doesSearchHaveName() {
-    var saveSr = document.getElementById('saveSr');
-    if (saveSr.value == null || saveSr.value.length == 0) {
-        alert('Search must have a name to save.');
-        return false;
-    }    
-    
-    return true;
-}
-
-function toggleFieldDisabled() {
-
-    if (document.getElementById('SB_searchString').value) {
-        document.getElementById('SB_limit').disabled = false;
-        document.getElementById('SB_fieldTypeSelect').disabled = false;
-        document.getElementById('SB_objSelect_0').disabled = false;
-        if (document.getElementById('SB_objSelect_0').value) {
-            document.getElementById('SB_objDetail_0').disabled = false;
-        } else {
-            document.getElementById('SB_objDetail_0').disabled = true;
-        }
-    } else {
-        document.getElementById('SB_limit').disabled = true;
-        document.getElementById('SB_fieldTypeSelect').disabled = true;
-        document.getElementById('SB_objSelect_0').disabled = true;
-        document.getElementById('SB_objDetail_0').disabled = true;
-    }
-
-    var allPreviousRowsUsed = true;
-    for (var ro = 1; ro < document.getElementById('numReturningObjects').value; ro++) {
-        var this_SB_objSelect = document.getElementById('SB_objSelect_' + ro);
-        var this_SB_objDetail = document.getElementById('SB_objDetail_' + ro);
-        
-        var last_SB_objSelect = document.getElementById('SB_objSelect_' + (ro - 1));
-        var last_SB_objDetail = document.getElementById('SB_objDetail_' + (ro - 1));
-        
-        if (allPreviousRowsUsed && last_SB_objSelect.value && last_SB_objDetail.value) {
-            this_SB_objSelect.disabled = false;
-            this_SB_objDetail.disabled = false;
-            if (this_SB_objSelect.value) {
-                this_SB_objDetail.disabled = false;
-            } else {
-                this_SB_objDetail.disabled = true;
-            }
-        } else {
-            this_SB_objSelect.disabled = true;
-            this_SB_objDetail.disabled = true;
-            allPreviousRowsUsed = false;
-        }
-    }
-}
-
-function buildSearch() {
-    toggleFieldDisabled();
-    
-    var searchString = 'FIND {' + document.getElementById('SB_searchString').value + '}';
-    
-    var fieldTypeSelect = '';
-    if (document.getElementById('SB_fieldTypeSelect').value && !document.getElementById('SB_fieldTypeSelect').disabled) {
-        fieldTypeSelect = ' IN ' + document.getElementById('SB_fieldTypeSelect').value;
-    }
-    
-    var roString = '';
-    for (var ro = 0; ro < document.getElementById('numReturningObjects').value; ro++) {
-        var SB_objSelect = document.getElementById('SB_objSelect_' + ro);
-        var SB_objDetail = document.getElementById('SB_objDetail_' + ro);
-        
-        if (SB_objSelect.value && !SB_objSelect.disabled) {
-            roString += ro == 0 ? ' RETURNING ' : ', ';
-            
-            roString += SB_objSelect.value;
-
-            if (SB_objDetail.value && !SB_objDetail.disabled) {
-                roString += '(' + SB_objDetail.value + ')';
-            }
-        }
-    }
-    
-    var limit = '';
-    if (document.getElementById('SB_limit').value && !document.getElementById('SB_limit').disabled) {
-        limit = ' LIMIT ' + document.getElementById('SB_limit').value;
-    }
-
-
-    if (searchString) {
-        document.getElementById('sosl_search_textarea').value = searchString + fieldTypeSelect + roString + limit;
-    }
-}
-
-function addReturningObjectRow(rowNum, defaultObject, defaultFields) {
-    //build the row inner html
-    var row = "";
-    
-    row +=     "<select id='SB_objSelect_" + rowNum + "' name='SB_objSelect_" + rowNum + "' style='width: 20em;' onChange='buildSearch();' onkeyup='buildSearch();'>" +
-            "<option value=''></option>";
-    
-    for (var obj in searchable_objects) {
-        row += "<option value='" + obj + "'";
-        if (defaultObject == obj) row += " selected='selected' ";
-        row += "'>" + obj + "</option>";
-    }     
-    
-    defaultFields = defaultFields != null ? defaultFields : "";
-    row +=  "</select>&nbsp;" +
-            "<input type='text' id='SB_objDetail_" + rowNum + "' size='51' name='SB_objDetail_" + rowNum + "' value='" + defaultFields + "' onkeyup='buildSearch();' />";
-            
-
-    //add to the DOM
-    var leadingTxtCell = document.createElement('td');
-    leadingTxtCell.setAttribute('nowrap','true');
-    leadingTxtCell.innerHTML = rowNum == 0 ? "returning object:" : "and object:" ;
-    
-    var bodyCell = document.createElement('td');
-    bodyCell.setAttribute('nowrap','true');
-    bodyCell.innerHTML = row;
-
-    var newPlusCell = document.createElement('td');
-    newPlusCell.setAttribute('id','add_row_plus_cell_' + rowNum);
-    newPlusCell.setAttribute('vAlign','bottom');
-    newPlusCell.innerHTML = "<img id='row_plus_button' src='" + getPathToStaticResource('/images/plus_icon.jpg') + "' onclick='addReturningObjectRow(document.getElementById(\"numReturningObjects\").value++);toggleFieldDisabled();' onmouseover='this.style.cursor=\"pointer\";'  style='padding-top: 4px;'/>";
-    
-    var newRow = document.createElement('tr');
-    newRow.setAttribute('id','returning_objects_row_' + rowNum);
-    newRow.appendChild(leadingTxtCell);
-    newRow.appendChild(bodyCell);
-    newRow.appendChild(newPlusCell);
-    
-    var lastRow = document.getElementById('sosl_search_textarea_row');    
-    lastRow.parentNode.insertBefore(newRow, lastRow);
-    
-    if (rowNum > 0) {
-        var row_plus_button = document.getElementById('row_plus_button');
-        row_plus_button.parentNode.removeChild(row_plus_button);
-    }
-}
-
-</script>
-SEARCH_BUILDER_SCRIPT;
-
-    if (WorkbenchConfig::get()->value("autoJumpToResults")) {
-        print "<form method='POST' name='search_form' action='#sr'>\n";
-    } else {
-        print "<form method='POST' name='search_form' action='#sr'>\n";
-    }
-
+    print "<form method='POST' name='search_form' action='search.php'>\n";
     print "<input type='hidden' id='numReturningObjects' name='numReturningObjects' value='" . count($searchRequest->getReturningObjects()) ."' />";
 
     print "<p class='instructions'>Enter a search string and optionally select the objects and fields to return to build a SOSL search below:</p>\n";
@@ -261,31 +100,14 @@ SEARCH_BUILDER_SCRIPT;
       "</td></tr>";
 
         print "<tr><td><input type='submit' name='searchSubmit' value='Search' />";
-        //print "<input type='reset' value='Reset' />";
 
-        //save and retrieve named searches
-        print "<td align='right' colspan='2'>";
-
-        print "&nbsp;Run: " .
-          "<select name='getSr' style='width: 10em;' onChange='document.search_form.submit();'>" . 
-          "<option value='' selected='selected'></option>";
-        if (isset($_SESSION['savedSearchRequests'])) {
-            foreach ($_SESSION['savedSearchRequests'] as $srName => $sr) {
-                if($srName != null) print "<option value='$srName'>$srName</option>";
-            }
-        }
-        print "</select>";
-
-        print "&nbsp;&nbsp;Save as: <input type='text' id='saveSr' name='saveSr' value='" . htmlspecialchars($searchRequest->getName(),ENT_QUOTES) . "' style='width: 10em;'/>\n";
-
-        print "<input type='submit' name='doSaveSr' value='Save' onclick='return doesSearchHaveName();' />\n";
-        print "<input type='submit' name='clearAllSr' value='Clear All'/>\n";
-
+        print "<td colspan=4 align='right'>";
         print "&nbsp;&nbsp;" .
-          "<img onmouseover=\"Tip('Save a search with a name and run it at a later time during your session. Note, if a search is already saved with the same name, the previous one will be overwritten.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
+            "<img onmouseover=\"Tip('Where did saved searches go? They have been replaced with bookmarkable and shareable searched! Just run a search and bookmark the URL to save or copy and paste to share.')\" align='absmiddle' src='" . getPathToStaticResource('/images/help16.png') . "'/>";
+        print "</td></tr></table><p/>\n";
 
 
-        print "</td></tr></table><p/></form>\n";
+        print "</form>\n";
 
         $rowNum = 0;
         foreach ($searchRequest->getReturningObjects() as $ro) {
@@ -404,6 +226,22 @@ function displaySearchResult($records, $searchTimeElapsed) {
         displayError("Sorry, no records returned.");
     }
     include_once 'footer.php';
+}
+
+function displayErrorBeforeForm($msg) {
+    include_once("header.php");
+    print "<p>";
+    displayError($msg);
+    print "</p>";
+}
+
+function updateUrlScript($searchRequest) {
+    return "<script type='text/javascript'>window.history.replaceState({}, document.title, '" . srjb($searchRequest) . "');</script>";
+}
+
+function srjb($searchRequest) {
+    return  basename($_SERVER['SCRIPT_NAME']) . '?srjb=' . urlencode(base64_encode($searchRequest->toJson())) .
+    (WorkbenchConfig::get()->value("autoJumpToResults") ? '#sr' : '');
 }
 
 ?>
