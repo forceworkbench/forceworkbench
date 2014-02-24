@@ -38,4 +38,4 @@ Learning more about Workbench
 
 A special thank you to [JetBrains](http://www.jetbrains.com) for donating an open source license for [PHP Storm](http://www.jetbrains.com/phpstorm/) used for developing Workbench.
 
-[![Developed with PHP Storm](http://www.jetbrains.com/phpstorm/documentation/phpstorm_banners/phpstorm1/phpstorm120x30_violet.gif)](http://www.jetbrains.com/phpstorm/)
+[![Developed with PhpStorm](http://www.jetbrains.com/phpstorm/documentation/phpstorm_banners/phpstorm1/phpstorm120x30_violet.gif)](http://www.jetbrains.com/phpstorm/)
