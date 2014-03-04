@@ -7,7 +7,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-$GLOBALS["WORKBENCH_VERSION"] = "29.0.4 Beta 5";
+$GLOBALS["WORKBENCH_VERSION"] = "29.0.4 Beta 6";
 
 class Page {
     public $title;

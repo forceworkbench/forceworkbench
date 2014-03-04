@@ -33,6 +33,7 @@ if (isset($_GET['op'])) {
 }
 
 if (!isset($asyncProcessId) || (!$isDeployOperation && !$isRetrieveOperation)) {
+    $asyncProcessId = '';
     require_once 'header.php';
     print "<p/>";
     displayInfo("Specify process details",false,false);
