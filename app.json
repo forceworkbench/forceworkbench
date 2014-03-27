@@ -1,0 +1,8 @@
+{
+    "name": "Workbench",
+    "description": "Web-based suite of tools for administrators and developers to interact with the Force.com APIs",
+    "keywords": ["Salesforce", "Force.com", "API", "PHP"],
+    "env": {
+        "BUILDPACK_URL": "https://github.com/ryanbrainard/heroku-buildpack-phing"
+    }
+}
