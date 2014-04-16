@@ -4,6 +4,8 @@
     "keywords": ["Salesforce", "Force.com", "API", "PHP"],
     "logo": "https://raw.githubusercontent.com/ryanbrainard/forceworkbench/master/assets/logos/blueCube-256x256.png",
     "env": {
-        "BUILDPACK_URL": "https://github.com/ryanbrainard/heroku-buildpack-phing"
+        "BUILDPACK_URL": "https://github.com/ryanbrainard/heroku-buildpack-phing",
+        "forceworkbench__requireSSL__default": "1",
+        "forceworkbench__redirectToHTTPS__default": "1"
     }
 }
