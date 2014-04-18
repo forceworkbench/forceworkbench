@@ -7,5 +7,6 @@
         "BUILDPACK_URL": "https://github.com/ryanbrainard/heroku-buildpack-phing",
         "forceworkbench__requireSSL__default": "1",
         "forceworkbench__redirectToHTTPS__default": "1"
-    }
+    },
+    "addons": ["redistogo"]
 }
