@@ -6,7 +6,7 @@
     "logo": "https://raw.githubusercontent.com/ryanbrainard/forceworkbench/master/assets/logos/blueCube-256x256.png",
     "env": {
         "BUILDPACK_URL": "https://github.com/ryanbrainard/heroku-buildpack-phing",
-        "PATH": "/app/php/bin:/usr/local/bin:/usr/bin:/bin"
+        "PATH": "/app/php/bin:/usr/local/bin:/usr/bin:/bin",
         "MAX_WORKERS": "5",
         "WEB_CONCURRENCY": "4",
         "forceworkbench__requireSSL__default": "true",
