@@ -6,10 +6,17 @@
     "logo": "https://raw.githubusercontent.com/ryanbrainard/forceworkbench/master/assets/logos/blueCube-256x256.png",
     "env": {
         "BUILDPACK_URL": "https://github.com/ryanbrainard/heroku-buildpack-phing",
-        "forceworkbench__requireSSL__default": "1",
-        "forceworkbench__redirectToHTTPS__default": "1",
+        "PATH": "/app/php/bin:/usr/local/bin:/usr/bin:/bin"
+        "MAX_WORKERS": "5",
+        "WEB_CONCURRENCY": "4",
+        "forceworkbench__requireSSL__default": "true",
+        "forceworkbench__redirectToHTTPS__default": "true",
         "forceworkbench__csrfSecret__default": { "generator":"secret" },
-        "forceworkbench__rc4Secret__default": { "generator":"secret" }
+        "forceworkbench__rc4Secret__default": { "generator":"secret" },
+        "forceworkbench__logHandler__default": "file",
+        "forceworkbench__logFile__default": "/app/target/app.log",
+        "forceworkbench__loginCsrfEnabled__default": "true",
+        "forceworkbench__streamingAdviceTimeout__default": "10000"
     },
     "addons": ["redistogo"]
 }
