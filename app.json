@@ -1,11 +1,13 @@
 {
     "name": "Workbench",
     "description": "Web-based suite of tools for administrators and developers to interact with the Force.com APIs",
+    "repository": "https://github.com/ryanbrainard/forceworkbench",
     "keywords": ["Salesforce", "Force.com", "API", "PHP"],
     "logo": "https://raw.githubusercontent.com/ryanbrainard/forceworkbench/master/assets/logos/blueCube-256x256.png",
     "env": {
         "BUILDPACK_URL": "https://github.com/ryanbrainard/heroku-buildpack-phing",
         "forceworkbench__requireSSL__default": "1",
         "forceworkbench__redirectToHTTPS__default": "1"
-    }
+    },
+    "addons": ["redistogo"]
 }
