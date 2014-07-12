@@ -17,6 +17,6 @@
         "forceworkbench__loginCsrfEnabled__default": "true",
         "forceworkbench__streamingAdviceTimeout__default": "10000"
     },
-    "addons": ["redistogo:mini"],
+    "addons": ["redistogo"],
     "success_url": "/login.php"
 }
