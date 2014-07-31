@@ -18,5 +18,9 @@
         "forceworkbench__streamingAdviceTimeout__default": "10000"
     },
     "addons": ["redistogo"],
+    "formation": [
+        { "process" => "web",    "quantity" => 1, "size" => "1X" },
+        { "process" => "worker", "quantity" => 1, "size" => "1X" }
+    ],
     "success_url": "/login.php"
 }
