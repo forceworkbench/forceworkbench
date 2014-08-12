@@ -15,7 +15,20 @@
         "forceworkbench__logHandler__default": "file",
         "forceworkbench__logFile__default": "/app/target/app.log",
         "forceworkbench__loginCsrfEnabled__default": "true",
-        "forceworkbench__streamingAdviceTimeout__default": "10000"
+        "forceworkbench__streamingAdviceTimeout__default": "10000",
+        "forceworkbench__oauthConfigs__default__login___DOT___salesforce___DOT___com__label": {
+            "description": "login.salesforce.com OAuth Label",
+            "value": "Production",
+            "required": false
+        },
+        "forceworkbench__oauthConfigs__default__login___DOT___salesforce___DOT___com__key": {
+            "description": "login.salesforce.com OAuth Client Key",
+            "required": false
+        },
+        "forceworkbench__oauthConfigs__default__login___DOT___salesforce___DOT___com__secret": {
+            "description": "login.salesforce.com OAuth Client Secret",
+            "required": false
+        }
     },
     "success_url": "/login.php"
 }
