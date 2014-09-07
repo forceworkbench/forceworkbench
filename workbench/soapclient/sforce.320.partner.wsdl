@@ -2761,7 +2761,8 @@ All Rights Reserved
                     <sequence>
                         <element name="language"  type="xsd:string" minOccurs="0"/>
 
-                    	<element name="localizeErrors" type="xsd:boolean"/>
+                        <!-- RDB: Manually added minOccurs="0" until fixed upstream --> 
+                    	<element name="localizeErrors" type="xsd:boolean" minOccurs="0"/>
 
                     </sequence>
                 </complexType>
