@@ -58,9 +58,12 @@ require_once 'soapclient/SforceMetadataClient.php';
 try {
 
     $deployOn29OrHigher = $isDeployOperation && WorkbenchContext::get()->isApiVersionAtLeast(29.0);
+    $retrieveOn31OrHigher = $isRetrieveOperation && WorkbenchContext::get()->isApiVersionAtLeast(31.0);
 
     if ($deployOn29OrHigher) {
         $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, true, $debugInfo);
+    } else if ($retrieveOn31OrHigher) {
+        $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
     } else {
         $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkStatus($asyncProcessId);
     }
@@ -99,8 +102,17 @@ try {
             "state" => null
         );
     }
-    foreach ($asyncResults as $resultName => $resultValue) {
-        $orderedAsyncResults[$resultName] = $resultValue;
+
+    if ($retrieveOn31OrHigher) {
+        $orderedAsyncResults = array(
+            "id" => $asyncResults->id,
+            "done" => $asyncResults->done,
+            "status" => $asyncResults->status
+        );
+    } else {
+        foreach ($asyncResults as $resultName => $resultValue) {
+            $orderedAsyncResults[$resultName] = $resultValue;
+        }
     }
 
     print "<h3>Status</h3>";
@@ -164,7 +176,12 @@ try {
                processDeployResultsForApiVersion28AndLower($results);
             }
             else {
-                $results = WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
+                if ($retrieveOn31OrHigher) {
+                    $results = $asyncResults;
+                }
+                else {
+                    $results = WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
+                }
             }
         }
 
