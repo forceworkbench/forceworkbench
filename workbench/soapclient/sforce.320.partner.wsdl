@@ -1,7 +1,8 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 Salesforce.com Partner Web Services API Version 32.0
-Generated on 2014-09-07 05:45:47 +0000.
+Generated on 2014-09-23 15:32:43 +0000.
 
 Copyright 1999-2014 salesforce.com, inc.
 All Rights Reserved
@@ -2674,14 +2675,6 @@ All Rights Reserved
 
 
 
-            <element name="StreamingEnabledHeader">
-                <complexType>
-                    <sequence>
-                        <element name="streamingEnabled" type="xsd:boolean" />
-                    </sequence>
-                </complexType>
-            </element>
-
 
 
         <element name="AllOrNoneHeader">
@@ -2761,7 +2754,6 @@ All Rights Reserved
                     <sequence>
                         <element name="language"  type="xsd:string" minOccurs="0"/>
 
-                        <!-- RDB: Manually added minOccurs="0" until fixed upstream --> 
                     	<element name="localizeErrors" type="xsd:boolean" minOccurs="0"/>
 
                     </sequence>
@@ -3170,8 +3162,6 @@ All Rights Reserved
 
         <part element="tns:DisableFeedTrackingHeader"    name="DisableFeedTrackingHeader"/>
 
-
-        <part element="tns:StreamingEnabledHeader"       name="StreamingEnabledHeader"/>
 
         <part element="tns:MruHeader"                    name="MruHeader"/>
         <part element="tns:EmailHeader"                  name="EmailHeader"/>
@@ -4357,7 +4347,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="MruHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
-                <soap:header use="literal" message="tns:Header" part="StreamingEnabledHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllOrNoneHeader"/>
                 <soap:header use="literal" message="tns:Header" part="LocaleOptions"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
@@ -4392,7 +4381,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="MruHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
-                <soap:header use="literal" message="tns:Header" part="StreamingEnabledHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllOrNoneHeader"/>
                 <soap:header use="literal" message="tns:Header" part="LocaleOptions"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
@@ -4428,7 +4416,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="MruHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
-                <soap:header use="literal" message="tns:Header" part="StreamingEnabledHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllOrNoneHeader"/>
                 <soap:header use="literal" message="tns:Header" part="LocaleOptions"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
@@ -4464,7 +4451,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="MruHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
-                <soap:header use="literal" message="tns:Header" part="StreamingEnabledHeader"/>
                 <soap:header use="literal" message="tns:Header" part="LocaleOptions"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
@@ -4499,7 +4485,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="EmailHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
-                <soap:header use="literal" message="tns:Header" part="StreamingEnabledHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllOrNoneHeader"/>
                 <soap:header use="literal" message="tns:Header" part="LocaleOptions"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
@@ -4521,7 +4506,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="CallOptions"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
-                <soap:header use="literal" message="tns:Header" part="StreamingEnabledHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllOrNoneHeader"/>
                 <soap:header use="literal" message="tns:Header" part="LocaleOptions"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
@@ -4589,7 +4573,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="CallOptions"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
-                <soap:header use="literal" message="tns:Header" part="StreamingEnabledHeader"/>
                 <soap:header use="literal" message="tns:Header" part="LocaleOptions"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
@@ -4614,7 +4597,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="CallOptions"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
-                <soap:header use="literal" message="tns:Header" part="StreamingEnabledHeader"/>
                 <soap:header use="literal" message="tns:Header" part="LocaleOptions"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
                 <soap:header use="literal" message="tns:Header" part="PackageVersionHeader"/>
@@ -4918,7 +4900,6 @@ All Rights Reserved
                 <soap:header use="literal" message="tns:Header" part="MruHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllowFieldTruncationHeader"/>
                 <soap:header use="literal" message="tns:Header" part="DisableFeedTrackingHeader"/>
-                <soap:header use="literal" message="tns:Header" part="StreamingEnabledHeader"/>
                 <soap:header use="literal" message="tns:Header" part="AllOrNoneHeader"/>
                 <soap:header use="literal" message="tns:Header" part="LocaleOptions"/>
                 <soap:header use="literal" message="tns:Header" part="DebuggingHeader"/>
