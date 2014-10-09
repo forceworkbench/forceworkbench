@@ -1,2 +1,2 @@
-web: tail -n 0 -F /app/target/app.log &; vendor/bin/heroku-php-apache2 workbench
+web: sh boot.sh
 worker: cd target/public_html && ./async_workers.sh
