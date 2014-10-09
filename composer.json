@@ -1,7 +1,5 @@
 {
     "require": {
-        "php": "~5.5.16",
-        "redis/redis": "*",
-        "soap/soap": "*"
+        "php": "~5.5.16"
     }
 }
