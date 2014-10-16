@@ -19,7 +19,7 @@ and is also available for [download](https://github.com/ryanbrainard/forceworkbe
 Workbench can also be [deployed to Heroku](https://heroku.com/deploy),
 which is great for spinning up a public instance during development in a fork:
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://dashboard-next-dev.herokuapp.com/new?template=https://github.com/ryanbrainard/forceworkbench/tree/94f60384dbb0a359cb53e6c86574408c73d48f76)
 
 For installation of Workbench, please see the [installation](http://wiki.developerforce.com/index.php/Workbench#Installation)
 section of the [wiki](http://wiki.developerforce.com/index.php/Workbench).
