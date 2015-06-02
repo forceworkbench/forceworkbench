@@ -275,6 +275,7 @@ $config["header_LoginOptions"] = array(
     );
 
     $GLOBALS['API_VERSIONS'] = array(
+        "34.0" => "34.0",
         "33.0" => "33.0",
         "32.0" => "32.0",
         "31.0" => "31.0",
