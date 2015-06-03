@@ -59,11 +59,17 @@ try {
 
     $deployOn29OrHigher = $isDeployOperation && WorkbenchContext::get()->isApiVersionAtLeast(29.0);
     $retrieveOn31OrHigher = $isRetrieveOperation && WorkbenchContext::get()->isApiVersionAtLeast(31.0);
+    $retrieveOn34OrHigher = $isRetrieveOperation && WorkbenchContext::get()->isApiVersionAtLeast(34.0);
 
     if ($deployOn29OrHigher) {
         $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkDeployStatus($asyncProcessId, true, $debugInfo);
     } else if ($retrieveOn31OrHigher) {
-        $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
+        if ($retrieveOn34OrHigher) {
+            $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, true, $debugInfo);
+        }
+        else {
+            $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, NULL, $debugInfo);
+        }
     } else {
         $asyncResults = WorkbenchContext::get()->getMetadataConnection()->checkStatus($asyncProcessId);
     }
@@ -180,7 +186,7 @@ try {
                     $results = $asyncResults;
                 }
                 else {
-                    $results = WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, $debugInfo);
+                    $results = WorkbenchContext::get()->getMetadataConnection()->checkRetrieveStatus($asyncProcessId, NULL, $debugInfo);
                 }
             }
         }
