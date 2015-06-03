@@ -86,9 +86,12 @@ class SforceMetadataClient extends SoapBaseClient {
         }
     }
 
-    public function checkRetrieveStatus($asyncProcessId,&$outputHeaders) {
+    public function checkRetrieveStatus($asyncProcessId,$includeZip,&$outputHeaders) {
         $request = new stdClass();
         $request->asyncProcessId = $asyncProcessId;
+        if (isset($includeZip)) {
+            $request->includeZip = $includeZip;
+        } 
 
         $response = $this->sforce->__soapCall("checkRetrieveStatus",array($request),null,null,$outputHeaders);
 
