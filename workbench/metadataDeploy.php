@@ -2,6 +2,10 @@
 require_once 'soapclient/SforceMetadataClient.php';
 require_once 'session.php';
 require_once 'shared.php';
+define("RUN_TESTS_DEPLOY_OPTION", "runTests");
+define("TEST_LEVEL_DEPLOY_OPTION", "testLevel");
+define("RUN_SPECIFIED_TESTS_TEST_LEVEL", "RunSpecifiedTests");
+
 if (!WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
     displayError("Metadata API not supported prior to version 10.0", true, true);
     exit;
@@ -96,7 +100,7 @@ options:</p>
     <img onmouseover="Tip('Choose a ZIP file containing a project manifest, a file named package.xml, and a set of directories that contain the components to deploy.  See Salesforce.com Metadata API Developers guide more information about working with ZIP files for deployment.')"
      align='absmiddle' src='<?php echo getPathToStaticResource('/images/help16.png'); ?>' />
 <p />
-    <?php printDeployOptions(defaultDeployOptions(), true); ?>
+    <?php printDeployOptions(defaultDeployOptions()); ?>
 <p />
 <input type='submit' name='stageForDeployment' value='Next' /></form>
     <?php
@@ -114,7 +118,9 @@ function deserializeDeployOptions($request) {
     foreach ($deployOptions as $optionName => $optionValue) {
         if (is_bool($optionValue)) {
             $deployOptions->$optionName = isset($request[$optionName]);
-        } else if (is_array($optionValue)) {
+        } else if ($optionName == TEST_LEVEL_DEPLOY_OPTION) {
+            $deployOptions->$optionName = $request[$optionName];
+        } else if ($optionName == RUN_TESTS_DEPLOY_OPTION) {
             $deployOptions->$optionName = (isset($request[$optionName]) && $request[$optionName] != "") ? explodeCommaSeparated(htmlspecialchars($request[$optionName])) : null;
         }
     }
@@ -122,14 +128,28 @@ function deserializeDeployOptions($request) {
     return $deployOptions;
 }
 
-function printDeployOptions($deployOptions, $editable) {
+function printDeployOptions($deployOptions) {
+    if (array_key_exists('testLevel', $deployOptions)) {
+        $editable = false;
+    } else {
+        $editable = true;
+    }
     print "<table>\n";
     foreach ($deployOptions as $optionName => $optionValue) {
         print "<tr><td style='text-align: right; padding-right: 2em; padding-bottom: 0.5em;'>" .
               "<label for='$optionName'>" . unCamelCase($optionName) . "</label></td><td>";
         if (is_bool($optionValue)) {
-            print "<input id='$optionName' type='checkbox' name='$optionName' " . (isset($optionValue) && $optionValue ? "checked='checked'" : "")  . " " . ($editable ? "" : "disabled='disabled'")  . "/>";
-        } else if (is_array($optionValue)) {
+            print "<input id='$optionName' type='checkbox' name='$optionName' " . (isset($optionValue) && $optionValue ? "checked='checked'" : "") . "/>";
+        } else if ($optionName == TEST_LEVEL_DEPLOY_OPTION) {
+            $targetElementId = RUN_TESTS_DEPLOY_OPTION;
+            $valueToLookFor = RUN_SPECIFIED_TESTS_TEST_LEVEL;
+            print "<select id='$optionName' name='$optionName' onchange=\"var el = document.getElementById('$targetElementId');this.value == '$valueToLookFor' ? el.removeAttribute('disabled') : el.disabled='disabled';\">";
+            $testLevelValues = array("NoTestRun", "RunLocalTests", "RunAllTestsInOrg", RUN_SPECIFIED_TESTS_TEST_LEVEL);
+            foreach ($testLevelValues as $testLevelValue) {
+                print "<option value='$testLevelValue'>$testLevelValue</option>";
+            }
+            print "</select>";
+        } else if ($optionName == RUN_TESTS_DEPLOY_OPTION) {
             print "<input id='$optionName' type='text' name='$optionName' value='" . implode(",", $optionValue) . "'" . " " . ($editable ? "" : "disabled='disabled'")  . "/>";
         }
         print "</td></tr>\n";
@@ -162,7 +182,12 @@ function defaultDeployOptions() {
     if (WorkbenchContext::get()->isApiVersionAtLeast(22.0)) { $deployOptions->purgeOnDelete = false; }
     $deployOptions->rollbackOnError = false;
     $deployOptions->singlePackage = false;
-    $deployOptions->runAllTests = false;
+    if (WorkbenchContext::get()->isApiVersionAtLeast(34.0)) {
+        $deployOptions->testLevel = "NoTestRun";
+    }
+    else {
+        $deployOptions->runAllTests = false;
+    }
     $deployOptions->runTests = array();
 
     return $deployOptions;
