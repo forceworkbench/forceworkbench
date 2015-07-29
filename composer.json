@@ -1,6 +1,7 @@
 {
     "require": {
         "php": "~5.5.16",
+        "ext-redis": "*",
         "ext-soap": "*"
     }
 }
