@@ -58,7 +58,7 @@ abstract class FutureTask {
         workbenchLog(LOG_INFO, "FutureTaskEnqueue", array(
             "async_id" =>  $this->asyncId,
             "source" => get_class($this),
-            "measure.async.enqueue.size" => strlen($payload). "task"));
+            "measure.async.enqueue.size" => strlen($payload). "byte"));
         return new FutureResult($this->asyncId);
     }
 
