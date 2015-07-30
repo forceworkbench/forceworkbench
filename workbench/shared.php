@@ -94,6 +94,10 @@ function _handle_logs_stdout($logLevel, $msg) {
     echo WorkbenchConfig::get()->value("logPrefix") . " $msg\n";
 }
 
+function _handle_logs_stderr($logLevel, $msg) {
+    file_put_contents("php://stderr", WorkbenchConfig::get()->value("logPrefix") . " $msg\n");
+}
+
 function logLevelToStr($logLevel) {
     switch($logLevel) {
         case LOG_EMERG:   return "EMERGENCY";

@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-export forceworkbench__logHandler__default='stdout';
 MAX_WORKERS=${MAX_WORKERS:-1}
 
 if [ $MAX_WORKERS -eq 0 ]; then

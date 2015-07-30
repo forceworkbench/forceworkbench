@@ -11,8 +11,7 @@
         "forceworkbench__redirectToHTTPS__default": "true",
         "forceworkbench__csrfSecret__default": { "generator":"secret" },
         "forceworkbench__rc4Secret__default": { "generator":"secret" },
-        "forceworkbench__logHandler__default": "file",
-        "forceworkbench__logFile__default": "/app/target/app.log",
+        "forceworkbench__logHandler__default": "stderr",
         "forceworkbench__loginCsrfEnabled__default": "true",
         "forceworkbench__streamingAdviceTimeout__default": "10000"
     },
