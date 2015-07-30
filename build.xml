@@ -1,21 +1,6 @@
 <?xml version="1.0"?>
 <project name="Workbench" default="stage">
-	<property name="dir.src" value="workbench"/>
-
-	<target name="stage" description="Stages files for deployment">
-		<!--suppress PhingDomInspection -->
-        <fail unless="env.PUBLIC_HTML_DIR" message="Environment variable PUBLIC_HTML_DIR must be set"/>
-
-        <!--suppress PhingDomInspection -->
-        <copy todir="${env.PUBLIC_HTML_DIR}">
-			<fileset dir="${dir.src}">
-				<exclude name="**/config/overrides.php"/>
-				<exclude name="**/configOverrides.php"/>
-			</fileset>
-		</copy>
+	<target name="stage">
+        <fail message="${line.separator}${line.separator}PHING BUILDS ARE DEPRECATED!${line.separator}${line.separator}Upgrade to cedar-14 and use the official PHP buildpack:${line.separator}  1. heroku buildpacks:clear${line.separator}  2. heroku stack:set cedar-14${line.separator}  3. git push heroku master${line.separator}"/>
 	</target>
-
-    <target name="phpinfo">
-        <php function="phpinfo" />
-    </target>
 </project>
