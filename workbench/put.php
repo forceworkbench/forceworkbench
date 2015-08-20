@@ -587,8 +587,7 @@ function printPutFieldForMappingId($csvArray, $showRefCol, $currentRecord) {
 function printPutFieldForMapping($field, $csvArray, $showRefCol, $currentRecord, $editable = true) {
     print "<tr";
     if ($editable && !$field->nillable && !$field->defaultedOnCreate) print " style='color: red;'";
-    print "><td style='cursor: pointer;' onmouseover=\"Tip('Label: " . str_replace("'", "\'", htmlspecialchars($field->label, ENT_COMPAT)) .
-                                                      " <br/> Type: " . htmlspecialchars($field->type, ENT_QUOTES) .
+    print "><td style='cursor: pointer;' onmouseover=\"Tip('Type: " . htmlspecialchars($field->type, ENT_QUOTES) .
                                                       " <br/> Length: " .htmlspecialchars($field->length, ENT_QUOTES) . "')\">" .
           htmlspecialchars($field->name, ENT_QUOTES) . ($currentRecord && $field->type == "base64" ? "&nbsp;<em style='color:grey'>(current value not retrieved)</em>" : "") . "</td>";
 
