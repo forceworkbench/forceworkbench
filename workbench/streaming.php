@@ -90,6 +90,9 @@ require_once "header.php";
     <div id="streamBody"></div>
 </div>
 
+<!-- dummy element for backward comparability -->
+<div id='partialSavedTopic' style='display:none;'></div>
+
 <script type="text/javascript">
 
 </script>
