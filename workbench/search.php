@@ -113,8 +113,8 @@ function displaySearchForm($searchRequest) {
         foreach ($searchRequest->getReturningObjects() as $ro) {
             print "<script>addReturningObjectRow(" .
             $rowNum++ . ", " .
-        "\"" . $ro->getObject()     . "\", " . 
-        "\"" . $ro->getFields()  . "\"" .
+        "\"" . htmlspecialchars($ro->getObject(),ENT_QUOTES) . "\", " .
+        "\"" . htmlspecialchars($ro->getFields(),ENT_QUOTES) . "\"" .
         ");</script>";
         }
 

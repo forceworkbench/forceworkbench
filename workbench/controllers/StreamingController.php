@@ -98,20 +98,10 @@ class StreamingController {
     }
 
     function getMessages() {
-        $messages = "";
-
         ob_start();
         if (count($this->errors) > 0) displayError($this->errors);
         if (count($this->infos) > 0)  displayInfo($this->infos);
-        $messages .= ob_get_clean();
-        
-        $messages .= "<div id='partialSavedTopic' style='display:none;'>";
-        if (count($this->errors) > 0) {
-            $messages .= $this->selectedTopic->toJson();
-        }
-        $messages .= "</div>";
-
-        return $messages;
+        return ob_get_clean();
     }
 
     function getPushTopicOptions() {
@@ -173,6 +163,7 @@ class StreamingController {
     }
 
     function getAjaxResponse() {
+        $ajaxResponse['failed'] = count($this->errors) > 0;
         $ajaxResponse['messages'] = $this->getMessages();
         $ajaxResponse['pushTopicOptions'] = $this->getPushTopicOptions();
 
