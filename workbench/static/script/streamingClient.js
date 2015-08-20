@@ -157,17 +157,6 @@ dojo.addOnLoad(function() {
         copyDetails(details, details.Name === null);
     }
 
-    function copyPartiallySavedTopic() {
-        var pstElem = dojo.byId("partialSavedTopic");
-        var pst = pstElem.innerText || pstElem.textContent;
-        if (pst === undefined || pst === null || pst === "") {
-            return;
-        }
-
-        var details = JSON.parse(pst);
-        copyDetails(details, true);
-    }
-
     function copyDetails(details, displayDetails) {
         if (displayDetails) {
             togglePushTopicDmlContainer_Internal(true);
@@ -281,6 +270,13 @@ dojo.addOnLoad(function() {
         dojo.byId("pushTopicDeleteBtn").disabled = true;
         dojo.byId("waitingIndicator").style.display = "inline";
 
+        var unsaved = {
+            Id: dojo.byId("pushTopicDmlForm_Id").value,
+            Name: dojo.byId("pushTopicDmlForm_Name").value,
+            ApiVersion: dojo.byId("pushTopicDmlForm_ApiVersion").value,
+            Query: dojo.byId("pushTopicDmlForm_Query").value
+        };
+
         dojo.xhrPost({
             form: "pushTopicDmlForm",
             handleAs: "json",
@@ -294,7 +290,9 @@ dojo.addOnLoad(function() {
                 dojo.byId("selectedTopic").innerHTML = content.pushTopicOptions;
 
                 copySelectedTopic();
-                copyPartiallySavedTopic();
+                if (content.failed) {
+                    copyDetails(unsaved, true);
+                }
                 toggleSubUnSubButtons();
             },
             error: function (error) {
@@ -318,7 +316,6 @@ dojo.addOnLoad(function() {
     // INITIALIZATION
 
     setStatus("Initializing");
-    copyPartiallySavedTopic();
     copySelectedTopic();
     toggleSubUnSubButtons();
 
