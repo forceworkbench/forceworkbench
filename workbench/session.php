@@ -11,8 +11,6 @@ if (!ini_get("date.timezone")) {
     date_default_timezone_set('UTC');
 }
 
-header_remove('X-Powered-By'); // runtime: expose_php = Off
-
 $logMeasures = array();
 
 if (isset($_SERVER['HTTP_X_REQUEST_START'])) {
