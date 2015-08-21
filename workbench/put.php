@@ -1147,10 +1147,10 @@ function displayIdOnlyPutResults($results,$apiCall,$csvArray,$idArray) {
 
             if (!isset($results[$row]->id) && isset($idArray)) {
                 $_SESSION['resultsWithData'][$row+1][0] = $idArray[$row]; //add id from idArray for id-only calls
-                print "<td>" . addLinksToIds($idArray[$row]) . "</td>";
+                print "<td>" . addLinksToIds(htmlspecialchars($idArray[$row])) . "</td>";
             } else {
                 $_SESSION['resultsWithData'][$row+1][0] = $results[$row]->id; //add id from results for everything else
-                print "<td>" . addLinksToIds($results[$row]->id) . "</td>";
+                print "<td>" . addLinksToIds(htmlspecialchars($results[$row]->id)) . "</td>";
             }
 
             $errMsgs = "";
