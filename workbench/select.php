@@ -15,6 +15,7 @@ if (isset($_POST['select'])) {
 ?>
 
 <form method='POST' action=''>
+    <?php print getCsrfFormTag(); ?>
     <p class='instructions'>Select an action to perform:</p>
 
     <p>

@@ -1,6 +1,8 @@
 <?php
+require_once "shared.php";
 require_once "context/WorkbenchContext.php";
 require_once "util/PhpReverseProxy.php";
+skipCsrfValidation();
 require_once "session.php";
 
 if (!WorkbenchContext::isEstablished()) {

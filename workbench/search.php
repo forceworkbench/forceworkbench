@@ -72,6 +72,7 @@ function displaySearchForm($searchRequest) {
     print "<script src='" . getPathToStaticResource('/script/search.js') . "' type='text/javascript'></script>\n";
 
     print "<form method='POST' name='search_form' action='search.php'>\n";
+    print getCsrfFormTag();
     print "<input type='hidden' id='numReturningObjects' name='numReturningObjects' value='" . count($searchRequest->getReturningObjects()) ."' />";
 
     print "<p class='instructions'>Enter a search string and optionally select the objects and fields to return to build a SOSL search below:</p>\n";

@@ -43,6 +43,7 @@ if (isset($unsupportedVersionError)) {
 <div style='float: right;'>
     <form name="changeApiVersionForm" action="" method="POST">
     Change API Version: <?php
+    print getCsrfFormTag();
     print "<select  method='POST' name='switchApiVersionTo' onChange='document.changeApiVersionForm.submit();'>";
     foreach ($GLOBALS['API_VERSIONS'] as $v) {
         print "<option value='$v'";

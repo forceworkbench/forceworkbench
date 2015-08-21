@@ -123,7 +123,14 @@ function getCsrfToken() {
     return md5(WorkbenchConfig::get()->value("csrfSecret") . session_id() . $_SERVER['SCRIPT_NAME']);
 }
 
+function skipCsrfValidation() {
+    $GLOBALS['SKIP_CSRF_VALIDATION'] = true;
+}
+
 function validateCsrfToken($doError = true) {
+    if (isset($GLOBALS['SKIP_CSRF_VALIDATION'])) {
+        return true;
+    }
    if (!isset($_REQUEST['CSRF_TOKEN']) || $_REQUEST['CSRF_TOKEN'] != getCsrfToken()) {
 
        if ($doError) {

@@ -5,8 +5,6 @@ require_once 'shared.php';
 $errors = null;
 
 if (isset($_POST['submitConfigSetter'])) {
-    validateCsrfToken();
-
     //find errors
     foreach (WorkbenchConfig::get()->entries() as $configKey => $configValue) {
         if (!isset($configValue['isHeader']) && isset($_POST[$configKey])) {

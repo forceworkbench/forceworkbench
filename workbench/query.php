@@ -147,6 +147,7 @@ function displayQueryForm($queryRequest) {
     print "<script src='" . getPathToStaticResource('/script/query.js') . "' type='text/javascript'></script>\n";
 
     print "<form method='POST' id='query_form' name='query_form' action='query.php'>\n";
+    print getCsrfFormTag();
     print "<input type='hidden' name='justUpdate' value='0' />";
     print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
     print "<p class='instructions'>Choose the object, fields, and critera to build a SOQL query below:</p>\n";

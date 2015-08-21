@@ -22,6 +22,7 @@ if (isset($_REQUEST['keyPrefix']) || isset($_REQUEST['id'])) {
 
 <form name='describeForm' method='POST' action='describe.php'>
     <?php
+    print getCsrfFormTag();
     printObjectSelection(WorkbenchContext::get()->getDefaultObject(), 'default_object', 30,
         "onChange=\"document.getElementById('loadingMessage').style.visibility='visible'; document.describeForm.submit();\"");
     ?>

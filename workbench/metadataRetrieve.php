@@ -72,6 +72,7 @@ else if (isset($_POST['stageForRetrieval'])) {
 <form id='retrieveForm' name='retrieveForm' method='POST'
     action=''><input type='hidden'
     name='retrieveRequestId' value='<?php print $retrieveRequestId; ?>' />
+    <?php print getCsrfFormTag(); ?>
 <input type='submit' name='retrievalConfirmed' value='Retrieve' /></form>
     <?php
 }
@@ -87,6 +88,7 @@ to define a retrieve request along with any applicable options:</p>
     enctype='multipart/form-data'><input type='hidden'
     name='MAX_FILE_SIZE'
     value='<?php print WorkbenchConfig::get()->value("maxFileSize"); ?>' />
+    <?php print getCsrfFormTag(); ?>
 <table>
     <tr>
         <td style='padding-right: 20px;'>Unpackaged Manifest:</td>

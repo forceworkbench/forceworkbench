@@ -88,7 +88,7 @@ if (!$myPage->isReadOnly && isReadOnlyMode()) {
     throw new WorkbenchHandledException("This page is not accessible in read-only mode");
 }
 
-if (WorkbenchContext::isEstablished() && !$myPage->isReadOnly  && $_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] != 'GET') {
     validateCsrfToken();
 }
 
