@@ -8,3 +8,4 @@ Vagrantfile
 .env
 .idea
 /vendor
+composer.phar
