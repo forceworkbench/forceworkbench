@@ -24,7 +24,7 @@ require_once "header.php";
 <div id="loginBlockContainer">
     <form id="login_form" action="login.php" method="post">
         <?php print getCsrfFormTag(); ?>
-        <input type="hidden" id="startUrl" name="startUrl" value="<?php print $c->getStartUrl(); ?>">
+        <input type="hidden" id="startUrl" name="startUrl" value="<?php print htmlspecialchars($c->getStartUrl(), ENT_QUOTES); ?>">
         <div id="login_type_selection" style="text-align: right; <?php if ($c->isOAuthRequired()) { print "display:none;"; } ?>">
             <input type="radio" id="loginType_std" name="loginType" value="std"/>
             <label for="loginType_std">Standard</label>
