@@ -1,0 +1,2 @@
+cd workbench
+php -d auto_prepend_file=console.php -a
