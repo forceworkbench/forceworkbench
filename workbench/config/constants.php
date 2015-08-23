@@ -7,7 +7,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-$GLOBALS["WORKBENCH_VERSION"] = "34.0.6";
+$GLOBALS["WORKBENCH_VERSION"] = "34.0.7";
 
 class Page {
     public $title;
@@ -58,6 +58,7 @@ $GLOBALS["MENUS"] = array(
     'Data' => array(
         'retrieve.php'  => new Page('Retrieve','View a record.',true,true,false,false,false,''),
         'insert.php'    => new Page('Insert','Creates new records.',true,false,true,'usesObject',true,''),
+        'async_insert.php'    => new Page('Insert (async)','Creates new records.',true,false,true,'usesObject',true,''),
         'update.php'    => new Page('Update','Updates existing records.',true,false,true,'usesObject',true,''),
         'upsert.php'    => new Page('Upsert','Creates new records and/or updates existing records based on a unique External Id.',true,false,true,'usesObject',true,''),
         'delete.php'    => new Page('Delete','Moves records to the Recycle Bin.',true,false,true,true,true,''),
