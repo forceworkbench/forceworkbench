@@ -189,6 +189,10 @@ function getPathToStaticResource($relPath) {
     return "static" . $relPath . getStaticResourceVersionParam();
 }
 
+function getPathToBowerComponents($relPath) {
+    return "bower_components" . $relPath;
+}
+
 function getPathToStaticResourceAsJsFunction() {
     return "function(relPath) { " .
                "return 'static' + relPath + '" . getStaticResourceVersionParam() . "'" .

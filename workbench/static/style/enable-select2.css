@@ -1,0 +1,7 @@
+.select2-container .select2-search__field:focus {
+	outline: none;
+}
+
+.select2-container .select2-results__options li {
+	text-align: left;
+}

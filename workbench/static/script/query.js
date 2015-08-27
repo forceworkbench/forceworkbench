@@ -259,6 +259,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
 
     //expand the field list so it looks right
     document.getElementById('QB_field_sel').size += 2;
+    jQuery("select:not(.select2-hidden-accessible)").select2();
 }
 
 function toggleMatrixSortSelectors(hasChanged) {

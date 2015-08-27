@@ -1,0 +1,19 @@
+{
+  "name": "workbench",
+  "version": "34.0.7",
+  "homepage": "https://github.com/ryanbrainard/forceworkbench",
+  "authors": [
+    "liratanak <liratanak.ann@gaea-sys.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "select2": "~4.0.0"
+  }
+}
