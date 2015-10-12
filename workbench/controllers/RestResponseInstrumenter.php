@@ -10,11 +10,16 @@ class RestResponseInstrumenter {
 
         // add link url to id services
         $this->insturmentations[] = new RegexInsturmentation("https?://.*(/id/00D.*/005.*)",
-                                                 		     "<a class=\'RestLinkable\' href=" . $baseUrl . "?url=$1&autoExec=1>$1</a>");
+                                                             "<a class=\'RestLinkable\' href=" . $baseUrl . "?url=$1&autoExec=1>$1</a>");
 
         // add link url to any rest url
-        $this->insturmentations[] = new RegexInsturmentation("(" . $restBasePattern . ".*)",
-                                                 		     "<a class=\'RestLinkable\' href=" . $baseUrl . "?url=$1&autoExec=0>$1</a>");
+        $this->insturmentations[] = new RegexUrlInsturmentation("(" . $restBasePattern . ".*)",
+                                                                function($matches) {
+                                                                    // This is a fix for https://github.com/ryanbrainard/forceworkbench/issues/581
+                                                                    $urlencoded = str_replace('&amp;', '%26', $matches[1]);
+                                                                    return "<a class=\'RestLinkable\' href=" . $baseUrl . "?url=$urlencoded&autoExec=0>" . $matches[1] . "</a>";
+                                                                }
+                                                               );
 
         // add autoExec to everything but query and search
         $this->insturmentations[] = new RegexInsturmentation('(url=' . $restBasePattern . '(?!/query|/search|.*/.*\{ID\}).*&)autoExec=0',
@@ -90,4 +95,21 @@ class RegexInsturmentation implements Insturmentation {
         return preg_replace('@' . $this->pattern . '@', $this->replacement, $s);
     }
 }
+
+class RegexUrlInsturmentation implements Insturmentation {
+    public $pattern;
+    public $callback;
+
+    function __construct($pattern, $callback) {
+        $this->pattern = $pattern;
+        $this->callback = $callback;
+    }
+
+    function instrument($s) {
+        return preg_replace_callback('@' . $this->pattern . '@',
+                                     $this->callback,
+                                     $s);
+    }
+}
+
 ?>
