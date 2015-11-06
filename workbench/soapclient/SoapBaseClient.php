@@ -14,6 +14,7 @@ abstract class SoapBaseClient {
         }
         $soapClientArray['encoding'] = 'utf-8';
         $soapClientArray['exceptions'] = true;
+        $soapClientArray['cache_wsdl'] = WSDL_CACHE_NONE;
 
         //set compression settings
         if (WorkbenchConfig::get()->value("enableGzip") && phpversion() > '5.1.2') {
