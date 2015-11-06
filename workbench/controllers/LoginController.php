@@ -380,6 +380,7 @@ class LoginController {
         curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);  //TODO: use ca-bundle instead
+        curl_setopt($curl, CURLOPT_SSLVERSION, 6);
 
         $proxySettings = getProxySettings();
         if ($proxySettings != null) {
