@@ -105,6 +105,7 @@ class SforceBaseClient {
         }
         $soapClientArray['exceptions'] = true;
         $soapClientArray['encoding'] = 'utf-8';
+        $soapClientArray['cache_wsdl'] = WSDL_CACHE_NONE;
 
         if (WorkbenchConfig::get()->value("enableGzip") && phpversion() > '5.1.2') {
             $soapClientArray['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | 1;
