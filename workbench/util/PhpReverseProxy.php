@@ -81,6 +81,7 @@ class PhpReverseProxy {
 
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); //TODO: use ca-bundle instead
+        curl_setopt($ch, CURLOPT_SSLVERSION, 6);
 
         if ($this->proxy_settings != null) {
             curl_setopt($ch, CURLOPT_PROXY, $this->proxy_settings["proxy_host"]);

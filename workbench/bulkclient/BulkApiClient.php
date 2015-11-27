@@ -376,6 +376,7 @@ class BulkApiClient {
         if($isPost) curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);                                //TODO: use ca-bundle instead
+        curl_setopt($ch, CURLOPT_SSLVERSION, 6);
         if($this->compressionEnabled) curl_setopt($ch, CURLOPT_ENCODING, "gzip");   //TODO: add  outbound compression support
 
         if ($this->proxySettings != null) {
