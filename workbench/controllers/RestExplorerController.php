@@ -71,6 +71,7 @@ class RestExplorerController {
 
         if (in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) && trim($this->requestBody) == "") {
             if (stripos($this->requestHeaders, "Content-Type: application/json") !== false) {
+                // If nothing's specified in the JSON body, set it to null.
                 $this->requestBody = "null";
             }
             else {
