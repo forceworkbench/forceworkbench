@@ -409,7 +409,7 @@ function setFieldMappings($action,$csvArray) {
                 if ($currRecord == null) {
                     displayUploadFileWithObjectSelectionForm($action, $id,
                                                              "An existing " . WorkbenchContext::get()->getDefaultObject() .
-                                                             " could not found with the id '$id'. Confirm both the object type and id are correct.");
+                                                             " could not be found with the id '$id'. Confirm both the object type and id are correct.");
                     exit;
                 }
             }

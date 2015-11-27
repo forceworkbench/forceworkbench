@@ -70,7 +70,7 @@ class RestExplorerController {
         $this->url = str_replace(' ', '+', trim($this->url));
 
         if (in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) && trim($this->requestBody) == "") {
-            throw new WorkbenchHandledException("Must include a Request Body.");
+            $this->requestBody = "null";
         }
     }
 
