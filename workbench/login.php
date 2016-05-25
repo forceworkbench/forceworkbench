@@ -121,6 +121,6 @@ require_once "header.php";
 <?php
 addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/login.js') . "'></script>");
 addFooterScript("<script type='text/javascript'>wbLoginConfig=" . $c->getJsConfig() ."</script>");
-addFooterScript("<script type='text/javascript'>WorkbenchLogin.initializeForm('" . htmlspecialchars($c->getLoginType()) ."');</script>");
+addFooterScript("<script type='text/javascript'>WorkbenchLogin.initializeForm(" . json_encode($c->getLoginType()) .");</script>");
 require_once "footer.php";
 ?>
