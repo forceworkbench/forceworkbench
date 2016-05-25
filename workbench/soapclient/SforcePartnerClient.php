@@ -267,7 +267,12 @@ class SObject {
                     if (isset($fieldsToConvert)) {
                         $convertedFields = preg_replace('/sf:/', '', $fieldsToConvert);
                         $convertedFields = '<Object xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'.$convertedFields.'</Object>';
-                        $this->fields = simplexml_load_string($convertedFields);
+                        try {
+                            libxml_disable_entity_loader(true);
+                            $this->fields = simplexml_load_string(disallowDoctype($convertedFields));
+                        } finally {
+                            libxml_disable_entity_loader(false);
+                        }
                     }
                     if (sizeof($anArray) > 0) {
                         $this->sobjects = $anArray;
