@@ -76,7 +76,6 @@ $GLOBALS["MENUS"] = array(
         'pwdMgmt.php'                 => new Page('Password Management','Set and Reset Passwords.',true,false,true,false,true,''),
         'asyncStatus.php'             => new Page('Bulk API Job Status','Asynchronous data load status and results.',true,true,true,false,true,''),
         'metadataStatus.php'          => new Page('Metadata API Process Status','Metadata API status and results.',true,true,true,false,true,''),
-        'burn.php'                    => new Page('API Call Afterburner','Special testing utility for expending API calls. For testing only.',true,true,false,false,true,''),
         'downloadAsyncBatch.php'      => new Page('Download Bulk API Batch','Downloads Bulk API requests and results.',true,true,false,false,true,''),
         'downloadResultsWithData.php' => new Page('Download DML Results','Downloads DML results.',true,true,false,false,true,''),
         'csv_preview.php'             => new Page('CSV Preview','Previews CSV upload.',true,true,false,false,true,''),

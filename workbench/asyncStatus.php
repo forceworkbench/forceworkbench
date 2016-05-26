@@ -52,44 +52,44 @@ $timeOnlyFormat = "h:i:s A";
 print "<table width='100%' cellpadding='5' class='lightlyBoxed'>";
 
 print "<tr>" .
-        "<td class='dataLabel'>Status</td><td class='dataValue'>" . $jobInfo->getState() . "</td>" .
-        "<td class='dataLabel'>Records Processed</td><td class='dataValue'>" . $jobInfo->getNumberRecordsProcessed() . "</td>" .
-        "<td class='dataLabel'>Batches Queued</td><td class='dataValue'>" . $jobInfo->getNumberBatchesQueued() . "</td>" .
+        "<td class='dataLabel'>Status</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getState()) . "</td>" .
+        "<td class='dataLabel'>Records Processed</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getNumberRecordsProcessed()) . "</td>" .
+        "<td class='dataLabel'>Batches Queued</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getNumberBatchesQueued()) . "</td>" .
         "</tr>";
 
 print "<tr>" .
-      "<td class='dataLabel'>Object</td><td class='dataValue'>" . $jobInfo->getObject() . "</td>" .
+      "<td class='dataLabel'>Object</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getObject()) . "</td>" .
       (WorkbenchContext::get()->isApiVersionAtLeast(19.0)
-          ? "<td class='dataLabel'>Records Failed</td><td class='dataValue'>" . $jobInfo->getNumberRecordsFailed() . "</td>"
-          : "<td class='dataLabel'>Content Type</td><td class='dataValue'>" . $jobInfo->getContentType() . "</td>"
+          ? "<td class='dataLabel'>Records Failed</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getNumberRecordsFailed()) . "</td>"
+          : "<td class='dataLabel'>Content Type</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getContentType()) . "</td>"
       ) .
-      "<td class='dataLabel'>Batches In Progress</td><td class='dataValue'>" . $jobInfo->getNumberBatchesInProgress() . "</td>" .
+      "<td class='dataLabel'>Batches In Progress</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getNumberBatchesInProgress()) . "</td>" .
      "</tr>";
 
 print "<tr>" .
-      "<td class='dataLabel'>Operation</td><td class='dataValue'>" . ucwords($jobInfo->getOpertion()). "</td>" .
-      "<td class='dataLabel'>Concurrency Mode</td><td class='dataValue'>" . $jobInfo->getConcurrencyMode() . "</td>" .
-      "<td class='dataLabel'>Batches Completed</td><td class='dataValue'>" . $jobInfo->getNumberBatchesCompleted() . "</td>" .
+      "<td class='dataLabel'>Operation</td><td class='dataValue'>" . ucwords(htmlspecialchars($jobInfo->getOpertion()). "</td>" .
+      "<td class='dataLabel'>Concurrency Mode</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getConcurrencyMode()) . "</td>" .
+      "<td class='dataLabel'>Batches Completed</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getNumberBatchesCompleted()) . "</td>" .
       "</tr>";
 
 print "<tr>" .
-      "<td class='dataLabel'>External Id</td><td class='dataValue'>" . $jobInfo->getExternalIdFieldName(). "</td>" .
-      "<td class='dataLabel'>API Version</td><td class='dataValue'>" . $jobInfo->getApiVersion() . "</td>" .    
-      "<td class='dataLabel'>Batches Failed</td><td class='dataValue'>" . $jobInfo->getNumberBatchesFailed() . "</td>" .
+      "<td class='dataLabel'>External Id</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getExternalIdFieldName()) . "</td>" .
+      "<td class='dataLabel'>API Version</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getApiVersion()) . "</td>" .
+      "<td class='dataLabel'>Batches Failed</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getNumberBatchesFailed()) . "</td>" .
       "</tr>";
 
 if (WorkbenchContext::get()->isApiVersionAtLeast(19.0)) {
     print "<tr>" .
-          "<td class='dataLabel'>API Processing</td><td class='dataValue'>" . $jobInfo->getApiActiveProcessingTime(). " ms</td>" .
-          "<td class='dataLabel'>Apex Processing</td><td class='dataValue'>" . $jobInfo->getApexProcessingTime() . " ms</td>" .    
-          "<td class='dataLabel'>Total Processing</td><td class='dataValue'>" . $jobInfo->getTotalProcessingTime() . " ms</td>" .
+          "<td class='dataLabel'>API Processing</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getApiActiveProcessingTime()) . " ms</td>" .
+          "<td class='dataLabel'>Apex Processing</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getApexProcessingTime()) . " ms</td>" .
+          "<td class='dataLabel'>Total Processing</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getTotalProcessingTime()) . " ms</td>" .
           "</tr>";
 }
 
 print "<tr>" .
-        "<td class='dataLabel'>Created</td><td class='dataValue'>" . localizeDateTimes($jobInfo->getCreatedDate(),$timeOnlyFormat) . "</td>" .
-        "<td class='dataLabel'>Last Modified</td><td class='dataValue'>" . localizeDateTimes($jobInfo->getSystemModstamp(),$timeOnlyFormat) . "</td>" .
-        "<td class='dataLabel'>Retries</td><td class='dataValue'>" . $jobInfo->getNumberRetries() . "</td>" .
+        "<td class='dataLabel'>Created</td><td class='dataValue'>" . localizeDateTimes(htmlspecialchars($jobInfo->getCreatedDate()), $timeOnlyFormat) . "</td>" .
+        "<td class='dataLabel'>Last Modified</td><td class='dataValue'>" . localizeDateTimes(htmlspecialchars($jobInfo->getSystemModstamp()) ,$timeOnlyFormat) . "</td>" .
+        "<td class='dataLabel'>Retries</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getNumberRetries()) . "</td>" .
        "</tr>";
 
 print "</table>";
@@ -118,8 +118,8 @@ if (count($batchInfos) > 0) {
                 $batchResultList = $asyncConnection->getBatchResultList($jobInfo->getId(), $batchInfo->getId());
             }
             foreach($batchResultList as $resultId) {
-                print "<a href='downloadAsyncBatch.php?op=result&jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . "&resultId=" . $resultId . "'>" .
-                      "<img src='" . getPathToStaticResource('/images/downloadIcon' . $batchInfo->getState() . '.gif') . "' border='0' onmouseover=\"Tip('Download " . $batchInfo->getState() . " Batch Results')\"/>" .
+                print "<a href='downloadAsyncBatch.php?op=result&jobId=" . htmlspecialchars($jobInfo->getId()) . "&batchId=" . htmlspecialchars($batchInfo->getId()) . "&resultId=" . $resultId . "'>" .
+                      "<img src='" . getPathToStaticResource('/images/downloadIcon' . htmlspecialchars($batchInfo->getState()) . '.gif') . "' border='0' onmouseover=\"Tip('Download " . htmlspecialchars($batchInfo->getState()) . " Batch Results')\"/>" .
                       "</a><br/>";
             }
         } else {
@@ -127,30 +127,30 @@ if (count($batchInfos) > 0) {
         }
         print "</td>";
 
-        $processingTimeDetails = "API Processing: " . $batchInfo->getApiActiveProcessingTime() . " ms<br/>" .
-                     "Apex Processing: "  .  $batchInfo->getApexProcessingTime() .   " ms<br/>" . 
-                     "Total Processing: "  . $batchInfo->getTotalProcessingTime() .  " ms<br/>";
+        $processingTimeDetails = "API Processing: " . htmlspecialchars($batchInfo->getApiActiveProcessingTime()) . " ms<br/>" .
+                     "Apex Processing: "  .  htmlspecialchars($batchInfo->getApexProcessingTime()) .   " ms<br/>" .
+                     "Total Processing: "  . htmlspecialchars($batchInfo->getTotalProcessingTime()) .  " ms<br/>";
 
         print "<td class='dataValue'>" .
               (WorkbenchContext::get()->isApiVersionAtLeast(19.0)
-                  ? "<a href='downloadAsyncBatch.php?op=request&jobId=" . $jobInfo->getId() . "&batchId=" . $batchInfo->getId() . 
-                     "' onmouseover=\"Tip('Download Batch Request')\"/>" . $batchInfo->getId() . "</a>" 
-                  : $batchInfo->getId()) .
+                  ? "<a href='downloadAsyncBatch.php?op=request&jobId=" . htmlspecialchars($jobInfo->getId()) . "&batchId=" . htmlspecialchars($batchInfo->getId()) .
+                     "' onmouseover=\"Tip('Download Batch Request')\"/>" . htmlspecialchars($batchInfo->getId()) . "</a>"
+                  : htmlspecialchars($batchInfo->getId())) .
               "</td>" . 
-              "<td class='dataValue'>" . $batchInfo->getState() . (($batchInfo->getStateMessage() != "") ? (": " . $batchInfo->getStateMessage()) : "") . "</td>" .
+              "<td class='dataValue'>" . htmlspecialchars($batchInfo->getState()) . (($batchInfo->getStateMessage() != "") ? (": " . htmlspecialchars($batchInfo->getStateMessage())) : "") . "</td>" .
               (WorkbenchContext::get()->isApiVersionAtLeast(19.0)
                   ? "<td class='dataValue pseudoLink' style='cursor: default' onmouseover=\"Tip('$processingTimeDetails')\"/>"
                   : "<td class='dataValue'>") .
-              $batchInfo->getNumberRecordsProcessed() . ($batchInfo->getNumberRecordsProcessed() == "1" ? " record" : " records") .
+                     htmlspecialchars($batchInfo->getNumberRecordsProcessed()) . (htmlspecialchars($batchInfo->getNumberRecordsProcessed()) == "1" ? " record" : " records") .
               "</td>" .
               (WorkbenchContext::get()->isApiVersionAtLeast(19.0)
-                  ? "<td class='dataValue'>" . $batchInfo->getNumberRecordsFailed() . 
+                  ? "<td class='dataValue'>" . htmlspecialchars($batchInfo->getNumberRecordsFailed()) .
                     ($batchInfo->getNumberRecordsFailed() == "1" 
                         ? " record" 
                         : " records") . "</td>" 
                   : "").
-              "<td class='dataValue'>" . localizeDateTimes($batchInfo->getCreatedDate(),$timeOnlyFormat) . "</td>" .
-              "<td class='dataValue'>" . localizeDateTimes($batchInfo->getSystemModstamp(),$timeOnlyFormat) . "</td>";
+              "<td class='dataValue'>" . localizeDateTimes(htmlspecialchars($batchInfo->getCreatedDate()), $timeOnlyFormat) . "</td>" .
+              "<td class='dataValue'>" . localizeDateTimes(htmlspecialchars($batchInfo->getSystemModstamp()), $timeOnlyFormat) . "</td>";
 
         print "</tr>";
     }
