@@ -60,8 +60,7 @@ $sessionInfo = array();
 $sessionInfo['Connection'] = array(
     'API Version' => WorkbenchContext::get()->getApiVersion(),
     'Client Id' => isset($_SESSION['tempClientId']) ? $_SESSION['tempClientId'] : WorkbenchConfig::get()->value('callOptions_client'),
-    'Endpoint' => WorkbenchContext::get()->getPartnerConnection()->getLocation(),
-    'Session Id' => WorkbenchContext::get()->getPartnerConnection()->getSessionId(),
+    'Endpoint' => WorkbenchContext::get()->getPartnerConnection()->getLocation()
 );
 
 $errors = array();
