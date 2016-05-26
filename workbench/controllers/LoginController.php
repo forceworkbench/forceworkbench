@@ -215,14 +215,10 @@ class LoginController {
             return;
         }
 
-        //block connections to localhost
-        if (stripos($serverUrl,'localhost')) {
-            if (isset($GLOBALS['internal']['localhostLoginError'])) {
-                $this->addError($GLOBALS['internal']['localhostLoginError']);
-            } else {
-                $this->addError("Must not connect to 'localhost'");
-            }
-
+        //block connections to anything but *.salesforce.com
+        $serverUrlHost = parse_url($serverUrl, PHP_URL_HOST);
+        if (!endsWith($serverUrlHost,'.salesforce.com', false)) {
+            $this->addError("Host must match *.salesforce.com");
             return;
         }
 
