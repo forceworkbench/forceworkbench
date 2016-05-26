@@ -209,16 +209,29 @@ class LoginController {
         return $serverUrl;
     }
 
+    private function isAllowedHost($serverUrl) {
+        $serverUrlHost = parse_url($serverUrl, PHP_URL_HOST);
+        $whitelist = array(
+            '/^.*\.salesforce\.com$/',
+            '/^.*\.vpod\.t\.force\.com$/'
+        );
+        foreach ($whitelist as $w) {
+            if (preg_match($w, $serverUrlHost)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private function processLogin($username, $password, $serverUrl, $sessionId, $actionJump) {
         if ($username && $password && $sessionId) {
             $this->addError('Provide only username and password OR session id, but not all three.');
             return;
         }
 
-        //block connections to anything but *.salesforce.com
-        $serverUrlHost = parse_url($serverUrl, PHP_URL_HOST);
-        if (!endsWith($serverUrlHost,'.salesforce.com', false)) {
-            $this->addError("Host must match *.salesforce.com");
+        //block connections to non-sfdc domains
+        if (!$this->isAllowedHost($serverUrl)) {
+            $this->addError("Host must be a Salesforce domain");
             return;
         }
 
