@@ -67,7 +67,7 @@ print "<tr>" .
      "</tr>";
 
 print "<tr>" .
-      "<td class='dataLabel'>Operation</td><td class='dataValue'>" . ucwords(htmlspecialchars($jobInfo->getOpertion()). "</td>" .
+      "<td class='dataLabel'>Operation</td><td class='dataValue'>" . ucwords(htmlspecialchars($jobInfo->getOpertion())) . "</td>" .
       "<td class='dataLabel'>Concurrency Mode</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getConcurrencyMode()) . "</td>" .
       "<td class='dataLabel'>Batches Completed</td><td class='dataValue'>" . htmlspecialchars($jobInfo->getNumberBatchesCompleted()) . "</td>" .
       "</tr>";
