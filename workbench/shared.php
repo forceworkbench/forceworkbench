@@ -643,9 +643,12 @@ function in_arrayi($needle, $haystack) {
  */
 function prettyPrintXml($xml, $htmlOutput=FALSE) {
     try {
-        $xmlObj = new SimpleXMLElement($xml);
+        libxml_disable_entity_loader(true);
+        $xmlObj = new SimpleXMLElement(disallowDoctype($xml));
     } catch (Exception $e) {
         return $xml;
+    } finally {
+        libxml_disable_entity_loader(false);
     }
 
     $xmlLines = explode("

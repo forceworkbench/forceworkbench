@@ -280,7 +280,13 @@ class BulkApiClient {
     public function getBatchInfos($jobId) {
         $batchInfos = array();
 
-        $batchInfoList = new SimpleXMLElement($this->get($this->url(array(self::JOB, $jobId, self::BATCH))));
+        try {
+            libxml_disable_entity_loader(true);
+            $batchInfoList = new SimpleXMLElement(disallowDoctype($this->get($this->url(array(self::JOB, $jobId, self::BATCH)))));
+        } finally {
+            libxml_disable_entity_loader(false);
+        }
+        
         foreach ($batchInfoList as $batchInfoListItem) {
             $batchInfos["$batchInfoListItem->id"] = new BatchInfo($batchInfoListItem->asXml());
         }
