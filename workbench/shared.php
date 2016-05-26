@@ -2,7 +2,7 @@
 require_once "util/ExpandableTree.php";
 
 function disallowDoctype($xmlString) {
-    if (strpos(substr($xmlString, 0, 1000), '!DOCTYPE') !== FALSE) {
+    if (stripos(substr($xmlString, 0, 1000), '!DOCTYPE') !== FALSE) {
         throw new WorkbenchHandledException("XML DOCTYPE declaration not allowed.");
     }
     return $xmlString;
