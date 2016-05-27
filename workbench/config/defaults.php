@@ -270,7 +270,8 @@ $config["header_LoginOptions"] = array(
             "cs16" => array("Sandbox: CS16","f"),
             "cs17" => array("Sandbox: CS17","g"),
             "prerelna1.pre" => array("Pre-Release: NA1","t"),
-            "mobile1.t" => array("Mobile 1","")
+            "mobile1.t" => array("Mobile 1",""),
+            "mobile2.t" => array("Mobile 2","")
         )
     );
 
