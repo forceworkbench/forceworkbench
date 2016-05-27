@@ -210,13 +210,12 @@ class LoginController {
     }
 
     private function isAllowedHost($serverUrl) {
-        $serverUrlHost = parse_url($serverUrl, PHP_URL_HOST);
-        $whitelist = array(
-            '/^.*\.salesforce\.com$/',
-            '/^.*\.vpod\.t\.force\.com$/'
+        $domainWhitelist = array(
+            'salesforce\.com',
+            'vpod\.t\.force\.com'
         );
-        foreach ($whitelist as $w) {
-            if (preg_match($w, $serverUrlHost)) {
+        foreach ($domainWhitelist as $w) {
+            if (preg_match('/^https?\:\/\/[\w\.\-_]+\.' . $w . '/', $serverUrl)) {
                 return true;
             }
         }
