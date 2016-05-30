@@ -17,7 +17,7 @@ if ($_SESSION) {
 
         if (isset($_SESSION['oauth']['serverUrlPrefix']) && !empty($_SESSION['oauth']['serverUrlPrefix'])) {
             $redirectTime = 5000;
-            $uiLogoutIFrame = "<iframe src='". $_SESSION['oauth']['serverUrlPrefix'] .
+            $uiLogoutIFrame = "<iframe src='". htmlspecialchars($_SESSION['oauth']['serverUrlPrefix']) .
                               "/secur/logout.jsp' width='0' height='0' style='display:none;'></iframe>\n";
         }
     } else {
