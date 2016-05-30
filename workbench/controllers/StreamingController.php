@@ -137,6 +137,14 @@ class StreamingController {
     function getStreamingConfig() {
         $streamingConfig["handshakeOnLoad"] = true; // TODO: make this configurable
         $streamingConfig["csrfToken"] = getCsrfToken();
+        $streamingConfig["apiVersionInt"] = intval(WorkbenchContext::get()->getApiVersion());
+        $streamingConfig["streamingV2Enabled"] = (bool) WorkbenchConfig::get()->valueOrElse('streamingV2Enabled', true);
+
+        $baseUrl = "http" . (usingSslFromUserToWorkbench() ? "s" : "") ."://" .
+            $_SERVER['HTTP_HOST'] .
+            str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
+            (strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/");
+        $streamingConfig["classicStreamingUrl"] = $baseUrl . "cometdProxy.php";
 
         // configs in "$streamingConfig["cometdConfig"]" are loaded into CometD in JS and need to match their format
         $streamingConfig["cometdConfig"]["logLevel"] = "info";
@@ -144,12 +152,7 @@ class StreamingController {
         $streamingConfig["cometdConfig"]["advice"]["timeout"] = (int) WorkbenchConfig::get()->valueOrElse("streamingAdviceTimeout", 25000);
         $streamingConfig["cometdConfig"]["advice"]["interval"] = 0;
         $streamingConfig["cometdConfig"]["advice"]["reconnect"] = "retry";
-        $streamingConfig["cometdConfig"]["url"] =
-            "http" . (usingSslFromUserToWorkbench() ? "s" : "") ."://" .
-            $_SERVER['HTTP_HOST'] .
-            str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
-			(strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/") .
-            "cometdProxy.php";
+        $streamingConfig["cometdConfig"]["url"] = $streamingConfig["classicStreamingUrl"];
 
         return json_encode($streamingConfig);
     }

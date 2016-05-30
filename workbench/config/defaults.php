@@ -536,6 +536,15 @@ $config["header_DataManagement"] = array(
          )
     );
 
+    $config["streamingV2Enabled"]  = array(
+        "label" => "Streaming V2",
+        "description" => "Enables client to use Streaming V2 endpoint and exposes options to subscribe to previous events.",
+        "default" => true,
+        "overrideable" => true,
+        "dataType" => "boolean",
+        "minApiVersion" => 37.0
+    );
+
 $config["header_queryAndSearchOptions"] = array(
     "label" => "Query & Search Options",
     "display" => true,
