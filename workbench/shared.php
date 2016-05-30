@@ -232,7 +232,7 @@ function printAsyncRefreshBlock() {
                  "<span id='refreshSpinner' style='display:none;'>&nbsp;<img src='" . getPathToStaticResource('/images/wait16trans.gif') . "' align='absmiddle'/></span>" .
                  "<span id='refreshInTimer' style='display:inline;'>in $refreshInterval seconds" .
                  "</span></div>";
-        print "<script>setTimeout('document.getElementById(\'refreshInTimer\').style.display=\'none\'; document.getElementById(\'refreshSpinner\').style.display=\'inline\'; window.location.href=\'$newUrl\'', $refreshInterval * 1000);</script>";
+        print "<script>setTimeout('document.getElementById(\'refreshInTimer\').style.display=\'none\'; document.getElementById(\'refreshSpinner\').style.display=\'inline\'; window.location.href=" . json_encode($newUrl) . "', $refreshInterval * 1000);</script>";
     } else {
         print "<input type='button' onclick='window.location.href=window.location.href;' value='Refresh' style='float:right;'/>";
     }
