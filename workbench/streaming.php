@@ -25,11 +25,11 @@ require_once "header.php";
 </div>
 
 <div id="replayFromContainer" style="display: none;">
-    <label>Replay from: <input id="replayFrom" name="replayFrom" value="-1"></label>
+    <label>Replay from:  <input id="replayFrom" name="replayFrom" value="-1"></label>
 </div>
 
 <div id="pushTopicContainer" style="display: block;">
-    <label for="selectedTopic">Push Topic:</label>
+    <label for="selectedTopic">Push Topic:</label>&nbsp;&nbsp;
     <select id="selectedTopic">
         <?php echo $c->getPushTopicOptions(); ?>
     </select>
@@ -88,6 +88,7 @@ require_once "header.php";
 
 <div id="genericSubscriptionContainer" style="display: none;">
     <label>Subscription: <input id="genericSubscription" name="genericSubscription"></label>
+    &nbsp;
     <input id="genericSubscribeBtn" type="button" value="Subscribe"/>
     <input id="genericUnsubscribeBtn" type="button" value="Unsubscribe" disabled="disabled"/>
 </div>
