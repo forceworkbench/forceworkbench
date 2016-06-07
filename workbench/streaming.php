@@ -19,8 +19,17 @@ require_once "header.php";
     <?php echo $c->getMessages(); ?>
 </div>
 
-<div id="pushTopicContainer" style="display: <?php echo $c->isEnabled() ? "block" : "none"?>;">
-    <label for="selectedTopic">Push Topic:</label>
+<div id="subscriptionTypeSelectors">
+    <label><input id="subscriptionTypeSelectPushTopic" type="radio" name="subscriptionType" value="pushTopic" checked/>Push Topics</label>
+    <label><input id="subscriptionTypeSelectGenericSubscription" type="radio" name="subscriptionType" value="genericSubscription"/>Generic Subscriptions</label>
+</div>
+
+<div id="replayFromContainer" style="display: none;">
+    <label>Replay from:  <input id="replayFrom" name="replayFrom" value="-1"></label>
+</div>
+
+<div id="pushTopicContainer" style="display: block;">
+    <label for="selectedTopic">Push Topic:</label>&nbsp;&nbsp;
     <select id="selectedTopic">
         <?php echo $c->getPushTopicOptions(); ?>
     </select>
@@ -40,14 +49,6 @@ require_once "header.php";
     <input id="pushTopicDetailsBtn"
            type="button"
            value="Details"/>
-
-    <input id="clearStream"
-           type="button"
-           value="Clear"/>
-
-    <input id="toggleShowPolling"
-           type="button"
-           value="Show Polling"/>
 
     <div id="pushTopicDmlContainer">
         <form id="pushTopicDmlForm" method="" action="">
@@ -85,8 +86,22 @@ require_once "header.php";
     </div>
 </div>
 
+<div id="genericSubscriptionContainer" style="display: none;">
+    <label>Subscription: <input id="genericSubscription" name="genericSubscription"></label>
+    &nbsp;
+    <input id="genericSubscribeBtn" type="button" value="Subscribe"/>
+    <input id="genericUnsubscribeBtn" type="button" value="Unsubscribe" disabled="disabled"/>
+</div>
+
 <div id="streamContainer">
-    <div><span id="status"></span><span id="pollIndicator">&bull;</span></div>
+    <div>
+      <span id="status"></span>
+      <span id="pollIndicator">&bull;</span>
+      <span id="streamUtilities">
+        <input id="clearStream" type="button" value="Clear"/>
+        <input id="toggleShowPolling" type="button" value="Show Polling"/>
+      </span>
+    </div>
     <div id="streamBody"></div>
 </div>
 
@@ -101,6 +116,7 @@ require_once "header.php";
 <?php
 if ($c->isEnabled()) {
     addFooterScript("<script type='text/javascript' src='" . 'static-unversioned/script/dojo/dojo/dojo.js' . "'></script>");
+    addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/CometDReplayExt.js') . "'></script>");
     addFooterScript("<script type='text/javascript' src='" . getPathToStaticResource('/script/streamingClient.js') . "'></script>");
     addFooterScript("<script type='text/javascript'>var wbStreaming = ". $c->getStreamingConfig() . ";</script>");
 }

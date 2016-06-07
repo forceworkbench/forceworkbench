@@ -276,6 +276,7 @@ $config["header_LoginOptions"] = array(
     );
 
     $GLOBALS['API_VERSIONS'] = array(
+        "37.0" => "37.0",
         "36.0" => "36.0",
         "35.0" => "35.0",
         "34.0" => "34.0",
@@ -533,6 +534,15 @@ $config["header_DataManagement"] = array(
             "Parallel" => "Parallel",
             "Serial" => "Serial"
          )
+    );
+
+    $config["streamingV2Enabled"]  = array(
+        "label" => "Streaming V2",
+        "description" => "Enables client to use Streaming V2 endpoint and exposes options to subscribe to previous events.",
+        "default" => true,
+        "overrideable" => true,
+        "dataType" => "boolean",
+        "minApiVersion" => 37.0
     );
 
 $config["header_queryAndSearchOptions"] = array(

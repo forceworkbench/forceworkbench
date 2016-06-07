@@ -328,7 +328,9 @@ table.sortable tr.sortBottom td {
     font-weight: bold;
 }
 
-#pushTopicContainer {
+#pushTopicContainer,
+#genericSubscriptionContainer,
+#replayFromContainer {
     margin-top: 10px;
 }
 
@@ -404,7 +406,7 @@ table.sortable tr.sortBottom td {
     color: rgb(66, 150, 231);
 }
 
-#toggleShowPolling, #clearStream{
+#toggleShowPolling, #clearStream {
     float: right;
     margin-left: 5px;
 }
@@ -412,4 +414,8 @@ table.sortable tr.sortBottom td {
 #streamContainer #pollIndicator {
     margin-left: 2px;
     display: none;
+}
+
+#selectedTopic {
+    width: 151px;
 }

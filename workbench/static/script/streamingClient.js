@@ -6,7 +6,6 @@ dojo.addOnLoad(function() {
     var showPolling = false;
     var subscriptions = [];
 
-
     function metaAny(message) {
         flashPollIndicator();
     }
@@ -38,8 +37,6 @@ dojo.addOnLoad(function() {
             postToStream("Handshake Successful", message);
             setStatus("Handshake Successful");
         } else {
-            
-
             postErrorToStream("Handshake Failure", message);
             setStatus("Handshake Failure");
         }
@@ -53,6 +50,7 @@ dojo.addOnLoad(function() {
             postToStream("Subscribed to " + message.subscription, message);
         } else {
             postErrorToStream("Subscription Failure: " + message.error, message);
+            unsubscribe(message.subscription);
         }
     }
 
@@ -121,6 +119,27 @@ dojo.addOnLoad(function() {
             }
         }
         return result;
+    }
+
+    function setCometdUrl(url) {
+        cometd.configure({
+            url: url
+        });
+    }
+
+    function selectSubscriptionType(subType) {
+        var pushTopicContainer = dojo.byId("pushTopicContainer");
+        var genericSubscriptionContainer = dojo.byId("genericSubscriptionContainer");
+
+        if (subType == "pushTopic") {
+            pushTopicContainer.style.display = "block";
+            genericSubscriptionContainer.style.display = "none";
+        } else if (subType == "genericSubscription") {
+            genericSubscriptionContainer.style.display = "block";
+            pushTopicContainer.style.display = "none";
+        } else {
+          alert("Unknown subscription subType!")
+        }
     }
 
     function togglePushTopicDmlContainer_Internal(forceShow) {
@@ -203,24 +222,72 @@ dojo.addOnLoad(function() {
         }
     }
 
-    function subscribe() {
+    function handshake() {
+        setStatus("Handshaking");
+
+        if (isUsingStreamingV2()) {
+            if(cometd.getExtension('replayFrom')) {
+                cometd.unregisterExtension('replayFrom');
+            }
+            var replayFrom = dojo.byId("replayFrom").value;
+            cometd.registerExtension('replayFrom', new CometDReplayExt());
+        } else {
+            cometd.unregisterExtension('replayFrom');
+        }
+
+        cometd.handshake();
+    }
+
+    function subcribePushTopic() {
         var topic = dojo.byId("selectedTopic").value;
         var topicName = JSON.parse(topic).Name;
-        subscriptions[topicName] = cometd.subscribe("/topic/" + topicName, handleSubscription);
+        var subscription = "/topic/" + topicName;
+        subscribe(subscription);
+    }
+
+    function subscribeGeneric() {
+        var genericSubscription = dojo.byId("genericSubscription").value;
+        subscribe(genericSubscription);
+    }
+    
+    function subscribe(subscription) {
+        if (isUsingStreamingV2()) {
+            var replayFrom = dojo.byId("replayFrom").value;
+            cometd.getExtension('replayFrom').setChannel(subscription);
+            cometd.getExtension('replayFrom').setReplay(replayFrom);
+        } else {
+            if (null != cometd.getExtension('replayFrom')) {
+                cometd.unregisterExtension('replayFrom');
+            }
+        }
+
+        subscriptions[subscription] = cometd.subscribe(subscription, handleSubscription);
         toggleSubUnSubButtons();
     }
 
-    function unsubscribe() {
+    function unsubscribePushTopic() {
         var topic = dojo.byId("selectedTopic").value;
         var topicName = JSON.parse(topic).Name;
-        cometd.unsubscribe(subscriptions[topicName]);
-        subscriptions[topicName] = undefined;
+        var subscription = "/topic/" + topicName;
+        unsubscribe(subscription);
+    }
+
+    function unsubscribeGeneric() {
+        var genericSubsription = dojo.byId("genericSubscription").value;
+        unsubscribe(genericSubsription);
+    }
+
+    function unsubscribe(subscription) {
+        cometd.unsubscribe(subscriptions[subscription]);
+        subscriptions[subscription] = undefined;
         toggleSubUnSubButtons();
     }
 
     function disconnect() {
         setStatus("Disconnecting");
         cometd.disconnect(true);
+        setStatus("Disconnected");
+        isConnected = false;
     }
 
     function toggleShowPolling() {
@@ -233,36 +300,73 @@ dojo.addOnLoad(function() {
     }
 
     function toggleSubUnSubButtons() {
-        var subName;
-        var topic = dojo.byId("selectedTopic").value;
+        var topic;
+        var subscribeBtnId;
+        var unSubscribeBtnId;
+        var isPushTopic;
+        if (dojo.byId("subscriptionTypeSelectPushTopic").checked) {
+            topic = dojo.byId("selectedTopic").value;
+            subscribeBtnId = "pushTopicSubscribeBtn";
+            unSubscribeBtnId = "pushTopicUnsubscribeBtn";
+            isPushTopic = true;
+        } else if (dojo.byId("subscriptionTypeSelectGenericSubscription").checked) {
+            topic = dojo.byId("genericSubscription").value;
+            subscribeBtnId = "genericSubscribeBtn";
+            unSubscribeBtnId = "genericUnsubscribeBtn";
+            isPushTopic = false;
+        } else {
+            alert("Unknown streaming type. Please select Push Topic or Generic.");
+            return;
+        }
+        toggleSubUnSubButtons_Helper(topic, subscribeBtnId, unSubscribeBtnId, isPushTopic);
+    }
 
-        if (topic === null || topic === "") {
-            dojo.byId("pushTopicSubscribeBtn").disabled = true;
-            dojo.byId("pushTopicUnsubscribeBtn").disabled = true;
+    function toggleSubUnSubButtons_Helper(topic, subscribeBtnId, unSubscribeBtnId, isPushTopic) {
+        var subName;
+
+        if (isPushTopic && (topic === null || topic === "")) {
+            dojo.byId(subscribeBtnId).disabled = true;
+            dojo.byId(unSubscribeBtnId).disabled = true;
             return;
         }
 
-        var selectedTopicName = JSON.parse(topic).Name;
-
-        if (selectedTopicName === null || selectedTopicName === "") {
-            dojo.byId("pushTopicSubscribeBtn").disabled = true;
-            dojo.byId("pushTopicUnsubscribeBtn").disabled = true;
-            return;
+        var selectedTopicName; 
+        if (isPushTopic) {
+            selectedTopicName = JSON.parse(topic).Name;
+            if (selectedTopicName === null || selectedTopicName === "") {
+                dojo.byId(subscribeBtnId).disabled = true;
+                dojo.byId(unSubscribeBtnId).disabled = true;
+                return;
+            } else {
+                selectedTopicName = "/topic/" + selectedTopicName;
+            }        
+        } else {
+            selectedTopicName = topic;
         }
 
         for (subName in subscriptions) {
             if (selectedTopicName === subName && subscriptions[subName] !== undefined) {
-                dojo.byId("pushTopicSubscribeBtn").disabled = true;
-                dojo.byId("pushTopicUnsubscribeBtn").disabled = false;
+                dojo.byId(subscribeBtnId).disabled = true;
+                dojo.byId(unSubscribeBtnId).disabled = false;
                 return;
             }
         }
-        dojo.byId("pushTopicSubscribeBtn").disabled = false;
-        dojo.byId("pushTopicUnsubscribeBtn").disabled = true;
+        dojo.byId(subscribeBtnId).disabled = false;
+        dojo.byId(unSubscribeBtnId).disabled = true;
     }
 
     function clearStream() {
         dojo.byId("streamBody").innerHTML = "";
+    }
+
+    function toggleReplayOptions() {
+        if (isUsingStreamingV2()) {
+            dojo.byId("replayFromContainer").style.display = "block";
+        }
+    }
+
+    function isUsingStreamingV2() {
+        return wbStreaming.streamingV2Enabled && wbStreaming.apiVersionInt >= 37;
     }
 
     function postTopicDml(dmlAction) {
@@ -318,6 +422,7 @@ dojo.addOnLoad(function() {
     setStatus("Initializing");
     copySelectedTopic();
     toggleSubUnSubButtons();
+    toggleReplayOptions();
 
     // config CometD -- this gets passed in from the controller via streaming.php
     cometd.configure(wbStreaming.cometdConfig);
@@ -326,13 +431,17 @@ dojo.addOnLoad(function() {
     cometd.onListenerException = listenerExceptionHandler;
 
     dojo.addOnUnload(disconnect);
+    bindEvent(dojo.byId("subscriptionTypeSelectPushTopic"), "click", function() { selectSubscriptionType("pushTopic") });
+    bindEvent(dojo.byId("subscriptionTypeSelectGenericSubscription"), "click", function() { selectSubscriptionType("genericSubscription") });
     bindEvent(dojo.byId("selectedTopic"), "change", copySelectedTopic);
     bindEvent(dojo.byId("selectedTopic"), "change", hideMessages);
     bindEvent(dojo.byId("selectedTopic"), "change", toggleSubUnSubButtons);
     bindEvent(dojo.byId("pushTopicSubscribeBtn"), "click", hideMessages);
     bindEvent(dojo.byId("pushTopicUnsubscribeBtn"), "click", hideMessages);
-    bindEvent(dojo.byId("pushTopicSubscribeBtn"), "click", subscribe);
-    bindEvent(dojo.byId("pushTopicUnsubscribeBtn"), "click", unsubscribe);
+    bindEvent(dojo.byId("genericSubscribeBtn"), "click", subscribeGeneric);
+    bindEvent(dojo.byId("genericUnsubscribeBtn"), "click", unsubscribeGeneric);
+    bindEvent(dojo.byId("pushTopicSubscribeBtn"), "click", subcribePushTopic);
+    bindEvent(dojo.byId("pushTopicUnsubscribeBtn"), "click", unsubscribePushTopic);
     bindEvent(dojo.byId("pushTopicDetailsBtn"), "click", togglePushTopicDmlContainer);
     bindEvent(dojo.byId("toggleShowPolling"), "click", toggleShowPolling);
     bindEvent(dojo.byId("clearStream"), "click", clearStream);
@@ -349,7 +458,6 @@ dojo.addOnLoad(function() {
     setStatus("Initialized");
 
     if (wbStreaming.handshakeOnLoad) {
-        setStatus("Handshaking");
-        cometd.handshake();
+        handshake();
     }
 });
