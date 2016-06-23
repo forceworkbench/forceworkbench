@@ -34,10 +34,18 @@
 class CallOptions {
     public $client;
     public $defaultNamespace;
+    public $clientLog;
+    public $debugExceptions;
+    public $platform;
+    public $remoteApplication;
 
-    public function __construct($client, $defaultNamespace=NULL) {
+    public function __construct($client, $defaultNamespace=NULL, $clientLog=NULL, $debugExceptions="true", $platform=NULL, $remoteApplication=NULL) {
         $this->client = $client;
         $this->defaultNamespace = $defaultNamespace;
+        $this->clientLog = $clientLog;
+        $this->debugExceptions = $debugExceptions;
+        $this->platform = $platform;
+        $this->remoteApplication = $remoteApplication;
     }
 }
 
