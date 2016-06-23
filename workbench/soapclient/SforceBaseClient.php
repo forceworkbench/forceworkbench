@@ -128,7 +128,11 @@ class SforceBaseClient {
         if ($header != NULL) {
             $this->callOptions = new SoapHeader($this->namespace, 'CallOptions', array (
           'client' => $header->client,
-          'defaultNamespace' => $header->defaultNamespace
+          'defaultNamespace' => $header->defaultNamespace,
+          'clientLog' => $header->clientLog,
+          'debugExceptions' => $header->debugExceptions,
+          'platform' => $header->platform,
+          'remoteApplication' => $header->remoteApplication
             ));
         } else {
             $this->callOptions = NULL;
@@ -390,7 +394,8 @@ class SforceBaseClient {
     public function setQueryOptions($header) {
         if ($header != NULL) {
             $this->queryHeader = new SoapHeader($this->namespace, 'QueryOptions', array (
-             'batchSize' => $header->batchSize
+             'batchSize' => $header->batchSize,
+             'scope' => ''
             ));
         } else {
             $this->queryHeader = NULL;
