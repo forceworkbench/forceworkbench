@@ -571,7 +571,7 @@ function natcaseksort($array) {
 
 
 function addLinksToIds($inputStr) {
-    $idMatcher = "/\b(\w{5}000\w{10})\b/";
+    $idMatcher = "/\b([A-Za-z0-9]{18})\b/";
     $uiHref = "href='" . getJumpToSfdcUrlPrefix() . "$1' target='sfdcUi' ";
 
     $dmlTip = "";
