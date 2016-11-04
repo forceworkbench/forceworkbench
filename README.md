@@ -19,28 +19,22 @@ and is also available for [download](https://github.com/ryanbrainard/forceworkbe
 Workbench can also be [deployed to Heroku](https://heroku.com/deploy),
 which is great for spinning up a public instance during development in a fork:
 
+Build And Run using Docker
+-------------------------
+Jonsey and Jujhar have set this up in a Docker container so it can be run locally.
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
-
-For installation of Workbench, please see the [installation](http://wiki.developerforce.com/index.php/Workbench#Installation)
-section of the [wiki](http://wiki.developerforce.com/index.php/Workbench).
-
-
-Build Using Docker
-----------------
-```console
+### Build
+```bash
 $ docker build -t sfwb ./
 ```
 
-```console
+### Run
+```bash
+$ docker run -t -p 80:80 sfwb
+
+## or to run interactivly for debugging
 $ docker run -ti -p 80:80 --entrypoint=/bin/bash sfwb
 ```
-
-```console
-$ docker run -t -p 80:80 sfwb
-```
-
-
 
 Support
 -------
