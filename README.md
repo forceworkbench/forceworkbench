@@ -23,17 +23,9 @@ Build And Run using Docker
 -------------------------
 Jonsey and Jujhar have set this up in a Docker container so it can be run locally.
 
-### Build
-```bash
-$ docker build -t sfwb ./
-```
-
 ### Run
 ```bash
-$ docker run -t -p 80:80 sfwb
-
-## or to run interactivly for debugging
-$ docker run -ti -p 80:80 --entrypoint=/bin/bash sfwb
+$ docker run -t -p 80:80 llyrjones/forceworkbench
 ```
 
 Support
