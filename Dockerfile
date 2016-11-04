@@ -1,22 +1,16 @@
 FROM php:5.6.27-apache
 
-RUN apt-get update
-
-RUN apt-get install -y git libxml2-dev
-
+#get libxml libs for php_soap.so
+RUN apt-get update &&apt-get install -y libxml2-dev
+#install php_soap
 RUN docker-php-ext-install -j$(nproc) soap
 
-#RUN git clone https://github.com/ryanbrainard/forceworkbench.git /root/workbench
-
+#add workbench folder from this project into the container and copy into apache webroot
 ADD workbench /workbench
-
 RUN cp -R /workbench/* /var/www/html
 
+#we use port 80 mostly
+EXPOSE 80
 
-# docker build -t sfwb ./
-
-# docker run -ti -p 80:80 --entrypoint=/bin/bash sfwb
-
-# docker run -t -p 80:80 sfwb
-
-
+#run apache
+CMD ["apache2-foreground"]
