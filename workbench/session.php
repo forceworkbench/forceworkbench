@@ -7,6 +7,8 @@ require_once 'context/WorkbenchContext.php';
 set_exception_handler('handleAllExceptions');
 set_error_handler('handleAllErrors');
 
+$_REQUEST['footerScripts'] = array();
+
 if (!ini_get("date.timezone")) {
     date_default_timezone_set('UTC');
 }
