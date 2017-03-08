@@ -276,6 +276,7 @@ $config["header_LoginOptions"] = array(
     );
 
     $GLOBALS['API_VERSIONS'] = array(
+        "39.0" => "39.0",
         "37.0" => "37.0",
         "36.0" => "36.0",
         "35.0" => "35.0",
@@ -312,7 +313,7 @@ $config["header_LoginOptions"] = array(
     $config["defaultApiVersion"]  = array(
         "label" => "Default API Version",
         "description" => "Default API version to be used for login. This setting does not affect the API version of the current session. Recommended to choose latest version. Some features may act unexpectedly when using older versions.",
-        "default" => "37.0",
+        "default" => "39.0",
         "overrideable" => true,
         "dataType" => "picklist",
         "valuesToLabels" => $GLOBALS['API_VERSIONS']
@@ -542,7 +543,7 @@ $config["header_DataManagement"] = array(
         "default" => true,
         "overrideable" => true,
         "dataType" => "boolean",
-        "minApiVersion" => 37.0
+        "minApiVersion" => 39.0
     );
 
 $config["header_queryAndSearchOptions"] = array(
