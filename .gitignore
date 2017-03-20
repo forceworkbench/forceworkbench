@@ -9,3 +9,4 @@ Vagrantfile
 .idea
 /vendor
 composer.phar
+bower_components/

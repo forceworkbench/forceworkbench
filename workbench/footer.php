@@ -22,6 +22,9 @@ print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKB
 </body>
 
 <script type="text/javascript" src="<?php echo getPathToStaticResource('/script/wz_tooltip.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo getPathToBowerComponents('/jquery/dist/jquery.min.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo getPathToBowerComponents('/select2/dist/js/select2.full.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo getPathToStaticResource('/script/enable-select2.js'); ?>"></script>
 
 <?php
 if (isset($_REQUEST["footerScripts"])) {

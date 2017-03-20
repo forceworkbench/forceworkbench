@@ -5,7 +5,8 @@
         <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 
         <link rel="shortcut icon" href="<?php echo getPathToStaticResource('/images/favicon.ico'); ?>" />
-
+        <link rel="stylesheet" href="<?php echo getPathToBowerComponents('/select2/dist/css/select2.min.css'); ?>" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo getPathToStaticResource('/style/enable-select2.css'); ?>" />
         <link rel="stylesheet" type="text/css" href="<?php echo getPathToStaticResource('/style/master.css'); ?>" />
         <link rel="stylesheet" type="text/css" href="<?php echo getPathToStaticResource('/style/pro_dropdown.css'); ?>" />
         <link rel="stylesheet" type="text/css" href="<?php echo getPathToStaticResource('/style/simpletree.css'); ?>" />
