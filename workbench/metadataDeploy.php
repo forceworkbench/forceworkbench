@@ -160,6 +160,10 @@ function printDeployOptions($deployOptions) {
 function validateZipFile($file) {
     $validationResult = validateUploadedFile($file);
 
+    if ($validationResult) {
+        return($validationResult);
+    }
+
     if (!isset($file["tmp_name"]) || $file["tmp_name"] == "") {
         return("No file uploaded for deployment.");
     }
