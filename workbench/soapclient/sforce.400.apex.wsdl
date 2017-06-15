@@ -526,7 +526,7 @@ Copyright 2006-2017 Salesforce.com, inc. All Rights Reserved
         <documentation>Manage your Salesforce.com Apex classes and triggers
 </documentation>
         <port binding="tns:ApexBinding" name="Apex">
-            <soap:address location="https://test.salesforce.com/services/Soap/s/40.0"/>
+            <soap:address location="https://login.salesforce.com/services/Soap/s/40.0"/>
         </port>
     </service>
 </definitions>

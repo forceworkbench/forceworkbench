@@ -3634,11 +3634,15 @@ Copyright 2006-2017 Salesforce.com, inc. All Rights Reserved
             </xsd:simpleType>
             <xsd:simpleType name="ExternalDataSourceType">
                 <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="Datacloud"/>
                     <xsd:enumeration value="Datajourney"/>
                     <xsd:enumeration value="OpenSearch"/>
                     <xsd:enumeration value="Identity"/>
                     <xsd:enumeration value="outgoingemail"/>
                     <xsd:enumeration value="recommendation"/>
+                    <xsd:enumeration value="SfdcOrg"/>
+                    <xsd:enumeration value="OData"/>
+                    <xsd:enumeration value="OData4"/>
                     <xsd:enumeration value="SimpleURL"/>
                     <xsd:enumeration value="Wrapper"/>
                 </xsd:restriction>
@@ -11410,7 +11414,7 @@ Copyright 2006-2017 Salesforce.com, inc. All Rights Reserved
     <service name="MetadataService">
         <documentation>Manage your Salesforce.com metadata</documentation>
         <port binding="tns:MetadataBinding" name="Metadata">
-            <soap:address location="https://test.salesforce.com/services/Soap/m/40.0"/>
+            <soap:address location="https://login.salesforce.com/services/Soap/m/40.0"/>
         </port>
     </service>
 </definitions>

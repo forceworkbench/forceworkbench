@@ -2,7 +2,7 @@
 <!--
 
 Salesforce.com Partner Web Services API Version 40.0
-Generated on 2017-05-17 02:13:23 +0000.
+Generated on 2017-06-15 21:47:31 +0000.
 
 Copyright 1999-2017 salesforce.com, inc.
 All Rights Reserved
@@ -7137,7 +7137,7 @@ All Rights Reserved
     <service name="SforceService">
         <documentation>Sforce SOAP API</documentation>
         <port binding="tns:SoapBinding" name="Soap">
-            <soap:address location="https://test.salesforce.com/services/Soap/u/40.0"/>
+            <soap:address location="https://login.salesforce.com/services/Soap/u/40.0"/>
         </port>
     </service>
 </definitions>
