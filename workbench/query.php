@@ -122,22 +122,7 @@ function displayQueryForm($queryRequest) {
             }
         }
 
-        $ops = array(
-            '=' => '=',
-            '!=' => '&ne;',
-            '<' => '&lt;',
-            '<=' => '&le;',
-            '>' => '&gt;',
-            '>=' => '&ge;',
-            'starts' => 'starts with',
-            'ends' => 'ends with',
-            'contains' => 'contains',
-            'IN' => 'in',
-            'NOT IN' => 'not in',
-            'INCLUDES' => 'includes',
-            'EXCLUDES' => 'excludes'
-        );
-
+        $ops = getComparisonOperators();
 
         print "var compOper_array = new Array();\n";
         foreach ($ops as $opValue => $opLabel) {

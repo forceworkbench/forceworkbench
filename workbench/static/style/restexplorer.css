@@ -11,3 +11,17 @@
 	white-space: pre-wrap; 
 	font-family: courier, monotype;
 }
+
+#codeViewPortContainerForDetails {
+	position:absolute; 
+	background-color:rgb(206,239,255); 
+	padding: 10px; 
+	width: 40%;
+	-moz-border-radius: 10px; 
+	border-radius: 10px;
+}
+
+#codeViewPortForDetails {
+	white-space: pre-wrap; 
+	font-family: courier, monotype;
+}

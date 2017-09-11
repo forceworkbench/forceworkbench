@@ -312,7 +312,7 @@ class QueryFutureTask extends FutureTask {
               ($this->totalQuerySize !== 1 ? "s": "") . " in " . sprintf ("%01.3f", $queryTimeElapsed) . " seconds:</p>\n";
 
         if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->nextQueryLocator) {
-            print "<p><input type='hidden' name='queryLocator' value='" . $this->nextQueryLocator . "' /></p>\n";
+            print "<p><input type='hidden' name='queryLocator' id='queryLocator' value='" . $this->nextQueryLocator . "' /></p>\n";
             print "<p><input type='submit' name='queryMore' id='queryMoreButtonTop' value='More...' /></p>\n";
         }
 
@@ -322,7 +322,7 @@ class QueryFutureTask extends FutureTask {
         );
 
         if (!WorkbenchConfig::get()->value("autoRunQueryMore") && $this->nextQueryLocator) {
-            print "<p><input type='hidden' name='queryLocator' value='" . $this->nextQueryLocator . "' /></p>\n";
+            print "<p><input type='hidden' name='queryLocator' id='queryLocator' value='" . $this->nextQueryLocator . "' /></p>\n";
             print "<p><input type='submit' name='queryMore' id='queryMoreButtonBottom' value='More...' /></p>";
         }
 

@@ -73,7 +73,6 @@ if (!isset($errors) && isset($_POST['submitConfigSetter']) || isset($_POST['rest
     header("Location: " . htmlspecialchars($_SERVER['PHP_SELF']) . "?saved=" . (isset($_POST['restoreDefaults']) ? "D" : "S"));
 }
 
-
 require_once 'header.php';
 
 if (isset($errors)) {
