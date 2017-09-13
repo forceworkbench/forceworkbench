@@ -30,7 +30,7 @@ if (WorkbenchConfig::get()->isConfigured("displayLiveMaintenanceMessage")) {
 
 
 // if async SOQL UI is not set, do not display it in the menu
-if (!WorkbenchConfig::get()->value("allowAsyncSoqlUI")) {
+if (!WorkbenchConfig::get()->value("allowAsyncSoqlUI") || !WorkbenchContext::get()->isApiVersionAtLeast(36.0))  {
     $asyncSOQLpage = $GLOBALS["MENUS"]['Queries']['asyncSOQL.php'];
     $asyncSOQLpage->onNavBar = false;
 }

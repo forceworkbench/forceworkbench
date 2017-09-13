@@ -21,9 +21,6 @@ set_exception_handler('handleAllExceptionsNoHeaders');
     src="<?php echo getPathToStaticResource('/script/jquery-ui.js'); ?>"></script>
   <script
     type="text/javascript"
-    src="<?php echo getPathToStaticResource('/script/jquery-migrate-1.2.1.js'); ?>"></script>
-  <script
-    type="text/javascript"
     src="<?php echo getPathToStaticResource('/script/wz_tooltip.js'); ?>"></script>
   <script
     type="text/javascript"

@@ -608,7 +608,8 @@ $config["header_queryAndSearchOptions"] = array(
         "description" => "Allow queries in AsyncSOQL.",
         "default" => true,
         "overrideable" => true,
-        "dataType" => "boolean"
+        "dataType" => "boolean",
+        "minApiVersion" => 36.0
     );
 
     $config["header_PackageVersion"] = array(
