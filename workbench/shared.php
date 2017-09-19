@@ -189,7 +189,7 @@ function amt($qty, $word) {
 }
 
 function getStaticResourceVersionParam() {
-    return "?v=" . urlencode("40.0.0");
+    return "?v=" . urlencode($GLOBALS["WORKBENCH_VERSION"]);
 }
 
 function getPathToStaticResource($relPath) {
