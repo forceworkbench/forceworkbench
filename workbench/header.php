@@ -28,6 +28,13 @@ if (WorkbenchConfig::get()->isConfigured("displayLiveMaintenanceMessage")) {
               "Workbench is currently undergoing maintenance. The service may be intermittently unavailable during this time.</div><br/>";
 }
 
+
+// if async SOQL UI is not set, do not display it in the menu
+if (!WorkbenchConfig::get()->value("allowAsyncSoqlUI") || !WorkbenchContext::get()->isApiVersionAtLeast(36.0))  {
+    $asyncSOQLpage = $GLOBALS["MENUS"]['Queries']['asyncSOQL.php'];
+    $asyncSOQLpage->onNavBar = false;
+}
+
 //check for latest version
 function strip_seps($haystack) {
     foreach (array(' ', '_', '-') as $n) {
@@ -59,7 +66,7 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
                 continue;
             } else if (stristr($tag->name, 'beta') ) {
                 $betaTagNames[] = $tag->name;
-            } else {
+        } else {
                 $gaTagNames[] = $tag->name;
             }
         }
@@ -74,7 +81,7 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
             $latestChannelVersion = $latestBetaVersion;
         } else {
             $latestChannelVersion = $latestGaVersion;
-        }
+            }
 
         if ($latestChannelVersion != $currentVersion) {
             print "<div style='background-color: #EAE9E4; width: 100%; padding: 2px;'>" .

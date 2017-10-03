@@ -150,3 +150,16 @@ function toggleCodeViewPort() {
 		codeViewPortToggler.innerHTML = 'Show Raw Response';
 	}
 }
+
+function toggleCodeViewPortForDetails() {
+	var codeViewPort = document.getElementById('codeViewPortContainerForDetails');
+	var codeViewPortToggler = document.getElementById('codeViewPortTogglerForDetails');
+
+	if (codeViewPort.style.display == 'none') {
+		codeViewPort.style.display = 'block';
+		codeViewPortToggler.innerHTML = 'Hide Raw Response';
+	} else {
+		codeViewPort.style.display = 'none';
+		codeViewPortToggler.innerHTML = 'Show Raw Response';
+	}
+}

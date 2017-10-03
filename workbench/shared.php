@@ -321,12 +321,27 @@ function handleAllExceptionsInternal($e, $showHeadersFooters) {
         if ($showHeadersFooters) try { include_once 'header.php'; } catch (Exception $e) {}
         displayError($e->getMessage(), false, $showHeadersFooters);
     } else {
+        $executing_script = basename($_SERVER['PHP_SELF']);
         if (strpos($e->getMessage(), "INVALID_SESSION_ID") === 0) {
-            handleAllExceptions(new WorkbenchAuthenticationException("Your Salesforce session is invalid or has expired. Please login again."));
+            $invalidSessionException = new WorkbenchAuthenticationException("Your Salesforce session is invalid or has expired. Please login again.");
+            foreach ($GLOBALS["MENUS"] as $type => $list_of_pages) {
+                if (array_key_exists($executing_script, $list_of_pages) && ($GLOBALS["MENUS"][$type][$executing_script]->noHeaderFooterForExceptionHandler==false)) {
+                 handleAllExceptionsNoHeaders($invalidSessionException);
+                } else {
+                    handleAllExceptions($invalidSessionException);
+                }
+            }
         }
 
         if (isKnownAuthenticationError($e->getMessage())) {
-            handleAllExceptions(new WorkbenchAuthenticationException($e->getMessage()));
+            $knownAuthenticationError = new WorkbenchAuthenticationException($e->getMessage());
+            foreach ($GLOBALS["MENUS"] as $type => $list_of_pages) {
+                if (array_key_exists($executing_script, $list_of_pages) && ($GLOBALS["MENUS"][$type][$executing_script]->noHeaderFooterForExceptionHandler==false)) {
+                 handleAllExceptionsNoHeaders($knownAuthenticationError);
+                } else {
+                    handleAllExceptions($knownAuthenticationError);
+                }
+            }
         }
 
         if ($showHeadersFooters)  try { include_once 'header.php'; } catch (Exception $e) {}
@@ -937,6 +952,41 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
         }
 
         print "</div>";
+    }
+}
+
+function getComparisonOperators() {
+    return array(
+            '=' => '=',
+            '!=' => '&ne;',
+            '<' => '&lt;',
+            '<=' => '&le;',
+            '>' => '&gt;',
+            '>=' => '&ge;',
+            'starts' => 'starts with',
+            'ends' => 'ends with',
+            'contains' => 'contains',
+            'IN' => 'in',
+            'NOT IN' => 'not in',
+            'INCLUDES' => 'includes',
+            'EXCLUDES' => 'excludes'
+        );
+}
+
+// color codes for status cell in the display table for job details
+function fillStatusCell($v, $jobId) {
+    if(strcmp($v,'Complete')==0) {
+         echo "<td style='color:ForestGreen;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+    } else if(strcmp($v,'Running')==0) {
+         echo "<td style='color:DodgerBlue;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+    } else if(strcmp($v,'Canceled')==0) {
+         echo "<td style='color:SlateGrey;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+    } else if(strcmp($v,'New')==0) {
+         echo"<td style='color:MediumBlue;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+    } else if(strcmp($v,'Error')==0) {
+         echo "<td style='color:Red;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+    } else {
+        echo "<td id='".$jobId."_status"."'>".$v."</td></tr>";
     }
 }
 ?>

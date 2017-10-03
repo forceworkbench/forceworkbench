@@ -26,8 +26,15 @@ if ($_SESSION) {
 
     session_unset();
     session_destroy();
-    
-    require_once 'header.php';
+
+    $executing_script = basename($_SERVER['PHP_SELF']);
+    //if 'noHeaderFooterForException' page property is set to false, include header
+    foreach ($GLOBALS["MENUS"] as $type => $list_of_pages) {
+      if (array_key_exists($executing_script, $list_of_pages) && ($GLOBALS["MENUS"][$type][$executing_script]->noHeaderFooterForExceptionHandler==false)) {
+         require_once 'header.php';
+      }
+    }
+
     print "<p/>";
 
     if (isset($uiLogoutIFrame)) {
@@ -44,7 +51,12 @@ if ($_SESSION) {
     }
     print "<script type='text/javascript'>setTimeout(\"location.href = 'login.php';\", $redirectTime);</script>";
 
-    include_once 'footer.php';
+    //if 'noHeaderFooterForException' page property is set to false, include footer
+    foreach ($GLOBALS["MENUS"] as $type => $list_of_pages) {
+        if (array_key_exists($executing_script, $list_of_pages) && ($GLOBALS["MENUS"][$type][$executing_script]->noHeaderFooterForExceptionHandler==false)) {
+        require_once 'footer.php';
+        }
+    }
 } else {
     session_unset();
     session_destroy();

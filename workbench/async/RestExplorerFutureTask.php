@@ -5,6 +5,7 @@ require_once "controllers/RestExplorerController.php";
 class RestExplorerFutureTask extends FutureTask {
 
     private $c;
+    private $returnControllerWithResult;
 
     /**
      * @param $c RestExplorerController
@@ -12,11 +13,25 @@ class RestExplorerFutureTask extends FutureTask {
     function __construct($c) {
         parent::__construct();
         $this->c = $c;
+        $this->returnControllerWithResult = false;
+    }
+
+    //returnControllerWithResult set to true will return RestExplorerController with results, so it can be formatted and displayed by the calling script
+    function returnUnformattedResult($in) {
+        $this->returnControllerWithResult = $in;
     }
 
     function perform() {
         $this->c->execute();
-        return $this->result();
+        if ($this->returnControllerWithResult == true) {
+             return $this->returnControllerWithResult();
+        } else {
+             return $this->result();
+        }
+    }
+
+    private function returnControllerWithResult(){
+        return $this->c;
     }
 
     private function result() {

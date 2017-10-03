@@ -419,3 +419,100 @@ table.sortable tr.sortBottom td {
 #selectedTopic {
     width: 151px;
 }
+
+
+.tab-box { 
+  border-bottom: 1px solid #DDD;
+  padding-bottom:5px;
+   position: relative;
+    top: 30px;
+}
+.tab-box a {
+  border:1px solid #DDD;
+  color:#0198E1;
+  font-size: 100%;
+  padding: 5px 15px;
+  text-decoration:none;
+  background-color: #eee;
+  position: relative;
+}
+.tab-box a.activeLink { 
+  background-color: #fff; 
+  border-bottom: 0; 
+  padding: 6px 15px;
+  position: relative;
+}
+.tabcontent { 
+    border: 1px solid #ddd; 
+    border-top: 0; 
+    padding: 30px; 
+    position: relative;
+    top: 30px;
+}
+.hide { 
+    display: none;
+}
+
+.footer { 
+    padding: 10px;
+}
+
+.small { 
+    color: #999; 
+    margin-top: 100px; 
+    border: 1px solid #EEE; 
+    padding: 5px; 
+    font-size: 9px; 
+    font-family:Verdana, Arial, Helvetica, sans-serif; 
+}
+
+.list{
+    border-collapse: collapse;
+    border: 1px solid #bababa;
+    width: 100%;
+    margin-left:auto; 
+    margin-right:auto;
+}
+
+.list th, .list td {
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #a9a9a9;
+}
+
+.list tr:nth-child(even)
+{
+    background-color: #f2f2f2
+}
+
+.ui-tabs .ui-tabs-nav li a { float: left; padding: .5em 1em; text-decoration: none !important; color:#7F7F7F}
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .ui-tabs .ui-tabs-nav li.ui-state-processing a { cursor: text; color:#0198E1;}
+.ui-tabs .ui-tabs-hide { display: none !important; }
+
+.hidden
+{
+    display: none;
+}
+
+.pg-normal {
+    color: black;
+    font-weight: normal;
+    text-decoration: none;    
+    cursor: pointer;    
+}
+
+.pg-selected {
+    color: black;
+    font-weight: bold;        
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.note {
+    text-align:right; 
+    font-size: 10px; 
+    clear: both;
+    float:right;
+    font-style: italic;
+    color: grey;
+}

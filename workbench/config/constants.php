@@ -7,7 +7,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-$GLOBALS["WORKBENCH_VERSION"] = "40.0.0";
+$GLOBALS["WORKBENCH_VERSION"] = "40.1.0";
 
 class Page {
     public $title;
@@ -18,8 +18,9 @@ class Page {
     public $onMenuSelect;
     public $showTitle;
     public $window;
+    public $noHeaderFooterForExceptionHandler;
 
-    public function __construct($title, $desc, $requiresSfdcSession=true, $isReadOnly=false, $onNavBar=false, $onMenuSelect=false, $showTitle=true, $window='') {
+    public function __construct($title, $desc, $requiresSfdcSession=true, $isReadOnly=false, $onNavBar=false, $onMenuSelect=false, $showTitle=true, $window='', $noHeaderFooterForExceptionHandler=false) {
         $this->title = $title;
         $this->desc = $desc;
         $this->requiresSfdcSession = $requiresSfdcSession;
@@ -28,6 +29,7 @@ class Page {
         $this->onMenuSelect = $onMenuSelect;
         $this->showTitle = $showTitle;
         $this->window = $window;
+        $this->noHeaderFooterForExceptionHandler = $noHeaderFooterForExceptionHandler;
     }
 }
 
@@ -50,9 +52,16 @@ $GLOBALS["MENUS"] = array(
     ),
 
     'Queries' => array(
-        'query.php'       => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file.',true,true,true,'usesObject',true,''),
-        'search.php'      => new Page('SOSL Search','Search the data in your organization across multiple objects.',true,true,true,'usesObject',true,''),
-        'streaming.php'   => new Page('Streaming Push Topics','Streaming latest query results in push topics using CometD long polling.',true,false,true,true,true,''),
+        'query.php'                     => new Page('SOQL Query','Queries the data in your organization and displays on the screen or exports to a CSV file.',true,true,true,'usesObject',true,''),
+        'asyncSOQL.php'                 => new Page('Async SOQL Query','Define, execute and monitor Async SOQL queries',true,true,true,'usesObject',true,'',true),
+        'asyncSOQLViewJobDetails.php'   => new Page('Job Details','Receives and responds to xhttp request from Async SOQL View Status page to display job details as well as cancel specified job',false,true,false,false,false,''),
+        'asyncSOQLDisplayFields.php'    => new Page('Display Object Fields','Receives xhttp request and adds source/target object fields to the page.',false,true,false,false,false,''),
+        'asyncSOQLSubmitJob.php'        => new Page('Submit Job','Receives xhttp request for Async SOQL job submission, processes it and submits the job.',false,true,false,false,false,''),
+        'asyncSOQLDefineQuery.php'      => new Page('Async SOQL Define Query','Contains DOM elements to submit new Async SOQL query and display result.',true,true,false,false,false,''),
+        'asyncSOQLViewStatus.php'       => new Page('Async SQOL View Status','Displays details of all Async SOQL jobs.',true,true,false,false,false,''),      
+        'search.php'                    => new Page('SOSL Search','Search the data in your organization across multiple objects.',true,true,true,'usesObject',true,''),
+        'streaming.php'                 => new Page('Streaming Push Topics','Streaming latest query results in push topics using CometD long polling.',true,false,true,true,true,''),
+
     ),
 
     'Data' => array(
@@ -84,4 +93,5 @@ $GLOBALS["MENUS"] = array(
         'future_get.php'              => new Page('Future Get','Future Get',true,false,false,false,false,'')
      )
 );
+
 ?>

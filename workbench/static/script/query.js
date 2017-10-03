@@ -1,6 +1,5 @@
 function parentChildRelationshipQueryBlocker() {
     var soql = document.getElementById('soql_query_textarea').value.toUpperCase();
-
     if (soql.indexOf('(SELECT') != -1 && soql.indexOf('IN (SELECT') == -1 && document.getElementById('export_action_csv').checked) {
         return confirm ("Export of parent-to-child relationship queries to CSV are not yet supported by Workbench and may give unexpected results. Are you sure you wish to continue?");
     }
@@ -16,7 +15,6 @@ function doesQueryHaveName() {
 
     return true;
 }
-
 
 function toggleFieldDisabled() {
     var QB_field_sel = document.getElementById('QB_field_sel');
@@ -85,8 +83,14 @@ function updateObject() {
     document.query_form.submit();
 }
 
+function updateTargetObject() {
+    document.map_form.justUpdateTarget.value = 1;
+    document.map_form.submit();
+}
+
 function exportActionIs(type) {
-    var exportActions = document.getElementById('query_form')['export_action'];
+    // var exportActions = document.getElementById('query_form')['export_action'];
+    var exportActions = document.getElementsByTagName('export_action');
     for (var i = 0; i < exportActions.length; i++) {
         if (exportActions[i].checked && exportActions[i].value == type) {
             return true;
@@ -230,7 +234,7 @@ function addFilterRow(filterRowNum, defaultField, defaultCompOper, defaultValue)
 
     defaultValue = defaultValue != null ? defaultValue : "";
     row +=  "</select>&nbsp;" +
-        "<input type='text' id='QB_filter_value_" + filterRowNum + "' size='31' name='QB_filter_value_" + filterRowNum + "' value='" + defaultValue + "' onkeyup='buildQuery();' />";
+        "<input type='text' id='QB_filter_value_" + filterRowNum + "' size='27' name='QB_filter_value_" + filterRowNum + "' value='" + defaultValue + "' onkeyup='buildQuery();' />";
 
 
     //add to the DOM

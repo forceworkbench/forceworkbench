@@ -603,12 +603,20 @@ $config["header_queryAndSearchOptions"] = array(
         "dataType" => "boolean"
     );
 
+    $config["allowAsyncSoqlUI"] = array(
+        "label" => "Allow AsyncSOQL UI",
+        "description" => "Allow queries in AsyncSOQL.",
+        "default" => true,
+        "overrideable" => true,
+        "dataType" => "boolean",
+        "minApiVersion" => 36.0
+    );
 
-$config["header_PackageVersion"] = array(
-    "label" => "Package Version",
-    "display" => true,
-    "isHeader" => true
-);
+    $config["header_PackageVersion"] = array(
+        "label" => "Package Version",
+        "display" => true,
+        "isHeader" => true
+    );
 
     $config["packageVersionHeader_include"] = array(
         "label" => "Use Package Version Header",
