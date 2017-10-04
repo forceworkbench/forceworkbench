@@ -31,9 +31,11 @@ abstract class FutureTask {
      */
     public function enqueueOrPerform() {
         if (hasRedis()) {
+            echo '<script>console.log("Enqueue")</script>';
             $future = $this->enqueue();
             return $future->ajax();
         } else {
+            echo '<script>console.log("Perform")</script>';
             return $this->perform();
         }
     }
