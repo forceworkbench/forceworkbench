@@ -51,16 +51,27 @@ set_exception_handler('handleAllExceptionsNoHeaders');
 
 <?php
     $c = new RestExplorerController();
+    echo '<script>console.log("C:")</script>';
+    echo '<script>console.log('. json_encode( $c ) .')</script>';
     $c->getInstanceForAsyncSOQL(null,'GET');
     $f = new RestExplorerFutureTask($c);
+    echo '<script>console.log("F:")</script>';
+    echo '<script>console.log('. json_encode( $f ) .')</script>';
     $f->returnUnformattedResult(true);
     $viewJobsResult = $f->enqueueOrPerform();
-
+    echo '<script>console.log("ViewJobsResult:")</script>';
+    echo '<script>console.log('. json_encode( $viewJobsResult ) .')</script>';
     if (isset($viewJobsResult)) {
         $viewJobsResultInst = $viewJobsResult->instResponse;
+        echo '<script>console.log("ViewJobsResultInst:")</script>';
+        echo '<script>console.log('. json_encode( $viewJobsResultInst ) .')</script>';
         $viewJobsResultInst_json = json_decode($viewJobsResultInst);
         $viewJobsResultNum = count($viewJobsResultInst_json->{'asyncQueries'});
+        echo '<script>console.log("ViewJobsResultNum:")</script>';
+        echo '<script>console.log('. json_encode( $viewJobsResultNum ) .')</script>';
         $viewJobsResultInst = addslashes((string) $viewJobsResultInst);
+        echo '<script>console.log("ViewJobsResultInst:")</script>';
+        echo '<script>console.log('. json_encode( $viewJobsResultInst ) .')</script>';
         if ($viewJobsResultNum > 0) {
             ?>
             <script type='text/javascript' class='evalable'>
@@ -92,4 +103,3 @@ set_exception_handler('handleAllExceptionsNoHeaders');
         <input type='submit' value='Cancel' id='cancel' align='right'>
     </div>    
 </div>
-
