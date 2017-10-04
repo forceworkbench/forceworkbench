@@ -18,6 +18,7 @@ class RestExplorerFutureTask extends FutureTask {
 
     //returnControllerWithResult set to true will return RestExplorerController with results, so it can be formatted and displayed by the calling script
     function returnUnformattedResult($in) {
+        echo '<script>console.log('. json_encode( $in ) .')</script>';
         $this->returnControllerWithResult = $in;
     }
 
