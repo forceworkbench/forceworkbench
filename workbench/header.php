@@ -89,7 +89,7 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
             $latestChannelVersion = $latestGaVersion;
             }
 
-        if ($latestChannelVersion != $currentVersion) {
+        if ($latestChannelVersion > $currentVersion) {
             print "<div style='background-color: #EAE9E4; width: 100%; padding: 2px;'>" .
                     "<a href='https://github.com/ryanbrainard/forceworkbench/tags' target='_blank' " .
                         "style='font-size: 8pt; font-weight: bold; color: #0046ad;'>" .
