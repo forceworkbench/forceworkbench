@@ -15,7 +15,14 @@ function verifyCallingFromCLI() {
 }
 
 function hasRedis() {
+    echo '<script>console.log("Checking Redis")</script>';
     $redisUrl = WorkbenchConfig::get()->value("redisUrl");
+    echo '<script>console.log('. json_encode( $redisUrl ) .')</script>';
+    echo '<script>console.log("Redis class exists")</script>';
+    echo '<script>console.log('. class_exists("Redis") .')</script>';
+    echo '<script>console.log("Is empty?")</script>';
+    echo '<script>console.log('. empty($redisUrl) .')</script>';
+    echo '<script>console.log('. !empty($redisUrl) && class_exists("Redis") .')</script>';
     return !empty($redisUrl) && class_exists("Redis");
 }
 
@@ -29,6 +36,7 @@ function redis() {
         $r = new Redis();
         $r->connect(parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT));
         if (!is_array(parse_url($redisUrl, PHP_URL_PASS))) {
+            echo '<script>console.log("Parsing Redis")</script>';
             $r->auth(parse_url($redisUrl, PHP_URL_PASS));
         }
 
