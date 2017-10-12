@@ -24,7 +24,7 @@ function hasRedis() {
     echo '<script>console.log('. empty($redisUrl) .')</script>';
     echo '<script>console.log("Return value")</script>';
     echo '<script>console.log('. (!empty($redisUrl) && class_exists("Redis") ).')</script>';
-    return false;
+    return !empty($redisUrl) && class_exists("Redis");
 }
 
 function redis() {
