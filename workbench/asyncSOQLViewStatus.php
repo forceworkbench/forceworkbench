@@ -51,11 +51,11 @@ set_exception_handler('handleAllExceptionsNoHeaders');
 
 <?php
     $c = new RestExplorerController();
-    echo '<script>console.log("C:")</script>';
-    echo '<script>console.log('. json_encode( $c ) .')</script>';
     $c->getInstanceForAsyncSOQL(null,'GET');
+    echo '<script>console.log("View Status C:")</script>';
+    echo '<script>console.log('. json_encode( $c ) .')</script>';
     $f = new RestExplorerFutureTask($c);
-    echo '<script>console.log("F:")</script>';
+    echo '<script>console.log("View status F:")</script>';
     echo '<script>console.log('. json_encode( $f ) .')</script>';
     $f->returnUnformattedResult(true);
     $viewJobsResult = $f->enqueueOrPerform();
