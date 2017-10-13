@@ -23,11 +23,17 @@ class RestExplorerFutureTask extends FutureTask {
     }
 
     function perform() {
+        echo '<script>console.log("RestExplorerFutureTask:")</script>';
         $this->c->execute();
         if ($this->returnControllerWithResult == true) {
-             return $this->returnControllerWithResult();
+            echo '<script>console.log("returnControllerWithResult:")</script>';
+            echo '<script>console.log('. json_encode( $this->returnControllerWithResult ) .')</script>';
+            echo '<script>console.log('. json_encode( $this->c ) .')</script>';
+            return $this->returnControllerWithResult();
         } else {
-             return $this->result();
+            echo '<script>console.log("Result:")</script>';
+            echo '<script>console.log('. json_encode( $this->c ) .')</script>';
+            return $this->result();
         }
     }
 
@@ -38,6 +44,7 @@ class RestExplorerFutureTask extends FutureTask {
     private function result() {
         ob_start();
         if ($this->c->errors != null) {
+            echo '<script>console.log("error:")</script>';
             displayError($this->c->errors);
             ?><p/><?php
         }
@@ -63,6 +70,9 @@ class RestExplorerFutureTask extends FutureTask {
         }
         $result = ob_get_contents();
         ob_end_clean();
+        echo '<script>console.log("Finished buffer result:")</script>';
+        echo '<script>console.log('. json_encode( $result ) .')</script>';
+
         return $result;
     }
     
