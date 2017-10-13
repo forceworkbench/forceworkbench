@@ -15,6 +15,8 @@ class QueryFutureTask extends FutureTask {
     }
 
     function perform() {
+        echo '<script>console.log("QueryFutureTask:")</script>';
+
         ob_start();
 
         $queryTimeStart = microtime(true);

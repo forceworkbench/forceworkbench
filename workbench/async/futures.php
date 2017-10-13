@@ -32,7 +32,9 @@ abstract class FutureTask {
     public function enqueueOrPerform() {
         if (hasRedis()) {
             echo '<script>console.log("Enqueue")</script>';
+            echo '<script>console.log('. json_encode( $this ) .')</script>';
             $future = $this->enqueue();
+            echo '<script>console.log('. json_encode( $future ) .')</script>';
             return $future->ajax();
         } else {
             echo '<script>console.log("Perform")</script>';
@@ -221,11 +223,15 @@ class FutureResult {
      * @return string
      */
     public function ajax() {
+        echo '<script>console.log("Performing ajax")</script>';
         ob_start();
         require "future_ajax.js.php";
         futureAjax($this->asyncId);
         $ajax = ob_get_contents();
         ob_end_clean();
+        echo '<script>console.log('. json_encode( $ajax ) .')</script>';
+
+
         return $ajax;
     }
 
