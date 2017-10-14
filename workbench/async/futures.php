@@ -30,6 +30,8 @@ abstract class FutureTask {
      * @return string
      */
     public function enqueueOrPerform() {
+        echo '<script>console.log("Current class")</script>';
+        echo '<script>console.log('. json_encode( get_class($this) ) .')</script>';
         if (hasRedis()) {
             echo '<script>console.log("Enqueue")</script>';
             echo '<script>console.log('. json_encode( $this ) .')</script>';
@@ -59,7 +61,7 @@ abstract class FutureTask {
         redis()->setex(FUTURE_LOCK . $this->asyncId, WorkbenchConfig::get()->value('asyncTimeoutSeconds'), crypto_serialize(session_id()));   // set an expiring lock on this async id so GC doesn't get it
         $payload = crypto_serialize($this);
         echo '<script>console.log("Payload")</script>';
-        echo '<script>console.log('. json_encode( $payload ) .')</script>';
+        echo '<script>console.log('. json_encode( $this->asyncId ) .')</script>';
         echo '<script>console.log('. json_encode( strlen($payload)) .')</script>';
         redis()->rpush(self::QUEUE, $payload);                                                                                 // place actual job on the queue
         workbenchLog(LOG_INFO, "FutureTaskEnqueue", array(

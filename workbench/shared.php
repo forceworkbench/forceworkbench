@@ -39,6 +39,8 @@ function redis() {
         if (!is_array(parse_url($redisUrl, PHP_URL_PASS))) {
             echo '<script>console.log("Parsing Redis")</script>';
             $r->auth(parse_url($redisUrl, PHP_URL_PASS));
+            echo '<script>console.log('. json_encode( $r ) .')</script>';
+
         }
 
         $GLOBALS['REDIS'] = $r;
