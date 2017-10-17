@@ -220,8 +220,8 @@ class FutureResult {
      */
     public function ajax() {
         ob_start();
-//        require "future_ajax.js.php";
-//        futureAjax($this->asyncId);
+        require "future_ajax.js.php";
+        futureAjax($this->asyncId);
         $ajax = ob_get_contents();
         ob_end_clean();
         return $ajax;
