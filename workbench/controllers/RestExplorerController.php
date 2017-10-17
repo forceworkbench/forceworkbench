@@ -174,15 +174,11 @@ class RestExplorerController {
     // creates a Rest Explorer Controller instance with specified parameters. Leveraged in the ajax response files (ajaxSubmitAsyncJob.php and ajaxViewJobsResult.php) for Async SOQL page.
     public function getInstanceForAsyncSOQL($param, $method) {
         $v = 36.0;
-        echo '<script>console.log("Workbench API: ")</script>';
-        echo '<script>console.log('.WorkbenchContext::get()->getApiVersion().')</script>';
         if (WorkbenchContext::get()->getApiVersion()){
             $v = WorkbenchContext::get()->getApiVersion();
         }
         $this->url = "/services/data/v".$v."/async-queries/".$param;
         $this->requestMethod = $method;
-        echo '<script>console.log('. json_encode( $this->url ) .')</script>';
-        echo '<script>console.log('. json_encode( $this->requestMethod ) .')</script>';
     }
 }
 ?>

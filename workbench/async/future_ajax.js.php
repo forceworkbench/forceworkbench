@@ -5,7 +5,7 @@
 <script type='text/javascript' src='<?php echo getPathToStaticResource('/script/getElementsByClassName.js') ?>'></script>
 
 <script type="text/javascript">
-
+    <!--
     var WorkbenchFuture<?php echo $asyncId ?> = new function() {
         // Get the HTTP Object
         this.getHTTPObject = function() {
@@ -74,7 +74,7 @@
     };
 
     WorkbenchFuture<?php echo $asyncId ?>.getFuture();
-
+    //-->
 </script>
 
 <?php } ?>

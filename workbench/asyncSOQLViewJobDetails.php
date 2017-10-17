@@ -154,10 +154,7 @@ function generateSoql($viewJobsResultInst, $jobIdValue, $jobId){
     $ob = $queryRequest->getObject();
 
     $asyncJob = new QueryFutureTask($queryRequest);
-    echo '<script>console.log("SOQL enqueueOrPerform:")</script>';
-    echo '<script>console.log('. json_encode( $asyncJob ) .')</script>';
     $results = $asyncJob->enqueueOrPerform();
-    echo '<script>console.log('. json_encode( $results ) .')</script>';
     print "<div id='soql_results' class='hidden'>".$results."</div>";
 }
 

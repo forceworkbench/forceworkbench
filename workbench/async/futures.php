@@ -30,16 +30,10 @@ abstract class FutureTask {
      * @return string
      */
     public function enqueueOrPerform() {
-        echo '<script>console.log("Current class")</script>';
-        echo '<script>console.log('. json_encode( get_class($this) ) .')</script>';
         if (hasRedis()) {
-            echo '<script>console.log("Enqueue")</script>';
-            echo '<script>console.log('. json_encode( $this ) .')</script>';
             $future = $this->enqueue();
-            echo '<script>console.log('. json_encode( $future ) .')</script>';
             return $future->ajax();
         } else {
-            echo '<script>console.log("Perform")</script>';
             return $this->perform();
         }
     }
@@ -60,9 +54,6 @@ abstract class FutureTask {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();                                                                // check user has active session before going into async land
         redis()->setex(FUTURE_LOCK . $this->asyncId, WorkbenchConfig::get()->value('asyncTimeoutSeconds'), crypto_serialize(session_id()));   // set an expiring lock on this async id so GC doesn't get it
         $payload = crypto_serialize($this);
-        echo '<script>console.log("Payload")</script>';
-        echo '<script>console.log('. json_encode( $this->asyncId ) .')</script>';
-        echo '<script>console.log('. json_encode( strlen($payload)) .')</script>';
         redis()->rpush(self::QUEUE, $payload);                                                                                 // place actual job on the queue
         workbenchLog(LOG_INFO, "FutureTaskEnqueue", array(
             "async_id" =>  $this->asyncId,
@@ -228,15 +219,11 @@ class FutureResult {
      * @return string
      */
     public function ajax() {
-        echo '<script>console.log("Performing ajax")</script>';
         ob_start();
         require "future_ajax.js.php";
         futureAjax($this->asyncId);
         $ajax = ob_get_contents();
         ob_end_clean();
-        echo '<script>console.log('. json_encode( $ajax ) .')</script>';
-
-
         return $ajax;
     }
 

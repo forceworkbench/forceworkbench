@@ -22,21 +22,14 @@ class RestExplorerFutureTask extends FutureTask {
 
     //returnControllerWithResult set to true will return RestExplorerController with results, so it can be formatted and displayed by the calling script
     function returnUnformattedResult($in) {
-        echo '<script>console.log('. json_encode( $in ) .')</script>';
         $this->returnControllerWithResult = $in;
     }
 
     function perform() {
-        echo '<script>console.log("RestExplorerFutureTask:")</script>';
         $this->c->execute();
         if ($this->returnControllerWithResult == true) {
-            echo '<script>console.log("returnControllerWithResult:")</script>';
-            echo '<script>console.log('. json_encode( $this->returnControllerWithResult ) .')</script>';
-            echo '<script>console.log('. json_encode( $this->c ) .')</script>';
             return $this->returnControllerWithResult();
         } else {
-            echo '<script>console.log("Result:")</script>';
-            echo '<script>console.log('. json_encode( $this->c ) .')</script>';
             return $this->result();
         }
     }
@@ -48,7 +41,6 @@ class RestExplorerFutureTask extends FutureTask {
     private function result() {
         ob_start();
         if ($this->c->errors != null) {
-            echo '<script>console.log("error:")</script>';
             displayError($this->c->errors);
             ?><p/><?php
         }
@@ -74,8 +66,6 @@ class RestExplorerFutureTask extends FutureTask {
         }
         $result = ob_get_contents();
         ob_end_clean();
-        echo '<script>console.log("Finished buffer result:")</script>';
-        echo '<script>console.log('. json_encode( $result ) .')</script>';
 
         return $result;
     }

@@ -54,7 +54,7 @@ if (isset($submitJobResult)) {
         if (json_last_error() == JSON_ERROR_NONE) {
             echo "<table id='submitjob_results' class='list' style='table-layout:fixed;width:100%;'>";
             foreach ($jobResultInst as $k => $v) {
-                echo "<tr><td style='font-weight:bold;width:20%;'>".$k."</td>";
+                echo "<tr><td style='font-weight:bold;width:25%;'>".$k."</td>";
                 if (is_string($v)) {
                     if ($k=='status') {
                         fillStatusCell($v, $jobId);
