@@ -56,6 +56,7 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
         curl_setopt ($ch, CURLOPT_USERAGENT, getWorkbenchUserAgent());
         curl_setopt($ch, CURLOPT_TIMEOUT, 2);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         $tagsResponse = curl_exec($ch);
         $info = curl_getinfo($ch);
         curl_close($ch);
