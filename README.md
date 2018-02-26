@@ -21,23 +21,27 @@ which is great for spinning up a public instance during development in a fork:
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
-For installation of Workbench, please see the [installation](http://wiki.developerforce.com/index.php/Workbench#Installation)
-section of the [wiki](http://wiki.developerforce.com/index.php/Workbench).
+For installation of Workbench, please see the [installation](wiki/#installation)
+section of the [wiki](wiki).
 
 Support
 -------
-If you running into problems, post a message on the Workbench [discussion group](http://groups.google.com/group/forceworkbench).
-Please note that the Workbench is NOT a supported product of or supported by salesforce.com, inc.
+Please note that the **Workbench is NOT a supported product of or supported by salesforce.com, inc.** For support from the Open Source community, please visit this project's pages below:
+
+* [Feedback & Discussion](http://groups.google.com/group/forceworkbench)
+* [Issues, Bugs, & Feature Requests](issues)
+
+Feedback
+--------
+Have something you want to discuss about the Workbench? Have a great idea for a new feature? Looking for support from the community? Want to find out the latest news about the Workbench? Visit the [Feedback & Discussion](http://groups.google.com/group/forceworkbench) page today.
+
 
 Learning more about Workbench
 -----------------------------
- - [Wiki](http://wiki.developerforce.com/page/Workbench)
- - [FAQs](http://wiki.developerforce.com/page/Workbench#FAQ)
+ - [Wiki](wiki)
+ - [FAQs](wiki#faq)
  - [Video demo](http://youtu.be/ThAxdDy4iMI)
- - [Database.com Workbook](http://www.salesforce.com/us/developer/docs/workbook_database/index.htm)
 
 ---
 
 A special thank you to [JetBrains](http://www.jetbrains.com) for donating an open source license for [PhpStorm](http://www.jetbrains.com/phpstorm/) used for developing Workbench.
-
-[![Developed with PhpStorm](http://www.jetbrains.com/phpstorm/documentation/phpstorm_banners/phpstorm1/phpstorm120x30_violet.gif)](http://www.jetbrains.com/phpstorm/)
