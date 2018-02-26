@@ -21,15 +21,15 @@ which is great for spinning up a public instance during development in a fork:
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
-For installation of Workbench, please see the [installation](wiki/#installation)
-section of the [wiki](wiki).
+For installation of Workbench, please see the [installation](https://github.com/ryanbrainard/forceworkbench/wiki/#installation)
+section of the [wiki](https://github.com/ryanbrainard/forceworkbench/wiki).
 
 Support
 -------
 Please note that the **Workbench is NOT a supported product of or supported by salesforce.com, inc.** For support from the Open Source community, please visit this project's pages below:
 
 * [Feedback & Discussion](http://groups.google.com/group/forceworkbench)
-* [Issues, Bugs, & Feature Requests](issues)
+* [Issues, Bugs, & Feature Requests](https://github.com/ryanbrainard/forceworkbench/issues)
 
 Feedback
 --------
@@ -38,8 +38,8 @@ Have something you want to discuss about the Workbench? Have a great idea for a 
 
 Learning more about Workbench
 -----------------------------
- - [Wiki](wiki)
- - [FAQs](wiki#faq)
+ - [Wiki](https://github.com/ryanbrainard/forceworkbench/wiki)
+ - [FAQs](https://github.com/ryanbrainard/forceworkbench/wiki#faq)
  - [Video demo](http://youtu.be/ThAxdDy4iMI)
 
 ---
