@@ -70,7 +70,13 @@ class RestExplorerController {
         $this->url = str_replace(' ', '+', trim($this->url));
 
         if (in_array($this->requestMethod, RestApiClient::getMethodsWithBodies()) && trim($this->requestBody) == "") {
-            throw new WorkbenchHandledException("Must include a Request Body.");
+            if (stripos($this->requestHeaders, "Content-Type: application/json") !== false) {
+                // If nothing's specified in the JSON body, set it to null.
+                $this->requestBody = "null";
+            }
+            else {
+                throw new WorkbenchHandledException("Must include a Request Body.");
+            }
         }
     }
 
