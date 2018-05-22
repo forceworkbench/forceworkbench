@@ -1,6 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
     <head>
+        <?php
+        if (getenv('GA_TRACKING_ID') !== false) {
+            print "<script async src=\"https://www.googletagmanager.com/gtag/js?id=". getenv('GA_TRACKING_ID') . "\"></script>";
+            print "<script>";
+            print "  window.dataLayer = window.dataLayer || [];";
+            print "  function gtag(){dataLayer.push(arguments);}";
+            print "  gtag('js', new Date());";
+            print "  gtag('config', 'UA-119670592-1');";
+            print "</script>";
+        }
+        ?>
         <meta http-equiv="Content-Language" content="UTF-8" />
         <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 
