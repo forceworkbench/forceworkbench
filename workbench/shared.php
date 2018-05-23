@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/vendor/autoload.php';
 require_once "util/ErrorLogging.php";
 require_once "util/ExpandableTree.php";
 
