@@ -12,6 +12,11 @@
             print "</script>";
         }
         ?>
+        <?php
+        if (getenv('PINGDOM_RUM') !== false) {
+            print "<script src=\"" . getenv('PINGDOM_RUM') . "\" async></script>";
+        }
+        ?>
         <meta http-equiv="Content-Language" content="UTF-8" />
         <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 
