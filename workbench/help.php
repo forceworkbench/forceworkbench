@@ -8,35 +8,35 @@ For support from the open source community, please visit the resources
 below:
 
 <ul>
-    <li><a href="http://wiki.developerforce.com/page/Workbench#FAQ"
+    <li><a href="https://github.com/forceworkbench/forceworkbench/wiki#faq"
         target="help">FAQs</a>
     <ul>
         <li><a
-            href="http://wiki.developerforce.com/page/Workbench#General"
+            href="https://github.com/forceworkbench/forceworkbench/wiki#general"
             target="help">General</a></li>
         <li><a
-            href="http://wiki.developerforce.com/page/Workbench#Login"
+            href="https://github.com/forceworkbench/forceworkbench/wiki#login"
             target="help">Login</a></li>
         <li><a
-            href="http://wiki.developerforce.com/page/Workbench#Data_Management"
+            href="https://github.com/forceworkbench/forceworkbench/wiki#data-management"
             target="help">Data Management</a></li>
         <li><a
-            href="http://wiki.developerforce.com/page/Workbench#Query_.26_Search"
+            href="https://github.com/forceworkbench/forceworkbench/wiki#query--search"
             target="help">Query &amp; Search</a></li>
         <li><a
-            href="http://wiki.developerforce.com/page/Workbench#Metadata"
+            href="https://github.com/forceworkbench/forceworkbench/wiki#metadata"
             target="help">Metadata</a></li>
         <li><a
-            href="http://wiki.developerforce.com/page/Workbench#Utilities"
+            href="https://github.com/forceworkbench/forceworkbench/wiki#utilities"
             target="help">Utilities</a></li>
         <li><a
-            href="http://wiki.developerforce.com/page/Workbench#Settings"
+            href="https://github.com/forceworkbench/forceworkbench/wiki#settings"
             target="help">Settings</a></li>
     </ul>
     </li>
-    <li><a href="http://groups.google.com/group/forceworkbench"
-        target="help">Feedback &amp; Discussion</a></li>
-    <li><a href="https://github.com/ryanbrainard/forceworkbench/issues"
+    <li><a href="https://salesforce.stackexchange.com/questions/tagged/workbench"
+        target="help">Stackoverflow</a></li>
+    <li><a href="https://github.com/forceworkbench/forceworkbench/issues"
         target="help">Report an Issue</a></li>
 </ul>
 <?php

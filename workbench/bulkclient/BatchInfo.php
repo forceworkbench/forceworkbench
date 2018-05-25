@@ -15,10 +15,7 @@
  * For support from the Open Source community, please visit the resources below:
  *
  * * Main Project Site
- *   https://github.com/ryanbrainard/forceworkbench
- *
- * * Feedback & Discussion
- *   http://groups.google.com/group/forceworkbench
+ *   https://github.com/forceworkbench/forceworkbench
  *
  * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.

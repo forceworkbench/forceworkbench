@@ -15,10 +15,7 @@
  * For support from the Open Source community, please visit the resources below:
  *
  * * Main Project Site
- *   https://github.com/ryanbrainard/forceworkbench
- *
- * * Feedback & Discussion
- *   http://groups.google.com/group/forceworkbench
+ *   https://github.com/forceworkbench/forceworkbench
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE

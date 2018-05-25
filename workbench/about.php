@@ -26,22 +26,19 @@ integration within the Salesforce application.</p>
 For support from the open source community, please visit the resources
 below:</p>
 <ul>
-    <li><a href="http://wiki.developerforce.com/page/Workbench"
-        target="_blank">Main Page</a></li>
+    <li><a href="https://github.com/forceworkbench/forceworkbench/wiki"
+        target="_blank">Documentation</a></li>
 
-    <li><a href="http://wiki.developerforce.com/page/Workbench#FAQ"
-        target="_blank">FAQ</a></li>
+    <li><a href="https://salesforce.stackexchange.com/questions/tagged/workbench"
+        target="_blank">Stackoverflow</a></li>
 
-    <li><a href="http://groups.google.com/group/forceworkbench"
-        target="_blank">Feedback &amp; Discussion</a></li>
-
-    <li><a href="https://github.com/ryanbrainard/forceworkbench/issues"
+    <li><a href="https://github.com/forceworkbench/forceworkbench/issues"
         target="_blank">Report an Issue</a></li>
 
-    <li><a href="https://github.com/ryanbrainard/forceworkbench"
+    <li><a href="https://github.com/forceworkbench/forceworkbench"
         target="_blank">Source Code</a></li>
 
-    <li><a href="https://github.com/ryanbrainard/forceworkbench/tags"
+    <li><a href="https://github.com/forceworkbench/forceworkbench/tags"
         target="_blank">Download</a></li>
 </ul>
 

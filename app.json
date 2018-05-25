@@ -1,9 +1,9 @@
 {
     "name": "Workbench",
     "description": "Web-based suite of tools for administrators and developers to interact with the Force.com APIs",
-    "repository": "https://github.com/ryanbrainard/forceworkbench",
+    "repository": "https://github.com/forceworkbench/forceworkbench",
     "keywords": ["Salesforce", "Force.com", "API", "PHP"],
-    "logo": "https://raw.githubusercontent.com/ryanbrainard/forceworkbench/master/assets/logos/blueCube-256x256.png",
+    "logo": "https://raw.githubusercontent.com/forceworkbench/forceworkbench/master/assets/logos/blueCube-256x256.png",
     "env": {
         "MAX_WORKERS": "5",
         "WEB_CONCURRENCY": "4",
