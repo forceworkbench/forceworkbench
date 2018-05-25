@@ -20,7 +20,7 @@
         <?php
         if (getenv('SENTRY_CLIENT_DSN') !== false) {
             print "<script src=\"https://cdn.ravenjs.com/3.25.2/raven.min.js\" crossorigin=\"anonymous\"></script>";
-            print "<script>Raven.config('" + getenv('SENTRY_CLIENT_DSN') . "').install()</script>";
+            print "<script>Raven.config('" . getenv('SENTRY_CLIENT_DSN') . "').install()</script>";
         }
         ?>
         <meta http-equiv="Content-Language" content="UTF-8" />
@@ -74,7 +74,7 @@ function strip_seps($haystack) {
 if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('curl') && (isset($_GET['autoLogin']) || 'login.php'==basename($_SERVER['PHP_SELF']))) {
     try {
         $ch = curl_init();
-        curl_setopt ($ch, CURLOPT_URL, 'https://api.github.com/repos/ryanbrainard/forceworkbench/tags');
+        curl_setopt ($ch, CURLOPT_URL, 'https://api.github.com/repos/forceworkbench/forceworkbench/tags');
         curl_setopt ($ch, CURLOPT_USERAGENT, getWorkbenchUserAgent());
         curl_setopt($ch, CURLOPT_TIMEOUT, 2);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -114,7 +114,7 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
 
         if ($latestChannelVersion != $currentVersion) {
             print "<div style='background-color: #EAE9E4; width: 100%; padding: 2px;'>" .
-                    "<a href='https://github.com/ryanbrainard/forceworkbench/tags' target='_blank' " .
+                    "<a href='https://github.com/forceworkbench/forceworkbench/tags' target='_blank' " .
                         "style='font-size: 8pt; font-weight: bold; color: #0046ad;'>" .
                         "A newer version of Workbench is available for download</a>" .
                   "</div><br/>";
