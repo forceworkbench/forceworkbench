@@ -17,6 +17,12 @@
             print "<script src=\"" . getenv('PINGDOM_RUM') . "\" async></script>";
         }
         ?>
+        <?php
+        if (getenv('SENTRY_CLIENT_DSN') !== false) {
+            print "<script src=\"https://cdn.ravenjs.com/3.25.2/raven.min.js\" crossorigin=\"anonymous\"></script>";
+            print "<script>Raven.config('" + getenv('SENTRY_CLIENT_DSN') . "').install()</script>";
+        }
+        ?>
         <meta http-equiv="Content-Language" content="UTF-8" />
         <meta http-equiv="Content-Type" content="text/xhtml; charset=UTF-8" />
 
