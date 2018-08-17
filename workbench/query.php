@@ -141,7 +141,7 @@ function displayQueryForm($queryRequest) {
 
     printObjectSelection($queryRequest->getObject(), 'QB_object_sel', "16", "onChange='updateObject();'", "queryable");
 
-    print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='4' style='width: 16em;' onChange='buildQuery();'>\n";
+    print "<p/>Fields:<select id='QB_field_sel' name='QB_field_sel[]' multiple='mutliple' size='12' style='width: 16em;' onChange='buildQuery();'>\n";
     if (isset($describeSObjectResult)) {
 
         print   " <option value='count()'";
@@ -252,8 +252,15 @@ function displayQueryForm($queryRequest) {
 
     print "</tr>\n";
 
+    print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
+        "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . WorkbenchConfig::get()->value("textareaRows") . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES) . "</textarea>\n" .
+        "</td></tr>\n";
+
     print "</table>\n";
     print "</td></tr>\n";
+
+
+
 
     $filterRowNum = 0;
     foreach ($queryRequest->getFilters() as $filter) {
@@ -266,10 +273,7 @@ function displayQueryForm($queryRequest) {
     }
 
 
-    print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-        "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . WorkbenchConfig::get()->value("textareaRows") . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES) . "</textarea>\n" .
-        "</td></tr>\n";
-
+    
 
     print "<tr><td colspan=1><input type='submit' name='querySubmit' class='disableWhileAsyncLoading' value='Query' onclick='return parentChildRelationshipQueryBlocker();' /></td>";
 
