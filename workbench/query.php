@@ -135,7 +135,7 @@ function displayQueryForm($queryRequest) {
     print getCsrfFormTag();
     print "<input type='hidden' name='justUpdate' value='0' />";
     print "<input type='hidden' id='numFilters' name='numFilters' value='" . count($queryRequest->getFilters()) ."' />";
-    print "<p class='instructions'>Choose the object, fields, and critera to build a SOQL query below:</p>\n";
+    print "<p class='instructions'>Choose the object, fields, and criteria to build a SOQL query below:</p>\n";
     print "<table border='0' style='width: 100%;'>\n";
     print "<tr><td valign='top' width='1'>Object:";
 
