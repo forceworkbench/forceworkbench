@@ -1,0 +1,12 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: vendor/bin/heroku-php-apache2 -F fpm_custom_local.conf -i local_php.ini workbench
+    volumes:
+      - './workbench:/app/workbench'
+    environment:
+      PORT: 8080
+      PATH: '/app/.heroku/php/bin:/app/.heroku/php/sbin:$PATH'
+    ports:
+      - '8080:8080'
