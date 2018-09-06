@@ -14,5 +14,5 @@ RUN tar -xzvf $PHP_BUILDPACK_VERSION.tar.gz -C /tmp/buildpack/php --strip-compon
 RUN /tmp/buildpack/php/bin/compile /app /tmp/build_cache /tmp/env
 
 # Set up xdebug
-RUN apt-get update && apt-get install -y iputils-ping
+RUN apt-get update && apt-get install -y iputils-ping && rm -rf /var/lib/apt/lists/*
 RUN $HEROKU_PHP_BIN/pecl install channel://pecl.php.net/xdebug-2.4.0
