@@ -2,7 +2,7 @@ version: '3'
 services:
   web:
     build: .
-    command: vendor/bin/heroku-php-apache2 -F fpm_custom_local.conf -i local_php.ini workbench
+    entrypoint: /app/docker-entrypoint.sh
     volumes:
       - './workbench:/app/workbench'
     environment:
