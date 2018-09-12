@@ -12,4 +12,4 @@ function fix_linux_internal_host() {
 }
 
 fix_linux_internal_host
-vendor/bin/heroku-php-apache2 -F fpm_custom_local.conf -i local_php.ini workbench
+vendor/bin/heroku-php-nginx -F fpm_custom_local.conf -i local_php.ini workbench
