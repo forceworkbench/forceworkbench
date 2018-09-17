@@ -15,3 +15,8 @@ RUN /tmp/buildpack/php/bin/compile /app /tmp/build_cache /tmp/env
 
 # Set up xdebug
 RUN $HEROKU_PHP_BIN/pecl install channel://pecl.php.net/xdebug-2.4.0
+
+# Set up Redis
+RUN wget http://download.redis.io/releases/redis-4.0.11.tar.gz
+RUN tar xzf redis-4.0.11.tar.gz
+RUN cd redis-4.0.11 && make
