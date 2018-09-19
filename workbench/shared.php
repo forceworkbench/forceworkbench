@@ -772,7 +772,8 @@ function crypto_serialize($data) {
 }
 
 function crypto_unserialize($data) {
-    return unserialize(base64_decode(rc4($data, WorkbenchConfig::get()->value("rc4Secret"), false)));
+    $results = unserialize(base64_decode(rc4($data, WorkbenchConfig::get()->value("rc4Secret"), false)));
+    return $results;
 }
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {

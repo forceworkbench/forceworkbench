@@ -12,6 +12,5 @@ function fix_linux_internal_host() {
 }
 
 fix_linux_internal_host
-redis-4.0.11/src/redis-server --daemonize yes
-cd workbench && ./async_workers.sh &
-vendor/bin/heroku-php-apache2 -F fpm_custom_local.conf -i local_php.ini workbench
+
+vendor/bin/heroku-php-apache2 -F fpm_custom.conf -i local_php.ini workbench

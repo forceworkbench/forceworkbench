@@ -10,3 +10,18 @@ services:
       PATH: '/app/.heroku/php/bin:/app/.heroku/php/sbin:$PATH'
     ports:
       - '8080:8080'
+    links:
+      - redis
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+  worker:
+    build: .
+    command: /bin/bash -c 'cd workbench && ./async_workers.sh'
+    volumes:
+      - './workbench:/app/workbench'
+    environment:
+      PATH: '/app/.heroku/php/bin:/app/.heroku/php/sbin:$PATH'
+    links:
+      - redis
