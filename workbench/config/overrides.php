@@ -44,6 +44,4 @@
 // $config["orgIdWhiteList"]["default"] = "00D000000000001, 00D000000000002";
 // $config["orgIdBlackList"]["default"] = "00D000000000003";
 
-// Points to Redis Instance
-$config["redisUrl"]["default"] = "redis://redis:6379";
 ?>
