@@ -28,7 +28,7 @@ echo "ServerTokens Prod" >> /app/vendor/heroku/heroku-buildpack-php/conf/apache2
 
 # PHP configuration
 # Modifications to conf/php/php.ini from the Heroku PHP buildpack
-sed -i 's/^expose_php = On/expose_php = Off/' /app/vendor/heroku/heroku-buildpack-php/conf/php/php.ini
+# sed -i 's/^expose_php = On/expose_php = Off/' /app/vendor/heroku/heroku-buildpack-php/conf/php/php.ini
 #sed -i 's/^file_uploads = On/file_uploads = Off/' /app/vendor/heroku/heroku-buildpack-php/conf/php/php.ini
 #sed -i 's/^short_open_tag = On/short_open_tag = Off/' /app/vendor/heroku/heroku-buildpack-php/conf/php/php.ini
 #sed -i 's/^post_max_size = 8M/post_max_size = 2M/' /app/vendor/heroku/heroku-
