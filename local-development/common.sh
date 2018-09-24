@@ -11,5 +11,13 @@ function fix_linux_internal_host() {
   fi
 }
 
+if [ -d .profile.d ]; then
+  for i in .profile.d/*.sh; do
+    if [ -r $i ]; then
+      . $i
+    fi
+  done
+  unset i
+fi
+
 fix_linux_internal_host
-vendor/bin/heroku-php-apache2 -F fpm_custom.conf -i local_php.ini workbench

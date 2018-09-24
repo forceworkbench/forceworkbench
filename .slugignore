@@ -1,6 +1,4 @@
 Dockerfile
 docker-compose.yml
-local_php.ini
 local.sh
-docker-entrypoint.sh
-fpm_custom_local.conf
+local-development/
