@@ -1,6 +1,11 @@
 # The following settings are optional, additional configurations for an Apache Web Server.
 # This file may be deleted if Workbench is hosted in an environment that does not allow .htaccess overrides.
 
+# X-Frame-Options
+<IfModule mod_headers.c>
+	Header always append X-Frame-Options SAMEORIGIN
+</IfModule>
+
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/css text/html application/x-javascript application/javascript application/csv
     BrowserMatch ^Mozilla/4 gzip-only-text/html
