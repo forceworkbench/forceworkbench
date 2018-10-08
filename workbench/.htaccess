@@ -1,9 +1,6 @@
 # The following settings are optional, additional configurations for an Apache Web Server.
 # This file may be deleted if Workbench is hosted in an environment that does not allow .htaccess overrides.
 
-# add custom header to all requests
-#Header add Custom-Header "parameter=value"
-
 # X-Frame-Options
 <IfModule mod_headers.c>
 	Header always append X-Frame-Options SAMEORIGIN
