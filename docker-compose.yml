@@ -8,6 +8,7 @@ services:
     environment:
       PATH: '/app/.heroku/php/bin:/app/.heroku/php/sbin:$PATH'
       REDIS_URL: 'redis://redis:6379'
+    env_file: ./local-development/local.env
     links:
       - redis
   web:
@@ -17,6 +18,7 @@ services:
       PATH: '/app/.heroku/php/bin:/app/.heroku/php/sbin:$PATH'
       PORT: 8080
       REDIS_URL: 'redis://redis:6379'
+    env_file: ./local-development/local.env
     ports:
       - '8080:8080'
   redis:
