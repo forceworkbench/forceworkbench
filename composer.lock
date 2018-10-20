@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "68ec110aab4b7d444c66d090d7252e4a",
+    "content-hash": "5a178c03f9c79dce5024bf519b6fce5f",
     "packages": [
         {
             "name": "sentry/sentry",
-            "version": "1.9.0",
+            "version": "1.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "c90567d78382b803e563939654d1563ddee61707"
+                "reference": "6b4c80ee1f5d9d5ab5bae949f4eb5d758a0bf64b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/c90567d78382b803e563939654d1563ddee61707",
-                "reference": "c90567d78382b803e563939654d1563ddee61707",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/6b4c80ee1f5d9d5ab5bae949f4eb5d758a0bf64b",
+                "reference": "6b4c80ee1f5d9d5ab5bae949f4eb5d758a0bf64b",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.9.x-dev"
+                    "dev-master": "1.10.x-dev"
                 }
             },
             "autoload": {
@@ -68,7 +68,7 @@
                 "log",
                 "logging"
             ],
-            "time": "2018-05-03T12:06:52+00:00"
+            "time": "2018-08-18T19:41:03+00:00"
         }
     ],
     "packages-dev": [],
@@ -78,7 +78,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "~5.6.12",
+        "php": "~7.2",
         "ext-redis": "*",
         "ext-soap": "*"
     },
