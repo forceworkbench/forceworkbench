@@ -62,13 +62,16 @@ class WorkbenchConfig {
             $envKeyParts = explode($configDelim, $envKey);
         
             foreach ($envKeyParts as $keyPart) {
+                workbenchLog(LOG_ERR, "error for $keyPart");
                 if ($keyPart === $configNamespace) {
                     $point = &$this->config;
                     continue;
                 }
         
                 if (!isset($point[$keyPart])) {
+                    workbenchLog(LOG_ERR, "Inside If Block #72 $keyPart");
                     $point[$keyPart] = "";
+                    
                 }
         
                 $point = &$point[$keyPart];
