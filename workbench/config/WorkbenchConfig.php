@@ -63,7 +63,7 @@ class WorkbenchConfig {
         
             foreach ($envKeyParts as $keyPart) {
                     //workbenchLog(LOG_ERR, "error for #65 Ricardo", $keyPart);
-                    error_log(print_r($keyPart));
+                    error_log(print_r($keyPart, true));
                 if ($keyPart === $configNamespace) {
                     $point = &$this->config;
                     continue;
