@@ -10,7 +10,7 @@ simple and intuitive user interface. Workbench also provides many
 advanced features for testing and troubleshooting the Force.com APIs,
 such as customizable SOAP headers, debug logs for API traffic, backward
 compatibility testing with previous API versions, and single sign-on
-integration within the Salesforce application.
+integration within the Salesforce application...
 
 
 
