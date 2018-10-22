@@ -43,5 +43,4 @@
 //
 // $config["orgIdWhiteList"]["default"] = "00D000000000001, 00D000000000002";
 // $config["orgIdBlackList"]["default"] = "00D000000000003";
-#testing testing testing
 ?>
