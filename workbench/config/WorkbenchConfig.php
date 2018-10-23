@@ -52,29 +52,27 @@ class WorkbenchConfig {
         // load environment variable based overrides
         $configNamespace = "forceworkbench";
         $configDelim = "__";
+
         foreach ($_ENV as $envKey => $envValue) {
             if (strpos($envKey, $configNamespace) !== 0) {
                 continue;
             }
         
             $envKey = str_replace("___DOT___", ".", $envKey);
-        
+
             $envKeyParts = explode($configDelim, $envKey);
         
             foreach ($envKeyParts as $keyPart) {
-                    //workbenchLog(LOG_ERR, "error for #65 Ricardo", $keyPart);
-                    error_log(print_r($keyPart, true));
-                if ($keyPart === $configNamespace) {
+                    
+               if ($keyPart === $configNamespace) {
                     $point = &$this->config;
                     continue;
                 }
         
                 if (!isset($point[$keyPart])) {
-                    //workbenchLog(LOG_ERR, "Inside If Block #72", $keyPart);
-                    $point[$keyPart] = "";
-                    
+                    $point[$keyPart] = [];
                 }
-        
+
                 $point = &$point[$keyPart];
             }
         
@@ -82,7 +80,7 @@ class WorkbenchConfig {
                 workbenchLog(LOG_ERR, "Invalid location for $envKey");
                 continue;
             }
-        
+
             $point = ($envValue === "false") ? false : $envValue;
         }
         
