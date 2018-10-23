@@ -12,9 +12,6 @@ such as customizable SOAP headers, debug logs for API traffic, backward
 compatibility testing with previous API versions, and single sign-on
 integration within the Salesforce application.
 
-
-
-
 Getting Started
 ---------------
 Workbench is publicly hosted at [workbench.developerforce.com](https://workbench.developerforce.com)
