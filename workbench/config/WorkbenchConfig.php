@@ -53,6 +53,8 @@ class WorkbenchConfig {
         $configNamespace = "forceworkbench";
         $configDelim = "__";
         foreach ($_ENV as $envKey => $envValue) {
+
+
             if (strpos($envKey, $configNamespace) !== 0) {
                 continue;
             }
@@ -70,7 +72,11 @@ class WorkbenchConfig {
                 if (!isset($point[$keyPart])) {
                     $point[$keyPart] = [];
                 }
-        
+                
+                if($keyPart === "default"){
+                    $point[$keyPart] = "";
+                }
+
                 $point = &$point[$keyPart];
             }
         
