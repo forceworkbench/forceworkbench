@@ -5,7 +5,7 @@ class WorkbenchConfig {
     const INSTANCE = "WORKBENCH_CONFIG";
 
     private $config;
-
+    
     /**
      * @static
      * @return WorkbenchConfig
@@ -26,55 +26,57 @@ class WorkbenchConfig {
         unset($GLOBALS[self::INSTANCE]);
     }
 
-    function __construct() {
-        // initialize in case load issues
-        $config = array();
+    function __construct() {  
+      // initialize in case load issues
+      $config = array();
 
-        //load default config values
-        require 'defaults.php';
+      //load default config values
+      require 'defaults.php';
 
-        // load file-based config overrides
-        if (is_file('config/overrides.php')) {
-            /** @noinspection PhpIncludeInspection */
-            require 'config/overrides.php';
-        }
+      // load file-based config overrides
+      if (is_file('config/overrides.php')) {
+          /** @noinspection PhpIncludeInspection */
+          require 'config/overrides.php';
+      }
 
-        // load legecy file-based config-overrides
-        if (is_file('configOverrides.php')) {
-            /** @noinspection PhpIncludeInspection */
-            require 'configOverrides.php';
-        }
+      // load legecy file-based config-overrides
+      if (is_file('configOverrides.php')) {
+          /** @noinspection PhpIncludeInspection */
+          require 'configOverrides.php';
+      }
 
-        // unset from global namespace
-        $this->config = $config;
-        unset($config);
+      // unset from global namespace
+      $this->config = $config;
+      unset($config);
 
         // load environment variable based overrides
         $configNamespace = "forceworkbench";
         $configDelim = "__";
         foreach ($_ENV as $envKey => $envValue) {
+          
+          
+          if (strpos($envKey, $configNamespace) !== 0) {
+              continue;
+          }
+      
+          $envKey = str_replace("___DOT___", ".", $envKey);
+      
+          $envKeyParts = explode($configDelim, $envKey);
 
-
-            if (strpos($envKey, $configNamespace) !== 0) {
-                continue;
-            }
-        
-            $envKey = str_replace("___DOT___", ".", $envKey);
-        
-            $envKeyParts = explode($configDelim, $envKey);
-        
+            $lastKey = end($envKeyParts);
+            reset($envKeyParts);
             foreach ($envKeyParts as $keyPart) {
                 if ($keyPart === $configNamespace) {
                     $point = &$this->config;
                     continue;
                 }
         
-                if (!isset($point[$keyPart])) {
-                    $point[$keyPart] = [];
-                }
-                
-                if($keyPart === "default"){
-                    $point[$keyPart] = "";
+                if (!isset($point[$keyPart])) { 
+                    if($keyPart === $lastKey){
+                      $point[$keyPart] = "";	 
+                      }	else {
+                        $point[$keyPart] = [];
+                      }             
                 }
 
                 $point = &$point[$keyPart];
@@ -84,11 +86,11 @@ class WorkbenchConfig {
                 workbenchLog(LOG_ERR, "Invalid location for $envKey");
                 continue;
             }
-        
+            
             $point = ($envValue === "false") ? false : $envValue;
         }
-        
-        foreach ($this->config as $configKey => $configValue) {
+            
+          foreach ($this->config as $configKey => $configValue) {
             // skip headers
             if (isset($configValue['isHeader'])) {
                 continue;
