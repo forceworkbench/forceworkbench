@@ -61,7 +61,8 @@ class WorkbenchConfig {
         
             $envKeyParts = explode($configDelim, $envKey);
 
-            $lastKey = end(array_values($envKeyParts));
+            $lastKey = end($envKeyParts);
+            reset($envKeyParts);
             foreach ($envKeyParts as $keyPart) {
                 if ($keyPart === $configNamespace) {
                     $point = &$this->config;
