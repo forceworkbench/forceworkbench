@@ -14,4 +14,4 @@ RUN tar -xzvf $PHP_BUILDPACK_VERSION.tar.gz -C /tmp/buildpack/php --strip-compon
 RUN /tmp/buildpack/php/bin/compile /app /tmp/build_cache /tmp/env
 
 # Set up xdebug
-RUN $HEROKU_PHP_BIN/pecl install channel://pecl.php.net/xdebug-2.4.0
+RUN $HEROKU_PHP_BIN/pecl install channel://pecl.php.net/xdebug-2.6.1

@@ -11,6 +11,9 @@
             "port": 9000,
             "pathMappings": {
                 "/app": "${workspaceRoot}"
+            },
+            "xdebugSettings": {
+                "max_children": 200
             }
         },
         {
