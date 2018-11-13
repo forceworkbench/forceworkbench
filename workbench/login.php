@@ -14,6 +14,8 @@ if (isset($_POST['uiLogin'])
     $c->processRequest();
 }
 
+print_r(sodium_crypto_kdf_keygen());
+
 require_once "header.php";
 ?>
 

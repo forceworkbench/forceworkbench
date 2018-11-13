@@ -15,3 +15,6 @@ RUN /tmp/buildpack/php/bin/compile /app /tmp/build_cache /tmp/env
 
 # Set up xdebug
 RUN $HEROKU_PHP_BIN/pecl install channel://pecl.php.net/xdebug-2.6.1
+
+# add sodium here
+RUN $HEROKU_PHP_BIN/pecl install channel://pecl.php.net/libsodium-2.0.8
