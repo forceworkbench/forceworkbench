@@ -769,23 +769,22 @@ function rc4($data, $salt, $encrypt) {
 
     return $result;
 }
-
- // nonce is 24 bytes
- // Key is 64 bytes
-
+/* TODO:
+    1. Remove rc4()
+    2. Rename the rc4Secret key to reflect reflect use of sodium instead of rc4
+    3. Add the nonce and secret key to the Heorku env list isntead of hardcoding it in docker-compose.yml
+    4. Replce the use of unserialize with json_encode and decode.
+*/
 function crypto_serialize($data) {
     $serialized_result = sodium_crypto_box(serialize($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
-    // $serialized_result = sodium_crypto_box(serialize($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
-    
+
     return $serialized_result;
-    //return rc4(base64_encode(serialize($data)), WorkbenchConfig::get()->value("rc4Secret"), true);
 }
 
 function crypto_unserialize($data) {
     $unserialized_result = unserialize(sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret")));
     
     return $unserialized_result;
-    // return unserialize(base64_decode(rc4($data, WorkbenchConfig::get()->value("rc4Secret"), false)));
 }
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {
