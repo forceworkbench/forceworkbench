@@ -1,7 +1,10 @@
 <?php
+
 require __DIR__ . '/../vendor/autoload.php';
 require_once "util/ErrorLogging.php";
 require_once "util/ExpandableTree.php";
+
+
 
 function disallowDoctype($xmlString) {
     if (stripos(substr($xmlString, 0, 1000), '!DOCTYPE') !== FALSE) {
@@ -760,19 +763,29 @@ function rc4($data, $salt, $encrypt) {
         $result = base64_encode($result);
     }
     else
-    {
+    { 
         $result = str_rot13($result);
     }
 
     return $result;
 }
 
+ // nonce is 24 bytes
+ // Key is 64 bytes
+
 function crypto_serialize($data) {
-    return rc4(base64_encode(serialize($data)), WorkbenchConfig::get()->value("rc4Secret"), true);
+    $serialized_result = sodium_crypto_box(serialize($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
+    // $serialized_result = sodium_crypto_box(serialize($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
+    
+    return $serialized_result;
+    //return rc4(base64_encode(serialize($data)), WorkbenchConfig::get()->value("rc4Secret"), true);
 }
 
 function crypto_unserialize($data) {
-    return unserialize(base64_decode(rc4($data, WorkbenchConfig::get()->value("rc4Secret"), false)));
+    $unserialized_result = unserialize(sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret")));
+    
+    return $unserialized_result;
+    // return unserialize(base64_decode(rc4($data, WorkbenchConfig::get()->value("rc4Secret"), false)));
 }
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {
