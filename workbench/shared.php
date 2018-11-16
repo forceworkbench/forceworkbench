@@ -704,71 +704,6 @@ function prettyPrintXml($xml, $htmlOutput=FALSE) {
     return ($htmlOutput) ? '<pre>' . htmlspecialchars($xml) . '</pre>' : $xml;
 }
 
-function rc4($data, $salt, $encrypt) {
-    $key = array();
-    $result = "";
-    $state = array();
-    $salt = md5(str_rot13($salt));
-    $len = strlen($salt);
-
-    if ($encrypt)
-    {
-        $data = str_rot13($data);
-    }
-    else
-    {
-        $data = base64_decode($data);
-    }
-
-    $ii = -1;
-
-    while (++$ii < 256)
-    {
-        $key[$ii] = ord(substr($salt, (($ii % $len) + 1), 1));
-        $state[$ii] = $ii;
-    }
-
-    $ii = -1;
-    $j = 0;
-
-    while (++$ii < 256)
-    {
-        $j = ($j + $key[$ii] + $state[$ii]) % 255;
-        $t = $state[$j];
-
-        $state[$ii] = $state[$j];
-        $state[$j] = $t;
-    }
-
-    $len = strlen($data);
-    $ii = -1;
-    $j = 0;
-    $k = 0;
-
-    while (++$ii < $len)
-    {
-        $j = ($j + 1) % 256;
-        $k = ($k + $state[$j]) % 255;
-        $t = $key[$j];
-
-        $state[$j] = $state[$k];
-        $state[$k] = $t;
-
-        $x = $state[(($state[$j] + $state[$k]) % 255)];
-        $result .= chr(ord($data[$ii]) ^ $x);
-    }
-
-    if ($encrypt)
-    {
-        $result = base64_encode($result);
-    }
-    else
-    { 
-        $result = str_rot13($result);
-    }
-
-    return $result;
-}
 /* TODO:
     1. Remove rc4()
     2. Rename the rc4Secret key to reflect reflect use of sodium instead of rc4
@@ -776,13 +711,13 @@ function rc4($data, $salt, $encrypt) {
     4. Replce the use of unserialize with json_encode and decode.
 */
 function crypto_serialize($data) {
-    $serialized_result = sodium_crypto_box(serialize($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
+    $serialized_result = sodium_crypto_box(json_encode($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
 
     return $serialized_result;
 }
 
 function crypto_unserialize($data) {
-    $unserialized_result = unserialize(sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret")));
+    $unserialized_result = json_decode(sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret")));
     
     return $unserialized_result;
 }
