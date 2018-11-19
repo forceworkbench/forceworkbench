@@ -13,10 +13,10 @@ class ApexExecuteFutureTask extends FutureTask {
         $this->executeAnonymousBlock = $executeAnonymousBlock;
         $this->logCategory = $logCategory;
         $this->logCategoryLevel = $logCategoryLevel;
-        $this->className = "ApexExecuteFutureTask";// TODO: $className; Need to dynamically get the class name with get_class()
+       // $this->className = "ApexExecuteFutureTask";// TODO: $className; Need to dynamically get the class name with get_class()
     }
 
-    public function toJSON()
+   /*  public function toJSON()
     {
         $arr = array(
             'executeAnonymousBlock' => $this->executeAnonymousBlock,
@@ -36,7 +36,7 @@ class ApexExecuteFutureTask extends FutureTask {
             $arr['logCategoryLevel'],
             $arr['className']
         );
-    }
+    } */
 
     function perform() {
         WorkbenchContext::get()->getApexConnection()->setDebugLevels($this->logCategory, $this->logCategoryLevel);

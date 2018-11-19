@@ -710,7 +710,7 @@ function prettyPrintXml($xml, $htmlOutput=FALSE) {
     4. Replce the use of unserialize with json_encode and decode.
 */
 
-function getClassNameFromJSON($JSON) {
+/* function getClassNameFromJSON($JSON) {
     $arr = json_decode($JSON, true);
     $className = null;
     
@@ -719,39 +719,18 @@ function getClassNameFromJSON($JSON) {
     }
     
     return $className;
-}
+} */
 
 
-function crypto_serialize($data) { // data is an object?
-    // define('NONCE', WorkbenchConfig::get()->value("nonce"));
-    // define('KEY', WorkbenchConfig::get()->value("rc4Secret"));
-    $ecrypted_result = null;
-    
-    // if data is an obj and has a method 'toJSON' then encode it with toJSON
-    if (method_exists($data, 'toJSON')) {
-        $dataJSON = $data->toJSON();
-        $ecrypted_result = sodium_crypto_box($dataJSON, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
-    } else {
-        // ensure the data is converted to json as a default if there is no 'toJSON' function
-        $ecrypted_result = sodium_crypto_box(json_encode($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
-    }
-   
-    return $ecrypted_result;
+function crypto_serialize($data) {
+    return sodium_crypto_box(serialize($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
 }
 
 function crypto_unserialize($data) {
-    $decodedJSON = sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
-    $unencrypted_result = null;
-
-    // if the $decodedJSON contains a 'className' string then call the reflection mehtod for async executions
-    if(strpos($decodedJSON, "className") !== false) {
-        $className = getClassNameFromJSON($decodedJSON);
-        $unencrypted_result = (new ReflectionMethod($className, 'fromJSON'))->invoke(null, $decodedJSON);
-    } else {
-        $unencrypted_result = json_decode(sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret")));
-    }
-    
-    return $unencrypted_result;
+    // TODO: make the names dynamic, look for some geSsimpleName(class) method.
+    $whitelist = ['ApexExecuteFutureTask', 'QueryFutureTask', 'ConnectionConfiguration', 'RestExplorerFutureTask', 'QueryRequest'];
+    $decryptedData = sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
+    return unserialize($decryptedData, ['allowed_classes' => $whitelist]);
 }
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {
