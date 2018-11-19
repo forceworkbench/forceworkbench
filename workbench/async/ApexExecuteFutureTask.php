@@ -6,12 +6,36 @@ class ApexExecuteFutureTask extends FutureTask {
     private $executeAnonymousBlock;
     private $logCategory;
     private $logCategoryLevel;
+    private $className;
 
     function __construct($executeAnonymousBlock, $logCategory, $logCategoryLevel) {
         parent::__construct();
         $this->executeAnonymousBlock = $executeAnonymousBlock;
         $this->logCategory = $logCategory;
         $this->logCategoryLevel = $logCategoryLevel;
+        $this->className = "ApexExecuteFutureTask";// TODO: $className; Need to dynamically get the class name with get_class()
+    }
+
+    public function toJSON()
+    {
+        $arr = array(
+            'executeAnonymousBlock' => $this->executeAnonymousBlock,
+            'logCategory' => $this->logCategory,
+            'logCategoryLevel' => $this->logCategoryLevel,
+            'className' => $this->className,
+        );
+        return json_encode($arr);
+    }
+
+    public static function fromJSON($json)
+    {
+        $arr = json_decode($json, true);
+        return new self(
+            $arr['executeAnonymousBlock'],
+            $arr['logCategory'],
+            $arr['logCategoryLevel'],
+            $arr['className']
+        );
     }
 
     function perform() {

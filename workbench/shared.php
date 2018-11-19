@@ -705,21 +705,53 @@ function prettyPrintXml($xml, $htmlOutput=FALSE) {
 }
 
 /* TODO:
-    1. Remove rc4()
     2. Rename the rc4Secret key to reflect reflect use of sodium instead of rc4
     3. Add the nonce and secret key to the Heorku env list isntead of hardcoding it in docker-compose.yml
     4. Replce the use of unserialize with json_encode and decode.
 */
-function crypto_serialize($data) {
-    $serialized_result = sodium_crypto_box(json_encode($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
 
-    return $serialized_result;
+function getClassNameFromJSON($JSON) {
+    $arr = json_decode($JSON, true);
+    $className = null;
+    
+    if ($arr['className']) {
+        $className = $arr['className'];
+    }
+    
+    return $className;
+}
+
+
+function crypto_serialize($data) { // data is an object?
+    // define('NONCE', WorkbenchConfig::get()->value("nonce"));
+    // define('KEY', WorkbenchConfig::get()->value("rc4Secret"));
+    $ecrypted_result = null;
+    
+    // if data is an obj and has a method 'toJSON' then encode it with toJSON
+    if (method_exists($data, 'toJSON')) {
+        $dataJSON = $data->toJSON();
+        $ecrypted_result = sodium_crypto_box($dataJSON, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
+    } else {
+        // ensure the data is converted to json as a default if there is no 'toJSON' function
+        $ecrypted_result = sodium_crypto_box(json_encode($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
+    }
+   
+    return $ecrypted_result;
 }
 
 function crypto_unserialize($data) {
-    $unserialized_result = json_decode(sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret")));
+    $decodedJSON = sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
+    $unencrypted_result = null;
+
+    // if the $decodedJSON contains a 'className' string then call the reflection mehtod for async executions
+    if(strpos($decodedJSON, "className") !== false) {
+        $className = getClassNameFromJSON($decodedJSON);
+        $unencrypted_result = (new ReflectionMethod($className, 'fromJSON'))->invoke(null, $decodedJSON);
+    } else {
+        $unencrypted_result = json_decode(sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret")));
+    }
     
-    return $unserialized_result;
+    return $unencrypted_result;
 }
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {
@@ -737,7 +769,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 }
             }
             </script>";
-         
+        
         print "<div style='text-align: left;'><h1>Debug Mode</h1>";
 
 
@@ -925,15 +957,15 @@ function getComparisonOperators() {
 // color codes for status cell in the display table for job details
 function fillStatusCell($v, $jobId) {
     if(strcmp($v,'Complete')==0) {
-         echo "<td style='color:ForestGreen;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+        echo "<td style='color:ForestGreen;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
     } else if(strcmp($v,'Running')==0) {
-         echo "<td style='color:DodgerBlue;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+        echo "<td style='color:DodgerBlue;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
     } else if(strcmp($v,'Canceled')==0) {
-         echo "<td style='color:SlateGrey;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+        echo "<td style='color:SlateGrey;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
     } else if(strcmp($v,'New')==0) {
-         echo"<td style='color:MediumBlue;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+        echo"<td style='color:MediumBlue;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
     } else if(strcmp($v,'Error')==0) {
-         echo "<td style='color:Red;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+        echo "<td style='color:Red;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
     } else {
         echo "<td id='".$jobId."_status"."'>".$v."</td></tr>";
     }
