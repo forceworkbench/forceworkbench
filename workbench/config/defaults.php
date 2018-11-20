@@ -876,10 +876,18 @@ $config["header_SecurityOptions"] = array(
     );
 
     // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
-    $config["rc4Secret"] = array(
-        "label" => "RC4 Salting Secret",
-        "description" => "Used for salting the RC4 encryption.",
-        "default" => "OVERRIDE_ME_IN_CONFIG_OVERRIDES_PHP",
+    $config["sodiumKey"] = array(
+        "label" => "Libsodium Encryption Key",
+        "description" => "Used for salting libsodium encryption.",
+        "default" => "MLVHLIPHTKVUGBSAELHHFDHRHTJVMHGHXLHASDYUVMLGPLYQJXZQTNPFTWEUCHXN",
+        "overrideable" => false,
+        "dataType" => "string"
+    );
+
+    $config["nonce"] = array(
+        "label" => "Nonce For libsodium Encryption",
+        "description" => "required nonce value for libsodium encryption.",
+        "default" => "RLTAGRQHGBCVUPWUQLQERNZS",
         "overrideable" => false,
         "dataType" => "string"
     );

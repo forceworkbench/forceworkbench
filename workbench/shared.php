@@ -704,33 +704,22 @@ function prettyPrintXml($xml, $htmlOutput=FALSE) {
     return ($htmlOutput) ? '<pre>' . htmlspecialchars($xml) . '</pre>' : $xml;
 }
 
-/* TODO:
-    2. Rename the rc4Secret key to reflect reflect use of sodium instead of rc4
-    3. Add the nonce and secret key to the Heorku env list isntead of hardcoding it in docker-compose.yml
-    4. Replce the use of unserialize with json_encode and decode.
-*/
-
-/* function getClassNameFromJSON($JSON) {
-    $arr = json_decode($JSON, true);
-    $className = null;
-    
-    if ($arr['className']) {
-        $className = $arr['className'];
-    }
-    
-    return $className;
-} */
-
-
 function crypto_serialize($data) {
-    return sodium_crypto_box(serialize($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
+    return sodium_crypto_box(serialize($data), WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("sodiumKey"));
 }
 
 function crypto_unserialize($data) {
-    // TODO: make the names dynamic, look for some geSsimpleName(class) method.
-    $whitelist = ['ApexExecuteFutureTask', 'QueryFutureTask', 'ConnectionConfiguration', 'RestExplorerFutureTask', 'QueryRequest'];
-    $decryptedData = sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("rc4Secret"));
-    return unserialize($decryptedData, ['allowed_classes' => $whitelist]);
+    $whitelistClasses = [
+        ApexExecuteFutureTask::class, 
+        QueryFutureTask::class, 
+        ConnectionConfiguration::class, 
+        RestExplorerFutureTask::class, 
+        QueryRequest::class
+    ];
+    
+    $decryptedData = sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("sodiumKey"));
+    
+    return unserialize($decryptedData, ['allowed_classes' => $whitelistClasses]);
 }
 
 function debug($showSuperVars = true, $showSoap = true, $customName = null, $customValue = null) {
