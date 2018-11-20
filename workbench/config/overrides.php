@@ -34,7 +34,8 @@
 // CSRF SECURITY SETTINGS
 // Uncomment and change the value below to a random, secret value:
 //
-// $config["csrfSecret"]["default"] = "CHANGE_ME";
+$config["sodiumKey"]["default"] = "MLVHLIPHTKVUGBSAELHHFDHRHTJVMHGHXLHASDYUVMLGPLYQJXZQTNPFTWEUCHXN";
+$config["nonce"]["default"] = "RLTAGRQHGBCVUPWUQLQERNZS";
 
 
 // ORG ID WHITELIST / BLACKLIST
