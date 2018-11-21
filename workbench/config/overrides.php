@@ -34,6 +34,7 @@
 // CSRF SECURITY SETTINGS
 // Uncomment and change the value below to a random, secret value:
 //
+// $config["csrfSecret"]["default"] = "CHANGE_ME";
 
 /* SODIUM ENCRYPTION KEY AND NONCE SETTINGS
 It is recommended that you change the values below to custom strings.
