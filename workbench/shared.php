@@ -494,11 +494,11 @@ function localizeDateTimes($inputStr, $formatOverride = null) {
     // Grab the format from the override if it exists, if not check
     // for the config option, otherwise default format
     $format = (($formatOverride != null) 
-            ? $formatOverride 
-            : ((WorkbenchConfig::get()->value("localeDateTimeFormat") !=  null)
-                ? WorkbenchConfig::get()->value("localeDateTimeFormat")
-                : 'Y-m-d\\TH:i:s.000P'));
-                
+	              ? $formatOverride 
+	              : ((WorkbenchConfig::get()->value("localeDateTimeFormat") !=  null)
+	                  ? WorkbenchConfig::get()->value("localeDateTimeFormat")
+	                  : 'Y-m-d\\TH:i:s.000P'));
+	                  
     $timezone = WorkbenchConfig::get()->value("convertTimezone");
     
     // Short-circuit if we aren't actually doing anything useful.
@@ -734,7 +734,7 @@ function debug($showSuperVars = true, $showSoap = true, $customName = null, $cus
                 }
             }
             </script>";
-
+         
         print "<div style='text-align: left;'><h1>Debug Mode</h1>";
 
 
@@ -922,15 +922,15 @@ function getComparisonOperators() {
 // color codes for status cell in the display table for job details
 function fillStatusCell($v, $jobId) {
     if(strcmp($v,'Complete')==0) {
-        echo "<td style='color:ForestGreen;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+         echo "<td style='color:ForestGreen;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
     } else if(strcmp($v,'Running')==0) {
-        echo "<td style='color:DodgerBlue;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+         echo "<td style='color:DodgerBlue;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
     } else if(strcmp($v,'Canceled')==0) {
-        echo "<td style='color:SlateGrey;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+         echo "<td style='color:SlateGrey;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
     } else if(strcmp($v,'New')==0) {
-        echo"<td style='color:MediumBlue;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+         echo"<td style='color:MediumBlue;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
     } else if(strcmp($v,'Error')==0) {
-        echo "<td style='color:Red;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
+         echo "<td style='color:Red;font-weight:bold' id='".$jobId."_status"."'>".$v."</td></tr>";
     } else {
         echo "<td id='".$jobId."_status"."'>".$v."</td></tr>";
     }
