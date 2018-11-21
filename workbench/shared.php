@@ -1,10 +1,7 @@
 <?php
-
 require __DIR__ . '/../vendor/autoload.php';
 require_once "util/ErrorLogging.php";
 require_once "util/ExpandableTree.php";
-
-
 
 function disallowDoctype($xmlString) {
     if (stripos(substr($xmlString, 0, 1000), '!DOCTYPE') !== FALSE) {

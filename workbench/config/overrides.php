@@ -34,9 +34,8 @@
 // CSRF SECURITY SETTINGS
 // Uncomment and change the value below to a random, secret value:
 //
-$config["sodiumKey"]["default"] = "MLVHLIPHTKVUGBSAELHHFDHRHTJVMHGHXLHASDYUVMLGPLYQJXZQTNPFTWEUCHXN";
-$config["nonce"]["default"] = "RLTAGRQHGBCVUPWUQLQERNZS";
-
+$config["sodiumKey"]["default"] = "T8TAoGtlCWOwWrFFRjTThFDn9+iGsGGjhvALbWkSONN4KyDNbI2VNZmm+sCiM5X7";
+$config["nonce"]["default"] = "aojzmL4AKy1s5T5JnQ1yn+2U";
 
 // ORG ID WHITELIST / BLACKLIST
 // To only allow access to a set of orgs or block access to particular orgs,

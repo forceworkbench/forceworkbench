@@ -800,11 +800,11 @@ $config["header_Performance"] = array(
         "minValue" => 1
     );
 
-$config["header_SecurityOptions"] = array(
-    "label" => "Security Options",
-    "display" => true,
-    "isHeader" => true
-);
+    $config["header_SecurityOptions"] = array(
+        "label" => "Security Options",
+        "display" => true,
+        "isHeader" => true
+    );
 
     $config["invalidateSessionOnLogout"] = array(
         "label" => "Invalidate Session on Logout",
@@ -883,7 +883,7 @@ $config["header_SecurityOptions"] = array(
         "overrideable" => false,
         "dataType" => "string"
     );
-    
+
     // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["nonce"] = array(
         "label" => "Nonce For libsodium Encryption",
