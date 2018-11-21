@@ -494,11 +494,11 @@ function localizeDateTimes($inputStr, $formatOverride = null) {
     // Grab the format from the override if it exists, if not check
     // for the config option, otherwise default format
     $format = (($formatOverride != null) 
-                ? $formatOverride 
-                : ((WorkbenchConfig::get()->value("localeDateTimeFormat") !=  null)
-                    ? WorkbenchConfig::get()->value("localeDateTimeFormat")
-                    : 'Y-m-d\\TH:i:s.000P'));
-                    
+            ? $formatOverride 
+            : ((WorkbenchConfig::get()->value("localeDateTimeFormat") !=  null)
+                ? WorkbenchConfig::get()->value("localeDateTimeFormat")
+                : 'Y-m-d\\TH:i:s.000P'));
+                
     $timezone = WorkbenchConfig::get()->value("convertTimezone");
     
     // Short-circuit if we aren't actually doing anything useful.
