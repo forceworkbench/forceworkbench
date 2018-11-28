@@ -8,10 +8,7 @@
 // END USERS TO CUSTOMIZE IN SETTINGS. SEE defaults.php FOR DETAILS.
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 // EXAMPLE: $config["fuzzyServerUrlLookup"]["default"] = false;
-
-
 // OAUTH 2.0 SETTINGS
 // Uncomment and populate with keys and secrets to enable OAuth.
 // Note, Production and Sandbox can have the same key and secret, but it is not required
@@ -29,13 +26,10 @@
 //                                                "secret" => ""
 //                                            )
 //                                        );
-
-
 // CSRF SECURITY SETTINGS
 // Uncomment and change the value below to a random, secret value:
 //
 // $config["csrfSecret"]["default"] = "CHANGE_ME";
-
 /* SODIUM ENCRYPTION KEY AND NONCE SETTINGS
 It is recommended that you change the values below to custom strings.
     -The sodiumKey must be 64 characters long
@@ -43,12 +37,10 @@ It is recommended that you change the values below to custom strings.
  */
 $config["sodiumKey"]["default"] = "T8TAoGtlCWOwWrFFRjTThFDn9+iGsGGjhvALbWkSONN4KyDNbI2VNZmm+sCiM5X7";
 $config["nonce"]["default"] = "aojzmL4AKy1s5T5JnQ1yn+2U";
-
 // ORG ID WHITELIST / BLACKLIST
 // To only allow access to a set of orgs or block access to particular orgs,
 // uncomment and add the orgs to the respective lists below as comma-separated values:
 //
 // $config["orgIdWhiteList"]["default"] = "00D000000000001, 00D000000000002";
 // $config["orgIdBlackList"]["default"] = "00D000000000003";
-#testing testing testing
 ?>
