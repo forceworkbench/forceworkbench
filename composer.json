@@ -1,8 +1,9 @@
 {
     "require": {
-        "php": "~5.6.12",
+        "php": "~7.2",
         "ext-redis": "*",
         "ext-soap": "*",
-        "sentry/sentry": "^1.9"
+        "sentry/sentry": "^1.9",
+        "ext-sodium": "*"
     }
 }

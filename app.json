@@ -10,7 +10,6 @@
         "forceworkbench__requireSSL__default": "true",
         "forceworkbench__redirectToHTTPS__default": "true",
         "forceworkbench__csrfSecret__default": { "generator":"secret" },
-        "forceworkbench__rc4Secret__default": { "generator":"secret" },
         "forceworkbench__logHandler__default": "stderr",
         "forceworkbench__loginCsrfEnabled__default": "true",
         "forceworkbench__streamingAdviceTimeout__default": "10000"

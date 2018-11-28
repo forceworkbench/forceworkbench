@@ -60,7 +60,9 @@ class WorkbenchConfig {
             $envKey = str_replace("___DOT___", ".", $envKey);
         
             $envKeyParts = explode($configDelim, $envKey);
-        
+
+            $lastKey = end($envKeyParts);
+            reset($envKeyParts);
             foreach ($envKeyParts as $keyPart) {
                 if ($keyPart === $configNamespace) {
                     $point = &$this->config;
@@ -68,9 +70,13 @@ class WorkbenchConfig {
                 }
         
                 if (!isset($point[$keyPart])) {
-                    $point[$keyPart] = "";
+                    if ($keyPart === $lastKey) {
+                      $point[$keyPart] = "";
+                      } else {
+                        $point[$keyPart] = [];
+                      }
                 }
-        
+
                 $point = &$point[$keyPart];
             }
         
