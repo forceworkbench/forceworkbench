@@ -712,7 +712,8 @@ function crypto_unserialize($data) {
         ConnectionConfiguration::class, 
         RestExplorerFutureTask::class, 
         QueryRequest::class,
-        WorkbenchHandledException::class
+        WorkbenchHandledException::class,
+        WorkbenchAuthenticationException::class
     ];
     
     $decryptedData = sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("sodiumKey"));
