@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ffdf12846810dcc04da05f6b8996b8e8",
+    "content-hash": "2628a007a9db9e3d97d17ef1bb466f00",
     "packages": [
         {
             "name": "sentry/sentry",
@@ -78,7 +78,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "~7.2",
+        "php": "~7.2.0",
         "ext-redis": "*",
         "ext-soap": "*",
         "ext-sodium": "*"
