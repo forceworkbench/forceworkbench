@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forceworkbench-web
+  labels:
+    app: forceworkbench
+    process: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: forceworkbench
+      process: web
+  template:
+    metadata:
+      labels:
+        app: forceworkbench
+        process: web
+    spec:
+      containers:
+        - name: forceworkbench-web
+          image: ryanbrainard/forceworkbench:45.0.0
+          imagePullPolicy: Always
+          command:
+            - vendor/bin/heroku-php-apache2
+          args:
+            - workbench
+          env:
+            - name: PORT
+              value: '80'
+            - name: REDIS_URL
+              value: redis://forceworkbench-redis:6379
+          ports:
+            - name: http
+              containerPort: 80
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: healthcheck.php
+

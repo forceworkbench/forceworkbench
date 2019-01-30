@@ -16,3 +16,6 @@ RUN /tmp/buildpack/php/bin/compile /app /tmp/build_cache /tmp/env
 
 # Set up xdebug
 RUN $HEROKU_PHP_BIN/pecl install channel://pecl.php.net/xdebug-2.6.1
+
+ENV PATH /app/.heroku/php/bin:/app/.heroku/php/sbin:$PATH
+RUN chmod -R 555 workbench

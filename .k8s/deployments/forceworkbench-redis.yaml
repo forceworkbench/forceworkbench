@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forceworkbench-redis
+  labels:
+    app: forceworkbench
+    process: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: forceworkbench
+      process: redis
+  template:
+    metadata:
+      labels:
+        app: forceworkbench
+        process: redis
+    spec:
+      containers:
+        - name: forceworkbench-redis
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+

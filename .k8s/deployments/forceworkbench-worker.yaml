@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forceworkbench-worker
+  labels:
+    app: forceworkbench
+    process: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: forceworkbench
+      process: worker
+  template:
+    metadata:
+      labels:
+        app: forceworkbench
+        process: worker
+    spec:
+      containers:
+        - name: forceworkbench-worker
+          image: ryanbrainard/forceworkbench:45.0.0
+          imagePullPolicy: Always
+          workingDir: /app/workbench
+          command:
+            - ./async_workers.sh
+          env:
+            - name: REDIS_URL
+              value: redis://forceworkbench-redis:6379
