@@ -6,7 +6,7 @@ metadata:
     app: forceworkbench
     process: web
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: forceworkbench
@@ -28,7 +28,9 @@ spec:
           env:
             - name: PORT
               value: '80'
-            - name: REDIS_URL
+            - name: forceworkbench__redisUrl__default
+              value: redis://forceworkbench-redis:6379
+            - name: forceworkbench__sessionStore__default
               value: redis://forceworkbench-redis:6379
           ports:
             - name: http

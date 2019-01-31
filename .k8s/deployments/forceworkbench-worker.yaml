@@ -6,7 +6,7 @@ metadata:
     app: forceworkbench
     process: worker
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: forceworkbench
@@ -25,5 +25,7 @@ spec:
           command:
             - ./async_workers.sh
           env:
-            - name: REDIS_URL
+            - name: forceworkbench__redisUrl__default
+              value: redis://forceworkbench-redis:6379
+            - name: forceworkbench__sessionStore__default
               value: redis://forceworkbench-redis:6379
