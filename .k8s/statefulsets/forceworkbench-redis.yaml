@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: forceworkbench-redis
   labels:
@@ -11,6 +11,7 @@ spec:
     matchLabels:
       app: forceworkbench
       process: redis
+  serviceName: forceworkbench-redis
   template:
     metadata:
       labels:
