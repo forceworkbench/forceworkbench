@@ -180,8 +180,9 @@ if (isLoggedIn() && termsOk()) {
                       "User Id:&nbsp;" . substr($userInfo->userId, 0, 15));
 
     print "<td id='myUserInfo'><a href='sessionInfo.php' onmouseover=\"Tip('". implode("<br/>", $infoTips) ."')\" >" .
-           htmlspecialchars($userInfo->userFullName . " at " . $userInfo->organizationName) . " on API " . WorkbenchContext::get()->getApiVersion() . "</a></td>";
-}
+    //JMC changes : htmlspecialchars($userInfo->userFullName . " at " . $userInfo->organizationName) . " on API " . WorkbenchContext::get()->getApiVersion() . "</a></td>";
+    htmlspecialchars($userInfo->userName . " at " . $userInfo->organizationName) . " on API " . WorkbenchContext::get()->getApiVersion() . "</a></td>";
+        }
 print "</tr></table>";
 
 if (isset($errors)) {
