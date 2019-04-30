@@ -35,7 +35,7 @@
         <?php
         $myPage = getMyPage();
         $title = $myPage->showTitle ? ": " . $myPage->title : "";
-        print "<title>Workbench$title</title>";
+        print "<title>Workbench Capgemini $title</title>";
 
         print "<script type='text/javascript'>var getPathToStaticResource = " . getPathToStaticResourceAsJsFunction() . ";</script>";
         ?>
