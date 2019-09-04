@@ -50,9 +50,6 @@ if (WorkbenchConfig::get()->isConfigured("displayLiveMaintenanceMessage")) {
               "Workbench is currently undergoing maintenance. The service may be intermittently unavailable during this time.</div><br/>";
 }
 
-    print "<div style='background-color: orange; width: 100%; padding: 2px; font-size: 8pt; font-weight: bold;'>" .
-              "Workbench must be approved for use in each org. You may not have permission to do this. <a href=\"https://github.com/forceworkbench/forceworkbench/wiki/Using-Workbench-in-Your-Org\">See documentation for details<a/>.</div><br/>";
-
 
 // if async SOQL UI is not set, do not display it in the menu
 if (!WorkbenchConfig::get()->value("allowAsyncSoqlUI"))  {
