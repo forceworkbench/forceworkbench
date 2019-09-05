@@ -9,7 +9,14 @@
             print "  function gtag(){dataLayer.push(arguments);}";
             print "  gtag('js', new Date());";
             print "  gtag('config', 'UA-119670592-1');";
+            print "  var captureOutboundLink = function(url) {";
+            print "      ga('send', 'event', 'outbound', 'click', url, {";
+            print "        'transport': 'beacon',";
+            print "        'hitCallback': function(){document.location = url;}";
+            print "      });";
+            print "   }";
             print "</script>";
+
         }
         ?>
         <?php

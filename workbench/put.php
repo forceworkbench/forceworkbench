@@ -208,6 +208,7 @@ function displayUploadFileWithObjectSelectionForm($action, $id = null, $warning 
     require_once 'header.php';
 
     if ($action != "retrieve") {
+        print "<p style='background-color: orange; padding: 5px; font-weight: bold;'>Consider using <a href='https://dataloader.io' onclick=\"captureOutboundLink('http://www.example.com'); return false;\">dataloader.io</a> for a more powerful experience.";
         print "<p class='instructions'>" .
               "Select " .
               (requiresObject($action) ? "an object and " : "") .

@@ -1,518 +1,544 @@
-@CHARSET "ISO-8859-1";
+@charset "ISO-8859-1";
 
 * {
-    font-family: Verdana, Arial, Kalimati, Utkal, FreeSans, sans-serif;
-    font-size: 12px;
+  font-family: Verdana, Arial, Kalimati, Utkal, FreeSans, sans-serif;
+  font-size: 12px;
 }
 
-pre,pre a {
-    font-family: monospace;
-    font-size: 12px;
+pre,
+pre a {
+  font-family: monospace;
+  font-size: 12px;
 }
 
 body {
-    background-color: white;
-    text-align: center;
+  background-color: white;
+  text-align: center;
 }
 
 #mainBlock {
-    margin: 0 auto;
-    width: 750px;
-    text-align: left;
+  margin: 0 auto;
+  width: 750px;
+  text-align: left;
 }
 
 a {
-    color: black;
+  color: black;
 }
 
 #navMenu {
-    text-align: center;
+  text-align: center;
 }
 
 #setupMenu {
-    float: right;
+  float: right;
 }
 
 #setupMenu a {
-    font-size: 11px;
+  font-size: 11px;
 }
 
-* a:hover,#navMenu a:hover,#setupMenu a:hover,#myUserInfo a:hover {
-    color: rgb(66, 150, 231);
-    text-decoration: underline;
+* a:hover,
+#navMenu a:hover,
+#setupMenu a:hover,
+#myUserInfo a:hover {
+  color: rgb(66, 150, 231);
+  text-decoration: underline;
 }
 
 .debugContainer {
-    white-space: pre;
-    font-family: monospace;
-    text-align: left;
-    display: none;
+  white-space: pre;
+  font-family: monospace;
+  text-align: left;
+  display: none;
 }
 
 .debugHeader {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .instructions {
-    font-style: italic;
-    font-size: small;
+  font-style: italic;
+  font-size: small;
 }
 
 h1 {
-    color: rgb(66, 150, 231);
-    font-size: large;
+  color: rgb(66, 150, 231);
+  font-size: large;
 }
 
 h2 {
-    color: rgb(66, 150, 231);
-    font-size: medium;
+  color: rgb(66, 150, 231);
+  font-size: medium;
 }
 
 h3 {
-    color: rgb(66, 150, 231);
+  color: rgb(66, 150, 231);
 }
 
-#pageTitle,#myUserInfo a {
-    font-size: 8pt;
-    text-align: left;
-    color: #888;
-    vertical-align: top;
+#pageTitle,
+#myUserInfo a {
+  font-size: 8pt;
+  text-align: left;
+  color: #888;
+  vertical-align: top;
 }
 
 .pseudoLink {
-    text-decoration: underline;
-    cursor: pointer;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .miniLink {
-    font-size: xx-small;
-    color: #888;
-    text-decoration: none;
-    font-weight: normal;
+  font-size: xx-small;
+  color: #888;
+  text-decoration: none;
+  font-weight: normal;
 }
 
 #pageTitle {
-    text-align: left;
-    color: rgb(66, 150, 231);
-    font-weight: bold;
-    font-size: medium;
+  text-align: left;
+  color: rgb(66, 150, 231);
+  font-weight: bold;
+  font-size: medium;
 }
 
-#myUserInfo,#myUserInfo a {
-    text-align: right;
-    text-transform: uppercase;
-    text-decoration: none;
+#myUserInfo,
+#myUserInfo a {
+  text-align: right;
+  text-transform: uppercase;
+  text-decoration: none;
 }
 
 #loginBlockContainer {
-    /* width: 525px; */
-    margin-left: auto;
-    margin-right: auto;
+  /* width: 525px; */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #loginBlockContainer p label {
-    float: left;
-    width: 100px;
-    text-align: left;
-    font-weight: bold;
+  float: left;
+  width: 100px;
+  text-align: left;
+  font-weight: bold;
 }
 
 #logoBlock {
-    float: right;
+  float: right;
 }
 
-.loginType_std, .loginType_adv, .loginType_oauth {
-    display: none;
+.loginType_std,
+.loginType_adv,
+.loginType_oauth {
+  display: none;
 }
 
 #navMenu a {
-    color: black;
-    text-decoration: none;
-    font-weight: bold;
+  color: black;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 table.lightlyBoxed {
-    border-style: solid;
-    border-width: 1px;
-    border-collapse: collapse;
-    border-color: #bbb;
+  border-style: solid;
+  border-width: 1px;
+  border-collapse: collapse;
+  border-color: #bbb;
 }
 
 table.lightlyBoxed td {
-    vertical-align: top;
+  vertical-align: top;
 }
 
 table.description {
-    border-color: #888;
-    border-style: solid;
-    border-width: medium;
-    width: 40em;
-    border-collapse: collapse;
+  border-color: #888;
+  border-style: solid;
+  border-width: medium;
+  width: 40em;
+  border-collapse: collapse;
 }
 
-table.description TD {
-    margin: 0;
-    padding: 40;
-    border-style: solid;
-    border-color: grey;
-    border-width: thin;
-    width: 50%;
+table.description td {
+  margin: 0;
+  padding: 40;
+  border-style: solid;
+  border-color: grey;
+  border-width: thin;
+  width: 50%;
 }
 
 table.dataTable {
-    border-color: #888;
-    border-style: solid;
-    border-width: thin;
-    border-collapse: collapse;
+  border-color: #888;
+  border-style: solid;
+  border-width: thin;
+  border-collapse: collapse;
 }
 
-table.dataTable TD,table.dataTable TH {
-    margin: 0;
-    padding: 2;
-    border-color: grey;
-    border-style: solid;
-    border-width: thin;
-    text-align: left;
-    vertical-align: top;
+table.dataTable td,
+table.dataTable th {
+  margin: 0;
+  padding: 2;
+  border-color: grey;
+  border-style: solid;
+  border-width: thin;
+  text-align: left;
+  vertical-align: top;
 }
 
-table.dataTable TD table.dataTable {
-    width: 100%;
+table.dataTable td table.dataTable {
+  width: 100%;
 }
 
 table.fieldMapping {
-    border-color: #888;
-    border-style: solid;
-    border-width: thin;
-    border-collapse: collapse;
-    width: 95%;
+  border-color: #888;
+  border-style: solid;
+  border-width: thin;
+  border-collapse: collapse;
+  width: 95%;
 }
 
-table.fieldMapping TD,table.fieldMapping TH {
-    padding: 2;
-    border-color: grey;
-    border-style: solid;
-    border-width: thin;
-    text-align: left;
-    width: 33%;
+table.fieldMapping td,
+table.fieldMapping th {
+  padding: 2;
+  border-color: grey;
+  border-style: solid;
+  border-width: thin;
+  text-align: left;
+  width: 33%;
 }
 
 .dataLabel {
-    text-align: right;
-    font-weight: bolder;
-    margin-left: 10px;
+  text-align: right;
+  font-weight: bolder;
+  margin-left: 10px;
 }
 
 .dataValue {
-    text-align: left;
+  text-align: left;
 }
 
 .matrixItem {
-    border: solid thin rgb(66, 150, 231);
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    margin: 5px;
-    padding: 5px;
+  border: solid thin rgb(66, 150, 231);
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px;
 }
 
-.displayErrors,.displayWarning,.displayInfo {
-    text-align: center;
-    font-size: 12px;
-    padding: 10px;
-    border: solid thin;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    clear: both;
+.displayErrors,
+.displayWarning,
+.displayInfo {
+  text-align: center;
+  font-size: 12px;
+  padding: 10px;
+  border: solid thin;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  clear: both;
 }
 
 .displayErrors {
-    color: red;
-    border-color: red;
+  color: red;
+  border-color: red;
 }
 
 .displayWarning {
-    color: orange;
-    border-color: orange;
+  color: orange;
+  border-color: orange;
 }
 
 .displayInfo {
-    color: rgb(66, 150, 231);
-    border-color: rgb(66, 150, 231);
+  color: rgb(66, 150, 231);
+  border-color: rgb(66, 150, 231);
 }
 
-#disclaimer,#disclaimer a {
-    color: #888;
-    font-size: 8pt;
-    text-align: center;
-    clear: both;
+#disclaimer,
+#disclaimer a {
+  color: #888;
+  font-size: 8pt;
+  text-align: center;
+  clear: both;
 }
 
 activateable {
-    color: red;
+  color: red;
 }
 
 .mono {
-    font-family: monospace;
+  font-family: monospace;
 }
 
 .describeValue {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 .trueColor {
-    color: #669900;
+  color: #669900;
 }
 
 .falseColor {
-    color: #CC3333;
+  color: #cc3333;
 }
 
 .highlightSystemField {
-    color: #CC6600;
+  color: #cc6600;
 }
 
 .highlightCustomField {
-    color: #663399;
+  color: #663399;
 }
 
 .legend {
-    float: right;
-    border:1px solid #bbb;
-    padding:0.5em;
-    margin-right:1em;
+  float: right;
+  border: 1px solid #bbb;
+  padding: 0.5em;
+  margin-right: 1em;
 }
 
 .legend ul {
-    margin:0;
-    padding-left: 2em;
+  margin: 0;
+  padding-left: 2em;
 }
 
 /*SORTABLE CSS*/ /* Copyright 2006 Joost de Valk */
 a img {
-    border: 0;
+  border: 0;
 }
 
 table.sortable {
-    border-spacing: 0;
-    border: 1px solid #777;
-    border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid #777;
+  border-collapse: collapse;
 }
 
-table.sortable th,table.sortable td {
-    text-align: left;
-    padding: 2px 4px 2px 4px;
-    border-style: solid;
-    border-color: #777;
+table.sortable th,
+table.sortable td {
+  text-align: left;
+  padding: 2px 4px 2px 4px;
+  border-style: solid;
+  border-color: #777;
 }
 
 table.sortable th {
-    border-width: 0px 1px 1px 1px;
-    background-color: #ccc;
+  border-width: 0px 1px 1px 1px;
+  background-color: #ccc;
 }
 
 table.sortable td {
-    border-width: 0px 1px 0px 1px;
+  border-width: 0px 1px 0px 1px;
 }
 
 table.sortable tr.odd td {
-    background-color: #eee;
+  background-color: #eee;
 }
 
 table.sortable tr.even td {
-    background-color: #fff;
+  background-color: #fff;
 }
 
 table.sortable tr.sortBottom td {
-    border-top: 1px solid #444;
-    background-color: #ccc;
-    font-weight: bold;
+  border-top: 1px solid #444;
+  background-color: #ccc;
+  font-weight: bold;
 }
 
 #pushTopicContainer,
 #genericSubscriptionContainer,
 #replayFromContainer {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 #pushTopicDmlContainer {
-    display: none;
-    margin-top: 10px;
-    border-color: #888;
-    border-style: solid;
-    border-width: thin;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
+  display: none;
+  margin-top: 10px;
+  border-color: #888;
+  border-style: solid;
+  border-width: thin;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
 
 #pushTopicDmlForm * {
-    vertical-align: middle;
-    margin: 3px;
+  vertical-align: middle;
+  margin: 3px;
 }
 
 #pushTopicDmlForm_Query {
-    font-family: monospace;
+  font-family: monospace;
 }
 
 #pushTopicDmlForm_Btns {
-    margin-left: 5em;
+  margin-left: 5em;
 }
 
 #waitingIndicator {
-    display: none;
-    color: #888;
-    vertical-align: middle;
+  display: none;
+  color: #888;
+  vertical-align: middle;
 }
 
 #streamContainer {
-    margin-top: 15px;
-    border-color: #888;
-    border-style: solid;
-    border-width: thin;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    display: none;
-    padding: 2px;
+  margin-top: 15px;
+  border-color: #888;
+  border-style: solid;
+  border-width: thin;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  display: none;
+  padding: 2px;
 }
 
 #streamContainer h3 {
-    margin-left: 10px;
-    display: inline;
+  margin-left: 10px;
+  display: inline;
 }
 
 #streamBody div {
-    border: solid thin rgb(66, 150, 231);
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    margin: 5px;
-    padding: 5px;
+  border: solid thin rgb(66, 150, 231);
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px;
 }
 
 #streamBody div span.heading {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 #streamBody div span.body {
-    font-family: monospace;
+  font-family: monospace;
 }
 
 #streamBody div.error {
-    color: red;
+  color: red;
 }
 
-#streamContainer #status, #streamContainer #pollIndicator {
-    margin-left: 10px;
-    font-weight: bold;
-    font-size: x-small;
-    color: rgb(66, 150, 231);
+#streamContainer #status,
+#streamContainer #pollIndicator {
+  margin-left: 10px;
+  font-weight: bold;
+  font-size: x-small;
+  color: rgb(66, 150, 231);
 }
 
-#toggleShowPolling, #clearStream {
-    float: right;
-    margin-left: 5px;
+#toggleShowPolling,
+#clearStream {
+  float: right;
+  margin-left: 5px;
 }
 
 #streamContainer #pollIndicator {
-    margin-left: 2px;
-    display: none;
+  margin-left: 2px;
+  display: none;
 }
 
 #selectedTopic {
-    width: 151px;
+  width: 151px;
 }
 
-
-.tab-box { 
-  border-bottom: 1px solid #DDD;
-  padding-bottom:5px;
-   position: relative;
-    top: 30px;
+.tab-box {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+  position: relative;
+  top: 30px;
 }
 .tab-box a {
-  border:1px solid #DDD;
-  color:#0198E1;
+  border: 1px solid #ddd;
+  color: #0198e1;
   font-size: 100%;
   padding: 5px 15px;
-  text-decoration:none;
+  text-decoration: none;
   background-color: #eee;
   position: relative;
 }
-.tab-box a.activeLink { 
-  background-color: #fff; 
-  border-bottom: 0; 
+.tab-box a.activeLink {
+  background-color: #fff;
+  border-bottom: 0;
   padding: 6px 15px;
   position: relative;
 }
-.tabcontent { 
-    border: 1px solid #ddd; 
-    border-top: 0; 
-    padding: 30px; 
-    position: relative;
-    top: 30px;
+.tabcontent {
+  border: 1px solid #ddd;
+  border-top: 0;
+  padding: 30px;
+  position: relative;
+  top: 30px;
 }
-.hide { 
-    display: none;
-}
-
-.footer { 
-    padding: 10px;
+.hide {
+  display: none;
 }
 
-.small { 
-    color: #999; 
-    margin-top: 100px; 
-    border: 1px solid #EEE; 
-    padding: 5px; 
-    font-size: 9px; 
-    font-family:Verdana, Arial, Helvetica, sans-serif; 
+.footer {
+  padding: 10px;
 }
 
-.list{
-    border-collapse: collapse;
-    border: 1px solid #bababa;
-    width: 100%;
-    margin-left:auto; 
-    margin-right:auto;
+.small {
+  color: #999;
+  margin-top: 100px;
+  border: 1px solid #eee;
+  padding: 5px;
+  font-size: 9px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
-.list th, .list td {
-    text-align: left;
-    padding: 8px;
-    border: 1px solid #a9a9a9;
+.list {
+  border-collapse: collapse;
+  border: 1px solid #bababa;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.list tr:nth-child(even)
-{
-    background-color: #f2f2f2
+.list th,
+.list td {
+  text-align: left;
+  padding: 8px;
+  border: 1px solid #a9a9a9;
 }
 
-.ui-tabs .ui-tabs-nav li a { float: left; padding: .5em 1em; text-decoration: none !important; color:#7F7F7F}
-.ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .ui-tabs .ui-tabs-nav li.ui-state-processing a { cursor: text; color:#0198E1;}
-.ui-tabs .ui-tabs-hide { display: none !important; }
+.list tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
 
-.hidden
-{
-    display: none;
+.ui-tabs .ui-tabs-nav li a {
+  float: left;
+  padding: 0.5em 1em;
+  text-decoration: none !important;
+  color: #7f7f7f;
+}
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
+.ui-tabs .ui-tabs-nav li.ui-state-disabled a,
+.ui-tabs .ui-tabs-nav li.ui-state-processing a {
+  cursor: text;
+  color: #0198e1;
+}
+.ui-tabs .ui-tabs-hide {
+  display: none !important;
+}
+
+.hidden {
+  display: none;
 }
 
 .pg-normal {
-    color: black;
-    font-weight: normal;
-    text-decoration: none;    
-    cursor: pointer;    
+  color: black;
+  font-weight: normal;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .pg-selected {
-    color: black;
-    font-weight: bold;        
-    text-decoration: underline;
-    cursor: pointer;
+  color: black;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .note {
-    text-align:right; 
-    font-size: 10px; 
-    clear: both;
-    float:right;
-    font-style: italic;
-    color: grey;
+  text-align: right;
+  font-size: 10px;
+  clear: both;
+  float: right;
+  font-style: italic;
+  color: grey;
 }
