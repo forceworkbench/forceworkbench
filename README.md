@@ -1,5 +1,7 @@
 ![Workbench](http://s3.amazonaws.com/dfc-wiki/en/images/b/b5/Workbench_logo.png)
 
+**NOTICE: WORKBENCH IS MAINTENANCE ONLY MODE. NO NEW FEATURES WILL BE ADDED AND ONLY SECURITY ISSUES WILL BE FIXED.**
+
 Workbench is a powerful, web-based suite of tools designed for
 administrators and developers to interact with Salesforce.com
 organizations via the Force.com APIs. Workbench includes robust support
