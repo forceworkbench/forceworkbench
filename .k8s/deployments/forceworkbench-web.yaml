@@ -17,6 +17,13 @@ spec:
         app: forceworkbench
         process: web
     spec:
+      volumes:
+        - name: forceworkbench-config
+          configMap:
+            name: forceworkbench-config
+        - name: forceworkbench-secrets
+          secret:
+            secretName: forceworkbench-secrets
       containers:
         - name: forceworkbench-web
           image: ryanbrainard/forceworkbench:45.0.0
@@ -32,6 +39,13 @@ spec:
               value: redis://forceworkbench-redis:6379
             - name: forceworkbench__sessionStore__default
               value: redis://forceworkbench-redis:6379
+          volumeMounts:
+            - name: forceworkbench-config
+              mountPath: /app/workbench/config/overrides.php
+              subPath: overrides.php
+            - name: forceworkbench-secrets
+              mountPath: /app/workbench/configOverrides.php # TODO: update app to read from /config/secrets.php
+              subPath: secrets.php
           ports:
             - name: http
               containerPort: 80

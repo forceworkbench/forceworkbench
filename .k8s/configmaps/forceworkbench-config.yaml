@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forceworkbench-config
+data:
+  overrides.php: |
+    <?php
+
+    $config["checkForLatestVersion"]["default"] = false;
+
+    $config["defaultLoginType"]["default"] = "adv";
+
+    // prepend version into global
+    $GLOBALS['API_VERSIONS'] = array_merge(
+      array("46.0" => "46.0 (from overrides)"),
+      $GLOBALS['API_VERSIONS']
+    );
+
+    // reload versions into config from global
+    $config["defaultApiVersion"]["valuesToLabels"] = $GLOBALS['API_VERSIONS']
+
+    // TODO: add the actual WSDL files for 46.0. would be done similarly to this file
+    ?>
