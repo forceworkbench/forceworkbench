@@ -11,3 +11,5 @@ Vagrantfile
 composer.phar
 .slug
 .cache
+
+.DS_Store
