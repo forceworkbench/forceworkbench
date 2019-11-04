@@ -184,6 +184,12 @@ if (isLoggedIn() && termsOk()) {
 }
 print "</tr></table>";
 
+if ($MIGRATION_MESSAGE) {
+    print "<div class='migrationInfo'>\n";
+    print "<p>" . $MIGRATION_MESSAGE . "</p>";
+    print "</div>\n";
+}
+
 if (isset($errors)) {
     print "<p/>";
     displayError($errors, false, true);

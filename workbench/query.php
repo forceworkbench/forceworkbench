@@ -5,6 +5,8 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'async/QueryFutureTask.php';
 
+$MIGRATION_INFO = "Visual Studio Code now includes <a href=\"https://developer.salesforce.com/tools/vscode/en/soql/writing\">SOQL code completion</a>. <a href=\"https://developer.salesforce.com/tools/vscode/en/getting-started/install\">Try it today!</a>";
+
 //clear all saved queries in cookies
 // TODO: remove after next version
 $persistedSavedQueryRequestsKey = "PSQR@";
@@ -113,8 +115,6 @@ function displayQueryForm($queryRequest) {
     } else {
         displayInfo('First choose an object to use the SOQL builder wizard.');
     }
-
-    migrationInfo("Quickly and securely import, export and delete unlimited amounts of data with <a href=\"https://dataloader.io/\">dataloader.io</a>. <a href=\"https://dataloader.io/\">Try it today!</a>");
 
     print "<script type='text/javascript'>\n";
         print "var field_type_array = new Array();\n";

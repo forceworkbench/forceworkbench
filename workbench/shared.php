@@ -479,13 +479,6 @@ function displayInfo($infos) {
     print "</div>\n";
 }
 
-
-function migrationInfo($info) {
-    print "<div class='migrationInfo'>\n";
-    print "<p>" . $info . "</p>";
-    print "</div>\n";
-}
-
 function getWorkbenchUserAgent() {
     return "Workbench/" . str_replace(" ", "_", trim($GLOBALS["WORKBENCH_VERSION"]));
 }
