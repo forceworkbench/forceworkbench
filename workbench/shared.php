@@ -479,6 +479,21 @@ function displayInfo($infos) {
     print "</div>\n";
 }
 
+
+function migrationInfo($infos) {
+    print "<div class='migrationInfo'>\n";
+    if (is_array($infos)) {
+        $infoString = "";
+        foreach ($infos as $info) {
+            $infoString .= "<p>" . htmlspecialchars($info) . "</p>";
+        }
+        print $infoString;
+    } else {
+        print htmlspecialchars($infos);
+    }
+    print "</div>\n";
+}
+
 function getWorkbenchUserAgent() {
     return "Workbench/" . str_replace(" ", "_", trim($GLOBALS["WORKBENCH_VERSION"]));
 }

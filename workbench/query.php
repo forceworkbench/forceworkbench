@@ -114,6 +114,8 @@ function displayQueryForm($queryRequest) {
         displayInfo('First choose an object to use the SOQL builder wizard.');
     }
 
+    migrationInfo("Visual Studio Code now includes <a href=\"https://developer.salesforce.com/tools/vscode/en/soql/writing\">SOQL code completion</a>. <a href=\"https://developer.salesforce.com/tools/vscode/en/getting-started/install\">Try it today!</a>");
+
     print "<script type='text/javascript'>\n";
         print "var field_type_array = new Array();\n";
         if (isset($describeSObjectResult)) {
