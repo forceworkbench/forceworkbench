@@ -485,11 +485,11 @@ function migrationInfo($infos) {
     if (is_array($infos)) {
         $infoString = "";
         foreach ($infos as $info) {
-            $infoString .= "<p>" . htmlspecialchars($info) . "</p>";
+            $infoString .= "<p>" . $info . "</p>";
         }
         print $infoString;
     } else {
-        print htmlspecialchars($infos);
+        print "<p>" . $infos . "</p>";
     }
     print "</div>\n";
 }

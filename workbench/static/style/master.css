@@ -261,6 +261,10 @@ table.fieldMapping th {
   font-weight: bold;
 }
 
+.migrationInfo a {
+  color: white;
+}
+
 #disclaimer,
 #disclaimer a {
   color: #888;
