@@ -65,7 +65,9 @@ set_exception_handler('handleAllExceptionsNoHeaders');
 </head>
 
 <body>
-
+<?php
+  migrationInfo("Visual Studio Code now includes <a href=\"https://developer.salesforce.com/tools/vscode/en/soql/writing\">SOQL code completion</a>. <a href=\"https://developer.salesforce.com/tools/vscode/en/getting-started/install\">Try it today!</a>");
+?>
   <div id="tabs">
       <ul>
           <li><a href="asyncSOQLDefineQuery.php" title="defineQuery">Define Query</a></li>
