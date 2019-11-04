@@ -184,9 +184,9 @@ if (isLoggedIn() && termsOk()) {
 }
 print "</tr></table>";
 
-if (isset($MIGRATION_MESSAGE)) {
+if (isset($GLOBALS['MIGRATION_MESSAGE'])) {
     print "<div class='migrationInfo'>\n";
-    print "<p>" . $MIGRATION_MESSAGE . "</p>";
+    print "<p>" . $GLOBALS['MIGRATION_MESSAGE'] . "</p>";
     print "</div>\n";
 }
 
