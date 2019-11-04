@@ -482,7 +482,7 @@ function displayInfo($infos) {
 
 function migrationInfo($info) {
     print "<div class='migrationInfo'>\n";
-    print "<p>" . $infos . "</p>";
+    print "<p>" . $info . "</p>";
     print "</div>\n";
 }
 
