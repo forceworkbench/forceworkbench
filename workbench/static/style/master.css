@@ -253,12 +253,15 @@ table.fieldMapping th {
 }
 
 .migrationInfo {
-  background: #1798c1;
+  background: #c23934;
   padding: 10px;
   margin-top: 10px;
   text-align: center;
   color: white;
-  font-weight: bold;
+}
+
+.migrationInfo p {
+  line-height: 30px;
 }
 
 .migrationInfo a {

@@ -480,17 +480,9 @@ function displayInfo($infos) {
 }
 
 
-function migrationInfo($infos) {
+function migrationInfo($info) {
     print "<div class='migrationInfo'>\n";
-    if (is_array($infos)) {
-        $infoString = "";
-        foreach ($infos as $info) {
-            $infoString .= "<p>" . $info . "</p>";
-        }
-        print $infoString;
-    } else {
-        print "<p>" . $infos . "</p>";
-    }
+    print "<p>" . $infos . "</p>";
     print "</div>\n";
 }
 
