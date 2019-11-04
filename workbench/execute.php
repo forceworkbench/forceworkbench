@@ -1,4 +1,7 @@
 <?php
+$MIGRATION_MESSAGE = "Anonymous Apex can be executed from Visual Studio Code. <a href=\"https://developer.salesforce.com/tools/vscode/en/getting-started/install\">Try it today!</a>";
+
+
 require_once 'session.php';
 require_once 'shared.php';
 require_once 'header.php';
