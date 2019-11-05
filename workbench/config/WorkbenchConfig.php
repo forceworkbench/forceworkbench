@@ -45,6 +45,12 @@ class WorkbenchConfig {
             require 'configOverrides.php';
         }
 
+        // load file-based secrets
+        if (is_file('config/secrets.php')) {
+            /** @noinspection PhpIncludeInspection */
+            require 'config/secrets.php';
+        }
+
         // unset from global namespace
         $this->config = $config;
         unset($config);
