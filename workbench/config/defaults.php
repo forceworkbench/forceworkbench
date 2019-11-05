@@ -2,8 +2,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    TO CONFIGURE WORKBENCH FOR ALL YOUR USERS, ADJUST THE "DEFAULT" VALUES FOR THE KEYS BELOW.
-//    FOR EASIER UPGRADING, YOU MAY IT IS RECOMMENDED TO MAKE THESE CHANGES TO THE overrides.php FILE
-//    WHICH ARE APPLIED AFTER LOADING CONFIGURATIONS FROM THIS FILE.
+//    FOR EASIER UPGRADING, IT IS RECOMMENDED TO MAKE THESE CHANGES TO THE overrides.php FILE
+//    INSTEAD OF MAKING ANY CHANGES TO THIS FILE DIRECTLY. IN ADDITION, A secrets.php FILE
+//    MAY ALSO BE PROVIDED TO LOAD ANY SECRETS THAT YOU WOULD LIKE TO KEEP SEPARATE FROM OTHER OVERRIDES.
+//    THE FILES ARE LOADED IN THE ORDER: 1) defaults.php, 2) overrides.php, 3) secrets.php
 //
 //    IF YOU WOULD LIKE TO ALLOW YOUR USERS TO OVERRIDE THE DEFAULTS SET THE "OVERRIDEABLE" VALUE TO true.
 //    THIS WILL CAUSE THE KEY TO APPEAR ON THE 'SETTINGS' PAGE AND WILL BE CUSTOMIZABLE ON A USER-BY-USER
@@ -869,7 +871,7 @@ $config["header_Performance"] = array(
         "dataType" => "boolean"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in secrets.php
     $config["csrfSecret"] = array(
         "label" => "CSRF Salting Secret",
         "description" => "Used for salting the CSRF (Cross-Site Request Forgery) tokens.",
@@ -878,7 +880,7 @@ $config["header_Performance"] = array(
         "dataType" => "string"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in secrets.php
     $config["sodiumKey"] = array(
         "label" => "Libsodium Encryption Key",
         "description" => "Used for salting libsodium encryption.",
@@ -887,7 +889,7 @@ $config["header_Performance"] = array(
         "dataType" => "string"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in secrets.php
     $config["nonce"] = array(
         "label" => "Nonce For libsodium Encryption",
         "description" => "required nonce value for libsodium encryption.",
@@ -923,7 +925,7 @@ $config["header_Performance"] = array(
         "dataType" => "boolean"
     );
 
-    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
+    // This should never be overrideable by end users; instead, admins SHOULD override default in secrets.php
     $config["oauthConfigs"] = array(
         "label" => "OAuth 2.0 Consumer Key",
         "description" => "OAuth 2.0 Consumer Key",
