@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# The values public/forceworkbench and private/forceworkbench are just examples.
+# The idea is that the public/forceworkbench would be something on Docker Hub somewhere
+# and would mirror what is in the public GitHub repo. The private/forceworkbench might be somewhere
+# like ECR or other private image registry. Note that Dockerfile.customizations contains
+# `FROM public/forceworkbench` so that inherits from `public/forceworkbench` and
+# just adds additional files as additional layers on top of the public image. This is all shown in
+# one repo here, but in practice, these two Dockerfiles and additional config files might be
+# in separate GitHub repos. This approach can work for non-secret config, but it is not recommened
+# for true secrets. They should be injected either via the environment or volume mounts.
+
+docker build -f Dockerfile -t public/forceworkbench .
+
+docker build -f Dockerfile.customizations -t private/forceworkbench .

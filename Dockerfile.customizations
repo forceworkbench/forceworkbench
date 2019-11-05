@@ -1,0 +1,4 @@
+FROM public/forceworkbench
+
+ADD workbench/soapclient/*.wsdl          workbench/soapclient/
+ADD workbench/config/overrides.php       workbench/config/
