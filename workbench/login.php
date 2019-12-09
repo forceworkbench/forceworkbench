@@ -20,7 +20,7 @@ require_once "header.php";
 <p>
     <?php if (count($c->getErrors()) > 0) displayError($c->getErrors()) ?>
 </p>
-
+<img src="https://s20207.pcdn.co/wp-content/uploads/2018/12/Screen-Shot-2018-12-07-at-10.38.38-PM-456x265.png" alt="Addepar Logo" />
 <div id="loginBlockContainer">
     <form id="login_form" action="login.php" method="post">
         <?php print getCsrfFormTag(); ?>
