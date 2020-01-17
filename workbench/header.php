@@ -32,6 +32,9 @@
         <link rel="stylesheet" type="text/css" href="<?php echo getPathToStaticResource('/style/pro_dropdown.css'); ?>" />
         <link rel="stylesheet" type="text/css" href="<?php echo getPathToStaticResource('/style/simpletree.css'); ?>" />
 
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+
         <?php
         $myPage = getMyPage();
         $title = $myPage->showTitle ? ": " . $myPage->title : "";
@@ -39,7 +42,7 @@
 
         print "<script type='text/javascript'>var getPathToStaticResource = " . getPathToStaticResourceAsJsFunction() . ";</script>";
         ?>
-        
+
 		<script type="text/javascript" src="<?php echo getPathToStaticResource('/script/pro_dropdown.js'); ?>"></script>
     </head>
 <body>
@@ -147,7 +150,7 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
             print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\" target=\"" . $page->window . "\">$page->title</a></li>\n";
         }
         print "</ul></li>";
-    
+
         if(!isLoggedIn() || !termsOk()) break; //only show first "Workbench" menu in these cases
     }
     ?>
