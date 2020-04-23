@@ -20,7 +20,7 @@ require_once "header.php";
 <p>
     <?php if (count($c->getErrors()) > 0) displayError($c->getErrors()) ?>
 </p>
-<img src="<?php echo getPathToStaticResource('/images/addepar-logo-black-stacked.png'); ?>" alt="Addepar Logo" />
+<img src="<?php echo getPathToStaticResource('/images/addepar-logo-black-stacked.png'); ?>" alt="Addepar Logo" style="width:35px;height:20px;"/>
 <div id="loginBlockContainer">
     <form id="login_form" action="login.php" method="post">
         <?php print getCsrfFormTag(); ?>
