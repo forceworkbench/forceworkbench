@@ -215,7 +215,7 @@ class LoginController {
             'vpod\.t\.force\.com',
             'cloudforce\.com'
         );
-        foreach ($domainWhitelist as $w) {
+        foreach (array_merge($domainWhitelist, WorkbenchConfig::get()->value("additionalDomainWhitelist")) as $w) {
             if (preg_match('/^https?\:\/\/[\w\.\-_]+\.' . $w . '/', $serverUrl)) {
                 return true;
             }

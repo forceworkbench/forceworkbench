@@ -1006,4 +1006,12 @@ $config["header_internal"] = array(
         "overrideable" => false,
         "dataType" => "string"
     );
+
+    $config["additionalDomainWhitelist"] = array(
+        "label" => "Additional whitelisted domains",
+        "description" => "To add extra domains to whitelist",
+        "default" => array(),
+        "overrideable" => true,
+        "dataType" => "array"
+    )
 ?>
