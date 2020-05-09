@@ -128,6 +128,12 @@ class LoginController {
         } else {
             $pw   = isset($_REQUEST['pw'])  ? $_REQUEST['pw']  : null;
             $sid  = isset($_REQUEST['sid']) ? $_REQUEST['sid'] : null;
+            if (WorkbenchConfig::get()->value("ignoreHTTPSCertificateIssuesAllowed")) {
+                $ignoreHTTPSCertificateIssues = isset($_REQUEST['ignoreHTTPSCertificateIssues'])?
+                    $_REQUEST['ignoreHTTPSCertificateIssues'] : false;
+            } else {
+                $ignoreHTTPSCertificateIssues = false;
+            }
             $serverUrl = $this->buildServerUrl();
 
             // special-cases for UI vs API logins
@@ -137,7 +143,7 @@ class LoginController {
                 $_REQUEST['autoLogin'] = 1;
             }
 
-            $this->processLogin($this->username, $pw, $serverUrl, $sid, $this->startUrl);
+            $this->processLogin($this->username, $pw, $serverUrl, $sid, $this->startUrl, $ignoreHTTPSCertificateIssues);
         }
     }
 
@@ -223,7 +229,8 @@ class LoginController {
         return false;
     }
 
-    private function processLogin($username, $password, $serverUrl, $sessionId, $actionJump) {
+    private function processLogin($username, $password, $serverUrl, $sessionId, $actionJump,
+                                  $ignoreHTTPSCertificateIssues=false) {
         if ($username && $password && $sessionId) {
             $this->addError('Provide only username and password OR session id, but not all three.');
             return;
@@ -259,7 +266,8 @@ class LoginController {
             $orgId = isset($_REQUEST["orgId"]) ? $_REQUEST["orgId"] : WorkbenchConfig::get()->value("loginScopeHeader_organizationId");
             $portalId = isset($_REQUEST["portalId"]) ? $_REQUEST["portalId"] : WorkbenchConfig::get()->value("loginScopeHeader_portalId");
 
-            WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, null, $overriddenClientId));
+            WorkbenchContext::establish(
+                ConnectionConfiguration::fromUrl($serverUrl, null, $overriddenClientId, $ignoreHTTPSCertificateIssues));
             try {
                 WorkbenchContext::get()->login($username, $password, $orgId, $portalId);
             } catch (Exception $e) {

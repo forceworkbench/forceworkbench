@@ -6,7 +6,7 @@ class PartnerConnectionProvider extends AbstractSoapConnectionProvider {
     function establish(ConnectionConfiguration $connConfig) {
         $connection =  new SforcePartnerClient();
 
-        $connection->createConnection($this->buildWsdlPath($connConfig));
+        $connection->createConnection($this->buildWsdlPath($connConfig), $connConfig);
         $connection->setEndpoint($this->buildEndpoint($connConfig));
         $connection->setSessionHeader($connConfig->getSessionId());
         $connection->setCallOptions(new CallOptions($connConfig->getClientId(), WorkbenchConfig::get()->value('callOptions_defaultNamespace')));

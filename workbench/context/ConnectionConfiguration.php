@@ -6,13 +6,15 @@ class ConnectionConfiguration {
     private $host;
     private $apiVersion;
     private $overriddenClientId;
+    private $ignoreHTTPSCertificateIssues;
 
-    function __construct($sessionId, $isSecure, $host, $apiVersion, $overriddenClientId) {
+    function __construct($sessionId, $isSecure, $host, $apiVersion, $overriddenClientId, $ignoreHTTPSCertificateIssues) {
         $this->sessionId = crypto_serialize($sessionId);
         $this->isSecure = $isSecure;
         $this->host = $host;
         $this->setApiVersion($apiVersion);
         $this->overriddenClientId = $overriddenClientId;
+        $this->ignoreHTTPSCertificateIssues = $ignoreHTTPSCertificateIssues;
     }
 
     function getSessionId() {
@@ -39,6 +41,10 @@ class ConnectionConfiguration {
         return isset($this->overriddenClientId) ? $this->overriddenClientId : WorkbenchConfig::get()->value("callOptions_client");
     }
 
+    function isIgnoreHTTPSCertificateIssuesEnabled() {
+        return isset($this->ignoreHTTPSCertificateIssues) ? $this->ignoreHTTPSCertificateIssues : false;
+    }
+
     function applyLoginResult($loginResult) {
         $this->host = parse_url($loginResult->serverUrl, PHP_URL_HOST);
         $port = parse_url($loginResult->serverUrl, PHP_URL_PORT);
@@ -47,7 +53,7 @@ class ConnectionConfiguration {
         $this->sessionId = crypto_serialize($loginResult->sessionId);
     }
 
-    static function fromUrl($serviceUrl, $sessionId, $clientId) {
+    static function fromUrl($serviceUrl, $sessionId, $clientId, $ignoreHTTPSCertificateIssues=false) {
         if (preg_match("!http(s?)://(.*)/services/Soap/[uc]/(\d{1,2}\.\d)!", $serviceUrl, $serviceUrlMatches) == 0) {
             throw new WorkbenchHandledException("Invalid Service URL format. Must be formatted as either Partner or Enterprise URL.\n" . $serviceUrl);
         }
@@ -57,7 +63,8 @@ class ConnectionConfiguration {
                     $serviceUrlMatches[1] == "s", // using HTTPS
                     $serviceUrlMatches[2],        // host
                     $serviceUrlMatches[3],        // API Version
-                    $clientId);
+                    $clientId,
+                    $ignoreHTTPSCertificateIssues);
     }
 }
 

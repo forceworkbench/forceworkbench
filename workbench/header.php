@@ -102,8 +102,12 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
         rsort($betaTagNames);
         rsort($gaTagNames);
 
-        $latestBetaVersion = strip_seps($betaTagNames[0]);
-        $latestGaVersion = strip_seps($gaTagNames[0]);
+        if (count($betaTagNames) > 0) {
+            $latestBetaVersion = strip_seps($betaTagNames[0]);
+        }
+        if (count($gaTagNames) > 0) {
+            $latestGaVersion = strip_seps($gaTagNames[0]);
+        }
         $currentVersion = strip_seps($GLOBALS["WORKBENCH_VERSION"]);
 
         if (stristr($currentVersion, 'beta') && !stristr($latestBetaVersion, $latestGaVersion)) {

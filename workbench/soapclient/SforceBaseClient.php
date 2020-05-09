@@ -94,9 +94,10 @@ class SforceBaseClient {
     /**
      * Connect method to www.salesforce.com
      *
-     * @param string $wsdl   Salesforce.com Partner WSDL
+     * @param string  $wsdl                        Salesforce.com Partner WSDL
+     * @param ConnectionConfiguration $connConfig  Connection config
      */
-    public function createConnection($wsdl, $proxy=null) {
+    public function createConnection($wsdl, ConnectionConfiguration $connConfig, $proxy=null) {
         $_SERVER['HTTP_USER_AGENT'] = 'Salesforce/PHPToolkit/1.0';
 
         $soapClientArray = array();
@@ -108,6 +109,19 @@ class SforceBaseClient {
 
         if (WorkbenchConfig::get()->value("enableGzip") && phpversion() > '5.1.2') {
             $soapClientArray['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | 1;
+        }
+
+        if (WorkbenchConfig::get()->value("ignoreHTTPSCertificateIssuesAllowed") &&
+                $connConfig->isIgnoreHTTPSCertificateIssuesEnabled()) {
+            $context = stream_context_create([
+                // set some relaxed SSL/TLS specific options for dev hosts
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                ]
+            ]);
+            $soapClientArray['stream_context'] = $context;
         }
 
         if (WorkbenchConfig::get()->value("proxyEnabled")) {

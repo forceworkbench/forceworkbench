@@ -99,6 +99,20 @@ require_once "header.php";
                     <?php printSelectOptions($c->getApiVersionSelectOptions(), $c->getApiVersion()); ?>
                 </select>
             </p>
+
+            <?php if (WorkbenchConfig::get()->value("ignoreHTTPSCertificateIssuesAllowed")) { ?>
+
+            <p class="displayWarning">
+                <strong>Check option below only if you are 100% confident that server you using is trustworthy!!!</strong><br>
+                Be ready to share your credentials (and sometimes your customer's ones, as well) with entire world if this is not the case
+            </p>
+            <p>
+                <label for="ignoreHTTPSCertificateIssues"></label>
+                <input type="checkbox" name="ignoreHTTPSCertificateIssues" id="ignoreHTTPSCertificateIssues" />
+                <strong>Ignore HTTPS certificate issues</strong>
+            </p>
+
+            <?php } ?>
         </div>
 
         <div class="loginType_std loginType_oauth loginType_adv">
