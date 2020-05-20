@@ -4,7 +4,7 @@ abstract class SoapBaseClient {
     protected $sessionId;
     protected $location;
 
-    public function __construct($sessionId, $clientId, $endpoint, $wsdlPath) {
+    public function __construct($sessionId, $clientId, $endpoint, $wsdlPath, $connConfig) {
 
         $_SERVER['HTTP_USER_AGENT'] = getWorkbenchUserAgent();
 
@@ -20,6 +20,18 @@ abstract class SoapBaseClient {
             $soapClientArray['compression'] = SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | 1;
         }
 
+        if (WorkbenchConfig::get()->value("ignoreHTTPSCertificateIssuesAllowed") &&
+            $connConfig->isIgnoreHTTPSCertificateIssuesEnabled()) {
+            $context = stream_context_create([
+                // set some relaxed SSL/TLS specific options for dev hosts
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                ]
+            ]);
+            $soapClientArray['stream_context'] = $context;
+        }
         //set proxy settings
         if (WorkbenchConfig::get()->value("proxyEnabled") == true) {
             $proxySettings = array();

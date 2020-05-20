@@ -7,7 +7,8 @@ class MetadataConnectionProvider extends AbstractSoapConnectionProvider {
         return new SforceMetadataClient($connConfig->getSessionId(),
                                         $connConfig->getClientId(),
                                         $this->buildEndpoint($connConfig),
-                                        $this->buildWsdlPath($connConfig));
+                                        $this->buildWsdlPath($connConfig),
+                                        $connConfig);
     }
 
     protected function getWsdlType() {

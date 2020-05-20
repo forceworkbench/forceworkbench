@@ -7,7 +7,8 @@ class ApexConnectionProvider extends AbstractSoapConnectionProvider {
         return new SforceApexClient($connConfig->getSessionId(),
                                     $connConfig->getClientId(),
                                     $this->buildEndpoint($connConfig),
-                                    $this->buildWsdlPath($connConfig));
+                                    $this->buildWsdlPath($connConfig),
+                                    $connConfig);
     }
 
     protected function getWsdlType() {
