@@ -32,7 +32,7 @@ class CometdProxy
         $proxy->host = $this->host;
         $proxy->forceSSL = $this->forceSSL;
         $proxy->forward_path = $forwardPath;
-        $proxy->cookie_whitelist = array("sfdc-stream", "BAYEUX_BROWSER");
+        $proxy->cookie_whitelist = array("sfdc-stream", "BAYEUX_BROWSER", "force-stream", "force-proxy-stream");
         $proxy->proxy_settings = getProxySettings();
         $proxy->is_forward_path_static = true;
         return $proxy;
