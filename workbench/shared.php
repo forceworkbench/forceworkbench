@@ -706,7 +706,7 @@ function crypto_serialize($data) {
 }
 
 function crypto_unserialize($data) {
-    $whitelistClasses = [
+    $allowlistClasses = [
         ApexExecuteFutureTask::class, 
         QueryFutureTask::class, 
         ConnectionConfiguration::class, 
@@ -718,7 +718,7 @@ function crypto_unserialize($data) {
     
     $decryptedData = sodium_crypto_box_open($data, WorkbenchConfig::get()->value("nonce"), WorkbenchConfig::get()->value("sodiumKey"));
     
-    return unserialize($decryptedData, ['allowed_classes' => $whitelistClasses]);
+    return unserialize($decryptedData, ['allowed_classes' => $allowlistClasses]);
 }
 
 function getComparisonOperators() {
