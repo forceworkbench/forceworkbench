@@ -908,8 +908,8 @@ $config["header_Performance"] = array(
     );
 
     // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
-    $config["orgIdBlackList"] = array(
-        "label" => "Organization Id Blacklist",
+    $config["orgIdBlockList"] = array(
+        "label" => "Organization Id Blocklist",
         "description" => "A comma-separated list of organization ids which are not allowed to connect to Workbench.",
         "default" => "",
         "overrideable" => false,

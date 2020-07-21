@@ -303,10 +303,10 @@ class LoginController {
         // exceptions will be caught by top-level handler
         $userInfo = WorkbenchContext::get()->getUserInfo();
 
-        // do org id whitelist/blacklisting
+        // do org id whitelist/blocklisting
         $orgId15 = substr($userInfo->organizationId,0,15);
         $orgIdWhiteList = array_map('trim',explode(",",WorkbenchConfig::get()->value("orgIdWhiteList")));
-        $orgIdBlackList = array_map('trim',explode(",",WorkbenchConfig::get()->value("orgIdBlackList")));
+        $orgIdBlockList = array_map('trim',explode(",",WorkbenchConfig::get()->value("orgIdBlockList")));
         $isAllowed = true;
         foreach ($orgIdWhiteList as $allowedOrgId) {
             if ($allowedOrgId === "") {
@@ -321,7 +321,7 @@ class LoginController {
             }
         }
 
-        foreach ($orgIdBlackList as $disallowedOrgId) {
+        foreach ($orgIdBlockList as $disallowedOrgId) {
             if ($orgId15 ===  substr($disallowedOrgId,0,15)) {
                 $isAllowed = false;
                 break;
