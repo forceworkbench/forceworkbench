@@ -210,12 +210,12 @@ class LoginController {
     }
 
     private function isAllowedHost($serverUrl) {
-        $domainWhitelist = array(
+        $domainAllowlist = array(
             'salesforce\.com',
             'vpod\.t\.force\.com',
             'cloudforce\.com'
         );
-        foreach ($domainWhitelist as $w) {
+        foreach ($domainAllowlist as $w) {
             if (preg_match('/^https?\:\/\/[\w\.\-_]+\.' . $w . '/', $serverUrl)) {
                 return true;
             }
@@ -303,25 +303,25 @@ class LoginController {
         // exceptions will be caught by top-level handler
         $userInfo = WorkbenchContext::get()->getUserInfo();
 
-        // do org id whitelist/blacklisting
+        // do org id allowlist/blocklisting
         $orgId15 = substr($userInfo->organizationId,0,15);
-        $orgIdWhiteList = array_map('trim',explode(",",WorkbenchConfig::get()->value("orgIdWhiteList")));
-        $orgIdBlackList = array_map('trim',explode(",",WorkbenchConfig::get()->value("orgIdBlackList")));
+        $orgIdAllowList = array_map('trim',explode(",",WorkbenchConfig::get()->value("orgIdAllowList")));
+        $orgIdBlockList = array_map('trim',explode(",",WorkbenchConfig::get()->value("orgIdBlockList")));
         $isAllowed = true;
-        foreach ($orgIdWhiteList as $allowedOrgId) {
+        foreach ($orgIdAllowList as $allowedOrgId) {
             if ($allowedOrgId === "") {
                 continue;
             } else if ($orgId15 === substr($allowedOrgId,0,15)) {
                 $isAllowed = true;
                 break;
             } else {
-                // there is something on the whitelist that's not us
+                // there is something on the Allowlist that's not us
                 // disallow and keep looking until we find our org id
                 $isAllowed = false;
             }
         }
 
-        foreach ($orgIdBlackList as $disallowedOrgId) {
+        foreach ($orgIdBlockList as $disallowedOrgId) {
             if ($orgId15 ===  substr($disallowedOrgId,0,15)) {
                 $isAllowed = false;
                 break;

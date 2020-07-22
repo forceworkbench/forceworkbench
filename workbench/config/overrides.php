@@ -44,11 +44,11 @@ It is recommended that you change the values below to custom strings.
 $config["sodiumKey"]["default"] = "T8TAoGtlCWOwWrFFRjTThFDn9+iGsGGjhvALbWkSONN4KyDNbI2VNZmm+sCiM5X7";
 $config["nonce"]["default"] = "aojzmL4AKy1s5T5JnQ1yn+2U";
 
-// ORG ID WHITELIST / BLACKLIST
+// ORG ID ALLOWLIST / BLOCKLIST
 // To only allow access to a set of orgs or block access to particular orgs,
 // uncomment and add the orgs to the respective lists below as comma-separated values:
 //
-// $config["orgIdWhiteList"]["default"] = "00D000000000001, 00D000000000002";
-// $config["orgIdBlackList"]["default"] = "00D000000000003";
+// $config["orgIdAllowList"]["default"] = "00D000000000001, 00D000000000002";
+// $config["orgIdBlockList"]["default"] = "00D000000000003";
 
 ?>

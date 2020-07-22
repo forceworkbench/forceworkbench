@@ -1,6 +1,6 @@
 FROM heroku/heroku:16-build as base
 
-ENV PHP_BUILDPACK_VERSION v148
+ENV PHP_BUILDPACK_VERSION v178
 ENV APP /app
 ENV HOME $APP
 ENV HEROKU_PHP_BIN $APP/.heroku/php/bin

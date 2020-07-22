@@ -2,7 +2,7 @@
  
 class PhpReverseProxy {
     public $host, $port, $forceSSL, $forward_path, $is_forward_path_static, $content, $content_type, $user_agent,
-    $XFF, $request_method, $cookie_whitelist, $proxy_settings;
+    $XFF, $request_method, $cookie_allowlist, $proxy_settings;
 
     private $http_code, $resultHeader, $cookie;
 
@@ -20,7 +20,7 @@ class PhpReverseProxy {
         $this->XFF = "";
         $this->request_method = "GET";
         $this->cookie = "";
-        $this->cookie_whitelist = array();
+        $this->cookie_allowlist = array();
     }
 
     function translateURL($serverName) {
@@ -58,7 +58,7 @@ class PhpReverseProxy {
         foreach ($_COOKIE as $cookieName => $cookieValue) {
             if ($cookieName == "PHPSESSID") continue;
             if ($cookieName == "XDEBUG_SESSION") continue;
-            if (count($this->cookie_whitelist) > 0 && !in_array($cookieName, $this->cookie_whitelist)) continue;
+            if (count($this->cookie_allowlist) > 0 && !in_array($cookieName, $this->cookie_allowlist)) continue;
             $allowedCookies .= trim($cookieName) . "=" . trim($cookieValue) ."; ";
         }
         $this->cookie = $allowedCookies;
@@ -132,9 +132,9 @@ class PhpReverseProxy {
     }
 
     function output() {
-        $headerWhitelist = array("HTTP", "Date", "Content-Type", "Set-Cookie");
+        $headerAllowlist = array("HTTP", "Date", "Content-Type", "Set-Cookie");
         foreach (explode("\r\n",$this->resultHeader) as $h) {
-            foreach ($headerWhitelist as $whl) {
+            foreach ($headerAllowlist as $whl) {
                 $replaceExistingHeader = true;
 
                 if (stripos($h, $whl) > -1) {
