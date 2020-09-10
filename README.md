@@ -1,4 +1,4 @@
-![Workbench](http://s3.amazonaws.com/dfc-wiki/en/images/b/b5/Workbench_logo.png)
+# Workbench
 
 **NOTICE: WORKBENCH IS MAINTENANCE ONLY MODE. NO NEW FEATURES WILL BE ADDED AND ONLY SECURITY ISSUES WILL BE FIXED. API VERSIONS WILL CONTINUE TO BE UPDATED.**
 
