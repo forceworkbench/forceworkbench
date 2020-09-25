@@ -1,4 +1,7 @@
 <?php
+
+$MIGRATION_MESSAGE = "Try the <a href=\"https://github.com/scolladon/postman-salesforce-apis\">Salesforce APIs for Postman</a>.";
+
 require_once 'restclient/RestClient.php';
 require_once 'controllers/RestExplorerController.php';
 require_once 'async/RestExplorerFutureTask.php';
