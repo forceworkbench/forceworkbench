@@ -28,10 +28,7 @@ section of the [wiki](https://github.com/forceworkbench/forceworkbench/wiki).
 
 Support
 -------
-Please note that the **Workbench is NOT a supported product of or supported by salesforce.com, inc.** For support from the Open Source community, please visit this project's pages below:
-
-* [Stackoverflow](https://salesforce.stackexchange.com/questions/tagged/workbench)
-* [Issues, Bugs, & Feature Requests](https://github.com/forceworkbench/forceworkbench/issues)
+Please note that the **Workbench is NOT a supported product of or supported by salesforce.com, inc.** For support from the Open Source community, please use [Stackoverflow](https://salesforce.stackexchange.com/questions/tagged/workbench).
 
 Learning more about Workbench
 -----------------------------
