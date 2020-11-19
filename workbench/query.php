@@ -5,7 +5,7 @@ require_once 'session.php';
 require_once 'shared.php';
 require_once 'async/QueryFutureTask.php';
 
-$MIGRATION_MESSAGE = "Visual Studio Code now includes <a href=\"https://developer.salesforce.com/tools/vscode/en/soql/writing\">SOQL code completion</a>. <a href=\"https://developer.salesforce.com/tools/vscode/en/getting-started/install\">Try it today!</a>";
+$MIGRATION_MESSAGE = "Visual Studio Code now includes <a href=\"https://developer.salesforce.com/tools/vscode/en/soql/writing\">a SOQL Builder</a>. <a href=\"https://developer.salesforce.com/tools/vscode/en/soql/soql-builder\">Try it today!</a>";
 
 //clear all saved queries in cookies
 // TODO: remove after next version
