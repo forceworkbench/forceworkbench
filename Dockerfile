@@ -1,10 +1,10 @@
-FROM heroku/heroku:16-build as base
+FROM heroku/heroku:20-build as base
 
-ENV PHP_BUILDPACK_VERSION v178
+ENV PHP_BUILDPACK_VERSION v190
 ENV APP /app
 ENV HOME $APP
 ENV HEROKU_PHP_BIN $APP/.heroku/php/bin
-ENV STACK heroku-16
+ENV STACK heroku-20
 
 ADD . $APP
 WORKDIR $APP
@@ -15,4 +15,5 @@ RUN tar -xzvf $PHP_BUILDPACK_VERSION.tar.gz -C /tmp/buildpack/php --strip-compon
 RUN /tmp/buildpack/php/bin/compile /app /tmp/build_cache /tmp/env
 
 # Set up xdebug
-RUN $HEROKU_PHP_BIN/pecl install channel://pecl.php.net/xdebug-2.6.1
+RUN apt-get update
+RUN apt-get --assume-yes install php-xdebug 
