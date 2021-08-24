@@ -523,7 +523,7 @@ function setFieldMappings($action,$csvArray) {
     if ($action == 'upsert') {
         printPutFieldForMappingId($csvArray, true, $currRecord);
         foreach ($describeSObjectResult->fields as $field) {
-            if ($field->updateable && $field->createable) {
+            if ($field->nameField || ($field->updateable && $field->createable)) {
                 printPutFieldForMapping($field, $csvArray, true, $currRecord);
             }
         }
