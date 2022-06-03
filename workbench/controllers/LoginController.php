@@ -213,7 +213,9 @@ class LoginController {
         $domainAllowlist = array(
             'salesforce\.com',
             'vpod\.t\.force\.com',
-            'cloudforce\.com'
+            'cloudforce\.com',
+            'salesforce\.mil',
+            'crmforce\.mil'
         );
         foreach ($domainAllowlist as $w) {
             if (preg_match('/^https?\:\/\/[\w\.\-_]+\.' . $w . '/', $serverUrl)) {
