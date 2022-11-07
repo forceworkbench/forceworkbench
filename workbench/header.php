@@ -39,7 +39,7 @@
 
         print "<script type='text/javascript'>var getPathToStaticResource = " . getPathToStaticResourceAsJsFunction() . ";</script>";
         ?>
-        
+
 		<script type="text/javascript" src="<?php echo getPathToStaticResource('/script/pro_dropdown.js'); ?>"></script>
     </head>
 <body>
@@ -102,8 +102,8 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
         rsort($betaTagNames);
         rsort($gaTagNames);
 
-        $latestBetaVersion = strip_seps($betaTagNames[0]);
-        $latestGaVersion = strip_seps($gaTagNames[0]);
+        $latestBetaVersion = (empty($betaTagNames) ? '' : strip_seps($betaTagNames[0]));
+        $latestGaVersion = (empty($gaTagNames) ? '' : strip_seps($gaTagNames[0]));
         $currentVersion = strip_seps($GLOBALS["WORKBENCH_VERSION"]);
 
         if (stristr($currentVersion, 'beta') && !stristr($latestBetaVersion, $latestGaVersion)) {
@@ -147,7 +147,7 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
             print "<li><a href='$href' onmouseover=\"Tip('$page->desc')\" target=\"" . $page->window . "\">$page->title</a></li>\n";
         }
         print "</ul></li>";
-    
+
         if(!isLoggedIn() || !termsOk()) break; //only show first "Workbench" menu in these cases
     }
     ?>
