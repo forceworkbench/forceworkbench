@@ -28,11 +28,20 @@ function redis() {
         }
 
         $redisUrl = WorkbenchConfig::get()->value("redisUrl");
+        // Heroku Redis v6 uses a self-signed cert, so we need to set the option to not verify the cert
+        // $r = new Redis();
+        // $r->connect(parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT));
+        // if (!is_array(parse_url($redisUrl, PHP_URL_PASS))) {
+        //     $r->auth(parse_url($redisUrl, PHP_URL_PASS));
+        // }
         $r = new Redis();
-        $r->connect(parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT));
+        $opts = [
+            'stream' => ['verify_peer' => false, 'verify_peer_name' => false]
+        ];
         if (!is_array(parse_url($redisUrl, PHP_URL_PASS))) {
-            $r->auth(parse_url($redisUrl, PHP_URL_PASS));
+            $opts['auth'] = parse_url($redisUrl, PHP_URL_PASS);
         }
+        $r->connect(parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT), 0, NULL, 0, 0, $opts);
 
         $GLOBALS['REDIS'] = $r;
     }
