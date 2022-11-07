@@ -169,12 +169,13 @@ function usingSslEndToEnd() {
 }
 
 function toBytes ($size_str) {
+    $size_int = substr ($size_str, 0, -1);
     switch (substr ($size_str, -1)) {
-        case 'G': case 'g': $size_str *= 1024;
-        case 'M': case 'm': $size_str *= 1024;
-        case 'K': case 'k': $size_str *= 1024;
+        case 'G': case 'g': $size_int *= 1024;
+        case 'M': case 'm': $size_int *= 1024;
+        case 'K': case 'k': $size_int *= 1024;
     }
-    return (int)$size_str;
+    return (int)$size_int;
 }
 
 function endsWith($haystack, $needle, $ignoreCase){
