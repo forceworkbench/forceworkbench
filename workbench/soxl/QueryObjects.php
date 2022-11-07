@@ -46,7 +46,7 @@ class QueryRequest {
         }
 
         if (isset($source['soql_query'])) {
-            if (get_magic_quotes_gpc()) {
+            if (0) {
                 $this->soqlQuery = stripslashes($source['soql_query']);
             } else {
                 $this->soqlQuery = $source['soql_query'];

@@ -23,11 +23,11 @@ function put($action) {
             }
 
             $singleRecordFieldMap = convertFieldMapToArray($_POST, fieldsToNameArray($fields));
-            
+
             $anySet = false;
             foreach ($fields as $field) {
                 if (isset($_POST[$field->name])) {
-                    if (get_magic_quotes_gpc()) {
+                    if (0) {
                         $_POST[$field->name] = stripslashes($_POST[$field->name]);
                     }
 
@@ -248,7 +248,7 @@ function displayUploadFileWithObjectSelectionForm($action, $id = null, $warning 
 
     print "<tr><td colspan='2'><br/><input type='submit' name='action' value='Next' /></td></tr>\n";
     print "</table></form>\n";
-    
+
     include_once 'footer.php';
 }
 

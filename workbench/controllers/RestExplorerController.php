@@ -32,19 +32,19 @@ class RestExplorerController {
         $this->requestMethod = isset($_REQUEST['requestMethod']) ? $_REQUEST['requestMethod'] : $this->requestMethod;
 
         $this->url = isset($_REQUEST['url'])
-                                ? (get_magic_quotes_gpc() 
+                                ? (0 
                                     ? stripslashes($_REQUEST['url']) 
                                     : $_REQUEST['url']) 
                                 : $this->url;
 
         $this->requestHeaders = isset($_REQUEST['requestHeaders'])
-                                ? (get_magic_quotes_gpc() 
+                                ? (0 
                                     ? stripslashes($_REQUEST['requestHeaders'])
                                     : $_REQUEST['requestHeaders'])
                                 : $this->requestHeaders;
 
         $this->requestBody = isset($_REQUEST['requestBody'])
-                                ? (get_magic_quotes_gpc()
+                                ? (0
                                     ? stripslashes($_REQUEST['requestBody'])
                                     : $_REQUEST['requestBody'])
                                 : $this->requestBody;

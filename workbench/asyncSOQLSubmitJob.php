@@ -33,7 +33,7 @@ if (WorkbenchContext::get()->isApiVersionAtLeast(39.0)) {
 // For POST method
 $c = new RestExplorerController();
 $c->getInstanceForAsyncSOQL(null,'POST');
-$c->requestBody =  (get_magic_quotes_gpc()? stripslashes($req): $req);
+$c->requestBody =  (0? stripslashes($req): $req);
 echo '<script>console.log("submitJobResult C:")</script>';
 echo '<script>console.log('. json_encode( $c ) .')</script>';
 $f = new RestExplorerFutureTask($c);
