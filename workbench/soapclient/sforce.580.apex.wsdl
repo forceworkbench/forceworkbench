@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Salesforce.com Apex API version 58.0
+
+Copyright 2006-2023 Salesforce.com, inc. All Rights Reserved
+-->
+<definitions targetNamespace="http://soap.sforce.com/2006/08/apex" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://soap.sforce.com/2006/08/apex">
+ <types>
+  <xsd:schema elementFormDefault="qualified" targetNamespace="http://soap.sforce.com/2006/08/apex">
+   <xsd:complexType name="CompileAndTestRequest">
+    <xsd:sequence>
+     <xsd:element name="checkOnly" type="xsd:boolean"/>
+     <xsd:element name="classes" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+     <xsd:element name="deleteClasses" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+     <xsd:element name="deleteTriggers" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+     <xsd:element name="runTestsRequest" minOccurs="0" type="tns:RunTestsRequest"/>
+     <xsd:element name="triggers" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="RunTestsRequest">
+    <xsd:sequence>
+     <xsd:element name="allTests" type="xsd:boolean"/>
+     <xsd:element name="classes" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+     <xsd:element name="maxFailedTests" minOccurs="0" type="xsd:int"/>
+     <xsd:element name="namespace" type="xsd:string"/>
+     <xsd:element name="packages" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+     <xsd:element name="skipCodeCoverage" minOccurs="0" type="xsd:boolean"/>
+     <xsd:element name="tests" minOccurs="0" maxOccurs="unbounded" type="tns:TestsNode"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="TestsNode">
+    <xsd:sequence>
+     <xsd:element name="classId" type="xsd:string"/>
+     <xsd:element name="className" type="xsd:string"/>
+     <xsd:element name="testMethods" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="CompileAndTestResult">
+    <xsd:sequence>
+     <xsd:element name="classes" minOccurs="0" maxOccurs="unbounded" type="tns:CompileClassResult"/>
+     <xsd:element name="deleteClasses" minOccurs="0" maxOccurs="unbounded" type="tns:DeleteApexResult"/>
+     <xsd:element name="deleteTriggers" minOccurs="0" maxOccurs="unbounded" type="tns:DeleteApexResult"/>
+     <xsd:element name="runTestsResult" type="tns:RunTestsResult"/>
+     <xsd:element name="success" type="xsd:boolean"/>
+     <xsd:element name="triggers" minOccurs="0" maxOccurs="unbounded" type="tns:CompileTriggerResult"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="CompileClassResult">
+    <xsd:sequence>
+     <xsd:element name="bodyCrc" minOccurs="0" type="xsd:int"/>
+     <xsd:element name="column" type="xsd:int"/>
+     <xsd:element name="id" type="tns:ID" nillable="true"/>
+     <xsd:element name="line" type="xsd:int"/>
+     <xsd:element name="name" minOccurs="0" type="xsd:string"/>
+     <xsd:element name="problem" minOccurs="0" type="xsd:string"/>
+     <xsd:element name="problems" minOccurs="0" maxOccurs="unbounded" type="tns:CompileIssue" nillable="true"/>
+     <xsd:element name="success" type="xsd:boolean"/>
+     <xsd:element name="warnings" minOccurs="0" maxOccurs="unbounded" type="tns:CompileIssue" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="CompileIssue">
+    <xsd:sequence>
+     <xsd:element name="column" minOccurs="0" type="xsd:int"/>
+     <xsd:element name="line" minOccurs="0" type="xsd:int"/>
+     <xsd:element name="message" minOccurs="0" type="xsd:string"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="DeleteApexResult">
+    <xsd:sequence>
+     <xsd:element name="id" type="tns:ID" nillable="true"/>
+     <xsd:element name="problem" minOccurs="0" type="xsd:string"/>
+     <xsd:element name="success" type="xsd:boolean"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="RunTestsResult">
+    <xsd:sequence>
+     <xsd:element name="apexLogId" minOccurs="0" type="xsd:string"/>
+     <xsd:element name="codeCoverage" minOccurs="0" maxOccurs="unbounded" type="tns:CodeCoverageResult"/>
+     <xsd:element name="codeCoverageWarnings" minOccurs="0" maxOccurs="unbounded" type="tns:CodeCoverageWarning"/>
+     <xsd:element name="failures" minOccurs="0" maxOccurs="unbounded" type="tns:RunTestFailure"/>
+     <xsd:element name="flowCoverage" minOccurs="0" maxOccurs="unbounded" type="tns:FlowCoverageResult"/>
+     <xsd:element name="flowCoverageWarnings" minOccurs="0" maxOccurs="unbounded" type="tns:FlowCoverageWarning"/>
+     <xsd:element name="numFailures" type="xsd:int"/>
+     <xsd:element name="numTestsRun" type="xsd:int"/>
+     <xsd:element name="successes" minOccurs="0" maxOccurs="unbounded" type="tns:RunTestSuccess"/>
+     <xsd:element name="totalTime" type="xsd:double"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="CodeCoverageResult">
+    <xsd:sequence>
+     <xsd:element name="id" type="tns:ID"/>
+     <xsd:element name="locationsNotCovered" minOccurs="0" maxOccurs="unbounded" type="tns:CodeLocation"/>
+     <xsd:element name="name" type="xsd:string"/>
+     <xsd:element name="namespace" type="xsd:string" nillable="true"/>
+     <xsd:element name="numLocations" type="xsd:int"/>
+     <xsd:element name="numLocationsNotCovered" type="xsd:int"/>
+     <xsd:element name="type" type="xsd:string"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="CodeLocation">
+    <xsd:sequence>
+     <xsd:element name="column" type="xsd:int"/>
+     <xsd:element name="line" type="xsd:int"/>
+     <xsd:element name="numExecutions" type="xsd:int"/>
+     <xsd:element name="time" type="xsd:double"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="CodeCoverageWarning">
+    <xsd:sequence>
+     <xsd:element name="id" type="tns:ID"/>
+     <xsd:element name="message" type="xsd:string"/>
+     <xsd:element name="name" type="xsd:string" nillable="true"/>
+     <xsd:element name="namespace" type="xsd:string" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="RunTestFailure">
+    <xsd:sequence>
+     <xsd:element name="id" type="tns:ID"/>
+     <xsd:element name="message" type="xsd:string"/>
+     <xsd:element name="methodName" type="xsd:string" nillable="true"/>
+     <xsd:element name="name" type="xsd:string"/>
+     <xsd:element name="namespace" type="xsd:string" nillable="true"/>
+     <xsd:element name="seeAllData" minOccurs="0" type="xsd:boolean"/>
+     <xsd:element name="stackTrace" type="xsd:string" nillable="true"/>
+     <xsd:element name="time" type="xsd:double"/>
+     <xsd:element name="type" type="xsd:string"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="FlowCoverageResult">
+    <xsd:sequence>
+     <xsd:element name="elementsNotCovered" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+     <xsd:element name="flowId" type="xsd:string"/>
+     <xsd:element name="flowName" type="xsd:string"/>
+     <xsd:element name="flowNamespace" type="xsd:string" nillable="true"/>
+     <xsd:element name="numElements" type="xsd:int"/>
+     <xsd:element name="numElementsNotCovered" type="xsd:int"/>
+     <xsd:element name="processType" type="tns:FlowProcessType"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:simpleType name="FlowProcessType">
+    <xsd:restriction base="xsd:string">
+     <xsd:enumeration value="AutoLaunchedFlow"/>
+     <xsd:enumeration value="Flow"/>
+     <xsd:enumeration value="Workflow"/>
+     <xsd:enumeration value="CustomEvent"/>
+     <xsd:enumeration value="InvocableProcess"/>
+     <xsd:enumeration value="LoginFlow"/>
+     <xsd:enumeration value="ActionPlan"/>
+     <xsd:enumeration value="JourneyBuilderIntegration"/>
+     <xsd:enumeration value="UserProvisioningFlow"/>
+     <xsd:enumeration value="Survey"/>
+     <xsd:enumeration value="SurveyEnrich"/>
+     <xsd:enumeration value="Appointments"/>
+     <xsd:enumeration value="FSCLending"/>
+     <xsd:enumeration value="DigitalForm"/>
+     <xsd:enumeration value="FieldServiceMobile"/>
+     <xsd:enumeration value="OrchestrationFlow"/>
+     <xsd:enumeration value="FieldServiceWeb"/>
+     <xsd:enumeration value="TransactionSecurityFlow"/>
+     <xsd:enumeration value="ContactRequestFlow"/>
+     <xsd:enumeration value="ActionCadenceFlow"/>
+     <xsd:enumeration value="ManagedContentFlow"/>
+     <xsd:enumeration value="CheckoutFlow"/>
+     <xsd:enumeration value="CartAsyncFlow"/>
+     <xsd:enumeration value="CustomerLifecycle"/>
+     <xsd:enumeration value="Journey"/>
+     <xsd:enumeration value="RecommendationStrategy"/>
+     <xsd:enumeration value="Orchestrator"/>
+     <xsd:enumeration value="RoutingFlow"/>
+     <xsd:enumeration value="ServiceCatalogItemFlow"/>
+     <xsd:enumeration value="EvaluationFlow"/>
+     <xsd:enumeration value="LoyaltyManagementFlow"/>
+     <xsd:enumeration value="ManagedContentAuthoringWorkflow"/>
+     <xsd:enumeration value="ActionCadenceAutolaunchedFlow"/>
+     <xsd:enumeration value="ActionCadenceStepFlow"/>
+     <xsd:enumeration value="IndividualObjectLinkingFlow"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:complexType name="FlowCoverageWarning">
+    <xsd:sequence>
+     <xsd:element name="flowId" type="xsd:string" nillable="true"/>
+     <xsd:element name="flowName" type="xsd:string" nillable="true"/>
+     <xsd:element name="flowNamespace" type="xsd:string" nillable="true"/>
+     <xsd:element name="message" type="xsd:string"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="RunTestSuccess">
+    <xsd:sequence>
+     <xsd:element name="id" type="tns:ID"/>
+     <xsd:element name="methodName" type="xsd:string"/>
+     <xsd:element name="name" type="xsd:string"/>
+     <xsd:element name="namespace" type="xsd:string" nillable="true"/>
+     <xsd:element name="seeAllData" minOccurs="0" type="xsd:boolean"/>
+     <xsd:element name="time" type="xsd:double"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="CompileTriggerResult">
+    <xsd:sequence>
+     <xsd:element name="bodyCrc" minOccurs="0" type="xsd:int"/>
+     <xsd:element name="column" type="xsd:int"/>
+     <xsd:element name="id" type="tns:ID" nillable="true"/>
+     <xsd:element name="line" type="xsd:int"/>
+     <xsd:element name="name" minOccurs="0" type="xsd:string"/>
+     <xsd:element name="problem" type="xsd:string" nillable="true"/>
+     <xsd:element name="problems" minOccurs="0" maxOccurs="unbounded" type="tns:CompileIssue" nillable="true"/>
+     <xsd:element name="success" type="xsd:boolean"/>
+     <xsd:element name="warnings" minOccurs="0" maxOccurs="unbounded" type="tns:CompileIssue" nillable="true"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="ExecuteAnonymousResult">
+    <xsd:sequence>
+     <xsd:element name="column" type="xsd:int"/>
+     <xsd:element name="compileProblem" type="xsd:string" nillable="true"/>
+     <xsd:element name="compiled" type="xsd:boolean"/>
+     <xsd:element name="exceptionMessage" type="xsd:string" nillable="true"/>
+     <xsd:element name="exceptionStackTrace" type="xsd:string" nillable="true"/>
+     <xsd:element name="line" type="xsd:int"/>
+     <xsd:element name="success" type="xsd:boolean"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="WsdlToApexInfo">
+    <xsd:sequence>
+     <xsd:element name="mapping" minOccurs="0" maxOccurs="unbounded" type="tns:NamespacePackagePair"/>
+     <xsd:element name="wsdl" type="xsd:string"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="NamespacePackagePair">
+    <xsd:sequence>
+     <xsd:element name="namespace" type="xsd:string"/>
+     <xsd:element name="packageName" type="xsd:string"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="WsdlToApexResult">
+    <xsd:sequence>
+     <xsd:element name="apexScripts" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+     <xsd:element name="errors" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+     <xsd:element name="success" type="xsd:boolean"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="AllowFieldTruncationHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="allowFieldTruncation" type="xsd:boolean"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="CallOptions">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="client" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="DebuggingHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="categories" minOccurs="0" maxOccurs="unbounded" type="tns:LogInfo"/>
+      <xsd:element name="debugLevel" type="tns:LogType"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:complexType name="LogInfo">
+    <xsd:sequence>
+     <xsd:element name="category" type="tns:LogCategory"/>
+     <xsd:element name="level" type="tns:LogCategoryLevel"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:simpleType name="LogCategory">
+    <xsd:restriction base="xsd:string">
+     <xsd:enumeration value="Db"/>
+     <xsd:enumeration value="Workflow"/>
+     <xsd:enumeration value="Validation"/>
+     <xsd:enumeration value="Callout"/>
+     <xsd:enumeration value="Apex_code"/>
+     <xsd:enumeration value="Apex_profiling"/>
+     <xsd:enumeration value="Visualforce"/>
+     <xsd:enumeration value="System"/>
+     <xsd:enumeration value="Wave"/>
+     <xsd:enumeration value="Nba"/>
+     <xsd:enumeration value="All"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LogCategoryLevel">
+    <xsd:restriction base="xsd:string">
+     <xsd:enumeration value="None"/>
+     <xsd:enumeration value="Finest"/>
+     <xsd:enumeration value="Finer"/>
+     <xsd:enumeration value="Fine"/>
+     <xsd:enumeration value="Debug"/>
+     <xsd:enumeration value="Info"/>
+     <xsd:enumeration value="Warn"/>
+     <xsd:enumeration value="Error"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:simpleType name="LogType">
+    <xsd:restriction base="xsd:string">
+     <xsd:enumeration value="None"/>
+     <xsd:enumeration value="Debugonly"/>
+     <xsd:enumeration value="Db"/>
+     <xsd:enumeration value="Profiling"/>
+     <xsd:enumeration value="Callout"/>
+     <xsd:enumeration value="Detail"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:element name="DebuggingInfo">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="debugLog" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="DisableFeedTrackingHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="disableFeedTracking" type="xsd:boolean"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="PackageVersionHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="packageVersions" minOccurs="0" maxOccurs="unbounded" type="tns:PackageVersion"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:complexType name="PackageVersion">
+    <xsd:sequence>
+     <xsd:element name="majorNumber" type="xsd:int"/>
+     <xsd:element name="minorNumber" type="xsd:int"/>
+     <xsd:element name="namespace" type="xsd:string"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:element name="SessionHeader">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="sessionId" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:simpleType name="ID">
+    <xsd:restriction base="xsd:string">
+     <xsd:length value="18"/>
+     <xsd:pattern value="[a-zA-Z0-9]{18}"/>
+    </xsd:restriction>
+   </xsd:simpleType>
+   <xsd:element name="compileAndTest">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="CompileAndTestRequest" type="tns:CompileAndTestRequest"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="compileAndTestResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="result" type="tns:CompileAndTestResult"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="compileClasses">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="scripts" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="compileClassesResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="result" minOccurs="0" maxOccurs="unbounded" type="tns:CompileClassResult"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="compileTriggers">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="scripts" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="compileTriggersResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="result" minOccurs="0" maxOccurs="unbounded" type="tns:CompileTriggerResult"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="executeAnonymous">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="String" type="xsd:string"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="executeAnonymousResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="result" type="tns:ExecuteAnonymousResult"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="runTests">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="RunTestsRequest" type="tns:RunTestsRequest"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="runTestsResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="result" type="tns:RunTestsResult"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="wsdlToApex">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="info" type="tns:WsdlToApexInfo"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="wsdlToApexResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element name="result" type="tns:WsdlToApexResult"/>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+  </xsd:schema>
+ </types>
+ <!-- Message for the header parts -->
+ <message name="Header">
+  <part name="AllowFieldTruncationHeader" element="tns:AllowFieldTruncationHeader"/>
+  <part name="CallOptions" element="tns:CallOptions"/>
+  <part name="DebuggingHeader" element="tns:DebuggingHeader"/>
+  <part name="DebuggingInfo" element="tns:DebuggingInfo"/>
+  <part name="DisableFeedTrackingHeader" element="tns:DisableFeedTrackingHeader"/>
+  <part name="PackageVersionHeader" element="tns:PackageVersionHeader"/>
+  <part name="SessionHeader" element="tns:SessionHeader"/>
+ </message>
+ <!-- Operation Messages -->
+ <message name="compileAndTestRequest">
+  <part element="tns:compileAndTest" name="parameters"/>
+ </message>
+ <message name="compileAndTestResponse">
+  <part element="tns:compileAndTestResponse" name="parameters"/>
+ </message>
+ <message name="compileClassesRequest">
+  <part element="tns:compileClasses" name="parameters"/>
+ </message>
+ <message name="compileClassesResponse">
+  <part element="tns:compileClassesResponse" name="parameters"/>
+ </message>
+ <message name="compileTriggersRequest">
+  <part element="tns:compileTriggers" name="parameters"/>
+ </message>
+ <message name="compileTriggersResponse">
+  <part element="tns:compileTriggersResponse" name="parameters"/>
+ </message>
+ <message name="executeAnonymousRequest">
+  <part element="tns:executeAnonymous" name="parameters"/>
+ </message>
+ <message name="executeAnonymousResponse">
+  <part element="tns:executeAnonymousResponse" name="parameters"/>
+ </message>
+ <message name="runTestsRequest">
+  <part element="tns:runTests" name="parameters"/>
+ </message>
+ <message name="runTestsResponse">
+  <part element="tns:runTestsResponse" name="parameters"/>
+ </message>
+ <message name="wsdlToApexRequest">
+  <part element="tns:wsdlToApex" name="parameters"/>
+ </message>
+ <message name="wsdlToApexResponse">
+  <part element="tns:wsdlToApexResponse" name="parameters"/>
+ </message>
+ <portType name="ApexPortType">
+  <operation name="compileAndTest">
+   <documentation>Compile one or more Apex Classes, Triggers, and run tests.</documentation>
+   <input message="tns:compileAndTestRequest"/>
+   <output message="tns:compileAndTestResponse"/>
+  </operation>
+  <operation name="compileClasses">
+   <documentation>Compile one or more Apex Classes.</documentation>
+   <input message="tns:compileClassesRequest"/>
+   <output message="tns:compileClassesResponse"/>
+  </operation>
+  <operation name="compileTriggers">
+   <documentation>Compile Apex Trigger code blocks.</documentation>
+   <input message="tns:compileTriggersRequest"/>
+   <output message="tns:compileTriggersResponse"/>
+  </operation>
+  <operation name="executeAnonymous">
+   <documentation>Execute an anonymous Apex code block</documentation>
+   <input message="tns:executeAnonymousRequest"/>
+   <output message="tns:executeAnonymousResponse"/>
+  </operation>
+  <operation name="runTests">
+   <documentation>Execute test methods</documentation>
+   <input message="tns:runTestsRequest"/>
+   <output message="tns:runTestsResponse"/>
+  </operation>
+  <operation name="wsdlToApex">
+   <documentation>Generate Apex packages from WSDL for web service callouts</documentation>
+   <input message="tns:wsdlToApexRequest"/>
+   <output message="tns:wsdlToApexResponse"/>
+  </operation>
+ </portType>
+ <binding name="ApexBinding" type="tns:ApexPortType">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="compileAndTest">
+   <soap:operation soapAction=""/>
+   <input>
+    <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="DebuggingHeader" message="tns:Header"/>
+    <soap:header use="literal" part="PackageVersionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="CallOptions" message="tns:Header"/>
+    <soap:body use="literal" parts="parameters"/>
+   </input>
+   <output>
+    <soap:header use="literal" part="DebuggingInfo" message="tns:Header"/>
+    <soap:body use="literal"/>
+   </output>
+  </operation>
+  <operation name="compileClasses">
+   <soap:operation soapAction=""/>
+   <input>
+    <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="PackageVersionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="CallOptions" message="tns:Header"/>
+    <soap:body use="literal" parts="parameters"/>
+   </input>
+   <output>
+    <soap:body use="literal"/>
+   </output>
+  </operation>
+  <operation name="compileTriggers">
+   <soap:operation soapAction=""/>
+   <input>
+    <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="PackageVersionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="CallOptions" message="tns:Header"/>
+    <soap:body use="literal" parts="parameters"/>
+   </input>
+   <output>
+    <soap:body use="literal"/>
+   </output>
+  </operation>
+  <operation name="executeAnonymous">
+   <soap:operation soapAction=""/>
+   <input>
+    <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="DebuggingHeader" message="tns:Header"/>
+    <soap:header use="literal" part="PackageVersionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="CallOptions" message="tns:Header"/>
+    <soap:header use="literal" part="AllowFieldTruncationHeader" message="tns:Header"/>
+    <soap:header use="literal" part="DisableFeedTrackingHeader" message="tns:Header"/>
+    <soap:body use="literal" parts="parameters"/>
+   </input>
+   <output>
+    <soap:header use="literal" part="DebuggingInfo" message="tns:Header"/>
+    <soap:body use="literal"/>
+   </output>
+  </operation>
+  <operation name="runTests">
+   <soap:operation soapAction=""/>
+   <input>
+    <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="DebuggingHeader" message="tns:Header"/>
+    <soap:header use="literal" part="CallOptions" message="tns:Header"/>
+    <soap:body use="literal" parts="parameters"/>
+   </input>
+   <output>
+    <soap:header use="literal" part="DebuggingInfo" message="tns:Header"/>
+    <soap:body use="literal"/>
+   </output>
+  </operation>
+  <operation name="wsdlToApex">
+   <soap:operation soapAction=""/>
+   <input>
+    <soap:header use="literal" part="SessionHeader" message="tns:Header"/>
+    <soap:header use="literal" part="CallOptions" message="tns:Header"/>
+    <soap:body use="literal" parts="parameters"/>
+   </input>
+   <output>
+    <soap:body use="literal"/>
+   </output>
+  </operation>
+ </binding>
+ <service name="ApexService">
+  <documentation>Manage your Salesforce.com Apex classes and triggers</documentation>
+  <port binding="tns:ApexBinding" name="Apex">
+   <soap:address location="https://login.salesforce.com/services/Soap/s/58.0"/>
+  </port>
+ </service>
+</definitions>
