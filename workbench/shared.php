@@ -34,7 +34,7 @@ function redis() {
           "stream" => ["verify_peer" => false, "verify_peer_name" => false],
         ]);
 
-        $GLOBALS['REDIS'] = $r;
+        $GLOBALS['REDIS'] = $redis;
     }
     return $GLOBALS['REDIS'];
 }
