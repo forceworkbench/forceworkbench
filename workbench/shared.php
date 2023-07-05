@@ -28,13 +28,13 @@ function redis() {
         }
 
         $redisUrl = WorkbenchConfig::get()->value("redisUrl");
-        $r = new Redis();
-        $r->connect(parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT));
-        if (!is_array(parse_url($redisUrl, PHP_URL_PASS))) {
-            $r->auth(parse_url($redisUrl, PHP_URL_PASS));
-        }
+        $redis = new Redis();
+        $redis->connect("tls://".$redisUrl["host"], $redisUrl["port"], 0, NULL, 0, 0, [
+          "auth" => $redisUrl["pass"],
+          "stream" => ["verify_peer" => false, "verify_peer_name" => false],
+        ]);
 
-        $GLOBALS['REDIS'] = $r;
+        $GLOBALS['REDIS'] = $redis;
     }
     return $GLOBALS['REDIS'];
 }
