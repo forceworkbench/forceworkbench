@@ -108,7 +108,6 @@ class WorkbenchConfig {
             }
             // otherwise, just use the default
             else {
-                print_r($configKey);
                 $this->config[$configKey]['value'] = $configValue['default'];
             }
         }

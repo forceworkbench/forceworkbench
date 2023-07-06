@@ -23,12 +23,12 @@ if (isset($_SERVER['HTTP_X_REQUEST_ID'])) {
 
 $sessionStore = WorkbenchConfig::get()->value("sessionStore");
 // If $sessionStore starts with redis://, convert to format for Redis extension and set as the session save handler
-// IN:  redis://user:pass@host:port/
-// OUT: tcp://host:port?auth=pass
-if (strpos($sessionStore, "redis://") === 0) {
+// IN:  rediss://user:pass@host:port/
+// OUT: tcp://host:port?auth=pass&stream[verify_peer]=0&stream[verify_peer_name]=0
+if (strpos($sessionStore, "redis") === 0) {
   $redisUrl = "tcp://" . parse_url($sessionStore, PHP_URL_HOST) . ":" . parse_url($sessionStore, PHP_URL_PORT);
   if (!is_array(parse_url($sessionStore, PHP_URL_PASS))) {
-    $redisUrl .= "?auth=" . parse_url($sessionStore, PHP_URL_PASS);
+    $redisUrl .= "?auth=" . parse_url($sessionStore, PHP_URL_PASS) . "&stream[verify_peer]=0&stream[verify_peer_name]=0";
   }
   ini_set("session.save_path", $redisUrl);
   ini_set("session.save_handler", "redis");
