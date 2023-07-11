@@ -2,7 +2,7 @@
 
 //source: https://gist.github.com/zacharyrankin/51cc9fe809486be31ac4083af7631e66
 
-class RedisSessionHandler implements SessionHandlerInterface
+class RedisSessionHandler implements SessionHandlerInterface, SessionUpdateTimestampHandlerInterface
 {
     private Redis $redis;
     private int $ttl;
@@ -49,5 +49,15 @@ class RedisSessionHandler implements SessionHandlerInterface
         $this->redis->setEx($session_id, $this->ttl, $session_data);
 
         return true;
+    }
+
+    public function validateId($session_id)
+    {
+        return $this->read($session_id) != '';
+    }
+
+    public function updateTimestamp($session_id, $session_data)
+    {
+        return $this->write($session_id, $session_data);
     }
 }
