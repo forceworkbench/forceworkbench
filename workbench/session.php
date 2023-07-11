@@ -3,6 +3,7 @@ require_once 'config/constants.php';
 require_once 'config/WorkbenchConfig.php';
 require_once 'shared.php';
 require_once 'context/WorkbenchContext.php';
+require_once 'util/RedisSessionHandler.php';
 
 set_exception_handler('handleAllExceptions');
 set_error_handler('handleAllErrors');
@@ -21,17 +22,9 @@ if (isset($_SERVER['HTTP_X_REQUEST_ID'])) {
     header('X-Request-ID: ' . $_SERVER['HTTP_X_REQUEST_ID']);
 }
 
-$sessionStore = WorkbenchConfig::get()->value("sessionStore");
-// If $sessionStore starts with redis://, convert to format for Redis extension and set as the session save handler
-// IN:  rediss://user:pass@host:port/
-// OUT: tcp://host:port?auth=pass&stream[verify_peer]=0&stream[verify_peer_name]=0
-if (strpos($sessionStore, "redis") === 0) {
-  $redisUrl = "tcp://" . parse_url($sessionStore, PHP_URL_HOST) . ":" . parse_url($sessionStore, PHP_URL_PORT);
-  if (!is_array(parse_url($sessionStore, PHP_URL_PASS))) {
-    $redisUrl .= "?auth=" . parse_url($sessionStore, PHP_URL_PASS) . "&stream[verify_peer]=0&stream[verify_peer_name]=0";
-  }
-  ini_set("session.save_path", $redisUrl);
-  ini_set("session.save_handler", "redis");
+if (hasRedis()) {
+    $ttl = strtotime("1 hour") - time();
+    session_set_save_handler(new RedisSessionHandler(redis(), $ttl));
 }
 
 ini_set("session.cookie_httponly", "1");
