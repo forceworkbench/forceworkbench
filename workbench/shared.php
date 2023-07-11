@@ -168,13 +168,23 @@ function usingSslEndToEnd() {
     return usingSslFromUserToWorkbench() && usingSslFromWorkbenchToSfdc();
 }
 
-function toBytes ($size_str) {
-    switch (substr ($size_str, -1)) {
-        case 'G': case 'g': $size_str *= 1024;
-        case 'M': case 'm': $size_str *= 1024;
-        case 'K': case 'k': $size_str *= 1024;
+// source: https://stackoverflow.com/a/11807179
+function toBytes(string $from): ?int {
+    $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    $number = substr($from, 0, -2);
+    $suffix = strtoupper(substr($from,-2));
+
+    //B or no suffix
+    if(is_numeric(substr($suffix, 0, 1))) {
+        return preg_replace('/[^\d]/', '', $from);
     }
-    return (int)$size_str;
+
+    $exponent = array_flip($units)[$suffix] ?? null;
+    if($exponent === null) {
+        return null;
+    }
+
+    return $number * (1024 ** $exponent);
 }
 
 function endsWith($haystack, $needle, $ignoreCase){
