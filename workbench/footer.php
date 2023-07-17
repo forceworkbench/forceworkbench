@@ -34,12 +34,12 @@ if (isset($_REQUEST["footerScripts"])) {
 </html>
 
 <?php
-//$peak = memory_get_peak_usage();
-//workbenchLog(LOG_INFO, "MemoryUsageCheck", array("measure.memory.peak" => $peak . "byte"));
-//if (WorkbenchContext::isEstablished() && ($peak/toBytes(ini_get("memory_limit"))) > 0.7) {
-//   WorkbenchContext::get()->clearCache();
-//   workbenchLog(LOG_INFO, "MemoryUsageCacheClear", array("measure.memory.cache_clear" => 1));
-//}
+$peak = memory_get_peak_usage();
+workbenchLog(LOG_INFO, "MemoryUsageCheck", array("measure.memory.peak" => $peak . "byte"));
+if (WorkbenchContext::isEstablished() && ($peak/toBytes(ini_get("memory_limit"))) > 0.7) {
+   WorkbenchContext::get()->clearCache();
+   workbenchLog(LOG_INFO, "MemoryUsageCacheClear", array("measure.memory.cache_clear" => 1));
+}
 
 if (isset($GLOBALS['REDIS'])) {
     redis()->close();
