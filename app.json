@@ -14,5 +14,7 @@
         "forceworkbench__loginCsrfEnabled__default": "true",
         "forceworkbench__streamingAdviceTimeout__default": "10000"
     },
-    "success_url": "/login.php"
+    "success_url": "/login.php",
+    "stack": "heroku-20"
+
 }
