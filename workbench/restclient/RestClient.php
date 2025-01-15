@@ -21,7 +21,7 @@ class RestApiClient {
 		if (!extension_loaded('curl')) {
 			throw new Exception('Missing required cURL extension.');
 		}
-	
+
         $this->baseUrl = $this->getBaseUrlFromPartnerEndpoint($partnerEndpoint);
         $this->sessionId = $sessionId;
     }
@@ -111,6 +111,7 @@ class RestApiClient {
                 throw new Exception($method . ' method not supported.');
         }
 
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);              // Force HTTP 1.1
         curl_setopt($ch, CURLOPT_URL, $this->baseUrl . $path);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $httpHeaders);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, $expectBinary ? 0 : 1);
@@ -158,7 +159,7 @@ class RestApiClient {
         }
 
         $httpResponse = new HttpResponse($chResponse, $headerSize, $expectBinary);
-        
+
         curl_close($ch);
 
         return $httpResponse;
@@ -197,7 +198,7 @@ class RestApiClient {
 class HttpResponse {
     public $header;
     public $body;
-    
+
     public function __construct($curlResponse, $headerSize, $expectBinary) {
         if ($expectBinary) {
             $this->body = $curlResponse;
