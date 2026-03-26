@@ -53,7 +53,7 @@ class StreamingController {
             }
 
             $this->pushTopics = json_decode($queryResponse->body)->records;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->errors[] = "Unknown Error Fetching Push Topics:\n" . $e->getMessage();
         }
     }
@@ -76,7 +76,7 @@ class StreamingController {
 
         try {
             $response = $this->restApi->send($method, $url, $headers, $data, false);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->errors[] = "Unknown Error $opProgLabel Push Topic\n:" . $e->getMessage();
             return;
         }

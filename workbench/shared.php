@@ -62,7 +62,7 @@ function workbenchLog($logLevel, $type, $message = "") {
             $info = WorkbenchContext::get()->getUserInfo();
             $orgId = $info->organizationId;
             $userId = $info->userId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // ignore and just use defaults
         }
     }
@@ -329,7 +329,7 @@ function handleAllExceptionsInternal($e, $showHeadersFooters) {
 
     print "<p/>";
     if ($e instanceof WorkbenchHandledException) {
-        if ($showHeadersFooters) try { include_once 'header.php'; } catch (Exception $e) {}
+        if ($showHeadersFooters) try { include_once 'header.php'; } catch (\Throwable $e) {}
         displayError($e->getMessage(), false, $showHeadersFooters);
     } else {
         $executing_script = basename($_SERVER['PHP_SELF']);
@@ -355,7 +355,7 @@ function handleAllExceptionsInternal($e, $showHeadersFooters) {
             }
         }
 
-        if ($showHeadersFooters)  try { include_once 'header.php'; } catch (Exception $e) {}
+        if ($showHeadersFooters)  try { include_once 'header.php'; } catch (\Throwable $e) {}
         workbenchLog(LOG_ERR, "E", "measure.exception=1 " . $fullMessage);
         displayError("UNKNOWN ERROR: " . $e->getMessage(), false, $showHeadersFooters);
     }

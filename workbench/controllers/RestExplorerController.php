@@ -104,7 +104,7 @@ class RestExplorerController {
                 $this->showResponse = true;
             }
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->errors = $e->getMessage();
         }
     }

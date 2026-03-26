@@ -27,7 +27,7 @@ class RedisSessionHandler implements SessionHandlerInterface, SessionUpdateTimes
 
     public function gc($max_lifetime): int
     {
-        return true;
+        return 0;
     }
 
     public function open($path, $name): bool
