@@ -4,6 +4,7 @@
     "repository": "https://github.com/forceworkbench/forceworkbench",
     "keywords": ["Salesforce", "Force.com", "API", "PHP"],
     "logo": "https://raw.githubusercontent.com/forceworkbench/forceworkbench/master/assets/logos/blueCube-256x256.png",
+    "stack": "heroku-24",
     "env": {
         "MAX_WORKERS": "5",
         "WEB_CONCURRENCY": "4",
