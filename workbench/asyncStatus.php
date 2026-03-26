@@ -21,7 +21,7 @@ try {
     $asyncConnection = WorkbenchContext::get()->getAsyncBulkConnection();
     $jobInfo = $asyncConnection->getJobInfo($_GET['jobId']);
     $batchInfos = $asyncConnection->getBatchInfos($_GET['jobId']);
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     displayError($e->getMessage(), false, false);
     if (stripos($e->getMessage(), 'InvalidVersion') > -1) {
         print "<p/><em>Quick Fix: <a href='sessionInfo.php' target='_blank'>Change API Version</a></em>";

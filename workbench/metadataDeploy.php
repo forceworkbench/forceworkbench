@@ -35,7 +35,7 @@ if (isset($_POST['deploymentConfirmed']) && isset($_POST["deployFileTmpName"])) 
         }
 
         header("Location: metadataStatus.php?asyncProcessId=" . $deployAsyncResults->id . "&op=D");
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         displayError($e->getMessage(), true, true);
         exit;
     }

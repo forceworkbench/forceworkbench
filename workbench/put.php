@@ -366,7 +366,7 @@ function queryCurrentRecord($describeSObjectResult, $id) {
         if ($queryResponse->size == 1) {
             return new SObject($queryResponse->records[0]);
         }
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         workbenchLog(LOG_DEBUG, "queryCurrentRecord failed", $e->getMessage());
         return null;
     }
@@ -884,7 +884,7 @@ function putSyncIdOnly($apiCall,$fieldMap,$csvArray,$showResults) {
                     $results = array_merge($results,$resultsMore);
                 }
 
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 displayError($e->getMessage(),false,true);
             }
         }
@@ -960,7 +960,7 @@ function putSync($apiCall,$extId,$fieldMap,$csvArray,$showResults) {
                     $resultsMore = WorkbenchContext::get()->getPartnerConnection()->$apiCall($sObjects);
                 }
                 unset($sObjects);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $errors = null;
                 $errors = $e->getMessage();
                 displayError($errors);
@@ -1008,7 +1008,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
             if($apiCall == "upsert" && isset($extId)) $job->setExternalIdFieldName($extId);
 
             $job = WorkbenchContext::get()->getAsyncBulkConnection()->createJob($job);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             displayError($e->getMessage(), true, true);
         }
 
@@ -1019,7 +1019,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
         if ($doingZip) {
             try {
                WorkbenchContext::get()->getAsyncBulkConnection()->createBatch($job, $zipFile);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 displayError($e->getMessage(), true, true);
             }
         } else {
@@ -1068,7 +1068,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
     
                 try {
                     WorkbenchContext::get()->getAsyncBulkConnection()->createBatch($job, convertArrayToCsv($asyncCsv));
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
                     displayError($e->getMessage(), true, true);
                 }
             }
@@ -1076,7 +1076,7 @@ function putAsync($apiCall, $extId, $fieldMap, $csvArray, $zipFile, $contentType
 
         try {
             $job = WorkbenchContext::get()->getAsyncBulkConnection()->updateJobState($job->getId(), "Closed");
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             displayError($e->getMessage(), true, true);
         }
 

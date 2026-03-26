@@ -119,7 +119,7 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
                         "A newer version of Workbench is available for download</a>" .
                   "</div><br/>";
         }
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         //do nothing
     }
 }

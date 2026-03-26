@@ -26,7 +26,7 @@ function changePassword($passwordChangeType) {
             $changePasswordResult = WorkbenchContext::get()->getPartnerConnection()->resetPassword($_POST['userId']);
             $infos[] = "Successfully reset password for " . $_POST['userId'];
         }
-    } catch(Exception $e) {
+    } catch(\Throwable $e) {
         $errors[] = $e->getMessage();
     }
 

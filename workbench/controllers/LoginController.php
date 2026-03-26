@@ -262,7 +262,7 @@ class LoginController {
             WorkbenchContext::establish(ConnectionConfiguration::fromUrl($serverUrl, null, $overriddenClientId));
             try {
                 WorkbenchContext::get()->login($username, $password, $orgId, $portalId);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 WorkbenchContext::get()->release();
                 $this->addError($e->getMessage());
                 return;
@@ -410,7 +410,7 @@ class LoginController {
             $response = json_decode($json_response, true);
 
             curl_close($curl);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             throw new WorkbenchAuthenticationException("OAuth authentication failed connect to: " . $tokenUrl);
         }
 

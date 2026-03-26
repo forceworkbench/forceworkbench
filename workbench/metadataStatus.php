@@ -228,7 +228,7 @@ try {
             WorkbenchContext::get()->clearCache();
         }
     }
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     displayError($e->getMessage(), false, true);
 }
 ?>

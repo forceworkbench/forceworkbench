@@ -9,7 +9,7 @@ if (isset($_REQUEST['switchApiVersionTo'])) {
     unset($_SESSION['restExplorerController']);
     try {
         WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         if (stripos($e->getMessage(), 'UNSUPPORTED_API_VERSION') > -1) {
             WorkbenchContext::get()->setApiVersion($previousVersion);
             WorkbenchContext::get()->getPartnerConnection()->getServerTimestamp();
@@ -73,7 +73,7 @@ try {
             $sessionInfo['Organization'][$uiKey] = $uiValue;
         }
     }
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     $errors[] = "Partner API Error: " . $e->getMessage();
 }
 
@@ -84,7 +84,7 @@ if (WorkbenchContext::get()->isApiVersionAtLeast(10.0)) {
                 $sessionInfo['Metadata'][$resultsKey] = $resultsValue;
             }
         }
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         $sessionInfo['Metadata']['Error'] = $e->getMessage();
     }
 }

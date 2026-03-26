@@ -670,7 +670,7 @@ function in_arrayi($needle, $haystack) {
 function prettyPrintXml($xml, $htmlOutput=FALSE) {
     try {
         $xmlObj = new SimpleXMLElement(disallowDoctype($xml));
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         return $xml;
     }
 
