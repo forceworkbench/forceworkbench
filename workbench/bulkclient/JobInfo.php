@@ -36,12 +36,7 @@ class JobInfo {
 
     public function __construct($xml = null) {
         if ($xml != null) {
-            try {
-                libxml_disable_entity_loader(true);
-                $this->xml = new SimpleXMLElement(disallowDoctype($xml));
-            } finally {
-                libxml_disable_entity_loader(false);
-            }
+            $this->xml = new SimpleXMLElement(disallowDoctype($xml));
         } else {
             $this->xml = new SimpleXMLElement("<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\"/>");
 

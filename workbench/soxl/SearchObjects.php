@@ -25,11 +25,7 @@ class SearchRequest {
         }
 
         if (isset($source['sosl_search'])) {
-            if (get_magic_quotes_gpc()) {
-                $this->soslSearch = stripslashes($source['sosl_search']);
-            } else {
-                $this->soslSearch = $source['sosl_search'];
-            }
+            $this->soslSearch = $source['sosl_search'];
         }
     }
 

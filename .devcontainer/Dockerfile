@@ -1,7 +1,7 @@
 # See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.158.0/containers/php/.devcontainer/base.Dockerfile
 
 # [Choice] PHP version: 8, 8.0, 7, 7.4, 7.3
-ARG VARIANT="7.4"
+ARG VARIANT="8.4"
 FROM mcr.microsoft.com/vscode/devcontainers/php:0-${VARIANT}
 
 # [Option] Install Node.js

@@ -132,7 +132,6 @@ include_once 'footer.php';
 function parseUnpackagedManifest($xmlFile) {
     try {
         libxml_use_internal_errors(true);
-        libxml_disable_entity_loader(true);
         $xmlString = file_get_contents($xmlFile);
         $packageXml = simplexml_load_string(disallowDoctype($xmlString));
         if (!isset($packageXml) || !$packageXml) {
@@ -147,7 +146,6 @@ function parseUnpackagedManifest($xmlFile) {
         }
     } finally {
         libxml_use_internal_errors(false);
-        libxml_disable_entity_loader(false);
     }
 
     $unpackaged = new Package();

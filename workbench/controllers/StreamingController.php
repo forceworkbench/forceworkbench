@@ -20,14 +20,6 @@ class StreamingController {
         $this->isAjax = false;
         $this->restBaseUrl = "/services/data/v" . WorkbenchContext::get()->getApiVersion();
 
-        if (get_magic_quotes_gpc()) {
-            foreach ($_REQUEST as $fieldName => &$r) {
-                if (strpos($fieldName, "pushTopicDmlForm_") > -1) {
-                    $r =& stripslashes($r);
-                }
-            }
-        }
-
         $this->selectedTopic = new PushTopic(
             isset($_REQUEST['pushTopicDmlForm_Id'])         ? $_REQUEST['pushTopicDmlForm_Id']         : null,
             isset($_REQUEST['pushTopicDmlForm_Name'])       ? $_REQUEST['pushTopicDmlForm_Name']       : null,
