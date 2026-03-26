@@ -222,8 +222,11 @@ function registerShortcut($key, $jsCommand) {
 }
 
 function addFooterScript($script) {
-    $scriptHash = md5($script); //de-duping
-    $_REQUEST["footerScripts"][$scriptHash] = $script;
+    if (!isset($GLOBALS["footerScripts"])) {
+        $GLOBALS["footerScripts"] = array();
+    }
+    $scriptHash = md5($script);
+    $GLOBALS["footerScripts"][$scriptHash] = $script;
 }
 
 function isReadOnlyMode() {
