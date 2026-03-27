@@ -51,12 +51,12 @@ class RedisSessionHandler implements SessionHandlerInterface, SessionUpdateTimes
         return true;
     }
 
-    public function validateId($session_id)
+    public function validateId(string $session_id): bool
     {
         return $this->read($session_id) != '';
     }
 
-    public function updateTimestamp($session_id, $session_data)
+    public function updateTimestamp(string $session_id, string $session_data): bool
     {
         return $this->write($session_id, $session_data);
     }
