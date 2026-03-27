@@ -11,7 +11,7 @@ if ($_SESSION) {
                 WorkbenchContext::get()->getPartnerConnection()->logout();
             }
             $apiSessionInvalidated = true;
-        } catch(Exception $e) {
+        } catch(\Throwable $e) {
             $apiSessionInvalidated = false;
         }
 

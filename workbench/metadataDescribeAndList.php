@@ -12,7 +12,7 @@ require_once 'soapclient/SforceMetadataClient.php';
 
 try {
     $describeMetadataResult = WorkbenchContext::get()->getMetadataConnection()->describeMetadata(WorkbenchContext::get()->getApiVersion());
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     displayError($e->getMessage(), false, true);
 }
 
@@ -115,7 +115,7 @@ function listMetadata($type) {
         }
 
         return $listMetadataResult;
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         displayError($e->getMessage(), false, true);
     }
 }

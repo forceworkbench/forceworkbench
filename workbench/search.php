@@ -135,7 +135,7 @@ function search($searchRequest) {
 
         return $records;
 
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         displayError($e->getMessage(),false, true);
     }
 }
@@ -216,7 +216,7 @@ function displaySearchResult($records, $searchTimeElapsed) {
                 print "</table>&nbsp;<p/>";
             }
             print    "</div>\n";
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $errors = null;
             $errors = $e->getMessage();
             print "<p />";

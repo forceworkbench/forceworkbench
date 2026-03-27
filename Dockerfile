@@ -1,10 +1,10 @@
-FROM heroku/heroku:20-build as base
+FROM heroku/heroku:24-build as base
 
-ENV PHP_BUILDPACK_VERSION v190
+ENV PHP_BUILDPACK_VERSION v260
 ENV APP /app
 ENV HOME $APP
 ENV HEROKU_PHP_BIN $APP/.heroku/php/bin
-ENV STACK heroku-20
+ENV STACK heroku-24
 
 ADD . $APP
 WORKDIR $APP

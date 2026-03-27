@@ -3,6 +3,7 @@ abstract class SoapBaseClient {
     public $sforce;
     protected $sessionId;
     protected $location;
+    protected $soapHeaders = array();
 
     public function __construct($sessionId, $clientId, $endpoint, $wsdlPath) {
 
@@ -60,7 +61,8 @@ abstract class SoapBaseClient {
             $headerArray[] = $allowFieldTruncationHeader;
         }
 
-        $this->sforce->__setSoapHeaders($headerArray);
+        $this->soapHeaders = $headerArray;
+        $this->sforce->__setSoapHeaders($this->soapHeaders);
         $this->sforce->__setLocation($endpoint);
 
         return $this->sforce;
@@ -80,7 +82,8 @@ abstract class SoapBaseClient {
 
         $debugBody = new SoapVar($logInfoVar, SOAP_ENC_OBJECT);
 
-        $this->sforce->__default_headers[] = new SoapHeader($this->getNamespace(), 'DebuggingHeader', $debugBody, false);
+        $this->soapHeaders[] = new SoapHeader($this->getNamespace(), 'DebuggingHeader', $debugBody, false);
+        $this->sforce->__setSoapHeaders($this->soapHeaders);
     }
 
     public function getLastRequest() {

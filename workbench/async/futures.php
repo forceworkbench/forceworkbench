@@ -94,7 +94,7 @@ abstract class FutureTask {
                 "measure.async.queue_time" => ($execStartTime - $this->enqueueTime) . "sec"));
 
             $future->redeem($this->perform());
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $future->redeem($e);
         }
 

@@ -36,6 +36,7 @@ class WorkbenchContext {
     private $connConfig;
     private $cache;
     private $defaultObject;
+    private $defaultObjectChanged;
     private $sfdcUiSidLikelySet;
     private $agreedToTerms;
 

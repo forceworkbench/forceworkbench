@@ -50,7 +50,7 @@ try {
     }
 
     fclose($fileContext) or die("Error closing php://output");
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     displayError($e->getMessage(), true, true);
     exit;
 }

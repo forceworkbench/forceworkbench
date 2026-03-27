@@ -351,7 +351,7 @@ class QueryFutureTask extends FutureTask {
 
                 fclose($csvFile) or die("Error closing php://output");
 
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 require_once("header.php");
                 displayQueryForm(new QueryRequest($_POST),'csv',$queryAction);
                 print "<p />";

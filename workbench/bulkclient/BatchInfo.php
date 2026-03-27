@@ -48,12 +48,7 @@ class BatchInfo {
     private $xml;
 
     public function __construct($xml) {
-        try {
-            libxml_disable_entity_loader(true);
-            $this->xml = new SimpleXMLElement(disallowDoctype($xml));
-        } finally {
-            libxml_disable_entity_loader(false);
-        }
+        $this->xml = new SimpleXMLElement(disallowDoctype($xml));
 
         if ($this->getExceptionCode() != "") {
             throw new Exception($this->getExceptionCode() . ": " . $this->getExceptionMessage());

@@ -70,7 +70,7 @@ if (isset($_POST['queryMore']) && isset($_POST['queryLocator'])) {
 } else if (isset($_POST['querySubmit']) && $_POST['querySubmit']=='Query' && $queryRequest->getSoqlQuery() != null && strpos($queryRequest->getExportTo(), 'async_') === 0) {
     try {
         queryAsync($queryRequest);
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         require_once 'header.php';
         displayQueryForm($queryRequest);
         throw $e;
@@ -304,7 +304,7 @@ function queryAsync($queryRequest) {
 
     try {
         $job = $asyncConnection->createJob($job);
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         if ((strpos($e->getMessage(), 'Unable to find object') > -1) || (strpos($e->getMessage(), 'InvalidEntity') > -1)) {
             throw new WorkbenchHandledException($e->getMessage());
         } else {

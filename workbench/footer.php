@@ -24,8 +24,8 @@ print "Workbench " . ($GLOBALS["WORKBENCH_VERSION"] != "trunk" ? $GLOBALS["WORKB
 <script type="text/javascript" src="<?php echo getPathToStaticResource('/script/wz_tooltip.js'); ?>"></script>
 
 <?php
-if (isset($_REQUEST["footerScripts"])) {
-    foreach ($_REQUEST["footerScripts"] as $script) {
+if (isset($GLOBALS["footerScripts"])) {
+    foreach ($GLOBALS["footerScripts"] as $script) {
         print $script . "\n";
     }
 }

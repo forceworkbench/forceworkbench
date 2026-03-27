@@ -62,7 +62,7 @@ function workbenchLog($logLevel, $type, $message = "") {
             $info = WorkbenchContext::get()->getUserInfo();
             $orgId = $info->organizationId;
             $userId = $info->userId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // ignore and just use defaults
         }
     }
@@ -222,8 +222,11 @@ function registerShortcut($key, $jsCommand) {
 }
 
 function addFooterScript($script) {
-    $scriptHash = md5($script); //de-duping
-    $_REQUEST["footerScripts"][$scriptHash] = $script;
+    if (!isset($GLOBALS["footerScripts"])) {
+        $GLOBALS["footerScripts"] = array();
+    }
+    $scriptHash = md5($script);
+    $GLOBALS["footerScripts"][$scriptHash] = $script;
 }
 
 function isReadOnlyMode() {
@@ -275,7 +278,7 @@ function isKnownAuthenticationError($errorMessage) {
     return false;
 }
 
-function handleAllErrors($errno, $errstr, $errfile, $errline, $errcontext) {
+function handleAllErrors($errno, $errstr, $errfile = "", $errline = 0) {
     $errorId = basename($errfile, ".php") . "-$errline-" . time();
     workbenchLog(LOG_CRIT, "F",  "measure.fatal=1 " . $errorId . ":$errstr:" . print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), true));
 
@@ -326,7 +329,7 @@ function handleAllExceptionsInternal($e, $showHeadersFooters) {
 
     print "<p/>";
     if ($e instanceof WorkbenchHandledException) {
-        if ($showHeadersFooters) try { include_once 'header.php'; } catch (Exception $e) {}
+        if ($showHeadersFooters) try { include_once 'header.php'; } catch (\Throwable $e) {}
         displayError($e->getMessage(), false, $showHeadersFooters);
     } else {
         $executing_script = basename($_SERVER['PHP_SELF']);
@@ -352,7 +355,7 @@ function handleAllExceptionsInternal($e, $showHeadersFooters) {
             }
         }
 
-        if ($showHeadersFooters)  try { include_once 'header.php'; } catch (Exception $e) {}
+        if ($showHeadersFooters)  try { include_once 'header.php'; } catch (\Throwable $e) {}
         workbenchLog(LOG_ERR, "E", "measure.exception=1 " . $fullMessage);
         displayError("UNKNOWN ERROR: " . $e->getMessage(), false, $showHeadersFooters);
     }
@@ -514,17 +517,17 @@ function localizeDateTimes($inputStr, $formatOverride = null) {
 
     date_default_timezone_set("UTC");
     
-    return preg_replace_callback('|\d\d\d\d\-\d\d\-\d\dT\d\d\:\d\d:\d\d\.\d\d\dZ|', 
-                                 create_function(
-                                    '$matches',
-                                       
-                                    '$utcDate = new DateTime($matches[0]);' .
-                                    'if (\'' . $timezone . '\'!= \'\') { ' . 
-                                        '$utcDate->setTimezone(new DateTimeZone(\'' . $timezone . '\'));'.
-                                    '}' .
-                                    'return $utcDate->format(\'' . $format . '\');'
-                                 ),
-                                 $inputStr);
+    return preg_replace_callback(
+        '|\d\d\d\d\-\d\d\-\d\dT\d\d\:\d\d:\d\d\.\d\d\dZ|',
+        function ($matches) use ($timezone, $format) {
+            $utcDate = new DateTime($matches[0]);
+            if ($timezone != '') {
+                $utcDate->setTimezone(new DateTimeZone($timezone));
+            }
+            return $utcDate->format($format);
+        },
+        $inputStr
+    );
 }
 
 function printSelectOptions($valuesToLabelsArray,$defaultValue = null) {
@@ -666,12 +669,9 @@ function in_arrayi($needle, $haystack) {
  */
 function prettyPrintXml($xml, $htmlOutput=FALSE) {
     try {
-        libxml_disable_entity_loader(true);
         $xmlObj = new SimpleXMLElement(disallowDoctype($xml));
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         return $xml;
-    } finally {
-        libxml_disable_entity_loader(false);
     }
 
     $xmlLines = explode("
