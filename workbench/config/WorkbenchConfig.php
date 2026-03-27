@@ -89,6 +89,10 @@ class WorkbenchConfig {
         }
         
         foreach ($this->config as $configKey => $configValue) {
+            if (!is_array($configValue)) {
+                continue;
+            }
+
             // skip headers
             if (isset($configValue['isHeader'])) {
                 continue;
