@@ -129,7 +129,7 @@ function deserializeDeployOptions($request) {
 }
 
 function printDeployOptions($deployOptions) {
-    if (array_key_exists('testLevel', $deployOptions)) {
+    if (property_exists($deployOptions, 'testLevel')) {
         $editable = false;
     } else {
         $editable = true;
