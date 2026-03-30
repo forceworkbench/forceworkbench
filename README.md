@@ -1,6 +1,10 @@
 # Workbench
 
-**NOTICE: WORKBENCH IS MAINTENANCE ONLY MODE. NO NEW FEATURES WILL BE ADDED AND ONLY SECURITY ISSUES WILL BE FIXED. API VERSIONS WILL CONTINUE TO BE UPDATED.**
+## **Workbench is NOT a supported product of or supported by salesforce.com, inc.**
+
+## **WORKBENCH IS MAINTENANCE ONLY MODE. NO NEW FEATURES WILL BE ADDED AND NO NEW SECURITY ISSUES WILL BE FIXED.**
+
+
 
 Workbench is a powerful, web-based suite of tools designed for
 administrators and developers to interact with Salesforce.com
@@ -28,7 +32,7 @@ section of the [wiki](https://github.com/forceworkbench/forceworkbench/wiki).
 
 Support
 -------
-Please note that the **Workbench is NOT a supported product of or supported by salesforce.com, inc.** For support from the Open Source community, please use [Stackoverflow](https://salesforce.stackexchange.com/questions/tagged/workbench).
+For support from the Open Source community, please use [Stackoverflow](https://salesforce.stackexchange.com/questions/tagged/workbench).
 
 Learning more about Workbench
 -----------------------------
