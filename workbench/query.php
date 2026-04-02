@@ -263,13 +263,13 @@ function displayQueryForm($queryRequest) {
             $filterRowNum++ . ", " .
             "\"" . $filter->getField()     . "\", " .
             "\"" . $filter->getCompOper()  . "\", " .
-            "\"" . htmlspecialchars($filter->getValue(), ENT_QUOTES)     . "\"" .
+            "\"" . htmlspecialchars($filter->getValue() ?? '', ENT_QUOTES)     . "\"" .
             ");</script>";
     }
 
 
     print "<tr><td valign='top' colspan=5><br/>Enter or modify a SOQL query below:\n" .
-        "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . WorkbenchConfig::get()->value("textareaRows") . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery(),ENT_QUOTES) . "</textarea>\n" .
+        "<br/><textarea id='soql_query_textarea' type='text' name='soql_query' rows='" . WorkbenchConfig::get()->value("textareaRows") . "' style='width: 99%; overflow: auto; font-family: monospace, courier;'>" . htmlspecialchars($queryRequest->getSoqlQuery() ?? '',ENT_QUOTES) . "</textarea>\n" .
         "</td></tr>\n";
 
 
