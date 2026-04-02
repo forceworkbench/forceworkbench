@@ -213,6 +213,7 @@ class SObject {
     public $type;
     public $fields;
     public $fieldsToNull;
+    public $queryResult;
     //  public $sobject;
 
     public function __construct($response=NULL) {

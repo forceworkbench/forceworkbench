@@ -138,7 +138,7 @@ class RestApiClient {
             curl_setopt($ch, CURLOPT_COOKIE, implode("; ", $cookies));
         }
 
-        $this->log("REQUEST \n METHOD: $method \n PATH: $path \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlspecialchars($data));
+        $this->log("REQUEST \n METHOD: $method \n PATH: $path \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlspecialchars($data ?? ''));
 
         $chResponse = curl_exec($ch);
         $this->log("RESPONSE \n" . htmlspecialchars($chResponse));

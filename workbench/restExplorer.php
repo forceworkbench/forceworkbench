@@ -100,7 +100,7 @@ if ($c->errors != null) {
         <p>
             <strong>Request Body</strong>
         </p>
-        <textarea name="requestBody" style="width: 100%; height: 10em; font-family: courier, monotype;"><?php echo htmlspecialchars($c->requestBody); ?></textarea>
+        <textarea name="requestBody" style="width: 100%; height: 10em; font-family: courier, monotype;"><?php echo htmlspecialchars($c->requestBody ?? ''); ?></textarea>
         <br/>
     </div>
 </form>
