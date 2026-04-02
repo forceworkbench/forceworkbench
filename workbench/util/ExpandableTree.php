@@ -96,7 +96,7 @@ class ExpandableTree {
                 if (is_bool($nodeValue)) {
                     $nodeValue = $nodeValue == 1 ? "<span class='trueColor'>true</span>" : "<span class='falseColor'>false</span>";
                 } else {
-                    $nodeValue = $escape ? htmlspecialchars($nodeValue) : $nodeValue;
+                    $nodeValue = $escape ? htmlspecialchars($nodeValue ?? '') : $nodeValue;
                     $nodeValue = $this->containsDates ? localizeDateTimes($nodeValue) : $nodeValue;
                     $nodeValue = $this->containsIds ? addLinksToIds($nodeValue) : $nodeValue;
                 }
