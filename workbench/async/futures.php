@@ -13,10 +13,11 @@ abstract class FutureTask {
     private $connConfig;
     private $cookies;
     private $enqueueTime;
+    private $requestId;
 
     function __construct() {
         $this->asyncId = uniqid();
-        $this->requestId = isset($_SERVER['HTTP_X_REQUEST_ID']) ? $_SERVER['HTTP_X_REQUEST_ID'] : null;
+        $this->requestId = $_SERVER['HTTP_X_REQUEST_ID'] ?? null;
         $this->connConfig = WorkbenchContext::get()->getConnConfig();
         $this->cookies = $_COOKIE;
     }

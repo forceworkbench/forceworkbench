@@ -18,24 +18,24 @@ class RedisSessionHandler implements SessionHandlerInterface, SessionUpdateTimes
         return true;
     }
 
-    public function destroy($session_id): bool
+    public function destroy(string $session_id): bool
     {
         $this->redis->del($session_id);
 
         return true;
     }
 
-    public function gc($max_lifetime): int
+    public function gc(int $max_lifetime): int
     {
         return 0;
     }
 
-    public function open($path, $name): bool
+    public function open(string $path, string $name): bool
     {
         return true;
     }
 
-    public function read($session_id): string
+    public function read(string $session_id): string
     {
         if ($result = $this->redis->get($session_id)) {
             return $result;
@@ -44,7 +44,7 @@ class RedisSessionHandler implements SessionHandlerInterface, SessionUpdateTimes
         return '';
     }
 
-    public function write($session_id, $session_data): bool
+    public function write(string $session_id, string $session_data): bool
     {
         $this->redis->setEx($session_id, $this->ttl, $session_data);
 
