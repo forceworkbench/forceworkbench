@@ -20,7 +20,7 @@ class RestExplorerController {
 
     public function __construct() {
         $this->requestMethod = 'GET';
-        $this->url = isset($_REQUEST['url']) ? $_REQUEST['url'] : $this->BASE_REST_URL_PREFIX . '/data/v' . WorkbenchContext::get()->getApiVersion();
+        $this->url = $_REQUEST['url'] ?? $this->BASE_REST_URL_PREFIX . '/data/v' . WorkbenchContext::get()->getApiVersion();
         $this->requestHeaders = $this->DEFAULT_REQUEST_HEADERS;
     }
     
@@ -30,23 +30,17 @@ class RestExplorerController {
         $this->autoExec = null;
         $this->doExecute = null;
         $this->showResponse = false;
-        $this->requestMethod = isset($_REQUEST['requestMethod']) ? $_REQUEST['requestMethod'] : $this->requestMethod;
+        $this->requestMethod = $_REQUEST['requestMethod'] ?? $this->requestMethod;
 
-        $this->url = isset($_REQUEST['url'])
-                                ? $_REQUEST['url']
-                                : $this->url;
+        $this->url = $_REQUEST['url'] ?? $this->url;
 
-        $this->requestHeaders = isset($_REQUEST['requestHeaders'])
-                                ? $_REQUEST['requestHeaders']
-                                : $this->requestHeaders;
+        $this->requestHeaders = $_REQUEST['requestHeaders'] ?? $this->requestHeaders;
 
-        $this->requestBody = isset($_REQUEST['requestBody'])
-                                ? $_REQUEST['requestBody']
-                                : $this->requestBody;
+        $this->requestBody = $_REQUEST['requestBody'] ?? $this->requestBody;
 
         $this->autoExec = $_SERVER['REQUEST_METHOD'] == 'GET' && isset($_REQUEST['autoExec']) ? $_REQUEST['autoExec'] : $this->autoExec;
 
-        $this->doExecute = isset($_REQUEST['doExecute']) ? $_REQUEST['doExecute'] : null;
+        $this->doExecute = $_REQUEST['doExecute'] ?? null;
 
         if ($this->doExecute || $this->autoExec == '1') {
             $this->preExecute();
