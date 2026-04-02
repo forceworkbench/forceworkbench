@@ -44,7 +44,7 @@ if (isset($_POST['execute'])) {
         <td colspan="2"><textarea id='scriptInput' name='scriptInput'
             cols='100'
             rows='<?php print WorkbenchConfig::get()->value("textareaRows") ?>'
-            style='overflow: auto; font-family: monospace, courier;'><?php echo htmlspecialchars(isset($_SESSION['scriptInput'])?$_SESSION['scriptInput']:null,ENT_QUOTES); ?></textarea>
+            style='overflow: auto; font-family: monospace, courier;'><?php echo htmlspecialchars($_SESSION['scriptInput'] ?? '', ENT_QUOTES); ?></textarea>
         <p />
         <input type='submit' name="execute" value='Execute' class='disableWhileAsyncLoading' /> <input
             type='reset' value='Reset' class='disableWhileAsyncLoading' /></td>

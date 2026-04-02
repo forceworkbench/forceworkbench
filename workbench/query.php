@@ -250,7 +250,7 @@ function displayQueryForm($queryRequest) {
     }
     print "</select></td>\n";
 
-    print "<td><input type='text' id='QB_limit_txt' size='10' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() != null ? $queryRequest->getLimit() : null,ENT_QUOTES) . "' onkeyup='buildQuery();' /></td>\n";
+    print "<td><input type='text' id='QB_limit_txt' size='10' name='QB_limit_txt' value='" . htmlspecialchars($queryRequest->getLimit() ?? '', ENT_QUOTES) . "' onkeyup='buildQuery();' /></td>\n";
 
     print "</tr>\n";
 

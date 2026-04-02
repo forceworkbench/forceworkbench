@@ -13,6 +13,7 @@ abstract class FutureTask {
     private $connConfig;
     private $cookies;
     private $enqueueTime;
+    private $requestId;
 
     function __construct() {
         $this->asyncId = uniqid();

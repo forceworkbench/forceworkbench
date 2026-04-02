@@ -2,7 +2,7 @@
 require_once 'restclient/RestClient.php';
 require_once 'controllers/RestResponseInstrumenter.php';
 
-class RestExplorerController {  
+class RestExplorerController {
     private $BASE_REST_URL_PREFIX = '/services';
     private $DEFAULT_REQUEST_HEADERS = "Content-Type: application/json; charset=UTF-8\nAccept: application/json";
 
@@ -16,6 +16,7 @@ class RestExplorerController {
     public $showResponse;
     public $autoExec;
     public $doExecute;
+    public $requestHeaders;
 
     public function __construct() {
         $this->requestMethod = 'GET';
