@@ -214,6 +214,7 @@ class SObject {
     public $fields;
     public $fieldsToNull;
     public $queryResult;
+    public $Id;
     //  public $sobject;
 
     public function __construct($response=NULL) {

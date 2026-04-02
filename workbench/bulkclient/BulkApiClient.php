@@ -400,7 +400,7 @@ class BulkApiClient {
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         }
 
-        $this->log("REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlspecialchars($data));
+        $this->log("REQUEST \n POST: $isPost \n URL: $url \n HTTP HEADERS: \n" . print_r($httpHeaders, true) . " DATA:\n " . htmlspecialchars($data ?? ''));
 
         $chResponse = curl_exec($ch);
 
