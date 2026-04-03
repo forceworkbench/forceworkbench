@@ -278,7 +278,7 @@ function convertCsvFileToArray($file) {
     $memLimitBytes = toBytes(ini_get("memory_limit"));
     $memWarningThreshold = WorkbenchConfig::get()->value("memoryUsageWarningThreshold") / 100;
     $headerCount = 0;
-    for ($row=0; ($data = fgetcsv($handle)) !== FALSE; $row++) {
+    for ($row=0; ($data = fgetcsv($handle, 0, ",", "\"", "\\")) !== FALSE; $row++) {
         if ($memLimitBytes != 0 && (memory_get_usage() / $memLimitBytes > $memWarningThreshold)) {
             displayError("Workbench almost exhausted all its memory after only processing $row rows of data.
             When performing a large data load, it is recommended to use a zipped request for processing with the Bulk API.
