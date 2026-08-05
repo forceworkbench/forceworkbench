@@ -347,12 +347,18 @@ class LoginController {
             throw new Exception("OAuth not enabled");
         }
 
+        $codeVerifier = $this->base64UrlEncode(random_bytes(32));
+        $_SESSION['oauth']['codeVerifier'] = $codeVerifier;
+        $codeChallenge = $this->base64UrlEncode(hash('sha256', $codeVerifier, true));
+
         $oauthConfigs = WorkbenchConfig::get()->value("oauthConfigs");
         $authUrl = "https://" . $hostName .
                     "/services/oauth2/authorize?response_type=code&display=popup".
                     "&client_id=" . urlencode($oauthConfigs[$hostName]["key"]) .
                     "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl()) .
-                    "&state=" . urlencode($state);
+                    "&state=" . urlencode($state) .
+                    "&code_challenge=" . urlencode($codeChallenge) .
+                    "&code_challenge_method=S256";
 
         header('Location: ' . $authUrl);
     }
@@ -376,11 +382,15 @@ class LoginController {
             throw new Exception("Misconfigured OAuth Host");
         }
 
+        $codeVerifier = isset($_SESSION['oauth']['codeVerifier']) ? $_SESSION['oauth']['codeVerifier'] : null;
+        unset($_SESSION['oauth']['codeVerifier']);
+
         $params = "code=" . $code
                   . "&grant_type=authorization_code"
                   . "&client_id=" . $oauthConfigs[$hostName]['key']
                   . "&client_secret=" . $oauthConfigs[$hostName]['secret']
-                  . "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl());
+                  . "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl())
+                  . "&code_verifier=" . urlencode($codeVerifier);
 
         $curl = curl_init($tokenUrl);
         curl_setopt($curl, CURLOPT_HEADER, false);
@@ -435,6 +445,10 @@ class LoginController {
         $_POST['termsAccepted'] = 1; // re-apply terms acceptance on oauth redirect
 
         $this->processLogin(null, null, $serverUrlPrefix . "/services/Soap/u/" . $apiVersion, $accessToken, $startUrl);
+    }
+
+    private function base64UrlEncode($data) {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
     private function oauthBuildRedirectUrl() {
