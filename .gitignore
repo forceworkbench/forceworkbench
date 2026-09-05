@@ -11,5 +11,6 @@ Vagrantfile
 composer.phar
 .slug
 .cache
+.phpunit.result.cache
 
 .DS_Store
