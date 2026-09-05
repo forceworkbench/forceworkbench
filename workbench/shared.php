@@ -28,8 +28,9 @@ function redis() {
         }
 
         $redisUrl = WorkbenchConfig::get()->value("redisUrl");
+        $redisScheme = parse_url($redisUrl, PHP_URL_SCHEME) == "rediss" ? "tls" : "tcp";
         $redis = new Redis();
-        $redis->connect("tls://".parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT), 0, NULL, 0, 0, [
+        $redis->connect($redisScheme."://".parse_url($redisUrl, PHP_URL_HOST), parse_url($redisUrl, PHP_URL_PORT), 0, NULL, 0, 0, [
           "auth" => parse_url($redisUrl, PHP_URL_PASS),
           "stream" => ["verify_peer" => false, "verify_peer_name" => false],
         ]);
