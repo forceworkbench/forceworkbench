@@ -11,6 +11,7 @@ class LoginController {
     private $startUrl;
     private $oauthEnabled;
     private $oauthRequired;
+    private $oauthPkceEnabled;
     private $termsRequired;
     private $termsFile;
 
@@ -56,6 +57,7 @@ class LoginController {
         }
 
         $this->oauthRequired = WorkbenchConfig::get()->value("oauthRequired");
+        $this->oauthPkceEnabled = WorkbenchConfig::get()->value("oauthPkceEnabled");
         if ($this->oauthRequired) {
             $this->loginType = "oauth";
         }
@@ -349,9 +351,13 @@ class LoginController {
             throw new Exception("OAuth not enabled");
         }
 
-        $verifier = $this->generatePkceVerifier();
-        $_SESSION['oauth']['pkceVerifiers'][$pkceKey] = $verifier;
-        $challenge = $this->derivePkceChallenge($verifier);
+        $pkceParams = "";
+        if ($this->oauthPkceEnabled) {
+            $verifier = $this->generatePkceVerifier();
+            $_SESSION['oauth']['pkceVerifiers'][$pkceKey] = $verifier;
+            $challenge = $this->derivePkceChallenge($verifier);
+            $pkceParams = "&code_challenge=" . urlencode($challenge) . "&code_challenge_method=S256";
+        }
 
         $oauthConfigs = WorkbenchConfig::get()->value("oauthConfigs");
         $authUrl = "https://" . $hostName .
@@ -359,8 +365,7 @@ class LoginController {
                     "&client_id=" . urlencode($oauthConfigs[$hostName]["key"]) .
                     "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl()) .
                     "&state=" . urlencode($state) .
-                    "&code_challenge=" . urlencode($challenge) .
-                    "&code_challenge_method=S256";
+                    $pkceParams;
 
         header('Location: ' . $authUrl);
     }
@@ -370,13 +375,16 @@ class LoginController {
             throw new Exception("OAuth not enabled");
         }
 
-        if (empty($pkceKey) || !isset($_SESSION['oauth']['pkceVerifiers'][$pkceKey])) {
-            throw new WorkbenchAuthenticationException(
-                "OAuth login session expired or invalid. Please restart the login process."
-            );
+        $codeVerifierParam = "";
+        if ($this->oauthPkceEnabled) {
+            if (empty($pkceKey) || !isset($_SESSION['oauth']['pkceVerifiers'][$pkceKey])) {
+                throw new WorkbenchAuthenticationException(
+                    "OAuth login session expired or invalid. Please restart the login process."
+                );
+            }
+            $codeVerifierParam = "&code_verifier=" . urlencode($_SESSION['oauth']['pkceVerifiers'][$pkceKey]);
+            unset($_SESSION['oauth']['pkceVerifiers'][$pkceKey]);
         }
-        $codeVerifier = $_SESSION['oauth']['pkceVerifiers'][$pkceKey];
-        unset($_SESSION['oauth']['pkceVerifiers'][$pkceKey]);
 
         // we set this again below to the real value returned,
         // but in case it fails prior, need to set for logout iframe hack
@@ -397,7 +405,7 @@ class LoginController {
                   . "&client_id=" . $oauthConfigs[$hostName]['key']
                   . "&client_secret=" . $oauthConfigs[$hostName]['secret']
                   . "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl())
-                  . "&code_verifier=" . urlencode($codeVerifier);
+                  . $codeVerifierParam;
 
         $curl = curl_init($tokenUrl);
         curl_setopt($curl, CURLOPT_HEADER, false);

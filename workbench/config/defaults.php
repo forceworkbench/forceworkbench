@@ -943,6 +943,15 @@ $config["header_Performance"] = array(
     );
 
     // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
+    $config["oauthPkceEnabled"] = array(
+        "label" => "Use PKCE for OAuth Login",
+        "description" => "Send a PKCE code_challenge/code_verifier with the OAuth login flow (RFC 7636)",
+        "default" => true,
+        "overrideable" => false,
+        "dataType" => "boolean"
+    );
+
+    // This should never be overrideable by end users; instead, admins SHOULD override default in overrides.php
     $config["oauthConfigs"] = array(
         "label" => "OAuth 2.0 Consumer Key",
         "description" => "OAuth 2.0 Consumer Key",
