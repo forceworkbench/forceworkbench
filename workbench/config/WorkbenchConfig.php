@@ -81,7 +81,9 @@ class WorkbenchConfig {
             }
         
             if (!isset($point) || is_array($point)) {
-                workbenchLog(LOG_ERR, "Invalid location for $envKey");
+                // can't use workbenchLog() here: it calls WorkbenchConfig::get(), which would
+                // recurse back into this constructor since the singleton isn't registered yet
+                error_log("Invalid location for config env var: $envKey");
                 continue;
             }
         
