@@ -11,6 +11,7 @@ class LoginController {
     private $startUrl;
     private $oauthEnabled;
     private $oauthRequired;
+    private $oauthPkceEnabled;
     private $termsRequired;
     private $termsFile;
 
@@ -56,6 +57,7 @@ class LoginController {
         }
 
         $this->oauthRequired = WorkbenchConfig::get()->value("oauthRequired");
+        $this->oauthPkceEnabled = WorkbenchConfig::get()->value("oauthPkceEnabled");
         if ($this->oauthRequired) {
             $this->loginType = "oauth";
         }
@@ -96,7 +98,7 @@ class LoginController {
                 validateCsrfToken();
             }
 
-            $this->oauthProcessLogin($_REQUEST["code"], $state->host, $state->apiVersion, $state->startUrl);
+            $this->oauthProcessLogin($_REQUEST["code"], $state->host, $state->apiVersion, $state->startUrl, $state->pkceKey ?? null);
             return;
         }
 
@@ -117,14 +119,16 @@ class LoginController {
                 throw new Exception("Invalid parameters for Oauth login");
             }
 
+            $pkceKey = $this->generatePkceKey();
             $state = json_encode(array(
                 "host" => $_POST["oauth_host"],
                 "apiVersion" => $_POST["oauth_apiVersion"],
                 "csrfToken" => getCsrfToken(),
-                "startUrl" => $this->startUrl
+                "startUrl" => $this->startUrl,
+                "pkceKey" => $pkceKey
             ));
 
-            $this->oauthRedirect($_POST["oauth_host"], $state);
+            $this->oauthRedirect($_POST["oauth_host"], $state, $pkceKey);
         } else {
             $pw   = isset($_REQUEST['pw'])  ? $_REQUEST['pw']  : null;
             $sid  = isset($_REQUEST['sid']) ? $_REQUEST['sid'] : null;
@@ -342,9 +346,17 @@ class LoginController {
         header("Location: $actionJump");
     }
 
-    private function oauthRedirect($hostName, $state) {
+    private function oauthRedirect($hostName, $state, $pkceKey) {
         if (!$this->oauthEnabled) {
             throw new Exception("OAuth not enabled");
+        }
+
+        $pkceParams = "";
+        if ($this->oauthPkceEnabled) {
+            $verifier = $this->generatePkceVerifier();
+            $_SESSION['oauth']['pkceVerifiers'][$pkceKey] = $verifier;
+            $challenge = $this->derivePkceChallenge($verifier);
+            $pkceParams = "&code_challenge=" . urlencode($challenge) . "&code_challenge_method=S256";
         }
 
         $oauthConfigs = WorkbenchConfig::get()->value("oauthConfigs");
@@ -352,14 +364,26 @@ class LoginController {
                     "/services/oauth2/authorize?response_type=code&display=popup".
                     "&client_id=" . urlencode($oauthConfigs[$hostName]["key"]) .
                     "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl()) .
-                    "&state=" . urlencode($state);
+                    "&state=" . urlencode($state) .
+                    $pkceParams;
 
         header('Location: ' . $authUrl);
     }
 
-    private function oauthProcessLogin($code, $hostName, $apiVersion, $startUrl) {
+    private function oauthProcessLogin($code, $hostName, $apiVersion, $startUrl, $pkceKey) {
         if (!$this->oauthEnabled) {
             throw new Exception("OAuth not enabled");
+        }
+
+        $codeVerifierParam = "";
+        if ($this->oauthPkceEnabled) {
+            if (empty($pkceKey) || !isset($_SESSION['oauth']['pkceVerifiers'][$pkceKey])) {
+                throw new WorkbenchAuthenticationException(
+                    "OAuth login session expired or invalid. Please restart the login process."
+                );
+            }
+            $codeVerifierParam = "&code_verifier=" . urlencode($_SESSION['oauth']['pkceVerifiers'][$pkceKey]);
+            unset($_SESSION['oauth']['pkceVerifiers'][$pkceKey]);
         }
 
         // we set this again below to the real value returned,
@@ -380,7 +404,8 @@ class LoginController {
                   . "&grant_type=authorization_code"
                   . "&client_id=" . $oauthConfigs[$hostName]['key']
                   . "&client_secret=" . $oauthConfigs[$hostName]['secret']
-                  . "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl());
+                  . "&redirect_uri=" . urlencode($this->oauthBuildRedirectUrl())
+                  . $codeVerifierParam;
 
         $curl = curl_init($tokenUrl);
         curl_setopt($curl, CURLOPT_HEADER, false);
@@ -443,6 +468,22 @@ class LoginController {
                 str_replace('\\', '/', dirname(htmlspecialchars($_SERVER['PHP_SELF']))) .
                 (strlen(dirname(htmlspecialchars($_SERVER['PHP_SELF']))) == 1 ? "" : "/") .
                 basename($_SERVER['SCRIPT_NAME']);
+    }
+
+    private function generatePkceKey() {
+        return bin2hex(random_bytes(16)); // correlation id carried in state, not secret
+    }
+
+    private function generatePkceVerifier() {
+        return $this->base64UrlEncode(random_bytes(32)); // 43-char string, within RFC 43-128 range
+    }
+
+    private function derivePkceChallenge($verifier) {
+        return $this->base64UrlEncode(hash('sha256', $verifier, true));
+    }
+
+    private function base64UrlEncode($data) {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
     public function isOAuthEnabled() {

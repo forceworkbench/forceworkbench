@@ -8,6 +8,9 @@ services:
     environment:
       PATH: '/app/.heroku/php/bin:/app/.heroku/php/sbin:$PATH'
       REDIS_URL: 'redis://redis:6379'
+    env_file:
+      - path: .env
+        required: false
     links:
       - redis
   web:
