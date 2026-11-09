@@ -158,7 +158,6 @@ class RestApiClient {
 
         $httpResponse = new HttpResponse($chResponse, $headerSize, $expectBinary);
         
-        curl_close($ch);
 
         return $httpResponse;
     }

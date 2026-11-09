@@ -411,7 +411,6 @@ class BulkApiClient {
             throw new Exception(curl_error($ch));
         }
 
-        curl_close($ch);
 
         return $chResponse;
     }

@@ -81,7 +81,6 @@ if (WorkbenchConfig::get()->value("checkForLatestVersion") && extension_loaded('
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         $tagsResponse = curl_exec($ch);
         $info = curl_getinfo($ch);
-        curl_close($ch);
         if ($tagsResponse === false || $info['http_code'] != 200) {
             throw new Exception("Could not access GitHub tags");
         }
