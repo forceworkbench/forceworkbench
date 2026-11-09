@@ -434,7 +434,6 @@ class LoginController {
             $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             $response = json_decode($json_response, true);
 
-            curl_close($curl);
         } catch (\Throwable $e) {
             throw new WorkbenchAuthenticationException("OAuth authentication failed connect to: " . $tokenUrl);
         }

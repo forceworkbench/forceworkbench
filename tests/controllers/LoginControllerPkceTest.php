@@ -63,7 +63,6 @@ class LoginControllerPkceTest extends TestCase {
 
     private function invokePrivate($object, $method, $args = []) {
         $reflection = new ReflectionMethod($object, $method);
-        $reflection->setAccessible(true);
         return $reflection->invokeArgs($object, $args);
     }
 
